@@ -8,16 +8,17 @@ import type { TierId } from "@/lib/loyalty";
  * dedicated artwork yet — same as the old CoinModel fallback, it reuses
  * the Bronze image until a Member icon exists.
  *
- * Note: the Silver file on disk is "Silver.png" (capitalized), not
- * "silver.png" — referenced here with that exact casing so the build
- * keeps working on case-sensitive hosts (Vercel/Linux), which Windows
- * doesn't enforce during local dev. Renaming it to lowercase for
- * consistency with the other three files is a nice-to-have, not required.
+ * All four filenames on disk are lowercase (bronze/silver/gold/diamond
+ * .png) — this previously referenced "Silver.png" (capitalized), which
+ * matched nothing on Vercel's case-sensitive Linux filesystem and made
+ * the silver icon 404 in production, even though it "worked" in local
+ * dev on Windows/macOS's case-insensitive filesystems. Keep this casing
+ * lowercase and matching disk exactly.
  */
 const TIER_ICON_SRC: Record<TierId, string> = {
   member: "/images/tiers/bronze.png",
   bronze: "/images/tiers/bronze.png",
-  silver: "/images/tiers/Silver.png",
+  silver: "/images/tiers/silver.png",
   gold: "/images/tiers/gold.png",
   diamond: "/images/tiers/diamond.png",
 };

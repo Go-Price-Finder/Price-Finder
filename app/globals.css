@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/*
+ * THEME SYSTEM
+ * ============
+ * Every color below is a role token (background / accent / text), not a
+ * literal color name — the family names (noir/gilt/ivory/espresso) are a
+ * holdover from the dark-only phase of this project, but they now hold
+ * DIFFERENT values per theme. Light is the default (defined directly in
+ * `@theme inline` below, so it's what renders with zero JS/CSS overrides —
+ * important for first paint and no-JS clients). Dark is applied by
+ * overriding the same custom properties under `:root[data-theme="dark"]`,
+ * which lib/theme-context.tsx toggles by setting `data-theme` on <html>
+ * (and app/layout.tsx's blocking inline script sets it from localStorage
+ * before first paint, so returning dark-theme visitors never see a flash
+ * of light).
+ *
+ * Because every component references these tokens via Tailwind utility
+ * classes (bg-noir-900, text-ivory-100, border-gilt-500, ...) rather than
+ * hardcoded hex, swapping the values here re-themes the entire site — no
+ * component file needs to know which theme is active. The two exceptions
+ * are raw hex strings passed to SVG `stroke`/`fill` props (chart lines),
+ * which read the current theme from useTheme() in JS instead — see
+ * components/PriceHistoryChart.tsx and PriceHistorySparkline.tsx.
+ *
+ * noir-950 and clay-400/500 are intentionally NOT overridden per theme:
+ * noir-950 is used only for dark scrims (modal backdrops, image vignettes)
+ * and as contrast text sitting on top of the gilt accent — both roles want
+ * "very dark" regardless of overall site theme. clay is a secondary warm
+ * accent (star ratings, low-stock pills) saturated enough to read fine on
+ * both a light and a dark surface unchanged.
+ *
+ * IMPORTANT — @theme vs @theme inline: colors/shadows/animations below live
+ * in a plain `@theme` block on purpose, NOT `@theme inline`. Tailwind's
+ * "inline" mode bakes the literal value straight into each generated
+ * utility (`.bg-noir-900 { background-color: #faf6ee }`) instead of
+ * `background-color: var(--color-noir-900)` — which would make the
+ * `:root[data-theme="dark"]` override below completely inert, since the
+ * utility classes would never re-read the variable at runtime. Fonts stay
+ * in their own separate `@theme inline` block further down because next/font
+ * needs that inlining behavior to correctly reference its own runtime CSS
+ * variables (--font-inter/--font-fraunces) — that block doesn't hold
+ * anything theme-swappable, so the tradeoff doesn't apply to it.
+ */
+
+@theme {
+  /* ---- LIGHT THEME (default) -------------------------------------- */
+
+  /* noir = background/surface scale. 900 = page background, 800 = card
+     surface, 700/600 = borders and dividers. Light theme restores the
+     original cream/ivory palette (soft warm cream page, crisp white
+     cards, sand-toned borders) from before the dark-luxury rebrand. */
+  --color-noir-950: #17130f;
+  --color-noir-900: #faf6ee;
+  --color-noir-800: #fffdf8;
+  --color-noir-700: #e8e0d0;
+  --color-noir-600: #dcd2bd;
+
+  /* gilt = the brand accent. Light theme's accent is sage green (the
+     original palette), standing in for the dark theme's gold — same
+     tokens, same roles (buttons/borders/underlines/prices), different
+     hue. 500 is the canonical solid-fill accent; 300/400 lighter and
+     livelier for prices/hovers; 600 the deepest shade. */
+  --color-gilt-300: #a9c9ac;
+  --color-gilt-400: #6b9b74;
+  --color-gilt-500: #5f8f68;
+  --color-gilt-600: #47714f;
+
+  /* ivory = text scale. In light theme this is dark ink/charcoal — 50 is
+     the darkest/most prominent (headings), 400 the lightest/faintest
+     (timestamps, category labels). */
+  --color-ivory-50: #2a2420;
+  --color-ivory-100: #3d362f;
+  --color-ivory-200: #5a5248;
+  --color-ivory-300: #746b5f;
+  --color-ivory-400: #9c9284;
+
+  /* Price-direction indicators — green for a drop, red for an increase.
+     Slightly deeper/more saturated than the dark-theme pair so they hold
+     contrast against a light cream background. */
+  --color-price-down: #1f9d55;
+  --color-price-up: #d1373c;
+
+  /* The actual price NUMERAL color (current price on cards, detail pages,
+     retailer comparisons, purchase history, etc.) — deliberately its own
+     token, not reused from `gilt`. It used to piggyback on gilt-300/400,
+     which meant a product's price literally changed hue (sage vs. gold)
+     just because the site was in light or dark mode, and even varied
+     within a single theme (isBestPrice products got a lighter shade).
+     Every price now renders in exactly one color per theme, chosen
+     specifically for legibility rather than as a brand accent: dark
+     charcoal here (matching ivory-50, the same tone already used for
+     headings), a single deep gold in dark theme (see below) — never
+     green, never a bright/light gold. */
+  --color-price-text: #221d18;
+
+  /* Footer accent — a soft sage-tinted sand, distinct from the page's
+     plain cream so the footer still reads as a deliberate closing band. */
+  --color-espresso-900: #c9d3ba;
+  --color-espresso-800: #e7ecdd;
+  --color-espresso-700: #f1f4ea;
+
+  --color-clay-400: #d99a7c;
+  --color-clay-500: #c97f5c;
+
+  /* Soft, warm-neutral shadow with a faint sage-tinted highlight ring —
+     the light-theme equivalent of the dark theme's black+gold shadow. */
+  --shadow-soft: 0 1px 3px rgba(42, 36, 32, 0.07), 0 0 0 1px rgba(95, 143, 104, 0.05);
+  --shadow-soft-lg: 0 6px 20px rgba(42, 36, 32, 0.10), 0 0 0 1px rgba(95, 143, 104, 0.07);
+  --shadow-soft-xl: 0 12px 36px rgba(42, 36, 32, 0.14), 0 0 32px rgba(95, 143, 104, 0.10);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Loyalty tier icons (components/loyalty-icons.tsx) — a gentle float,
+     no rotation. Frozen by the prefers-reduced-motion override below like
+     every other animation on this page. */
+  --animate-levitate: levitate 3.2s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes levitate {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+/* Kept separate from the @theme block above — see the big comment near the
+   top of this file for why fonts specifically need "inline" mode while
+   colors/shadows/animations specifically must NOT have it. */
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+}
+
+/* ---- DARK THEME (opt-in via data-theme="dark" on <html>) ----------- */
+:root[data-theme="dark"] {
+  --color-noir-900: #0a0a0a;
+  --color-noir-800: #252525;
+  --color-noir-700: #2f2b26;
+  --color-noir-600: #3a352e;
+
+  --color-gilt-300: #e3cd8e;
+  --color-gilt-400: #d4af37;
+  --color-gilt-500: #b8935f;
+  --color-gilt-600: #a3813f;
+
+  --color-ivory-50: #faf8f3;
+  --color-ivory-100: #f5f1e8;
+  --color-ivory-200: #ded6c8;
+  --color-ivory-300: #b0a89c;
+  --color-ivory-400: #a89a8e;
+
+  --color-price-down: #3ecf8e;
+  --color-price-up: #e5484d;
+
+  /* One single, deliberately deep/muted gold for every price numeral —
+     noticeably darker and less saturated than gilt-300/400 (which stay
+     reserved for buttons, borders, and other bright accent uses) so price
+     text never reads as the same light/bright yellow-gold as the rest of
+     the accent system. */
+  --color-price-text: #9c7a3f;
+
+  --color-espresso-900: #2a1810;
+  --color-espresso-800: #3d2817;
+  --color-espresso-700: #4a3728;
+
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.05);
+  --shadow-soft-lg: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 175, 55, 0.07);
+  --shadow-soft-xl: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 32px rgba(212, 175, 55, 0.09);
+}
+
+:root {
+  --background: var(--color-noir-900);
+  --foreground: var(--color-ivory-100);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+/* Hide scrollbar for horizontal product rails while keeping it scrollable */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Soft circular light glow — restored for the light theme's cream/sage
+   palette (see components/CinematicBackground.tsx), matching the original
+   Dream Décor-inspired design direction. Explicitly hidden in dark theme,
+   which keeps its flat, glow-free background per the Brew Haven direction
+   — the two backdrop treatments are intentionally different, not a single
+   effect reused across both. */
+.light-theme-glow {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+:root[data-theme="dark"] .light-theme-glow {
+  opacity: 0;
+}
+
+::selection {
+  background: var(--color-gilt-500);
+  color: var(--color-noir-950);
+}
+
+/* Respect the user's motion preference as a global safety net, in addition to
+   the JS-level checks in the parallax, tilt, and count-up components. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

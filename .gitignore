@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Leftover superseded files awaiting manual cleanup — never commit these
+_to_delete/

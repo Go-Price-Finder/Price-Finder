@@ -48,6 +48,13 @@ export type BrooklynDelhiProduct = {
   deepLink: string;
   /** Path under /public — e.g. "/images/brooklyn-delhi/tikka-masala.webp". */
   image: string;
+  /** All real photos available for this product (primary first), used by
+   * the product detail page's gallery. Falls back to just `[image]` for
+   * the handful of products where only one confirmed, unambiguous photo
+   * could be matched — see brooklyn-delhi-tote-bag products, which share
+   * one ambiguous source photo group and so were left with a single
+   * image rather than risk mismatching one tote's photo to the other. */
+  images: string[];
   category: "Food" | "Cook Book" | "Clothing" | "Bag" | "Accessories";
   badge?: string;
   rating?: BrooklynDelhiRating;
@@ -63,6 +70,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Ftomato-achaar-1-5-oz-packet-1",
     image: "/images/brooklyn-delhi/tomato-achaar-1-5-oz-packet-1.webp",
+    images: ["/images/brooklyn-delhi/tomato-achaar-1-5-oz-packet-1.webp", "/images/brooklyn-delhi/tomato-achaar-1-5-oz-packet-1-2.webp", "/images/brooklyn-delhi/tomato-achaar-1-5-oz-packet-1-3.webp"],
     category: "Food",
     badge: "New",
   },
@@ -75,6 +83,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fdate-tamarind-chutney-1-5-oz-packet",
     image: "/images/brooklyn-delhi/date-tamarind-chutney-1-5-oz-packet.webp",
+    images: ["/images/brooklyn-delhi/date-tamarind-chutney-1-5-oz-packet.webp", "/images/brooklyn-delhi/date-tamarind-chutney-1-5-oz-packet-2.webp", "/images/brooklyn-delhi/date-tamarind-chutney-1-5-oz-packet-3.webp"],
     category: "Food",
     badge: "New",
   },
@@ -87,6 +96,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Ftomato-achaar",
     image: "/images/brooklyn-delhi/tomato-achaar.webp",
+    images: ["/images/brooklyn-delhi/tomato-achaar.webp", "/images/brooklyn-delhi/tomato-achaar-2.webp", "/images/brooklyn-delhi/tomato-achaar-3.webp", "/images/brooklyn-delhi/tomato-achaar-4.webp"],
     category: "Food",
     badge: "Best Seller",
     rating: { stars: 5, count: 40 },
@@ -100,6 +110,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fdate-tamarind-chutney",
     image: "/images/brooklyn-delhi/date-tamarind-chutney.webp",
+    images: ["/images/brooklyn-delhi/date-tamarind-chutney.webp", "/images/brooklyn-delhi/date-tamarind-chutney-2.webp"],
     category: "Food",
     badge: "New",
   },
@@ -112,6 +123,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fmango-curry",
     image: "/images/brooklyn-delhi/mango-curry.webp",
+    images: ["/images/brooklyn-delhi/mango-curry.webp", "/images/brooklyn-delhi/mango-curry-2.webp", "/images/brooklyn-delhi/mango-curry-3.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 5, count: 4 },
@@ -125,6 +137,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fchickpea-tikka-masala",
     image: "/images/brooklyn-delhi/chickpea-tikka-masala.webp",
+    images: ["/images/brooklyn-delhi/chickpea-tikka-masala.webp", "/images/brooklyn-delhi/chickpea-tikka-masala-2.webp", "/images/brooklyn-delhi/chickpea-tikka-masala-3.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 5, count: 1 },
@@ -138,6 +151,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fsweet-potato-coconut-dal",
     image: "/images/brooklyn-delhi/sweet-potato-coconut-dal.webp",
+    images: ["/images/brooklyn-delhi/sweet-potato-coconut-dal.webp", "/images/brooklyn-delhi/sweet-potato-coconut-dal-2.webp", "/images/brooklyn-delhi/sweet-potato-coconut-dal-3.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 5, count: 2 },
@@ -151,6 +165,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fred-bean-rajma-masala",
     image: "/images/brooklyn-delhi/red-bean-rajma-masala.webp",
+    images: ["/images/brooklyn-delhi/red-bean-rajma-masala.webp", "/images/brooklyn-delhi/red-bean-rajma-masala-2.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 4.5, count: 3 },
@@ -164,6 +179,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fblack-bean-butter-masala",
     image: "/images/brooklyn-delhi/black-bean-butter-masala.webp",
+    images: ["/images/brooklyn-delhi/black-bean-butter-masala.webp", "/images/brooklyn-delhi/black-bean-butter-masala-2.webp", "/images/brooklyn-delhi/black-bean-butter-masala-3.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 5, count: 1 },
@@ -177,6 +193,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Froasted-garlic-achaar",
     image: "/images/brooklyn-delhi/roasted-garlic-achaar.webp",
+    images: ["/images/brooklyn-delhi/roasted-garlic-achaar.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-2.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-3.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-4.webp"],
     category: "Food",
     badge: "New",
     rating: { stars: 4.9, count: 31 },
@@ -190,6 +207,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fsweet-mango-chutney",
     image: "/images/brooklyn-delhi/sweet-mango-chutney.webp",
+    images: ["/images/brooklyn-delhi/sweet-mango-chutney.webp", "/images/brooklyn-delhi/sweet-mango-chutney-2.webp", "/images/brooklyn-delhi/sweet-mango-chutney-3.webp", "/images/brooklyn-delhi/sweet-mango-chutney-4.jpg"],
     category: "Food",
     rating: { stars: 5, count: 7 },
   },
@@ -202,6 +220,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fspicy-mango-chutney",
     image: "/images/brooklyn-delhi/spicy-mango-chutney.webp",
+    images: ["/images/brooklyn-delhi/spicy-mango-chutney.webp", "/images/brooklyn-delhi/spicy-mango-chutney-2.webp", "/images/brooklyn-delhi/spicy-mango-chutney-3.webp"],
     category: "Food",
     rating: { stars: 5, count: 7 },
   },
@@ -214,6 +233,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Ftikka-masala",
     image: "/images/brooklyn-delhi/tikka-masala.webp",
+    images: ["/images/brooklyn-delhi/tikka-masala.webp", "/images/brooklyn-delhi/tikka-masala-2.webp", "/images/brooklyn-delhi/tikka-masala-3.webp"],
     category: "Food",
     rating: { stars: 5, count: 63 },
   },
@@ -226,6 +246,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fcashew-butter-masala",
     image: "/images/brooklyn-delhi/cashew-butter-masala.webp",
+    images: ["/images/brooklyn-delhi/cashew-butter-masala.webp", "/images/brooklyn-delhi/cashew-butter-masala-2.webp", "/images/brooklyn-delhi/cashew-butter-masala-3.webp"],
     category: "Food",
     rating: { stars: 4.9, count: 13 },
   },
@@ -238,6 +259,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fgolden-coconut-curry",
     image: "/images/brooklyn-delhi/golden-coconut-curry.webp",
+    images: ["/images/brooklyn-delhi/golden-coconut-curry.webp", "/images/brooklyn-delhi/golden-coconut-curry-2.webp", "/images/brooklyn-delhi/golden-coconut-curry-3.webp"],
     category: "Food",
     rating: { stars: 5, count: 20 },
   },
@@ -250,6 +272,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fcoconut-cashew-korma",
     image: "/images/brooklyn-delhi/coconut-cashew-korma.webp",
+    images: ["/images/brooklyn-delhi/coconut-cashew-korma.webp", "/images/brooklyn-delhi/coconut-cashew-korma-2.webp", "/images/brooklyn-delhi/coconut-cashew-korma-3.webp"],
     category: "Food",
     rating: { stars: 5, count: 10 },
   },
@@ -262,6 +285,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fchutney-trio-gift-set",
     image: "/images/brooklyn-delhi/chutney-trio-gift-set.webp",
+    images: ["/images/brooklyn-delhi/chutney-trio-gift-set.webp", "/images/brooklyn-delhi/chutney-trio-gift-set-2.webp"],
     category: "Food",
     badge: "New",
   },
@@ -274,6 +298,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fbest-of-brooklyn-delhi-gift-box",
     image: "/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box.jpg",
+    images: ["/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box.jpg", "/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box-2.webp"],
     category: "Food",
     badge: "Best Seller",
     rating: { stars: 5, count: 3 },
@@ -288,6 +313,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fcelebrations-gift-box",
     image: "/images/brooklyn-delhi/celebrations-gift-box.jpg",
+    images: ["/images/brooklyn-delhi/celebrations-gift-box.jpg", "/images/brooklyn-delhi/celebrations-gift-box-2.jpg", "/images/brooklyn-delhi/celebrations-gift-box-3.webp", "/images/brooklyn-delhi/celebrations-gift-box-4.webp"],
     category: "Food",
     badge: "Limited Stock",
     rating: { stars: 5, count: 1 },
@@ -301,6 +327,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fcookbook-gift-set",
     image: "/images/brooklyn-delhi/cookbook-gift-set.webp",
+    images: ["/images/brooklyn-delhi/cookbook-gift-set.webp", "/images/brooklyn-delhi/cookbook-gift-set-2.webp", "/images/brooklyn-delhi/cookbook-gift-set-3.webp", "/images/brooklyn-delhi/cookbook-gift-set-4.webp"],
     category: "Cook Book",
     badge: "Online Only",
   },
@@ -313,6 +340,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fspicy-sweet-trio-gift-set",
     image: "/images/brooklyn-delhi/spicy-sweet-trio-gift-set.webp",
+    images: ["/images/brooklyn-delhi/spicy-sweet-trio-gift-set.webp", "/images/brooklyn-delhi/spicy-sweet-trio-gift-set-2.webp", "/images/brooklyn-delhi/spicy-sweet-trio-gift-set-3.webp"],
     category: "Food",
     badge: "Best Seller",
     rating: { stars: 5, count: 3 },
@@ -326,6 +354,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fspicy-trio-gift-box",
     image: "/images/brooklyn-delhi/spicy-trio-gift-box.webp",
+    images: ["/images/brooklyn-delhi/spicy-trio-gift-box.webp", "/images/brooklyn-delhi/spicy-trio-gift-box-2.webp", "/images/brooklyn-delhi/spicy-trio-gift-box-3.webp"],
     category: "Food",
     badge: "Online Only",
     rating: { stars: 5, count: 1 },
@@ -339,6 +368,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fvibrant-india-cookbook",
     image: "/images/brooklyn-delhi/vibrant-india-cookbook.webp",
+    images: ["/images/brooklyn-delhi/vibrant-india-cookbook.webp", "/images/brooklyn-delhi/vibrant-india-cookbook-2.webp", "/images/brooklyn-delhi/vibrant-india-cookbook-3.webp", "/images/brooklyn-delhi/vibrant-india-cookbook-4.webp"],
     category: "Cook Book",
     badge: "Online Only",
   },
@@ -351,6 +381,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fbrooklyn-delhi-market-t-shirt",
     image: "/images/brooklyn-delhi/brooklyn-delhi-market-t-shirt.webp",
+    images: ["/images/brooklyn-delhi/brooklyn-delhi-market-t-shirt.webp", "/images/brooklyn-delhi/brooklyn-delhi-market-t-shirt-2.webp", "/images/brooklyn-delhi/brooklyn-delhi-market-t-shirt-3.webp"],
     category: "Clothing",
     badge: "New",
   },
@@ -363,6 +394,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fachaar-short-sleeve-unisex-t-shirt",
     image: "/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt.webp",
+    images: ["/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt.webp", "/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt-2.webp"],
     category: "Clothing",
     rating: { stars: 5, count: 1 },
   },
@@ -375,6 +407,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Ftomato-achaar-short-sleeve-unisex-t-shirt",
     image: "/images/brooklyn-delhi/tomato-achaar-short-sleeve-unisex-t-shirt.webp",
+    images: ["/images/brooklyn-delhi/tomato-achaar-short-sleeve-unisex-t-shirt.webp"],
     category: "Clothing",
   },
   {
@@ -386,6 +419,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Fmarket-tote-bag",
     image: "/images/brooklyn-delhi/market-tote-bag.webp",
+    images: ["/images/brooklyn-delhi/market-tote-bag.webp"],
     category: "Bag",
   },
   {
@@ -397,6 +431,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink:
       "https://www.awin1.com/cread.php?awinmid=125500&awinaffid=3002879&ued=https%3A%2F%2Fbrooklyndelhi.com%2Fproducts%2Ftomato-achaar-tote-bag",
     image: "/images/brooklyn-delhi/tomato-achaar-tote-bag.webp",
+    images: ["/images/brooklyn-delhi/tomato-achaar-tote-bag.webp"],
     category: "Bag",
   },
   {
@@ -409,6 +444,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     // file-level note above.
     deepLink: "https://brooklyndelhi.com/products/brooklyn-delhi-magnet-trio",
     image: "/images/brooklyn-delhi/brooklyn-delhi-magnet-trio.webp",
+    images: ["/images/brooklyn-delhi/brooklyn-delhi-magnet-trio.webp"],
     category: "Accessories",
   },
 ];

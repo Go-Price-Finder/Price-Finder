@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SearchIcon } from "./icons";
 
 type SearchBarProps = {
@@ -9,6 +10,10 @@ type SearchBarProps = {
   className?: string;
   buttonLabel?: string;
   showIcon?: boolean;
+  /** When true, this bar isn't a product search at all (e.g. Footer's
+   * "Get price drop alerts" email field reuses this component's styling)
+   * — submitting it won't navigate to /search. */
+  disableSearchNav?: boolean;
 };
 
 export default function SearchBar({
@@ -17,17 +22,26 @@ export default function SearchBar({
   className = "",
   buttonLabel = "Search",
   showIcon = true,
+  disableSearchNav = false,
 }: SearchBarProps) {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
+  const router = useRouter();
 
   const isLarge = size === "lg";
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (disableSearchNav) return;
+    const q = value.trim();
+    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
     <div className="relative">
       <form
         role="search"
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={handleSubmit}
         className={`group relative flex w-full items-center gap-2 rounded-full border bg-noir-800 transition-all duration-300 ${
           isLarge ? "px-3 py-2.5 sm:px-4" : "px-2 py-1.5"
         } ${

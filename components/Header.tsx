@@ -2,20 +2,26 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import ThemeToggle from "./ThemeToggle";
-import { BellIcon, CloseIcon, HeartIcon, MenuIcon } from "./icons";
+import { BellIcon, ChevronRightIcon, CloseIcon, HeartIcon, MenuIcon } from "./icons";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useAuth } from "@/lib/auth-context";
 import { signOutAction } from "@/lib/supabase/actions";
 
+// Brooklyn Delhi is discoverable via the homepage's Our Partners /
+// Popular Categories sections and its own /brooklyn-delhi page, so it's
+// deliberately not a standing top-nav item — nav stays generic
+// (Trending/Categories/How It Works/Deals) instead of naming individual
+// partners, since that list should scale to many partners later without
+// needing to grow forever.
 const NAV_LINKS = [
   { label: "Trending", href: "/trending" },
   { label: "Categories", href: "/#categories" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Deals", href: "/deals" },
-  { label: "Brooklyn Delhi", href: "/brooklyn-delhi" },
 ];
 
 export default function Header() {
@@ -23,6 +29,9 @@ export default function Header() {
   const { count } = useWishlist();
   const { user, loading, signOutLocally } = useAuth();
   const [signingOut, startSignOut] = useTransition();
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHome = pathname === "/";
 
   function handleSignOut() {
     startSignOut(async () => {
@@ -37,9 +46,32 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-gilt-500/20 bg-noir-900/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-4 sm:px-8">
+        {/* Consistent back/home control on every non-homepage page — goes
+            back in history when there's somewhere to go back to, otherwise
+            falls back to Home. */}
+        {!isHome && (
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gilt-500/25 bg-noir-800 text-ivory-100 shadow-soft transition-all duration-200 hover:border-gilt-400 hover:text-gilt-400"
+          >
+            <ChevronRightIcon className="h-4 w-4 rotate-180" />
+          </button>
+        )}
+
         <Link href="/" className="shrink-0">
           <Logo />
         </Link>
+
+        {!isHome && (
+          <Link
+            href="/"
+            className="hidden shrink-0 items-center gap-1 rounded-full border border-gilt-500/25 bg-noir-800 px-3 py-1.5 text-xs font-medium text-ivory-200 shadow-soft transition-all duration-200 hover:border-gilt-400 hover:text-gilt-400 sm:flex"
+          >
+            Home
+          </Link>
+        )}
 
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (

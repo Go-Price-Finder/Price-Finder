@@ -37,6 +37,7 @@ export default function Footer() {
                 placeholder="Enter your email"
                 buttonLabel="Subscribe"
                 showIcon={false}
+                disableSearchNav
               />
             </div>
           </div>

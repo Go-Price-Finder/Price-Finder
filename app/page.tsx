@@ -1,8 +1,10 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import OurPartners from "@/components/OurPartners";
+import UnderConstruction from "@/components/UnderConstruction";
 import FeaturedDeals from "@/components/FeaturedDeals";
 import LoyaltySection from "@/components/LoyaltySection";
-import TrendingNow from "@/components/TrendingNow";
+import BestSellers from "@/components/BestSellers";
 import SavingsDashboard from "@/components/SavingsDashboard";
 import PopularCategories from "@/components/PopularCategories";
 import WhyPriceFinder from "@/components/WhyPriceFinder";
@@ -14,20 +16,24 @@ export default function Home() {
     <>
       <Header />
       {/* snap-proximity (not mandatory) so the horizontal product rails
-          (FeaturedDeals, TrendingNow) and normal in-page scrolling both
+          (FeaturedDeals, BestSellers) and normal in-page scrolling both
           still work naturally — it nudges toward each section's start
           rather than forcing a hard stop.
 
-          Section order is deliberately varied — full-height "pinned"
-          sections (Hero/Loyalty/Trending/Categories/How It Works) are
-          interleaved with shorter, content-driven ones (FeaturedDeals,
-          SavingsDashboard, WhyPriceFinder) so the page doesn't read as one
-          long stack of identical-height blocks. */}
+          Section order: Hero → Our Partners (new — real retailers we work
+          with) → Under Construction (new — sets expectations before the
+          real-but-small catalog below) → Featured Deals → Loyalty → Best
+          Sellers → Savings Dashboard → Popular Categories → Why Price
+          Finder → How It Works. Every section below Hero now either shows
+          real data or hides itself entirely when there's nothing real to
+          show (FeaturedDeals, BestSellers, PopularCategories). */}
       <main className="flex-1 scroll-smooth snap-y snap-proximity">
         <Hero />
+        <OurPartners />
+        <UnderConstruction />
         <FeaturedDeals />
         <LoyaltySection />
-        <TrendingNow />
+        <BestSellers />
         <SavingsDashboard />
         <PopularCategories />
         <WhyPriceFinder />

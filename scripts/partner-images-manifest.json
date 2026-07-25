@@ -1,0 +1,1682 @@
+[
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-40A-9.6KW_95ffc284-ba2e-4ee4-b478-294a5c6dd355.jpg?v=1733972864",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-40a-21-30-40-ft-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/30FT-40A-9.6KW_c948cc76-9445-44a0-b571-998fe64e76de.jpg?v=1733972864",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-40a-21-30-40-ft-30ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-40A-9.6KW_188e6e82-b41b-40f5-848a-9fba9eb2fb44.jpg?v=1733972864",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-40a-21-30-40-ft-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-32A-7.68KW_943ff19d-f3c3-45a5-be69-5ea6afffb301.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-32a-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-32A-7.68KW_77183ead-374b-46d0-947d-c8e21fc0b0c7.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-32a-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-40A-9.6KW_60ec5651-f9ce-4bc3-a31a-dca360f8b14d.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-40A-9.6KW_6e048415-3f35-41b2-a06a-a0e7c24058b5.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-50A-12kW_9eac22b4-fc6c-4d50-a1f4-9de375a9cc37.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-30ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-50A-12kW_1fd11f44-aef2-4e82-a71a-7b061383d915.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-50a-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-50A-12kW_7ef54d25-eb73-483b-9582-59d5ff397c23.jpg?v=1733972791",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-50a-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/Tesla_ex_50a_21FT.jpg?v=1770183720",
+    "dest": "public/images/evdance/evdance-50a-tesla-ev-charging-extension-cable-cord-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/Tesla_ex_50a_40FT.jpg?v=1770183720",
+    "dest": "public/images/evdance/evdance-50a-tesla-ev-charging-extension-cable-cord-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/08_87ab9561-1f16-467c-911b-9d0b0002fd14.jpg?v=1733966025",
+    "dest": "public/images/evdance/evdance-mini-tesla-nacs-to-j1772-charging-adapter-max-80-amp-250v-black.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/07_4c961c1f-70e2-40db-95ec-2c3c9850d05a.jpg?v=1733966025",
+    "dest": "public/images/evdance/evdance-mini-tesla-nacs-to-j1772-charging-adapter-max-80-amp-250v-white.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/05_e05ca9b8-9cec-4590-9349-935c633c31a2.jpg?v=1733966074",
+    "dest": "public/images/evdance/evdance-sae-j1772-to-tesla-charging-adapter-80-amp-240v.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/06-1.jpg?v=1733966203",
+    "dest": "public/images/evdance/evdance-ccs1-to-nacs-adapter-250kw.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/1601T.jpg?v=1776236573",
+    "dest": "public/images/evdance/evdance-level-1-2-ev-charger-nema-6-20-nacs-portable-dual-plug-in-12-16a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-32A-7.68KW_6bbe1f8f-321e-45d5-a85e-54c75642ac1f.jpg?v=1733972833",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-21-40ft-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-32A-7.68KW_5fed6852-8a1f-48b6-8b5e-74a70e0b5cdd.jpg?v=1733972833",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-32a-21-40ft-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/02_c21f8d2d-f469-46b2-9642-dc7a99213181.jpg?v=1733966140",
+    "dest": "public/images/evdance/evdance-tesla-nacs-to-j1772-charging-adapter-with-security-lock-white.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/04_a639403a-596f-4672-9e6b-fe010efb86d8.jpg?v=1733966140",
+    "dest": "public/images/evdance/evdance-tesla-nacs-to-j1772-charging-adapter-with-security-lock-black.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/01_b5bf2c14-8847-46f3-a8e6-a5e042d798b6.jpg?v=1733966251",
+    "dest": "public/images/evdance/evdance-v2l-adapter-for-hyundai-ioniq-5-ioniq-6-kia-ev6-15-amp.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-NEMA-14-50-32A-Tesla-NACS-Portable-EV-Charger-image0.jpg?v=1780648345",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-32a-tesla-nacs-portable-ev-charger-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/PortableAirCompressor.jpg?v=1699595422",
+    "dest": "public/images/evdance/evdance-tire-inflator-portable-air-compressor-150psi-dual-power.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/21FT-50A-12kW_5f9f2ccf-8391-43f4-a871-dcaea5d00626.jpg?v=1733972890",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-50a-21-40-ft-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40FT-50A-12kW_61f8f600-642b-4367-a9fe-44d9ee634b36.jpg?v=1733972890",
+    "dest": "public/images/evdance/evdance-j1772-ev-extension-cord-50a-21-40-ft-40ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/1601U.jpg?v=1776236573",
+    "dest": "public/images/evdance/evdance-level-1-2-ev-charger-nema-6-20-j1772-portable-dual-plug-in-12-16a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/4002U.jpg?v=1733904823",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-40a-j1772-portable-ev-charger-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/4002U.jpg?v=1733904823",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/13-32A-U-APP_01790dbf-7dd3-40c9-814e-08966cf5eaaa.jpg?v=1776237617",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-black-etl-listed.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/3205U.jpg?v=1733904788",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-black-standard-safety.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/3205U_00d3468f-3043-48fe-82c6-f01ecff2f2dc.jpg?v=1733904788",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-silver-standard-safety.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/Tesla-EV-Charging-Extension-Cable-Cord_3.jpg?v=1784109020",
+    "dest": "public/images/evdance/evdance-nexus-reach-tesla-ev-charging-extension-cords-40a-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/Tesla-EV-Charging-Extension-Cable-Cord_4.jpg?v=1784108964",
+    "dest": "public/images/evdance/evdance-tesla-ev-charging-extension-cords-32a-21ft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-NACS-to-CCS-Adapter-with-Interlock6.jpg?v=1784685871",
+    "dest": "public/images/evdance/evdance-nacs-to-ccs-pulse-fusion-adapter-with-interlock-500a-compatible-with-tesla-superchargers.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40A-T.jpg?v=1764731901",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Flux-Level-2-NEMA-14-50-40A-Tesla_Portable-EV-Charger-image8.jpg?v=1781056215",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/4002T-app_3_e3aaa1f0-859a-4caa-984b-546077f28e26.jpg?v=1764744368",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Flux-Level-2-NEMA-14-50-40A-Tesla_Portable-EV-Charger-image7.jpg?v=1781056216",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40A-U_f5e66fb1-c9e3-4d85-8867-b96cd4cfb3a2.jpg?v=1764732171",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/40A-U_f5e66fb1-c9e3-4d85-8867-b96cd4cfb3a2.jpg?v=1764732171",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/4002U-app.jpg?v=1764732171",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/Flux-j1772.jpg?v=1764732171",
+    "dest": "public/images/evdance/evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-U-14-30.jpg?v=1764751765",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-NEMA-14-30-24A-J1772-Portable-EV-Charger8.jpg?v=1782975894",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/10-24A-U-14-30-APP.jpg?v=1764751781",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-T-14-30.jpg?v=1764751696",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-NEMA-14-30-24A-NACS-Portable-EV-Charger0.jpg?v=1784779147",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-T-14-30_b452b714-fe74-4026-8f95-18f8e7c184fd.jpg?v=1764751696",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/14-30_Tesla_74.jpg?v=1764751696",
+    "dest": "public/images/evdance/evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-U-1030.jpg?v=1764666598",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-Portable-EV-Charger-24A-image8.jpg?v=1780552826",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/11-24A-U-10-30-APP.jpg?v=1764666598",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A_10-30_Plug_J1772_70.jpg?v=1764666598",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-T-1030.jpg?v=1764666268",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-NEMA-10-30-24A-NACS-Portable-EV-Charger2.jpg?v=1784771283",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/24A-T-1030_3.jpg?v=1764666268",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-NEMA-10-30-24A-NACS-Portable-EV-Charger1.jpg?v=1784771283",
+    "dest": "public/images/evdance/evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/61Bm2IFULtL._AC_SL1500.jpg?v=1784947359",
+    "dest": "public/images/evdance/evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/61Bm2IFULtL._AC_SL1500.jpg?v=1784947359",
+    "dest": "public/images/evdance/evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/61Bm2IFULtL._AC_SL1500.jpg?v=1784947359",
+    "dest": "public/images/evdance/evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Flux-Level-1_2-NEMA-5-15-Plug-NACS-Portable-EV-Charger1.jpg?v=1784963894",
+    "dest": "public/images/evdance/evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-etl-listed-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Flux-Level-1_2-NEMA-5-15-Plug-NACS-Portable-EV-Charger1.jpg?v=1784963894",
+    "dest": "public/images/evdance/evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-standard-safety-wifi-enabled.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Flux-Level-1_2-NEMA-5-15-Plug-NACS-Portable-EV-Charger1.jpg?v=1784963894",
+    "dest": "public/images/evdance/evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-standard-safety-plug-play.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Home-Level-2-EV-Charger-NEMA-14-50_J1772-Wall-mounted-Plug-In-40A-image.jpg?v=1784267272",
+    "dest": "public/images/evdance/evdance-home-level-2-ev-charger-nema-14-50-j1772-wall-mounted-plug-in-40a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Level-2-EV-Charger-NEMA-14-50-NACS-Wall-mounted-Plug-In-40A.jpg?v=1784267199",
+    "dest": "public/images/evdance/evdance-level-2-ev-charger-nema-14-50-nacs-wall-mounted-plug-in-40a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE_-Home-Level-2-EV-Charger-J1772-Wall-mounted-Hardwired-In-50A.jpg?v=1784276725",
+    "dest": "public/images/evdance/evdance-home-level-2-ev-charger-j1772-wall-mounted-hardwired-in-50a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Home-Level-2-EV-Charger-NACS-Wall-mounted-Hardwired-In-50A_4048f82a-0222-4313-b900-930d3e75edfb.jpg?v=1784276670",
+    "dest": "public/images/evdance/evdance-home-level-2-ev-charger-nacs-wall-mounted-hardwired-in-50a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/1_64d06082-1f46-4603-8f4d-7509f5c03cb4.jpg?v=1776246156",
+    "dest": "public/images/evdance/evdance-level-2-ev-charger-nema-14-50-j1772-portable-plug-in-40a.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Home-Level-2-EV-Charging-NACS-Tesla-ETL-Certified-32A-240V-Main-image.jpg?v=1784267026",
+    "dest": "public/images/evdance/evdance-home-level-2-ev-charger-nema-14-50-nacs-tesla-wall-mounted-plug-in-32a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE-Home-Level-2-EV-Charging-J1772-ETL-Certified-Main-image.jpg?v=1784266946",
+    "dest": "public/images/evdance/evdance-home-level-2-ev-charger-nema-14-50-j1772-wall-mounted-plug-in-32a-etl-certification.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0809/1975/7122/files/EVDANCE_U40_Level_2_EV_Charger_NEMA_14-50_J1772_Wall-mounted_-_40A___ETL_Certification_1.png?v=1782282027",
+    "dest": "public/images/evdance/evdance-u40-level-2-ev-charger-nema-14-50-j1772-wall-mounted-40a-etl-certification.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6pcsSableHairRoundPointWatercolorBrushes_2.webp?v=1783672316",
+    "dest": "public/images/golden-maple/6pcs-sable-hair-round-point-watercolor-brushes.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_56955622-426d-471d-8270-d75cbe402381.jpg?v=1758533491",
+    "dest": "public/images/golden-maple/nylon-detail-paint-brush-10pcs-set-5-0-3-0-2-0-0-1-2-3-4-6-8-black.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_e9ae9654-64f5-4f3f-a2e1-0ca0436dfb70.jpg?v=1769154156",
+    "dest": "public/images/golden-maple/nylon-detail-paint-brush-10pcs-set-5-0-3-0-2-0-0-1-2-3-4-6-8-yellow.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-000.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-00.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-1.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-3.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterIKolinskySableRoundBrushes_1.webp?v=1783751567",
+    "dest": "public/images/golden-maple/master-i-kolinsky-sable-round-brushes-master-i-size-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Nylon_Detail_Paint_Brush_Set_1.jpg?v=1774333022",
+    "dest": "public/images/golden-maple/nylon-round-flat-detail-paint-brush-15pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Golden-Maple-9PcsSet-Oblique-Tip-Nylon-Hair-Long-Handle-Angled-Paint-Brushes-Set-artsit-painting-brush-artgoldenmaple.webp?v=1783672482",
+    "dest": "public/images/golden-maple/9pcs-angled-paint-brush-set-with-oblique-tips.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3PCSArtistFanPaintBrushSetHogBristleLongHandleforOil_Acrylic_2_1474f942-7f11-425f-b765-df551dc0651d.webp?v=1783590270",
+    "dest": "public/images/golden-maple/3pcs-artist-fan-paint-brush-set-hog-bristle-long-handle-for-oil-acrylic.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SableFilbertPaintBrushSet-6pcs_1.webp?v=1784786480",
+    "dest": "public/images/golden-maple/sable-filbert-paint-brush-set-6pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3pcsWatercolorTravelPaintBrushesRoundPointedTipswithLeatheretteCarryCase_1.webp?v=1783664335",
+    "dest": "public/images/golden-maple/3pcs-watercolor-travel-paint-brushes-round-pointed-tips-with-leatherette-carry-case-travel-brush-nylon4-8-12.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3pcsWatercolorTravelPaintBrushesRoundPointedTipswithLeatheretteCarryCase_1.webp?v=1783664335",
+    "dest": "public/images/golden-maple/3pcs-watercolor-travel-paint-brushes-round-pointed-tips-with-leatherette-carry-travel-brush-nylon-18-colors-travel-watercolor-get-10-off.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3pcsWatercolorTravelPaintBrushesRoundPointedTipswithLeatheretteCarryCase_1.webp?v=1783664335",
+    "dest": "public/images/golden-maple/3pcs-watercolor-travel-paint-brushes-round-pointed-tips-with-leatherette-carry-travel-brush-nylon-25-colors-travel-watercolor-get-10-off.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3pcsWatercolorTravelPaintBrushesRoundPointedTipswithLeatheretteCarryCase_1.webp?v=1783664335",
+    "dest": "public/images/golden-maple/3pcs-watercolor-travel-paint-brushes-round-pointed-tips-with-leatherette-carry-travel-brush-nylon-33-colors-travel-watercolor-get-10-off.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3pcsWatercolorTravelPaintBrushesRoundPointedTipswithLeatheretteCarryCase_1.webp?v=1783664335",
+    "dest": "public/images/golden-maple/3pcs-watercolor-travel-paint-brushes-round-pointed-tips-with-leatherette-carry-case-travel-brush-nylon6-8-12.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Golden-Maple-15PCS-Nylon-Brush-Set-Flat-brush-filbert-brush-Round-brush-Cat-tongue-petal-brush-Fan-brush-artsit-painti_1.webp?v=1783587559",
+    "dest": "public/images/golden-maple/15pcs-nylon-brush-set-flat-filbert-round-cat-tongue-petal-and-fan-brushes-p00015.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PortableTravelWatercolorSet-PocketFieldSketchKit_2.webp?v=1784785454",
+    "dest": "public/images/golden-maple/portable-travel-watercolor-set-pocket-field-sketch-kit-33-assorted-colors.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PortableTravelWatercolorSet-PocketFieldSketchKit_1.webp?v=1784785454",
+    "dest": "public/images/golden-maple/portable-travel-watercolor-set-pocket-field-sketch-kit-33-assorted-colors-nylon-travel-brush-get-10-off.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Golden-Maple-6PCS-Flat-Sable-Artist-Paint-Brush-Set-artsit-painting-brush-artgoldenmaple.webp?v=1783671849",
+    "dest": "public/images/golden-maple/6pcs-flat-sable-artist-paint-brush-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumWatercolorSquirrelMopBrushes_1.webp?v=1784786053",
+    "dest": "public/images/golden-maple/premium-watercolor-squirrel-mop-brushes-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumWatercolorSquirrelMopBrushes_4.webp?v=1784786053",
+    "dest": "public/images/golden-maple/premium-watercolor-squirrel-mop-brushes-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumWatercolorSquirrelMopBrushes_6.webp?v=1784786053",
+    "dest": "public/images/golden-maple/premium-watercolor-squirrel-mop-brushes-6.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumWatercolorSquirrelMopBrushes_10.webp?v=1784786053",
+    "dest": "public/images/golden-maple/premium-watercolor-squirrel-mop-brushes-3pcs-set-save-25.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonFlat_Liner_RoundDetailPaintBrush-15pcsset_1.webp?v=1783762176",
+    "dest": "public/images/golden-maple/nylon-flat-liner-round-detail-paint-brush-15pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailBrushes_1.webp?v=1783755486",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brushes-size-2-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailBrushes_1.webp?v=1783755486",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brushes-size-3-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailBrushes_1.webp?v=1783755486",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brushes-size-4-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailBrushes_1.webp?v=1783755486",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brushes-size-5-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailBrushes_1.webp?v=1783755486",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brushes-a-set-of-4pcs-save-45.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1pcsWolfGoatMixHairChineseCalligraphyPaintingBrush_G1_G2_G3_3.webp?v=1783587878",
+    "dest": "public/images/golden-maple/1pcs-wolf-goat-mix-hair-chinese-calligraphy-painting-brush-g1-g2-g3-a-set-of-3pcs-get-40-off.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1pcsWolfGoatMixHairChineseCalligraphyPaintingBrush_G1_G2_G3_12.webp?v=1783587878",
+    "dest": "public/images/golden-maple/1pcs-wolf-goat-mix-hair-chinese-calligraphy-painting-brush-g1-g2-g3-g3-large.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1pcsWolfGoatMixHairChineseCalligraphyPaintingBrush_G1_G2_G3_12.webp?v=1783587878",
+    "dest": "public/images/golden-maple/1pcs-wolf-goat-mix-hair-chinese-calligraphy-painting-brush-g1-g2-g3-g2-medium.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1pcsWolfGoatMixHairChineseCalligraphyPaintingBrush_G1_G2_G3_12.webp?v=1783587878",
+    "dest": "public/images/golden-maple/1pcs-wolf-goat-mix-hair-chinese-calligraphy-painting-brush-g1-g2-g3-g1-small.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1PCSWolfHairChineseCalligraphyBrush_W1_5.webp?v=1783588167",
+    "dest": "public/images/golden-maple/1pcs-wolf-hair-chinese-calligraphy-brush-w1.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/20230705110456.webp?v=1783676159",
+    "dest": "public/images/golden-maple/daniel-martinez-professional-watercolor-brush-set-5pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseCalligraphyBrushSet1WolfHair_3GoatHairBrushesforWritingandPainting_1.webp?v=1783675406",
+    "dest": "public/images/golden-maple/chinese-calligraphy-brush-set-1-wolf-hair-3-goat-hair-brushes-for-writing-and-painting.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonThinLine_Liner_Flat_RoundModelDetailPaintBrush-15pcsset_1.webp?v=1783765892",
+    "dest": "public/images/golden-maple/nylon-thin-line-liner-flat-round-model-detail-paint-brush-15pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/71GWds7gwhL._AC_SL1500.jpg?v=1764324853",
+    "dest": "public/images/golden-maple/nylon-15pcs-liner-detail-paint-brush-3pcs-goat-hair-dry-brush-18pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonRound_Liner_Flat_AngleDetailPaintBrush-10pcsset_1.webp?v=1783764891",
+    "dest": "public/images/golden-maple/nylon-round-liner-flat-angle-detail-paint-brush-10pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/10pcsSableWatercolorBrushSetRound_Flat_Dagger_andOvalWash_6.webp?v=1783587232",
+    "dest": "public/images/golden-maple/10pcs-sable-watercolor-brush-set-round-flat-dagger-and-oval-wash.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6InchFlatHakeBrush-SoftGoatHairwithSolidWoodenHandle.webp?v=1783670750",
+    "dest": "public/images/golden-maple/6-inch-flat-hake-brush-soft-goat-hair-with-solid-wooden-handle.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/JuanSaturioProfessionalWatercolorMixingBrushSet-5pcs_1.webp?v=1783750535",
+    "dest": "public/images/golden-maple/juan-saturio-professional-watercolor-mixing-brush-set-5pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/EnhancedSyntheticPaintBrushSet-25pcsAcrylic_Oil_andWatercolorwithClothRoll_PaletteKnife_1.webp?v=1783749285",
+    "dest": "public/images/golden-maple/enhanced-synthetic-paint-brush-set-25pcs-acrylic-oil-and-watercolor-with-cloth-roll-palette-knife.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/71YErMcTRkL._AC_SX679.jpg?v=1740360751",
+    "dest": "public/images/golden-maple/nylon-round-liners-flat-angles-detail-paint-brush-18pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseClassicCalligraphyBrushes-Painting_Watercolor_1.webp?v=1783675966",
+    "dest": "public/images/golden-maple/chinese-classic-calligraphy-brushes-painting-watercolor-xjhe.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseClassicCalligraphyBrushes-Painting_Watercolor_1.webp?v=1783675966",
+    "dest": "public/images/golden-maple/chinese-classic-calligraphy-brushes-painting-watercolor-klsg.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseClassicCalligraphyBrushes-Painting_Watercolor_1.webp?v=1783675966",
+    "dest": "public/images/golden-maple/chinese-classic-calligraphy-brushes-painting-watercolor-ypjh.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseClassicCalligraphyBrushes-Painting_Watercolor_1.webp?v=1783675966",
+    "dest": "public/images/golden-maple/chinese-classic-calligraphy-brushes-painting-watercolor-jzylx.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ChineseClassicCalligraphyBrushes-Painting_Watercolor_1.webp?v=1783675966",
+    "dest": "public/images/golden-maple/chinese-classic-calligraphy-brushes-painting-watercolor-a-set-of-4pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumDrybrushSet-6pcs_1.webp?v=1784785664",
+    "dest": "public/images/golden-maple/premium-drybrush-set-6pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Angle_Round_LinerNylonDetailBrush_4_5_6GoatHairDryBrush-10pcsset_1.webp?v=1783674053",
+    "dest": "public/images/golden-maple/angle-round-liner-nylon-detail-brush-4-5-6-goat-hair-dry-brush-10pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonRound_Liner_Angle_FlatDetailBrush_4_5DryBrush-10pcsset_1.webp?v=1783764505",
+    "dest": "public/images/golden-maple/nylon-round-liner-angle-flat-detail-brush-4-5-dry-brush-10pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/50ExtraFineTipNylonDetailBrush-6pcsset_1.webp?v=1783665488",
+    "dest": "public/images/golden-maple/5-0-extra-fine-tip-nylon-detail-brush-6pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_65b05e15-819d-45ba-9d80-d5e3c17fb3df.jpg?v=1712915992",
+    "dest": "public/images/golden-maple/rose-red-kolinsky-detail-brush-set-4pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/10_971dd8c5-9508-4064-ae2a-180c46a50cb3.png?v=1754900911",
+    "dest": "public/images/golden-maple/natural-hair-travel-brush-set-3pcs-watercolor-gouache-painting.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/18pcs_Miniature_Brush_Set_15pcs_Detail_Paint_Brush_3pcs_Dry_Brush_1.jpg?v=1773910004",
+    "dest": "public/images/golden-maple/nylon-round-flat-15pcs-detail-paint-brush-3pcs-goat-hair-dry-brush-miniature-brush-18pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/BristleAngledHakeBrush40506080ForOilAcrylicPainting_5.webp?v=1783674680",
+    "dest": "public/images/golden-maple/bristle-angled-hake-brush-40-50-60-80-for-oil-acrylic-painting-40.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/BristleAngledHakeBrush40506080ForOilAcrylicPainting_5.webp?v=1783674680",
+    "dest": "public/images/golden-maple/bristle-angled-hake-brush-40-50-60-80-for-oil-acrylic-painting-50.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/BristleAngledHakeBrush40506080ForOilAcrylicPainting_5.webp?v=1783674680",
+    "dest": "public/images/golden-maple/bristle-angled-hake-brush-40-50-60-80-for-oil-acrylic-painting-60.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/BristleAngledHakeBrush40506080ForOilAcrylicPainting_5.webp?v=1783674680",
+    "dest": "public/images/golden-maple/bristle-angled-hake-brush-40-50-60-80-for-oil-acrylic-painting-80.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_dc7825c9-fd1f-4248-852e-0b8e0fb94a9b.jpg?v=1727681868",
+    "dest": "public/images/golden-maple/nylon-detail-paint-brush-20pcs-set-round-liner-spotter-flat-angle-more.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-6.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-8.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-10.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-12.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NaturalHairMopPaintbrush-RoundQuillFineTipforWatercolorandGouache_1.webp?v=1783761189",
+    "dest": "public/images/golden-maple/natural-hair-mop-paintbrush-round-quill-fine-tip-for-watercolor-and-gouache-a-set-of-6-pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/WetPaletteKit_1.webp?v=1784788505",
+    "dest": "public/images/golden-maple/wet-palette-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Miniature_Paint_Set_16_x_20ml_Basic_Colors_Acrylic_Paints_1.jpg?v=1780553293",
+    "dest": "public/images/golden-maple/miniature-paint-set-16-x-20ml-basic-colors-acrylic-paints-paint-set-free-thinner.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Kolinsky_Sable_Miniature_Paint_Brush_Set_3pcs_1.jpg?v=1773625682",
+    "dest": "public/images/golden-maple/master-i-00-0-1-kolinsky-sable-miniature-paint-brush-set-3pcs-set-size-00-size-0-size-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/fcfd4f13b790f16e3888b69a80e83fe4.jpg?v=1773625682",
+    "dest": "public/images/golden-maple/master-i-00-0-1-kolinsky-sable-miniature-paint-brush-set-3pcs-set-size-3-0-size-4-0-size-5-0.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/743605f760424ca99f99a93454d51d14.jpg?v=1773974653",
+    "dest": "public/images/golden-maple/master-i-00-0-1-kolinsky-sable-miniature-paint-brush-set-3pcs-set-size-0-size-1-size-3.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonRound50_0_1_2ModelDetailPaintBrush_2DryBrush-11pcsset_1.webp?v=1783764262",
+    "dest": "public/images/golden-maple/nylon-round-5-0-0-1-2-model-detail-paint-brush-2-dry-brush-11pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonFlat_Angle_Filbert_Liner_RoundDetailBrush-10pcsset_1.webp?v=1783761539",
+    "dest": "public/images/golden-maple/nylon-flat-angle-filbert-liner-round-detail-brush-10pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Black3-01.jpg?v=1740377548",
+    "dest": "public/images/golden-maple/nylon-detail-brush-set-3-0-0-1-2-goat-hair-dry-brush-set-1-2-3-4-5-6-10pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/NylonLiner_Flat15pcsDetailPaintBrush_3pcsGoatHairDryBrushMiniatureBrush-18pcsset_1.webp?v=1783762868",
+    "dest": "public/images/golden-maple/nylon-liner-flat-15pcs-detail-paint-brush-3pcs-goat-hair-dry-brush-miniature-brush-18pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SyntheticSquirrelHairWatercolorMopBrushSet-3pcs_1.webp?v=1784787862",
+    "dest": "public/images/golden-maple/synthetic-squirrel-hair-watercolor-mop-brush-set-3pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Master_I_Miniature_Paint_Brush_Set_Kolinsky_Sable_Goat_Hair_-_7pcs_1.jpg?v=1772095706",
+    "dest": "public/images/golden-maple/master-i-3-0-0-1-2-2-kolinsky-sable-detail-brush-s-m-goat-hair-dry-brush-7pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/KolinskySableMiniaturePaintBrushes-GoldenMaple3pcsDetailPaintBrushesDrybrushforAcrylicWatercolor_SmallFineDetailPaintBrushSetUseforWarhammer_MiniPaints_PaintbyNumber_Figurine.jpg?v=1740645124",
+    "dest": "public/images/golden-maple/1-0000-kolinsky-sable-detail-brush-0-angled-nylon-brushes-3pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/15pcs_Detail_Paint_Brush_3pcs_Dry_Brush_Miniature_Brush_Set_1.jpg?v=1775885984",
+    "dest": "public/images/golden-maple/nylon-15pcs-spot-liner-detail-flat-detail-paint-brush-3pcs-goat-hair-dry-brush-miniature-brush-18pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ArtistFacePaintAcrylicPaintBrushSet-11pcs_1.webp?v=1783674188",
+    "dest": "public/images/golden-maple/artist-face-paint-acrylic-paint-brush-set-11pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ExtraFineTipNylonDetailBrush-6pcsset_1_8baaab80-7f59-4a15-ade1-3ba3ad7b5e3c.webp?v=1783666025",
+    "dest": "public/images/golden-maple/5-0-3-0-2-0-extra-fine-tip-nylon-detail-brush-6pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/100_Extra_Fine_Detail_Miniature_Paint_Brush_Set_-_6pcs_1.jpg?v=1776757865",
+    "dest": "public/images/golden-maple/10-0-extra-fine-tip-nylon-detail-brush-6pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Purple-01.webp?v=1783589941",
+    "dest": "public/images/golden-maple/3-0-extra-fine-tip-nylon-detail-brush-6pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/50HydrationPaperSheetsforWetPalette_1.webp?v=1783666453",
+    "dest": "public/images/golden-maple/50-hydration-paper-sheets-for-wet-palette-1-pack-50-sheets.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/50HydrationPaperSheetsforWetPalette_1.webp?v=1783666453",
+    "dest": "public/images/golden-maple/50-hydration-paper-sheets-for-wet-palette-2-pack-100-sheets.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6.76FlOzAirbrushThinner_1.webp?v=1783671132",
+    "dest": "public/images/golden-maple/6-76-fl-oz-airbrush-thinner.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_in_1_Wet_Palette_Kit_-_Acrylic_Miniature_Painting_1.webp?v=1783589347",
+    "dest": "public/images/golden-maple/2-in-1-wet-palette-kit-acrylic-miniature-painting-wet-palette-kit-with-8-pcs-detail-brush-3-pcs-drybrush.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_in_1_Wet_Palette_Kit_-_Acrylic_Miniature_Painting_1.webp?v=1783589347",
+    "dest": "public/images/golden-maple/2-in-1-wet-palette-kit-acrylic-miniature-painting-only-wet-palette-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Double-HeadedNylonDetailPaintBrush_GoatHairDryBrush-3pcsset_1.webp?v=1783741760",
+    "dest": "public/images/golden-maple/double-headed-nylon-detail-paint-brush-goat-hair-dry-brush-3pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Miniature_Paint_Brush_Set_-_7pcs_1.jpg?v=1770775985",
+    "dest": "public/images/golden-maple/master-i-2-0-1-2-4-kolinsky-sable-detail-brush-3-5-6-goat-hair-dry-brush-7pcs-set-7pcs-brush-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_55b967b3-8218-4b17-b9f7-9aea2d5af20f.jpg?v=1773975339",
+    "dest": "public/images/golden-maple/master-i-2-0-1-2-4-kolinsky-sable-detail-brush-3-5-6-goat-hair-dry-brush-7pcs-set-7pcs-brush-set-30g-brush-soap.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Black-01_d0a161e8-5180-4e37-a3f6-5316531b0ab3.jpg?v=1745828143",
+    "dest": "public/images/golden-maple/master-i-2-0-0-1-2-kolinsky-sable-detail-paint-brush-s-m-goat-hair-dry-brush-7pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ExtraFineTipNylonDetailBrush-6pcsset_1.webp?v=1783589803",
+    "dest": "public/images/golden-maple/2-0-extra-fine-tip-nylon-detail-brush-6pcs-set-morandi-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-000.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-00.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-0.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-1.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MasterKolinskySableMiniatureDetailBrushes_1.webp?v=1783752992",
+    "dest": "public/images/golden-maple/master-i-3-0-2-0-0-1-2-kolinsky-sable-miniature-detail-brushes-a-set-of-4pcs-save-33.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/AnatomicalCuttingMat_1.webp?v=1783673836",
+    "dest": "public/images/golden-maple/anatomical-cutting-mat.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/KolinskySableMiniatureDetailBrush_5.webp?v=1783753756",
+    "dest": "public/images/golden-maple/master-i-5-0-4-0-3-0-2-0-kolinsky-sable-miniature-detail-brush-4pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_19aa9b67-56a1-4b51-b8e1-88c832158e81.jpg?v=1747732267",
+    "dest": "public/images/golden-maple/ultimate-mega-brush-set-10pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Alligator_Clip_Sticks_Set_1.jpg?v=1770971000",
+    "dest": "public/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_48222891-b4a2-40cc-882c-c37e913e9d86.jpg?v=1774336789",
+    "dest": "public/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs-painting-handle.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ProfessionalDryBrushSet-6pcs_1.webp?v=1784786330",
+    "dest": "public/images/golden-maple/professional-dry-brush-set-6pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/d9ab6c9f08514fb92dbadf2efeebc88f.jpg?v=1754907011",
+    "dest": "public/images/golden-maple/entry-level-nylon-detail-brushes-16pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-fine-granules-1mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-fine-granules-2mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-fine-granules-3mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-fine-granules-4mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-fine-granules-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-large-granules-4mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-large-granules-6mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelingCorkSheet_2.webp?v=1783759961",
+    "dest": "public/images/golden-maple/modeling-cork-sheet-large-granules-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_de32dbec-294a-4594-854a-eaff0f5deaec.jpg?v=1749718636",
+    "dest": "public/images/golden-maple/dry-brush-sponge-box-black-sponge.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_a02ec784-b69c-4d7e-9f0c-b233884e5aac.jpg?v=1749718636",
+    "dest": "public/images/golden-maple/dry-brush-sponge-box-white-sponge.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_2cc2e9af-9bf7-4f31-9ecf-6f10215f8fed.jpg?v=1749718636",
+    "dest": "public/images/golden-maple/dry-brush-sponge-box-a-set-of-two-black-white.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimulatedLeaves_1.webp?v=1784787252",
+    "dest": "public/images/golden-maple/simulated-leaves-spring-leaves.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimulatedLeaves_2.webp?v=1784787251",
+    "dest": "public/images/golden-maple/simulated-leaves-early-autumn-leaves.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimulatedLeaves_3.webp?v=1784787251",
+    "dest": "public/images/golden-maple/simulated-leaves-autumn-yellow-leaves.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimulatedLeaves_4.webp?v=1784787251",
+    "dest": "public/images/golden-maple/simulated-leaves-autumn-red-leaves.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/8_14465446-6a65-45d7-9a1a-523a905f35e7.jpg?v=1748595897",
+    "dest": "public/images/golden-maple/double-headed-weathering-dry-brush-set-3pcs-version-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4_e1100891-4058-4a4e-8ad9-be6ce764cdf0.jpg?v=1766545512",
+    "dest": "public/images/golden-maple/double-headed-weathering-dry-brush-set-3pcs-version-2.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/12_6e1e2597-54e8-4a17-bc12-69dec09f048e.jpg?v=1748596471",
+    "dest": "public/images/golden-maple/nylon-dry-sweep-clean-large-bristle-brush-round.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/13_712a6d87-f3cb-4117-b6e6-f16e8ca7d56b.jpg?v=1748596472",
+    "dest": "public/images/golden-maple/nylon-dry-sweep-clean-large-bristle-brush-flat.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_306d913b-2516-4fba-8d71-fc8988a89a38.jpg?v=1748596727",
+    "dest": "public/images/golden-maple/flat-horsehair-filbert-synthetic-dry-brush-6pcs-pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_d2f818d9-927d-4a8e-b4f8-7ce33c509f5e.jpg?v=1749699080",
+    "dest": "public/images/golden-maple/metal-palette-version-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_51491d6a-8dfc-4c3d-baec-bcec316a7341.jpg?v=1749699080",
+    "dest": "public/images/golden-maple/metal-palette-version-2.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_214907a0-a3e2-41ab-a7cf-89a876a9e3d6.jpg?v=1749699080",
+    "dest": "public/images/golden-maple/metal-palette-version-3.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3457bda8-3237-4539-b57d-ebb68565fe9f.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-0-2mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_2a3ed8db-05c6-4a4f-9909-75c8461ba377.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-0-3mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_29974167-c428-4761-8c2c-b142ee403acf.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-0-5mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4_6ba26107-5b40-4ff2-9ec8-09c0048fe55b.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-1-0mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5_6076b931-79df-446e-8a6a-b30ecb6026dc.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-1-5mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6_3805fde8-1619-4fdd-bd43-4f6148edcb70.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-2-0mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/7_f0783651-ecac-40a8-b7f3-df644dbcccfb.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-2-5mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/8_69aa1525-1b14-4e5d-98f8-5afb1f9024a6.jpg?v=1749699044",
+    "dest": "public/images/golden-maple/copper-rod-3-0mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3f9852c0-227f-4a11-ad9e-253b89f5f8d0.jpg?v=1776131315",
+    "dest": "public/images/golden-maple/ultra-fine-liner-brushes-0.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3f9852c0-227f-4a11-ad9e-253b89f5f8d0.jpg?v=1776131315",
+    "dest": "public/images/golden-maple/ultra-fine-liner-brushes-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3f9852c0-227f-4a11-ad9e-253b89f5f8d0.jpg?v=1776131315",
+    "dest": "public/images/golden-maple/ultra-fine-liner-brushes-2.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3f9852c0-227f-4a11-ad9e-253b89f5f8d0.jpg?v=1776131315",
+    "dest": "public/images/golden-maple/ultra-fine-liner-brushes-3pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_4f0590aa-2035-4923-a363-51451d0d8c07.jpg?v=1749796340",
+    "dest": "public/images/golden-maple/metal-sculpting-tool.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/8_252b80f5-7586-4a07-a096-4f3234879f3e.jpg?v=1771922081",
+    "dest": "public/images/golden-maple/acrylic-composable-rack-a-set-of-6.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/9_3b86440f-a5b6-421f-bdfd-d685632e1063.jpg?v=1771922081",
+    "dest": "public/images/golden-maple/acrylic-composable-rack-single.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/TrapezoidalCork_3.webp?v=1784788035",
+    "dest": "public/images/golden-maple/trapezoidal-cork-version-1-3pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/TrapezoidalCork_6.webp?v=1784788035",
+    "dest": "public/images/golden-maple/trapezoidal-cork-version-2-3pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/TrapezoidalCork_8.webp?v=1784788035",
+    "dest": "public/images/golden-maple/trapezoidal-cork-version-3-3pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimpleCorkHandle_5.webp?v=1784786999",
+    "dest": "public/images/golden-maple/simple-cork-handle-w-30mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SimpleCorkHandle_6.webp?v=1784786999",
+    "dest": "public/images/golden-maple/simple-cork-handle-w-38mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelTools_8.webp?v=1783759648",
+    "dest": "public/images/golden-maple/model-tools-double-headed-metal-wiping-rod-with-sponge-head-for-accurate-detailing-red.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelTools_7.webp?v=1783759648",
+    "dest": "public/images/golden-maple/model-tools-double-headed-metal-wiping-rod-with-sponge-head-for-accurate-detailing-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelTools_1.webp?v=1783759648",
+    "dest": "public/images/golden-maple/model-tools-double-headed-metal-wiping-rod-with-sponge-head-for-accurate-detailing-red-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelTools_1.webp?v=1783759648",
+    "dest": "public/images/golden-maple/model-tools-double-headed-metal-wiping-rod-with-sponge-head-for-accurate-detailing-sponge-head-3mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelTools_1.webp?v=1783759648",
+    "dest": "public/images/golden-maple/model-tools-double-headed-metal-wiping-rod-with-sponge-head-for-accurate-detailing-sponge-head-5mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_f022a26d-cafb-4011-a936-f1839f10a973.jpg?v=1750148302",
+    "dest": "public/images/golden-maple/weathered-bleed-brush-long-handed-nylon-for-model-weathering-stroke-coloring.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SiliconeBrushes_ClayShapersforPotteryandDrawingToolSet5pcs_3.webp?v=1784786765",
+    "dest": "public/images/golden-maple/silicone-brushes-clay-shapers-for-pottery-and-drawing-tool-set-5pcs-3mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SiliconeBrushes_ClayShapersforPotteryandDrawingToolSet5pcs_2.webp?v=1784786765",
+    "dest": "public/images/golden-maple/silicone-brushes-clay-shapers-for-pottery-and-drawing-tool-set-5pcs-5mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SiliconeBrushes_ClayShapersforPotteryandDrawingToolSet5pcs_4.webp?v=1784786765",
+    "dest": "public/images/golden-maple/silicone-brushes-clay-shapers-for-pottery-and-drawing-tool-set-5pcs-8mm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/FoamSandingPads_12pcsHandmadeDual-UseWet_DryPolishingBlocksforJewelryandModels_1.webp?v=1783750133",
+    "dest": "public/images/golden-maple/foam-sanding-pads-12pcs-handmade-dual-use-wet-dry-polishing-blocks-for-jewelry-and-models.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/StickyPutty_96pcsReusableWallArtAdhesiveforPhotography_Miniatures_andCrafts_5.webp?v=1784788210",
+    "dest": "public/images/golden-maple/sticky-putty-96pcs-reusable-wall-art-adhesive-for-photography-miniatures-and-crafts-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/StickyPutty_96pcsReusableWallArtAdhesiveforPhotography_Miniatures_andCrafts_6.webp?v=1784788210",
+    "dest": "public/images/golden-maple/sticky-putty-96pcs-reusable-wall-art-adhesive-for-photography-miniatures-and-crafts-white.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/StickyPutty_96pcsReusableWallArtAdhesiveforPhotography_Miniatures_andCrafts_7.webp?v=1784788210",
+    "dest": "public/images/golden-maple/sticky-putty-96pcs-reusable-wall-art-adhesive-for-photography-miniatures-and-crafts-pink.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_1.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-painting-handle-setting-cap-6pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_6.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-painting-handle-grip-head-5pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_2.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-painting-handle-with-blue-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_4.webp?v=1783749576",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-painting-handle-with-pink-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_5.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-painting-handle-with-white-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_3.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-setting-cap-6pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Ergonomic_Painting_Handle_Perfect_for_Warhammer_D_D_Scale_Models_7.webp?v=1783749575",
+    "dest": "public/images/golden-maple/ergonomic-painting-handle-perfect-for-warhammer-d-d-scale-models-grip-head-5pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PastelPaintBrushSet-4pcs_5.webp?v=1784777333",
+    "dest": "public/images/golden-maple/pastel-paint-brush-set-4pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_6623112b-d224-4257-84fb-d7bfe05636e2.jpg?v=1750314597",
+    "dest": "public/images/golden-maple/spring-clamp-for-seamless-model-gluing.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_1095a80f-246b-443a-8b26-585bd3e3d32b.jpg?v=1750402745",
+    "dest": "public/images/golden-maple/2pcs-small-paint-tray-mixing-palette-set-with-metal-stirrers-and-plastic-droppers.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelDryBrush3pcsset_Hand-PaintedWater-BasedToolforAgingGundamModels_1.webp?v=1783759295",
+    "dest": "public/images/golden-maple/model-dry-brush-3pcs-set-hand-painted-water-based-tool-for-aging-gundam-models-3pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelDryBrush3pcsset_Hand-PaintedWater-BasedToolforAgingGundamModels_1.webp?v=1783759295",
+    "dest": "public/images/golden-maple/model-dry-brush-3pcs-set-hand-painted-water-based-tool-for-aging-gundam-models-12.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelDryBrush3pcsset_Hand-PaintedWater-BasedToolforAgingGundamModels_1.webp?v=1783759295",
+    "dest": "public/images/golden-maple/model-dry-brush-3pcs-set-hand-painted-water-based-tool-for-aging-gundam-models-8.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelDryBrush3pcsset_Hand-PaintedWater-BasedToolforAgingGundamModels_1.webp?v=1783759295",
+    "dest": "public/images/golden-maple/model-dry-brush-3pcs-set-hand-painted-water-based-tool-for-aging-gundam-models-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/e92d123dd77a2b470c7e0b8ca54cc74f.jpg?v=1750474807",
+    "dest": "public/images/golden-maple/ultra-thin-model-scissors-double-sided-fine-blade-for-gundam-military-assembly.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_0.5X500mm_1_c7e28dad-0fa2-4b05-9e8b-32d1c9208342.jpg?v=1760616087",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-0-5-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_0.8X500mm1_9e39367f-4fd7-42e1-87e4-5ea4a4e74751.jpg?v=1760616201",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-0-8-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_1.0X250mm_5_80a2270d-86b3-45d5-9b28-9ae9c9b26921.jpg?v=1760616297",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-1-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_1.0X500mm_1_73687908-4be4-4e71-bf48-774200a9d3e5.jpg?v=1760616345",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-1-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_1.5X500mm_1_8ef93f64-3435-48b2-9ed4-99b452f21aef.jpg?v=1760616443",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-1-5-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_2.0X250mm_5_588fc749-e95d-4204-9b54-cd09fea64b8c.jpg?v=1760616514",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-2-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_2.0X500mm_1_0f49598b-c724-43a1-aa40-9bf4e2f6c6b5.jpg?v=1760616609",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-2-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_3.0X250mm5_9dc26b14-f954-4fe1-92bc-977e2c63285b.jpg?v=1760616695",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-3-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_3.0X500mm_1_f9b39031-31a0-497d-baa6-e7628a0352bc.jpg?v=1760616776",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-3-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_4.0X500mm_1_9dba1836-ac73-471e-b907-456e492bc413.jpg?v=1760617014",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-4-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_5.0X250mm_5_84880350-4d63-441b-aa73-c7213f69de85.jpg?v=1760617061",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-5-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_5.0X500mm_1_fc8154d5-c3bc-40f0-8133-efcf9872059a.jpg?v=1760617182",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-5-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_6.0X250mm_5_61a30d54-6f0b-4e20-be57-f9f19de379bb.jpg?v=1760617238",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-6-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_6.0X500mm_1_68a7c09e-1094-4e4d-ac0a-889ea50ecdbe.jpg?v=1760617294",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-6-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_8.0X500mm1_4e2e74a1-7d4b-4e8c-82e6-c9f9cf63cdc4.jpg?v=1760617367",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-8-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ABS_10X500mm_1_5ac67157-8827-4f50-a424-df23ab485672.jpg?v=1760617418",
+    "dest": "public/images/golden-maple/abs-modeling-rods-rod-10-0-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/L_2X2X500.jpg?v=1760617553",
+    "dest": "public/images/golden-maple/abs-modeling-rods-l-rod-2-2-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/L_3X3X250.jpg?v=1760617613",
+    "dest": "public/images/golden-maple/abs-modeling-rods-l-rod-3-3-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/L_4X4X250.jpg?v=1760617677",
+    "dest": "public/images/golden-maple/abs-modeling-rods-l-rod-4-4-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/L_4X4X500.jpg?v=1760617801",
+    "dest": "public/images/golden-maple/abs-modeling-rods-l-rod-4-4-500mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2X1X250_5.jpg?v=1760617839",
+    "dest": "public/images/golden-maple/abs-modeling-rods-tube-2-1-0-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3X1.5X250_5.jpg?v=1760617884",
+    "dest": "public/images/golden-maple/abs-modeling-rods-tube-3-1-5-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4X2X250_5.jpg?v=1760617948",
+    "dest": "public/images/golden-maple/abs-modeling-rods-tube-4-2-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5X1.5X250_5.jpg?v=1760618152",
+    "dest": "public/images/golden-maple/abs-modeling-rods-tube-5-1-5-250mm-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2x4x250mm_10PCS.jpg?v=1760696977",
+    "dest": "public/images/golden-maple/abs-modeling-rods-half-round-2-4-250mm-10pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/7_94b7ffb1-e902-483e-ba9c-08bf902dfbe2.jpg?v=1751003625",
+    "dest": "public/images/golden-maple/dust-removal-brush-dual-soft-hard-bristles-for-sweeping-and-polishing-gundam-models-2pcs-soft-hard.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/9_9f1e6e8c-627a-4a5c-9506-126958a41c7f.jpg?v=1751005965",
+    "dest": "public/images/golden-maple/dust-removal-brush-dual-soft-hard-bristles-for-sweeping-and-polishing-gundam-models-2pcs-soft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/8_4718a3d7-1313-4863-aebb-14db135076d9.jpg?v=1751005965",
+    "dest": "public/images/golden-maple/dust-removal-brush-dual-soft-hard-bristles-for-sweeping-and-polishing-gundam-models-2pcs-hard.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/9_9f1e6e8c-627a-4a5c-9506-126958a41c7f.jpg?v=1751005965",
+    "dest": "public/images/golden-maple/dust-removal-brush-dual-soft-hard-bristles-for-sweeping-and-polishing-gundam-models-1pc-soft.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/8_4718a3d7-1313-4863-aebb-14db135076d9.jpg?v=1751005965",
+    "dest": "public/images/golden-maple/dust-removal-brush-dual-soft-hard-bristles-for-sweeping-and-polishing-gundam-models-1pc-hard.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureDetailingPaintBrushSet_FineDetail_Acrylic_Watercolor_OilPainting13pcs_1.webp?v=1783755845",
+    "dest": "public/images/golden-maple/miniature-detailing-paint-brush-set-fine-detail-acrylic-watercolor-oil-painting-13pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-golden-autumn.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-winter-brown.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-spring-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-early-summer.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-late-summer.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-70plants-autumn-yellow.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-120plants-no-1.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-120plants-no-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-120plants-no-3.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-120plants-no-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-5mm-120plants-no-5.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-1.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-2.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-3.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-4.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-5.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-6.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-7.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-n0-8.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-8mm-104plants-no-9.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-nordic-wild-grass.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-east-europe-weed.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-prairie-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-autumn-yellow.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-spring-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniatureScenicGrassTufts_1.webp?v=1783757915",
+    "dest": "public/images/golden-maple/miniature-scenic-grass-tufts-10mm-15plants-autumn-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_e50f69a4-790f-49ec-a75d-6e1f4654ef23.png?v=1773391217",
+    "dest": "public/images/golden-maple/master-i-2-0-1-2-4-kolinsky-sable-detail-brush-3-5-6-goat-hair-dry-brush-7pcs-set.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PlasticBrushCup-MiniaturePainting_11.webp?v=1784784952",
+    "dest": "public/images/golden-maple/plastic-brush-cup-miniature-painting-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PlasticBrushCup-MiniaturePainting_5.webp?v=1784784951",
+    "dest": "public/images/golden-maple/plastic-brush-cup-miniature-painting-gradient-yellow.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PlasticBrushCup-MiniaturePainting_4.webp?v=1784784951",
+    "dest": "public/images/golden-maple/plastic-brush-cup-miniature-painting-gradient-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PlasticBrushCup-MiniaturePainting_1.webp?v=1784784951",
+    "dest": "public/images/golden-maple/plastic-brush-cup-miniature-painting-white.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/StainlessSteelMixingBallsforPaintBottles_MiniaturePainting_Crafts_7.webp?v=1784787725",
+    "dest": "public/images/golden-maple/stainless-steel-mixing-balls-for-paint-bottles-miniature-painting-crafts.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Master_I_Precision_Kolinsky_Sable_Miniature_Detail_Brushes_5pcs_1.jpg?v=1776750559",
+    "dest": "public/images/golden-maple/master-i-5-0-00-0-1-2-kolinsky-sable-miniature-detail-brushes-5pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/b58ce7b99582c961375527c3c6b27ebb_4f081321-632a-46a6-8b67-b689aa8303b9.png?v=1757400416",
+    "dest": "public/images/golden-maple/weathering-flat-synthetic-brush-set-wargaming-miniatures-watercolor-oil-painting-3pcs.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/21.jpg?v=1757486365",
+    "dest": "public/images/golden-maple/master-i-2-0-1-2-4-kolinsky-sable-s-m-l-goat-hair-dry-brush-7pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6_26da63fe-ffa9-48f1-a851-1d9aba3922d3.jpg?v=1757556407",
+    "dest": "public/images/golden-maple/nylon-5-0-3-0-2-0-0-1-2-3-4-6-8-miniature-detail-brushes-10pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_14.webp?v=1784787487",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-green-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_15.webp?v=1784787486",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-pink-purple.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_16.webp?v=1784787487",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-yellow-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_17.webp?v=1784787486",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-purple-and-yellow.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_5.webp?v=1784787486",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-green.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_12.webp?v=1784787487",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-blue.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_9.webp?v=1784787487",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-pink.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_10.webp?v=1784787486",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-purple.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_13.webp?v=1784787486",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-black.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SoftSiliconeBrushCleaner_Heart-ShapedScrubberforMakeupBrushCleaning_6.webp?v=1784787487",
+    "dest": "public/images/golden-maple/soft-silicone-brush-cleaner-heart-shaped-scrubber-for-makeup-brush-cleaning-yellow.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6391ace427ade714b70fb966024ae804_032fdd2d-841f-47b5-94b1-70c04ba0a587.jpg?v=1757663539",
+    "dest": "public/images/golden-maple/kolinsky-sable-4-0-3-0-2-0-0-1-2-miniature-detail-brushes-6-pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4pcsIrregularCarbonFiberSandingSticks_Grinding_Polishing_7.webp?v=1783664549",
+    "dest": "public/images/golden-maple/4pcs-irregular-carbon-fiber-sanding-sticks-grinding-polishing.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_in_1_Wet_Palette_Kit_-_Miniature_Painting_8.webp?v=1783589616",
+    "dest": "public/images/golden-maple/2-in-1-wet-palette-kit-miniature-painting.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PolyhedralDiceSetwithBag_Dungeons_Dragons_RPG_andTabletopGames_1.webp?v=1784785259",
+    "dest": "public/images/golden-maple/polyhedral-dice-set-with-bag-dungeons-dragons-rpg-and-tabletop-games-blue-purple.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PolyhedralDiceSetwithBag_Dungeons_Dragons_RPG_andTabletopGames_2.webp?v=1784785259",
+    "dest": "public/images/golden-maple/polyhedral-dice-set-with-bag-dungeons-dragons-rpg-and-tabletop-games-purple.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/b58ce7b99582c961375527c3c6b27ebb_834ad015-b718-4c44-a3d0-fffb950d2305.webp?v=1783588486",
+    "dest": "public/images/golden-maple/2-in-1-paints-brushes-organizer.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5RollsPinstripeMaskingTape_516_513_1532_Miniatures_DIY_Art_2.webp?v=1783664758",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-0-8cm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5RollsPinstripeMaskingTape_516_513_1532_Miniatures_DIY_Art_2.webp?v=1783664758",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-1cm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5RollsPinstripeMaskingTape_516_513_1532_Miniatures_DIY_Art_2.webp?v=1783664758",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-1-2cm.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/0.8.jpg?v=1784861454",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-tape-cutter-0-8cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1.2.jpg?v=1784861453",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-tape-cutter-1cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_d703482b-02ae-4ff9-8a31-21f46b99fb36.jpg?v=1784861453",
+    "dest": "public/images/golden-maple/5-rolls-pinstripe-masking-tape-5-16-5-13-15-32-miniatures-diy-art-tape-cutter-1-2cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_1c445209-568f-40a3-8ff5-5a104d566fdd.webp?v=1783673521",
+    "dest": "public/images/golden-maple/all-in-one-professional-model-nylon-detail-paint-brush-15-pcs-set-round-flat-liner-filbert-angular-angle.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_8480af76-210d-49eb-847f-4aa4ead5ac1e.jpg?v=1761733790",
+    "dest": "public/images/golden-maple/nylon-flat-round-miniature-brush-10pcs-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Drybrush_Texture_Palette_-_Warhammer_Tabletop_Miniatures_8.webp?v=1783742346",
+    "dest": "public/images/golden-maple/drybrush-texture-palette-warhammer-tabletop-miniatures-drybrush-texture-palette-2pcs-6pcs-drybrush-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Drybrush_Texture_Palette_-_Warhammer_Tabletop_Miniatures_8.webp?v=1783742346",
+    "dest": "public/images/golden-maple/drybrush-texture-palette-warhammer-tabletop-miniatures-drybrush-texture-palette-2pcs.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Battlefield_Basing_Set_-_All-in-One_Terrain_Kit_for_Dioramas_Wargaming_1.webp?v=1783674412",
+    "dest": "public/images/golden-maple/battlefield-basing-set-all-in-one-terrain-kit-for-dioramas-wargaming.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MaskingFluid-30ml1.1flOzLiquidMaskingFluid_1.webp?v=1783751158",
+    "dest": "public/images/golden-maple/masking-fluid-30ml-1-1-fl-oz-liquid-masking-fluid.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/9_67d56dcf-f2b7-4c31-8966-0f11f9cf225f.jpg?v=1765876611",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_35df8b42-3581-4fb7-be36-fee051799423.png?v=1772186057",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-round-brush-0.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3_97dbee29-f096-4467-8543-a9af6b4caee7.png?v=1772186057",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-round-brush-1.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_2_e3a7b453-8622-427e-b6d5-40fd1b7aa951.png?v=1772186057",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-spear-point-0.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_4_368ff994-9366-4610-9020-0e513cec1050.png?v=1772186057",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-spear-point-1.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_9cbcfa76-b88f-442d-a5fa-6afa5796faf9.png?v=1772186057",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-spear-point-2.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_ccd6bee7-4307-4713-946a-18704b635f8f.jpg?v=1774418938",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-with-beech-wood-handles-arrow-shaped-miniature-painting-brush-5pcs-brush-set-30g-brush-soap.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Miniature_Tool_Kit_-_Model_Making_Crafts_DIY_1.webp?v=1783758197",
+    "dest": "public/images/golden-maple/miniature-tool-kit-model-making-crafts-diy.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturesDisplayPlinths_1.webp?v=1783758928",
+    "dest": "public/images/golden-maple/miniatures-display-plinths-round-blue-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturesDisplayPlinths_1.webp?v=1783758928",
+    "dest": "public/images/golden-maple/miniatures-display-plinths-square-blue-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturesDisplayPlinths_1.webp?v=1783758928",
+    "dest": "public/images/golden-maple/miniatures-display-plinths-tapered-blue-tack-kit.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturesDisplayPlinths_1.webp?v=1783758928",
+    "dest": "public/images/golden-maple/miniatures-display-plinths-3pc-blu-tack-not-included.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/360_SwivelMiniPrecisionMiniatureVise_1.webp?v=1783588751",
+    "dest": "public/images/golden-maple/360-swivel-mini-precision-miniature-vise.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4ReplaceableBrushHeadsMulti-PurposePremiumKolinskySableBrushwithRosewoodHandles_1.jpg?v=1767511761",
+    "dest": "public/images/golden-maple/kolinsky-sable-with-red-sandalwood-handles-3-0-2-0-0-1-replaceable-brush-heads-a-set-of-4pcs-1-brush-3-heads.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Brush_Heads2_1.jpg?v=1784167400",
+    "dest": "public/images/golden-maple/kolinsky-sable-with-red-sandalwood-handles-3-0-2-0-0-1-replaceable-brush-heads-4-x-brush-heads-only-3-0-2-0-0-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Brush_Heads1_1.jpg?v=1784167400",
+    "dest": "public/images/golden-maple/kolinsky-sable-with-red-sandalwood-handles-3-0-2-0-0-1-replaceable-brush-heads-4-x-brush-heads-only-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Brush-Handle-_Excluding-Brush-Head.jpg?v=1777099116",
+    "dest": "public/images/golden-maple/kolinsky-sable-with-red-sandalwood-handles-3-0-2-0-0-1-replaceable-brush-heads-brush-handle.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/GoldenMapleMasterIBrushCleaner_Preserver_CleaningSoap_30g_1.webp?v=1783750294",
+    "dest": "public/images/golden-maple/golden-maple-master-i-brush-cleaner-preserver-cleaning-soap-30g.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PremiumKolinskySableArrowShapedMiniaturePaintingBrush_5pcsset_2.webp?v=1784785830",
+    "dest": "public/images/golden-maple/premium-kolinsky-sable-arrow-shaped-miniature-painting-brush-5pcs-set.webp"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/81-Hole_Wooden_Paint_Rack_Organizer_for_Miniature_Paints_2_1.jpg?v=1774937634",
+    "dest": "public/images/golden-maple/81-hole-wooden-paint-rack-organizer-for-miniature-paints-standard.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Thickened_Plus.jpg?v=1781746385",
+    "dest": "public/images/golden-maple/81-hole-wooden-paint-rack-organizer-for-miniature-paints-thickened-plus.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Clear_Sealed_Miniature_Case_for_Ita_Bag_9.jpg?v=1774938319",
+    "dest": "public/images/golden-maple/clear-sealed-miniature-case-for-ita-bag-small.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Clear_Sealed_Miniature_Case_for_Ita_Bag_7.jpg?v=1774938319",
+    "dest": "public/images/golden-maple/clear-sealed-miniature-case-for-ita-bag-custom-eagle-clip-strap-divider-double-sided-gel.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Clear_Sealed_Miniature_Case_for_Ita_Bag_8.jpg?v=1774938319",
+    "dest": "public/images/golden-maple/clear-sealed-miniature-case-for-ita-bag-medium.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturesCarryingStorageCasewithHandle_1.jpg?v=1775890258",
+    "dest": "public/images/golden-maple/travel-ready-miniatures-carrying-storage-case-with-handle.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ErgonomicSandalwoodPaintingHandle_PerfectforWarhammer_D_D_ScaleModels_1_Purple-black.jpg?v=1778145468",
+    "dest": "public/images/golden-maple/360-ergonomic-sandalwood-painting-handle-with-stable-base-purple-black.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/360_Ergonomic_Sandalwood_Painting_Handle_with_Stable_Base_Yellow_1_Yellow.jpg?v=1778146142",
+    "dest": "public/images/golden-maple/360-ergonomic-sandalwood-painting-handle-with-stable-base-yellow.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ExecutioneroftheFourChaosGods_40.jpg?v=1777371278",
+    "dest": "public/images/golden-maple/executioner-of-the-four-chaos-gods-model-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ReplacementClamp-StyleGripHead5pcs.jpg?v=1777441641",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-yellow-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Replacement_Clamp-Style_Grip_Head_5pcs_black_1.jpg?v=1781140668",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-black-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Replacement_Clamp-Style_Grip_Head_5pcs_Green.jpg?v=1781157631",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-green-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Grip_Head_5pcs_1.jpg?v=1783912059",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-painting-handle-grip-head-yellow-5pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Grip_Head_5pcs_2.jpg?v=1783912060",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-strong-magnet-upgrade-black-red-pre-order.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Grip_Head_5pcs_3.jpg?v=1783912059",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-strong-magnet-upgrade-pink-blue-pre-order.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Grip_Head_5pcs_4.jpg?v=1783912060",
+    "dest": "public/images/golden-maple/replacement-clamp-style-grip-head-5pcs-strong-magnet-upgrade-neon-green-pre-order.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2-in-1_Paint_Brush_Holder_Phone_Stand_1.jpg?v=1778307779",
+    "dest": "public/images/golden-maple/2-in-1-paint-brush-holder-phone-stand.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/MiniaturePaintSet18x20mlAcrylicPaints_Non-Toxic_Water-BasedforModelPainting_1.jpg?v=1778292540",
+    "dest": "public/images/golden-maple/miniature-paint-set-18-x-20ml-acrylic-paints-non-toxic-water-based-for-model-painting.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/BOX.jpg?v=1782440601",
+    "dest": "public/images/golden-maple/2-0-1-2-4-kolinsky-sable-detail-brush-l-s-dry-brush-6pcs-set-with-brush-cleaner-wooden-gift-box-brush-set.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/PortableBrushWasher_StainlessSteelwithSpringHolder_1.jpg?v=1781063645",
+    "dest": "public/images/golden-maple/2-in-1-portable-brush-washer-drying-stand.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/GoldNMM_NonMetallicMetal_ColorMiniaturePaintSet6Bottlesx20ml_1.jpg?v=1781173357",
+    "dest": "public/images/golden-maple/gold-nmm-non-metallic-metal-color-miniature-paint-set-6-bottles-x-20-ml.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/StabilizedWoodErgonomicPaintingHandlewith360_Rotation_Includes3Anti-TipBases_2Caps_3SteadyStands_1.png?v=1781778842",
+    "dest": "public/images/golden-maple/stabilized-wood-ergonomic-painting-handle-with-360-rotation-includes-3-anti-tip-bases-2-caps-3-1-handle-2-caps-3-bases-3-stands.png"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_3_2f80ab69-20d7-47a8-9a37-6981bd2881ae.jpg?v=1782717479",
+    "dest": "public/images/golden-maple/precision-craft-knife-set-includes-6-replacement-blades-for-miniature-model-making.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Extra-LargeWetPaletteforMiniaturePainting_Magnetic_Ventilated_4.jpg?v=1782555761",
+    "dest": "public/images/golden-maple/3-in-1-extra-large-wet-palette-kit-for-miniature-painting-magnetic-ventilated-wet-palette-brush-washer-palette-cup.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/400_53552f2a-9325-47f7-a633-f5e9fa65ac25.jpg?v=1782788715",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-400.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/600.jpg?v=1782788716",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-600.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/800.jpg?v=1782788716",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-800.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1000.jpg?v=1782788716",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-1000.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1200.jpg?v=1782788715",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-1200.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/0_752f81fb-078d-44ac-ae64-602e7516bb9f.jpg?v=1782802380",
+    "dest": "public/images/golden-maple/100pcs-self-adhesive-sandpaper-set-400-600-800-1000-1200-grit-for-model-kits-gundam-miniature-finishing-400-600-800-1000-1200.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/UltrasonicPaintBrushCleaner_PortableDeepCleaning_2.jpg?v=1782814355",
+    "dest": "public/images/golden-maple/ultrasonic-paint-brush-cleaner-portable-deep-cleaning-us.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/UltrasonicPaintBrushCleaner_PortableDeepCleaning_2.jpg?v=1782814355",
+    "dest": "public/images/golden-maple/ultrasonic-paint-brush-cleaner-portable-deep-cleaning-uk.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/UltrasonicPaintBrushCleaner_PortableDeepCleaning_2.jpg?v=1782814355",
+    "dest": "public/images/golden-maple/ultrasonic-paint-brush-cleaner-portable-deep-cleaning-eu.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/UltrasonicPaintBrushCleaner_PortableDeepCleaning_2.jpg?v=1782814355",
+    "dest": "public/images/golden-maple/ultrasonic-paint-brush-cleaner-portable-deep-cleaning-au.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4_bec6f3bc-c475-4490-a8b6-f5734601b72c.jpg?v=1782871263",
+    "dest": "public/images/golden-maple/3d-printed-miniature-tool-organizer-desktop-storage-rack-for-painting-workbench-organizer-set-6pcs.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/HandDrillSet_1.jpg?v=1782888564",
+    "dest": "public/images/golden-maple/hand-drill-set-for-miniature-painting-pin-vise-with-10-bits-10-collets-ideal-for-models-3d-prints-limited.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_bd35ae32-7bd6-4e12-8b00-63c474840748.jpg?v=1783477386",
+    "dest": "public/images/golden-maple/miniature-office-desk-set-computer-table-chair-monitor-accessories-for-diorama-display-gray.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/2_f6262b54-7ca8-4622-9610-3aa6e8c1b044.jpg?v=1783477386",
+    "dest": "public/images/golden-maple/miniature-office-desk-set-computer-table-chair-monitor-accessories-for-diorama-display-white.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/6_cec96423-e47d-48e7-8c1c-4239fb68b9fc.jpg?v=1783501656",
+    "dest": "public/images/golden-maple/360-rotary-craft-cutter-precision-swivel-blade-pen-for-stencils-scrapbooking-diy-crafts-red.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/5_2601d0d1-07d4-4ad9-8bf7-28468c9ef483.jpg?v=1783501656",
+    "dest": "public/images/golden-maple/360-rotary-craft-cutter-precision-swivel-blade-pen-for-stencils-scrapbooking-diy-crafts-white.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/4_d82aa157-fd00-4f97-835e-1c9881d383dd.jpg?v=1783501657",
+    "dest": "public/images/golden-maple/360-rotary-craft-cutter-precision-swivel-blade-pen-for-stencils-scrapbooking-diy-crafts-green.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/3_56ad28f7-169b-4ef6-81e8-52eefa84fe8f.jpg?v=1783501657",
+    "dest": "public/images/golden-maple/360-rotary-craft-cutter-precision-swivel-blade-pen-for-stencils-scrapbooking-diy-crafts-orange.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/7_bdd10aff-a929-491e-a878-0b6e1581f310.jpg?v=1783501656",
+    "dest": "public/images/golden-maple/360-rotary-craft-cutter-precision-swivel-blade-pen-for-stencils-scrapbooking-diy-crafts-black.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SandingToolOrganizer_4-ZoneStorageRack_1.jpg?v=1783933972",
+    "dest": "public/images/golden-maple/sanding-tool-organizer-4-zone-storage-rack.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/Face_SkinTonesAcrylicPaintSet10x20ml_Non-Toxic_Water-BasedforMiniatureFigurePainting_1.jpg?v=1783936648",
+    "dest": "public/images/golden-maple/face-skin-tones-acrylic-paint-set-10-x-20ml-non-toxic-water-based-for-miniature-figure-painting-limited.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/TapeCutter_Dispenser_DesktopOrganizerforWashiTape_MaskingTape_StickerRolls_8.jpg?v=1784108791",
+    "dest": "public/images/golden-maple/tape-cutter-dispenser-desktop-organizer-for-washi-tape-masking-tape-sticker-rolls-tape-cutter-1.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/0.8.jpg?v=1784861454",
+    "dest": "public/images/golden-maple/tape-cutter-dispenser-desktop-organizer-for-washi-tape-masking-tape-sticker-rolls-tape-cutter-0-8cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1_d703482b-02ae-4ff9-8a31-21f46b99fb36.jpg?v=1784861453",
+    "dest": "public/images/golden-maple/tape-cutter-dispenser-desktop-organizer-for-washi-tape-masking-tape-sticker-rolls-tape-cutter-1cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/1.2.jpg?v=1784861453",
+    "dest": "public/images/golden-maple/tape-cutter-dispenser-desktop-organizer-for-washi-tape-masking-tape-sticker-rolls-tape-cutter-1-2cm-masking-tape.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/ModelScriberwithTungstenSteelBlade_PrecisionPanelLineToolforGundam_ResinGK_andScaleModels_1.jpg?v=1784272268",
+    "dest": "public/images/golden-maple/model-scriber-with-tungsten-steel-blade-precision-panel-line-tool-for-gundam-resin-gk-and-scale-models.jpg"
+  },
+  {
+    "url": "https://cdn.shopify.com/s/files/1/0631/8053/8080/files/SilverNMM_NonMetallicMetal_ColorMiniaturePaintSet6Bottlesx20ml_1.jpg?v=1784775250",
+    "dest": "public/images/golden-maple/silver-nmm-non-metallic-metal-color-miniature-paint-set-6-bottles-x-20-ml-paint-set.jpg"
+  }
+]

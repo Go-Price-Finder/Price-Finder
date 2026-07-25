@@ -6,12 +6,26 @@ import { Resend } from "resend";
  * later.
  *
  * RESEND_API_KEY is read from the environment; see .env.local.example.
- * It's fine for this to be unset in development before a real key is
- * added — the Resend SDK only throws once something actually calls
- * `resend.emails.send()` without a key, not at import time, so `next dev`
- * / `next build` still work with no key configured.
+ * Lazy initialization ensures the client is only created when actually
+ * needed, preventing errors during build time when the API key might not
+ * be set. This allows `next dev` / `next build` to work without requiring
+ * a configured key.
  */
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+export function getResendClient(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+
+// Export a getter property for backward compatibility
+export const resend = {
+  get emails() {
+    return getResendClient().emails;
+  },
+};
 
 /**
  * The verified "from" address. In production this must be on a domain

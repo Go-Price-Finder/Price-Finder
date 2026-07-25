@@ -21,7 +21,7 @@ export type GoldenMapleProductCategory =
   | "Art Tools"
   | "Model Making"
   | "Beauty Tools"
-  | "Tools & Accessories"
+  | "Art Supplies"
   | "Craft Materials"
   | "Instrument Accessories"
   | "Tapes & Adhesives"
@@ -46,7 +46,7 @@ export const GOLDEN_MAPLE_CATEGORIES: GoldenMapleProductCategory[] = [
   "Art Tools",
   "Model Making",
   "Beauty Tools",
-  "Tools & Accessories",
+  "Art Supplies",
   "Craft Materials",
   "Instrument Accessories",
   "Tapes & Adhesives",
@@ -1143,7 +1143,7 @@ export const GOLDEN_MAPLE_PRODUCTS: GoldenMapleProduct[] = [
     deepLink: "https://www.awin1.com/cread.php?awinmid=124092&awinaffid=3002879&ued=https%3A%2F%2Fartgoldenmaple.com%2Fproducts%2Fgolden-maple-metal-magnetic-alligator-parts-clamp-set%3Fvariant%3D47400431026400",
     image: "/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs.jpg",
     images: ["/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs.jpg"],
-    category: "Tools & Accessories",
+    category: "Art Supplies",
   },
   {
     slug: "magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs-painting-handle",
@@ -1153,7 +1153,7 @@ export const GOLDEN_MAPLE_PRODUCTS: GoldenMapleProduct[] = [
     deepLink: "https://www.awin1.com/cread.php?awinmid=124092&awinaffid=3002879&ued=https%3A%2F%2Fartgoldenmaple.com%2Fproducts%2Fgolden-maple-metal-magnetic-alligator-parts-clamp-set%3Fvariant%3D51163235582176",
     image: "/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs-painting-handle.jpg",
     images: ["/images/golden-maple/magnetic-bendable-alligator-clip-sticks-set-30-pcs-flexible-version-30pcs-painting-handle.jpg"],
-    category: "Tools & Accessories",
+    category: "Art Supplies",
   },
   {
     slug: "professional-dry-brush-set-6pcs",
@@ -1823,7 +1823,7 @@ export const GOLDEN_MAPLE_PRODUCTS: GoldenMapleProduct[] = [
     deepLink: "https://www.awin1.com/cread.php?awinmid=124092&awinaffid=3002879&ued=https%3A%2F%2Fartgoldenmaple.com%2Fproducts%2Fgolden-maple-spring-clamp-for-seamless-model-gluing%3Fvariant%3D47515862171872",
     image: "/images/golden-maple/spring-clamp-for-seamless-model-gluing.jpg",
     images: ["/images/golden-maple/spring-clamp-for-seamless-model-gluing.jpg"],
-    category: "Tools & Accessories",
+    category: "Art Supplies",
   },
   {
     slug: "2pcs-small-paint-tray-mixing-palette-set-with-metal-stirrers-and-plastic-droppers",
@@ -2970,7 +2970,7 @@ export const GOLDEN_MAPLE_PRODUCTS: GoldenMapleProduct[] = [
     deepLink: "https://www.awin1.com/cread.php?awinmid=124092&awinaffid=3002879&ued=https%3A%2F%2Fartgoldenmaple.com%2Fproducts%2Fgolden-maple-mini-precision-miniature-vise-vise-360-swivel%3Fvariant%3D48402805850336",
     image: "/images/golden-maple/360-swivel-mini-precision-miniature-vise.webp",
     images: ["/images/golden-maple/360-swivel-mini-precision-miniature-vise.webp"],
-    category: "Tools & Accessories",
+    category: "Art Supplies",
   },
   {
     slug: "kolinsky-sable-with-red-sandalwood-handles-3-0-2-0-0-1-replaceable-brush-heads-a-set-of-4pcs-1-brush-3-heads",

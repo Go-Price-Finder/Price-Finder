@@ -55,7 +55,7 @@ export type BrooklynDelhiProduct = {
    * one ambiguous source photo group and so were left with a single
    * image rather than risk mismatching one tote's photo to the other. */
   images: string[];
-  category: "Food" | "Cook Book" | "Clothing" | "Bag" | "Accessories";
+  category: "Food" | "Cook Book" | "Clothing" | "Bag" | "Fridge Accessories";
   badge?: string;
   rating?: BrooklynDelhiRating;
 };
@@ -445,7 +445,7 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     deepLink: "https://brooklyndelhi.com/products/brooklyn-delhi-magnet-trio",
     image: "/images/brooklyn-delhi/brooklyn-delhi-magnet-trio.webp",
     images: ["/images/brooklyn-delhi/brooklyn-delhi-magnet-trio.webp"],
-    category: "Accessories",
+    category: "Fridge Accessories",
   },
 ];
 
@@ -455,7 +455,7 @@ export const BROOKLYN_DELHI_CATEGORIES: BrooklynDelhiProduct["category"][] = [
   "Cook Book",
   "Clothing",
   "Bag",
-  "Accessories",
+  "Fridge Accessories",
 ];
 
 export function formatBrooklynDelhiPrice(dollars: number): string {

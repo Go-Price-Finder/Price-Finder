@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 import Providers from "./providers";
@@ -60,6 +61,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-noir-900 text-ivory-50">
         <CinematicBackground />
         <Providers>{children}</Providers>
+        {/* Vercel Analytics — page-view tracking site-wide. A no-op outside
+            a Vercel deployment (no env vars needed), so it's safe to render
+            unconditionally including in local dev. */}
+        <Analytics />
       </body>
     </html>
   );

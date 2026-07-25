@@ -6,10 +6,11 @@ import PriceHistorySparkline from "./PriceHistorySparkline";
 
 /**
  * Card for any real, live product (lib/partners.ts's normalized
- * RealProduct — currently just Brooklyn Delhi, but partner-agnostic by
- * design so a second partner's products render identically). Replaces the
+ * RealProduct — partner-agnostic by design, so Brooklyn Delhi, EVDANCE,
+ * and Golden Maple products all render identically). Replaces the old
  * Brooklyn-Delhi-specific BrooklynDelhiCard now that more than one section
- * (homepage, /brooklyn-delhi, /search) needs the same real-product card.
+ * (homepage, partner pages, /search, /category) needs the same
+ * real-product card.
  *
  * Clicking the image/name goes to this product's own detail page on Price
  * Finder (not straight out to the partner's site) — the outbound purchase

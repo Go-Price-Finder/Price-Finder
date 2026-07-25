@@ -16,6 +16,11 @@ import {
   BROOKLYN_DELHI_PRODUCTS,
   type BrooklynDelhiProduct,
 } from "./brooklyn-delhi-data";
+import { EVDANCE_PRODUCTS, type EvdanceProduct } from "./evdance-data";
+import {
+  GOLDEN_MAPLE_PRODUCTS,
+  type GoldenMapleProduct,
+} from "./golden-maple-data";
 
 /** The shape every partner's products get normalized to, so homepage
  * sections and search can treat every real retailer identically instead
@@ -76,6 +81,53 @@ const BROOKLYN_DELHI_REAL_PRODUCTS = BROOKLYN_DELHI_PRODUCTS.map(
   normalizeBrooklynDelhi
 );
 
+// EVDANCE and Golden Maple's data files don't carry rating/badge fields
+// (the source Awin feed has neither) — normalizing them here just omits
+// those keys rather than fabricating placeholder values, consistent with
+// how normalizeBrooklynDelhi only ever passes through what its own real
+// data actually has.
+function normalizeEvdance(product: EvdanceProduct): RealProduct {
+  return {
+    id: `evdance:${product.slug}`,
+    slug: product.slug,
+    partnerId: "evdance",
+    partnerName: "EVDANCE",
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    originalPrice: product.originalPrice,
+    image: product.image,
+    images: product.images,
+    category: product.category,
+    deepLink: product.deepLink,
+    href: `/evdance/${product.slug}`,
+  };
+}
+
+const EVDANCE_REAL_PRODUCTS = EVDANCE_PRODUCTS.map(normalizeEvdance);
+
+function normalizeGoldenMaple(product: GoldenMapleProduct): RealProduct {
+  return {
+    id: `golden-maple:${product.slug}`,
+    slug: product.slug,
+    partnerId: "golden-maple",
+    partnerName: "Golden Maple",
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    originalPrice: product.originalPrice,
+    image: product.image,
+    images: product.images,
+    category: product.category,
+    deepLink: product.deepLink,
+    href: `/golden-maple/${product.slug}`,
+  };
+}
+
+const GOLDEN_MAPLE_REAL_PRODUCTS = GOLDEN_MAPLE_PRODUCTS.map(
+  normalizeGoldenMaple
+);
+
 /**
  * Every real, active partner. Add a new entry here (and its own
  * `normalize*` mapper above) to onboard another partner — every section
@@ -88,6 +140,20 @@ export const PARTNERS: Partner[] = [
     tagline: "Indian-inspired condiments, cookbooks & merch",
     href: "/brooklyn-delhi",
     products: BROOKLYN_DELHI_REAL_PRODUCTS,
+  },
+  {
+    id: "evdance",
+    name: "EVDANCE",
+    tagline: "EV charging cables, adapters & portable chargers",
+    href: "/evdance",
+    products: EVDANCE_REAL_PRODUCTS,
+  },
+  {
+    id: "golden-maple",
+    name: "Golden Maple",
+    tagline: "Artist brushes, model-making & miniature painting supplies",
+    href: "/golden-maple",
+    products: GOLDEN_MAPLE_REAL_PRODUCTS,
   },
 ];
 

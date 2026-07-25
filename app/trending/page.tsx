@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Trending == Best Sellers for now — with a single, brand-new partner
- * there's no real "what's suddenly popular" signal to compute separately
- * from "what's tagged Best Seller," so this page intentionally shows the
- * exact same real data as the homepage's Best Sellers section rather than
- * inventing a distinct trending algorithm on a one-partner catalog. Once
- * there's real traffic/sales data across multiple partners, this can
- * become its own ranking.
+ * Trending == Best Sellers for now — there's still no real traffic/sales
+ * signal to compute a distinct "what's suddenly popular" ranking from, so
+ * this page intentionally shows the exact same real data as the
+ * homepage's Best Sellers section (getBestSellers() across every active
+ * partner) rather than inventing a trending algorithm with no real usage
+ * data behind it. Once there's real traffic/sales data, this can become
+ * its own ranking.
  */
 export default function TrendingPage() {
   const products = getBestSellers();
@@ -48,8 +48,8 @@ export default function TrendingPage() {
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
             The same real products as our Best Sellers — trending and best
-            sellers are the same list while Brooklyn Delhi is our only
-            partner. More partners means a real trending signal here soon.
+            sellers are the same list until we have real traffic and sales
+            data to rank by instead.
           </p>
         </section>
 

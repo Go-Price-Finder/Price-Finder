@@ -9,10 +9,9 @@ import { ChevronRightIcon } from "./icons";
 /**
  * Real markdowns only, from lib/partners.ts's getFeaturedDeals() — a
  * product only shows up here when it has a genuine originalPrice greater
- * than its current price (currently just Brooklyn Delhi's Celebrations
- * Gift Box, $63 was $95). No mock/"Price TBA" data anymore, and the whole
- * section disappears rather than show a fabricated markdown when nothing
- * is actually on sale.
+ * than its current price, from any active partner. No mock/"Price TBA"
+ * data anymore, and the whole section disappears rather than show a
+ * fabricated markdown when nothing is actually on sale.
  */
 export default function FeaturedDeals() {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -82,10 +81,10 @@ export default function FeaturedDeals() {
 
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Link
-          href="/brooklyn-delhi"
+          href="/deals"
           className="group mt-6 inline-flex items-center gap-1 text-sm font-medium text-ivory-100 transition-colors hover:text-gilt-400"
         >
-          View all Brooklyn Delhi products
+          View all deals
           <ChevronRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
         </Link>
       </div>

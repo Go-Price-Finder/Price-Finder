@@ -1,15 +1,15 @@
 const COMING_NEXT = [
-  "More real partners and product catalogs beyond Brooklyn Delhi",
+  "More real partners and product catalogs beyond our first three",
   "Real price history and price-drop alerts once there's data to track",
   "Verified customer reviews for every real product",
-  "Search across every category, not just our first partner's",
+  "Ratings and Best Seller badges for EVDANCE and Golden Maple, once that data exists",
 ];
 
 /**
- * Sets expectations before visitors hit the (currently Brooklyn-Delhi-only)
- * real catalog — explains plainly that Price Finder is early and still
- * onboarding partners, rather than letting a mostly-empty site speak for
- * itself. Sits between Our Partners and Featured Deals on the homepage.
+ * Sets expectations before visitors hit the real catalog — explains
+ * plainly that Price Finder is early and still onboarding partners,
+ * rather than letting a still-growing site speak for itself. Sits between
+ * Our Partners and Featured Deals on the homepage.
  */
 export default function UnderConstruction() {
   return (

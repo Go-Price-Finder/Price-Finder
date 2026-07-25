@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { label: "Categories", href: "/#categories" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Deals", href: "/deals" },
+  { label: "Brooklyn Delhi", href: "/brooklyn-delhi" },
 ];
 
 export default function Header() {

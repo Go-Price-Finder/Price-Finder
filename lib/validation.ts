@@ -72,14 +72,29 @@ export function getPasswordStrengthLabel(score: number): PasswordStrengthLabel {
 // Username
 // ---------------------------------------------------------------------------
 
+import { PROFANITY_LIST } from "./profanity-list";
+
 export const USERNAME_MIN = 3;
 export const USERNAME_MAX = 20;
 export const USERNAME_PATTERN = /^[A-Za-z0-9_-]+$/;
 
 /**
+ * True if `username` contains any word from PROFANITY_LIST as a substring
+ * (case-insensitive, underscores/dashes stripped first so "b-i-t_c-h"-style
+ * evasion with allowed separator characters doesn't slip through). See
+ * lib/profanity-list.ts for the word list and its known limitations.
+ */
+export function containsProfanity(username: string): boolean {
+  const normalized = username.toLowerCase().replace(/[_-]/g, "");
+  return PROFANITY_LIST.some((word) => normalized.includes(word));
+}
+
+/**
  * Returns a human-readable error message if the username is invalid, or
  * null if it's valid. Checked in order so the user sees the single most
- * relevant issue rather than every problem at once.
+ * relevant issue rather than every problem at once. The profanity check
+ * runs last, after format checks, so a too-short or malformed username
+ * reports that first rather than a (possibly confusing) language warning.
  */
 export function getUsernameError(username: string): string | null {
   if (!username) return "Username is required.";
@@ -91,6 +106,8 @@ export function getUsernameError(username: string): string | null {
     return "Username can't contain spaces.";
   if (!USERNAME_PATTERN.test(username))
     return "Username can only contain letters, numbers, underscores, and dashes.";
+  if (containsProfanity(username))
+    return "Username contains inappropriate language. Please choose another.";
   return null;
 }
 

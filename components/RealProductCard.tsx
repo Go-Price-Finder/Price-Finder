@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { RealProduct } from "@/lib/partners";
 import { ExternalLinkIcon, StarIcon } from "./icons";
+import PriceHistorySparkline from "./PriceHistorySparkline";
 
 /**
  * Card for any real, live product (lib/partners.ts's normalized
@@ -15,6 +16,18 @@ import { ExternalLinkIcon, StarIcon } from "./icons";
  * link only happens via the explicit "Buy Now" button. "View Details" and
  * "Buy Now" sit together in one row so it's always clear which click does
  * what.
+ *
+ * Every optional row below (rating, price-history) reserves its height
+ * even when that product has no data for it, instead of only rendering
+ * conditionally — that's what keeps every card the same height in a row
+ * or grid, regardless of which products happen to have a rating yet.
+ *
+ * No "multiple retailers" indicator: RealProduct doesn't model alternate
+ * listings for the same item yet (every product currently has exactly one
+ * partner and one price). Add that back once the data actually supports
+ * more than one retailer selling the same product — showing it now would
+ * be exactly the kind of fabricated claim the rest of this site has
+ * deliberately avoided.
  */
 export default function RealProductCard({
   product,
@@ -26,7 +39,7 @@ export default function RealProductCard({
     product.originalPrice > product.price;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft-xl">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft-xl">
       <Link
         href={product.href}
         aria-label={product.name}
@@ -58,11 +71,13 @@ export default function RealProductCard({
         </div>
 
         {/* Name and price share a row so the two most important facts
-            about the product line up on the same baseline. */}
+            about the product line up on the same baseline. min-h reserves
+            2 lines' worth of space for the name regardless of whether it
+            wraps, so every card in a row lines up. */}
         <div className="flex items-start justify-between gap-3">
           <Link
             href={product.href}
-            className="line-clamp-2 flex-1 font-display text-base font-semibold leading-snug text-ivory-50 transition-colors hover:text-gilt-400"
+            className="line-clamp-2 min-h-[2.75rem] flex-1 font-display text-base font-semibold leading-snug text-ivory-50 transition-colors hover:text-gilt-400"
           >
             {product.name}
           </Link>
@@ -78,22 +93,36 @@ export default function RealProductCard({
           </div>
         </div>
 
-        {product.rating && (
-          <div className="flex items-center gap-1.5">
-            <StarIcon className="h-4 w-4 text-orange-400" />
-            <span className="text-sm font-semibold text-orange-400">
-              {product.rating.stars}
-            </span>
-            <span className="text-xs text-ivory-400">
-              ({product.rating.count})
-            </span>
-          </div>
-        )}
+        {/* Fixed-height row whether or not this product has a rating yet,
+            so cards without one (still early in the catalog) don't come
+            out shorter than cards that do. */}
+        <div className="flex h-5 items-center gap-1.5">
+          {product.rating ? (
+            <>
+              <StarIcon className="h-4 w-4 text-orange-400" />
+              <span className="text-sm font-semibold text-orange-400">
+                {product.rating.stars}
+              </span>
+              <span className="text-xs text-ivory-400">
+                ({product.rating.count})
+              </span>
+            </>
+          ) : (
+            <span className="text-xs text-ivory-400">No ratings yet</span>
+          )}
+        </div>
+
+        <PriceHistorySparkline
+          price={product.price}
+          originalPrice={product.originalPrice}
+        />
 
         {/* View Details (internal) and Buy Now (outbound) together on one
             row, same size, so it's obvious both are equally valid next
-            steps rather than one being a disabled/secondary action. */}
-        <div className="mt-2 flex items-center gap-2">
+            steps rather than one being a disabled/secondary action.
+            mt-auto pins this to the bottom of the card regardless of how
+            much space the content above takes up. */}
+        <div className="mt-auto flex items-center gap-2 pt-1">
           <Link
             href={product.href}
             className="flex-1 rounded-full border border-gilt-500/30 bg-noir-700 px-3 py-2 text-center text-xs font-semibold text-ivory-100 transition-colors hover:border-gilt-400 hover:text-gilt-400"

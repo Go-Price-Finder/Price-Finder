@@ -18,7 +18,7 @@ export default function OurPartners() {
         <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
           Our Partners
         </span>
-        <h2 className="mt-2 font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
+        <h2 className="mt-2 font-display text-4xl font-medium tracking-tight text-ivory-50 sm:text-5xl">
           Shops we work with
         </h2>
         <span aria-hidden className="mx-auto mt-4 block h-[3px] w-14 rounded-full bg-gilt-500" />

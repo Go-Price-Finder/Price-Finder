@@ -1,67 +1,51 @@
-"use client";
-
-import { PricePoint } from "@/lib/types";
-import { analyzePriceHistory } from "@/lib/data";
-import { buildAreaPath, buildLinePath, scalePoints } from "@/lib/chart-utils";
-import { useTheme } from "@/lib/theme-context";
-
-const WIDTH = 120;
-const HEIGHT = 32;
-
-// Mirrors --color-price-down/-up/-ivory-400 per theme — SVG stroke/fill
-// props take a literal color, not a Tailwind class. Keep in sync with
-// app/globals.css and PriceHistoryChart.tsx's identical COLORS map.
-const COLORS = {
-  light: { down: "#1f9d55", up: "#d1373c", flat: "#9c9284" },
-  dark: { down: "#3ecf8e", up: "#e5484d", flat: "#a89a8e" },
-};
-
+/**
+ * Price history strip for a real product card. Price Finder only just
+ * launched, so every real product currently has exactly one price data
+ * point — rather than fabricate a fake multi-point trend line (which the
+ * rest of this site has deliberately avoided doing, see lib/data.ts's
+ * sanitization notes), this renders an honest flat line with a single
+ * "today" marker and a plain-language caption. Once a product has real
+ * price history (multiple recorded prices over time), swap the flat line
+ * for an actual polyline plotted from that data — the SVG viewBox/marker
+ * setup here is already shaped to make that a drop-in change.
+ */
 export default function PriceHistorySparkline({
-  history,
-  className = "",
+  price,
+  originalPrice,
 }: {
-  history: PricePoint[];
-  className?: string;
+  price: number;
+  originalPrice?: number;
 }) {
-  const { theme } = useTheme();
-  const points = scalePoints(history, WIDTH, HEIGHT);
-  const { isDown, isFlat } = analyzePriceHistory(history);
-  const palette = COLORS[theme];
-  // Green for a price drop, red for an increase — kept in sync with
-  // PriceHistoryChart.tsx's stroke colors.
-  const strokeColor = isFlat ? palette.flat : isDown ? palette.down : palette.up;
+  const hasDiscount = typeof originalPrice === "number" && originalPrice > price;
 
   return (
-    <svg
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      className={className}
-      role="img"
-      aria-label="Price history over the last 6 months"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <linearGradient id="sparkline-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={strokeColor} stopOpacity="0.18" />
-          <stop offset="100%" stopColor={strokeColor} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={buildAreaPath(points, HEIGHT)} fill="url(#sparkline-fill)" />
-      <path
-        d={buildLinePath(points)}
+    <div className="flex items-center gap-2 rounded-xl border border-noir-600 bg-noir-800/50 px-2.5 py-2">
+      <svg
+        width="48"
+        height="20"
+        viewBox="0 0 48 20"
         fill="none"
-        stroke={strokeColor}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {points.length > 0 && (
-        <circle
-          cx={points[points.length - 1].x}
-          cy={points[points.length - 1].y}
-          r="2.5"
-          fill={strokeColor}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
+        className="shrink-0"
+      >
+        <line
+          x1="2"
+          y1="10"
+          x2="46"
+          y2="10"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeDasharray="2 3"
+          className="text-ivory-400/50"
         />
-      )}
-    </svg>
+        <circle cx="46" cy="10" r="3" className="fill-gilt-500" />
+      </svg>
+      <span className="text-xs font-medium text-ivory-400">
+        {hasDiscount
+          ? `Tracking since launch — 1 price drop ($${originalPrice} → $${price})`
+          : "Tracking since launch — no price changes yet"}
+      </span>
+    </div>
   );
 }

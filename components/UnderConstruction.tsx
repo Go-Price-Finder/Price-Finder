@@ -20,10 +20,8 @@ export default function UnderConstruction() {
           Under Construction
         </span>
         <p className="max-w-2xl text-balance text-sm leading-relaxed text-ivory-300 sm:text-base">
-          Price Finder is early — right now Brooklyn Delhi is our first real,
-          live partner, and everything below reflects their actual catalog
-          and prices. We&rsquo;re actively onboarding more partners, so the
-          site will keep growing from here.
+          We&rsquo;re actively working on bringing more retail partners on
+          board. More coming soon, thank you for your patience as we grow!
         </p>
         <ul className="mt-1 flex flex-wrap justify-center gap-2">
           {COMING_NEXT.map((item) => (

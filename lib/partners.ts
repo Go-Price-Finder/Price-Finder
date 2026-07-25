@@ -16,11 +16,6 @@ import {
   BROOKLYN_DELHI_PRODUCTS,
   type BrooklynDelhiProduct,
 } from "./brooklyn-delhi-data";
-import { EVDANCE_PRODUCTS, type EvdanceProduct } from "./evdance-data";
-import {
-  GOLDEN_MAPLE_PRODUCTS,
-  type GoldenMapleProduct,
-} from "./golden-maple-data";
 
 /** The shape every partner's products get normalized to, so homepage
  * sections and search can treat every real retailer identically instead
@@ -77,48 +72,8 @@ function normalizeBrooklynDelhi(product: BrooklynDelhiProduct): RealProduct {
   };
 }
 
-function normalizeEvdance(product: EvdanceProduct): RealProduct {
-  return {
-    id: `evdance:${product.slug}`,
-    slug: product.slug,
-    partnerId: "evdance",
-    partnerName: "EVDANCE",
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    image: product.image,
-    images: product.images,
-    category: product.category,
-    deepLink: product.deepLink,
-    href: `/evdance/${product.slug}`,
-  };
-}
-
-function normalizeGoldenMaple(product: GoldenMapleProduct): RealProduct {
-  return {
-    id: `golden-maple:${product.slug}`,
-    slug: product.slug,
-    partnerId: "golden-maple",
-    partnerName: "Golden Maple",
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    image: product.image,
-    images: product.images,
-    category: product.category,
-    deepLink: product.deepLink,
-    href: `/golden-maple/${product.slug}`,
-  };
-}
-
 const BROOKLYN_DELHI_REAL_PRODUCTS = BROOKLYN_DELHI_PRODUCTS.map(
   normalizeBrooklynDelhi
-);
-const EVDANCE_REAL_PRODUCTS = EVDANCE_PRODUCTS.map(normalizeEvdance);
-const GOLDEN_MAPLE_REAL_PRODUCTS = GOLDEN_MAPLE_PRODUCTS.map(
-  normalizeGoldenMaple
 );
 
 /**
@@ -133,20 +88,6 @@ export const PARTNERS: Partner[] = [
     tagline: "Indian-inspired condiments, cookbooks & merch",
     href: "/brooklyn-delhi",
     products: BROOKLYN_DELHI_REAL_PRODUCTS,
-  },
-  {
-    id: "evdance",
-    name: "EVDANCE",
-    tagline: "EV charging cables, adapters & portable chargers",
-    href: "/evdance",
-    products: EVDANCE_REAL_PRODUCTS,
-  },
-  {
-    id: "golden-maple",
-    name: "Golden Maple",
-    tagline: "Art brushes, model-making tools & craft supplies",
-    href: "/golden-maple",
-    products: GOLDEN_MAPLE_REAL_PRODUCTS,
   },
 ];
 
@@ -170,11 +111,6 @@ export type RealCategory = {
   name: string;
   image: string;
   itemCount: number;
-  /** Which partner's page this category's tile should link to — categories
-   * are scoped per-partner (not merged across partners even if two happen
-   * to share a name), since each partner's category anchor only exists on
-   * that partner's own page. */
-  partnerId: string;
 };
 
 export function slugifyRealCategory(name: string): string {
@@ -184,26 +120,35 @@ export function slugifyRealCategory(name: string): string {
 /** Only categories that currently have at least one real product —
  * auto-shrinks/grows as partners and their catalogs change. Each
  * category's tile image is its first product's real photo, not a
- * placeholder. Grouped per-partner (see RealCategory.partnerId) so two
- * partners that happen to use the same category name (e.g. both having an
- * "Accessories" bucket) don't get incorrectly merged into one tile. */
+ * placeholder. */
 export function getRealCategories(): RealCategory[] {
-  const byKey = new Map<string, RealProduct[]>();
-  for (const partner of PARTNERS) {
-    for (const product of partner.products) {
-      const key = `${product.partnerId}:${product.category}`;
-      const list = byKey.get(key) ?? [];
-      list.push(product);
-      byKey.set(key, list);
-    }
+  const products = getAllRealProducts();
+  const byCategory = new Map<string, RealProduct[]>();
+  for (const product of products) {
+    const list = byCategory.get(product.category) ?? [];
+    list.push(product);
+    byCategory.set(product.category, list);
   }
-  return Array.from(byKey.values()).map((items) => ({
-    slug: slugifyRealCategory(items[0].category),
-    name: items[0].category,
+  return Array.from(byCategory.entries()).map(([name, items]) => ({
+    slug: slugifyRealCategory(name),
+    name,
     image: items[0].image,
     itemCount: items.length,
-    partnerId: items[0].partnerId,
   }));
+}
+
+/** A single real category by its slug, plus only the real products in it
+ * — used by the dedicated per-category page so clicking "Food" on Popular
+ * Categories shows just Food, not every category stacked on one page. */
+export function getCategoryBySlug(
+  slug: string
+): (RealCategory & { products: RealProduct[] }) | undefined {
+  const category = getRealCategories().find((c) => c.slug === slug);
+  if (!category) return undefined;
+  return {
+    ...category,
+    products: getAllRealProducts().filter((p) => p.category === category.name),
+  };
 }
 
 /** Real markdowns only — a product counts as a deal when it has a real

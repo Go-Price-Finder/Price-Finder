@@ -44,8 +44,8 @@ export default function PopularCategories() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <Link
-              key={`${category.partnerId}:${category.slug}`}
-              href={`/${category.partnerId}#${category.slug}`}
+              key={category.slug}
+              href={`/category/${category.slug}`}
               className="group flex flex-col overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-all duration-300 hover:-translate-y-1.5 hover:shadow-soft-xl"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden">

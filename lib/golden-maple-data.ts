@@ -2678,7 +2678,14 @@ export const GOLDEN_MAPLE_PRODUCTS: GoldenMapleProduct[] = [
   {
     slug: "2-in-1-wet-palette-kit-miniature-painting",
     name: "2 in 1 Wet Palette Kit - Miniature Painting",
-    description: "\\",
+    // Source feed's own description for this exact variant was just a
+    // stray "\" (a vendor data-entry gap, not a parsing bug — confirmed
+    // against the raw CSV). Backfilled with Golden Maple's own real copy
+    // for the same wet-palette-kit product line, shared verbatim across
+    // its other listed variants in the feed, rather than showing a
+    // placeholder or fabricating new text.
+    description:
+      "Keeps Paint Fresh for Days: Designed for miniature painting, our stay-wet palette keeps acrylic paint moist and workable for longer—perfect for extended sessions or layering techniques. Complete 2-in-1 Set: Includes 2 wet palettes (top tray and bottom tray) and a dry palette (middle tray). A practical setup that helps you stay organized during your painting routine. Organized Brush Storage: The middle tray conveniently holds your brushes and tools, keeping your workspace tidy. Great for home studios and dedicated painting areas. Premium Materials Included: Comes with 4 ultra-absorbent sponges and 100 sheets of palette paper—keeping paint fresh and vibrant for days, even between sessions. Perfect for Miniature Artists & Hobbyists: Compatible with acrylics, watercolors, and gouache. Ideal for miniature painting, model detailing, and Warhammer accessories.",
     price: 35.99,
     deepLink: "https://www.awin1.com/cread.php?awinmid=124092&awinaffid=3002879&ued=https%3A%2F%2Fartgoldenmaple.com%2Fproducts%2Fgolden-maple-2-in-1-wet-palette-kit-for-acrylic-miniature-painting%3Fvariant%3D47769117098208",
     image: "/images/golden-maple/2-in-1-wet-palette-kit-miniature-painting.webp",

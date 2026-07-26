@@ -23,9 +23,30 @@
  * doc). If you're editing this file by hand instead of via the script,
  * only ever add new lines at the two markers below — everything else
  * should stay generic.
+ *
+ * COMPLIANCE GATE — hard requirement, enforced here regardless of how a
+ * partner got wired into the array below: no partner's products are ever
+ * returned by getAllRealProducts()/getPartner()/etc. unless
+ * lib/partner-compliance.ts's isPartnerLive() says that partner has
+ * passed terms review (an entry exists, status is "active", and the
+ * comparison-engine eligibility is explicitly confirmed). A partner
+ * failing that check is filtered out entirely at module load, below —
+ * this is the render-time backstop for the same gate
+ * scripts/import-partner.mjs enforces at import time, so a bad status
+ * value or a hand-added PARTNERS entry can't bypass it. Per-partner image
+ * restrictions (imageUsagePermission: "pending") and per-SKU
+ * Best-Sellers/Deals restrictions (excludedProducts: true) are enforced
+ * the same way, more narrowly — see normalizeProduct and
+ * getFeaturedDeals/getBestSellers below.
  */
 
 import { getParentCategory } from "./category-map";
+import {
+  IMAGE_PENDING_PLACEHOLDER,
+  canShowRealImages,
+  isPartnerLive,
+  requiresPerSkuFeatureCheck,
+} from "./partner-compliance";
 
 import {
   BROOKLYN_DELHI_PRODUCTS,
@@ -109,12 +130,22 @@ export type Partner = {
 
 /** The one normalizer every partner's products go through. Partner data
  * files intentionally all share `RawPartnerProduct`'s shape so this never
- * needs a partner-specific variant — see the file-level comment. */
+ * needs a partner-specific variant — see the file-level comment.
+ *
+ * Compliance image gate lives here: when canShowRealImages(partnerId) is
+ * false (imageUsagePermission: "pending" in lib/partner-compliance.json —
+ * currently Brooklyn Delhi, awaiting written confirmation), every real
+ * photo is swapped for IMAGE_PENDING_PLACEHOLDER instead of the vendor's
+ * actual product image. This runs for every product from that partner
+ * with no per-product opt-out — the restriction is per-partner, not
+ * per-SKU, so there's no data field that could accidentally let one
+ * product's real photo through while the rest are gated. */
 function normalizeProduct(
   product: RawPartnerProduct,
   partnerId: string,
   partnerName: string
 ): RealProduct {
+  const imagesAllowed = canShowRealImages(partnerId);
   return {
     id: `${partnerId}:${product.slug}`,
     slug: product.slug,
@@ -124,8 +155,10 @@ function normalizeProduct(
     description: product.description,
     price: product.price,
     originalPrice: product.originalPrice,
-    image: product.image,
-    images: product.images,
+    image: imagesAllowed ? product.image : IMAGE_PENDING_PLACEHOLDER,
+    images: imagesAllowed
+      ? product.images
+      : [IMAGE_PENDING_PLACEHOLDER],
     category: product.category,
     parentCategory: getParentCategory(product.category).name,
     badge: product.badge,
@@ -146,12 +179,13 @@ const GOLDEN_MAPLE_REAL_PRODUCTS = GOLDEN_MAPLE_PRODUCTS.map(
 );
 
 /**
- * Every real, active partner. scripts/import-partner.mjs appends new
- * entries at PARTNER_REGISTRY_MARKER below — every section that reads
- * from getAllRealProducts()/getRealCategories() picks a new entry up
+ * Every partner wired into the codebase — NOT the same as "every partner
+ * that displays," see PARTNERS below. scripts/import-partner.mjs appends
+ * new entries at PARTNER_REGISTRY_MARKER — every section that reads from
+ * getAllRealProducts()/getRealCategories() picks a new entry up
  * automatically, no other file needs to change.
  */
-export const PARTNERS: Partner[] = [
+const ALL_WIRED_PARTNERS: Partner[] = [
   {
     id: "brooklyn-delhi",
     name: "Brooklyn Delhi",
@@ -177,6 +211,32 @@ export const PARTNERS: Partner[] = [
   // `{ id, name, tagline, href, products }` entries directly above this
   // comment. Don't remove the comment itself.
 ];
+
+/**
+ * Every partner that actually displays on the live site — ALL_WIRED_PARTNERS
+ * filtered through the compliance gate (lib/partner-compliance.ts's
+ * isPartnerLive). A partner can be present in the codebase (data file
+ * written, wired into ALL_WIRED_PARTNERS above) and still never appear
+ * here — e.g. its compliance status was changed back from "active", or it
+ * was wired in by hand without going through scripts/import-partner.mjs's
+ * own gate. This is the one list every homepage section, partner page,
+ * category page, and search query actually reads from
+ * (getAllRealProducts/getPartner/etc. below all derive from PARTNERS, not
+ * ALL_WIRED_PARTNERS) — so a compliance failure here means the partner is
+ * invisible everywhere on the site, not just skipped in one section.
+ */
+export const PARTNERS: Partner[] = ALL_WIRED_PARTNERS.filter((partner) => {
+  const live = isPartnerLive(partner.id);
+  if (!live && process.env.NODE_ENV !== "production") {
+    // Intentional build/dev-time visibility into why a wired-in partner
+    // isn't showing; not a runtime error, so this shouldn't throw and
+    // break the build.
+    console.warn(
+      `[compliance] "${partner.id}" is wired into lib/partners.ts but is not "active" and comparison-engine-confirmed in lib/partner-compliance.json — its ${partner.products.length} product(s) will not display anywhere on the site.`
+    );
+  }
+  return live;
+});
 
 export function getAllRealProducts(): RealProduct[] {
   return PARTNERS.flatMap((partner) => partner.products);
@@ -246,9 +306,19 @@ export function getCategoryBySlug(
 
 /** Real markdowns only — a product counts as a deal when it has a real
  * originalPrice greater than its current price. Empty array (not a
- * fabricated fallback) when nothing is actually on sale. */
+ * fabricated fallback) when nothing is actually on sale.
+ *
+ * Compliance gate: excludes every product from a partner whose
+ * excludedProducts flag is set in lib/partner-compliance.json (some SKUs
+ * are excluded from commission and must be verified per-SKU before
+ * featuring — RealProduct doesn't model a per-SKU override yet, so until
+ * it does, the conservative behavior is to leave that partner's products
+ * out of curated placements like Deals entirely rather than risk
+ * featuring an excluded SKU). Its products still appear on its own
+ * partner page and in search — this only gates the curated sections. */
 export function getFeaturedDeals(): RealProduct[] {
   return getAllRealProducts()
+    .filter((p) => !requiresPerSkuFeatureCheck(p.partnerId))
     .filter((p) => typeof p.originalPrice === "number" && p.originalPrice > p.price)
     .sort((a, b) => {
       const pctA = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
@@ -259,11 +329,17 @@ export function getFeaturedDeals(): RealProduct[] {
 
 /** "Best sellers" — real products carrying a "Best Seller" badge from the
  * source data, falling back to the highest-rated products if no partner
- * has tagged any yet, so the section never shows an arbitrary slice. */
+ * has tagged any yet, so the section never shows an arbitrary slice.
+ *
+ * Same per-SKU compliance gate as getFeaturedDeals above — a partner
+ * flagged excludedProducts is left out of Best Sellers entirely until its
+ * products get a real per-SKU commission-exclusion check. */
 export function getBestSellers(partnerIds?: string[]): RealProduct[] {
-  const pool = partnerIds
-    ? getAllRealProducts().filter((p) => partnerIds.includes(p.partnerId))
-    : getAllRealProducts();
+  const pool = (
+    partnerIds
+      ? getAllRealProducts().filter((p) => partnerIds.includes(p.partnerId))
+      : getAllRealProducts()
+  ).filter((p) => !requiresPerSkuFeatureCheck(p.partnerId));
 
   const badged = pool.filter((p) => p.badge === "Best Seller");
   if (badged.length > 0) return badged;

@@ -28,6 +28,22 @@
  *      pass/fail, so a broken import is caught immediately instead of
  *      discovered later.
  *
+ * COMPLIANCE GATE — runs FIRST, before any CSV parsing or file writes,
+ * against lib/partner-compliance.json (the same registry
+ * lib/partner-compliance.ts reads for the live site's own render-time
+ * gate — see that file's header comment for why it's checked in both
+ * places). This is a hard requirement: a partner that isn't in the
+ * registry, isn't "active", or isn't comparisonEngineConfirmed gets
+ * BLOCKED here — the script exits before touching the filesystem, so a
+ * bad import can't even generate a data file, let alone wire one in.
+ * softer per-partner restrictions (pending image permission, a
+ * plagiarism-review requirement, a per-SKU featuring check) don't block
+ * the import but ARE printed in the compliance report and enforced
+ * further down (image download is skipped/placeholder'd, descriptions
+ * that look copied verbatim from the feed are flagged for manual
+ * rewrite). See the "0. Compliance gate" section below for the actual
+ * checks, and DESIGN_SPEC.md for the full policy writeup.
+ *
  * WHAT THIS CANNOT PROMISE, honestly: "drop in ANY CSV, zero config" only
  * holds when the CSV's column names are close enough to the DEFAULT_MAPPING
  * candidates below (Awin-feed-style — search_price/price, image_link,
@@ -133,6 +149,122 @@ const PARTNER_NAME = args["partner-name"];
 const TAGLINE = args.tagline ?? "";
 
 // ---------------------------------------------------------------------
+// 0. Compliance gate — reads the SAME registry the live site's own
+//    render-time gate reads (lib/partner-compliance.ts), so a partner
+//    that's blocked here could never have snuck through some other way.
+//    This runs before any CSV parsing, category classification, image
+//    downloading, or file writing — a blocked partner leaves no trace on
+//    disk.
+// ---------------------------------------------------------------------
+
+const complianceRegistry = JSON.parse(
+  readFileSync(join(ROOT, "lib", "partner-compliance.json"), "utf-8")
+);
+const complianceEntry = complianceRegistry.partners[PARTNER_ID];
+
+function printComplianceReport(entry) {
+  console.log("=".repeat(72));
+  console.log(`COMPLIANCE REPORT — ${PARTNER_ID}`);
+  console.log("=".repeat(72));
+
+  if (!entry) {
+    console.log(`  BLOCKED  No entry for "${PARTNER_ID}" in lib/partner-compliance.json.`);
+    console.log("");
+    return { blocked: true, reason: "Partner not found in compliance registry — terms must be reviewed before import." };
+  }
+
+  const passed = [];
+  const blocked = [];
+  const warnings = [];
+
+  // Hard blockers — any one of these stops the import entirely.
+  if (entry.status !== "active") {
+    blocked.push(
+      `status is "${entry.status}", not "active" — Partner is not yet an approved/active affiliate — do not display products live.`
+    );
+  } else {
+    passed.push(`status: "active"`);
+  }
+
+  if (entry.comparisonEngineConfirmed === false) {
+    blocked.push(
+      `comparisonEngineConfirmed: false — partner type hasn't been confirmed as eligible for a comparison site.` +
+        (entry.comparisonEngineNote ? ` ${entry.comparisonEngineNote}` : "")
+    );
+  } else {
+    passed.push("comparisonEngineConfirmed: true");
+  }
+
+  // Soft restrictions — reported, enforced further down, but don't block
+  // the import outright.
+  if (entry.imageUsagePermission === "pending") {
+    warnings.push(
+      `imageUsagePermission: "pending" — real product images will NOT be downloaded/displayed; the placeholder image is used instead until this is updated to "confirmed".` +
+        (entry.imageUsageNote ? ` (${entry.imageUsageNote})` : "")
+    );
+  } else if (entry.imageUsagePermission === "confirmed") {
+    passed.push(`imageUsagePermission: "confirmed"`);
+  }
+
+  if (entry.noPlagiarism === true) {
+    warnings.push(
+      `noPlagiarism: true — every product description will be checked against the raw feed text; close/verbatim matches are flagged below for manual rewrite before going live.` +
+        (entry.noPlagiarismNote ? ` (${entry.noPlagiarismNote})` : "")
+    );
+  }
+
+  if (entry.excludedProducts === true) {
+    warnings.push(
+      `excludedProducts: true — this partner's products will be excluded from Best Sellers/Deals by default (see lib/partners.ts) until each SKU is individually verified as commission-eligible.` +
+        (entry.excludedProductsNote ? ` (${entry.excludedProductsNote})` : "")
+    );
+  }
+
+  if (entry.ftcDisclosureRequired === true) {
+    warnings.push("ftcDisclosureRequired: true — confirm the site's affiliate-disclosure copy covers this partner before going live.");
+  }
+  if (entry.noMedicalClaims === true) {
+    warnings.push(`noMedicalClaims: true — review descriptions for medical/curative claims before going live.${entry.noMedicalClaimsNote ? ` (${entry.noMedicalClaimsNote})` : ""}`);
+  }
+  if (entry.priceSyncSensitive === true) {
+    warnings.push(`priceSyncSensitive: true — re-sync this partner's feed frequently; do not let imported prices go stale.${entry.priceSyncNote ? ` (${entry.priceSyncNote})` : ""}`);
+  }
+  if (entry.noDiscountLanguageNearBrand === true) {
+    warnings.push(`noDiscountLanguageNearBrand: true — review copy for "best price/discount/% off" language next to the brand name.${entry.noDiscountLanguageNote ? ` (${entry.noDiscountLanguageNote})` : ""}`);
+  }
+
+  console.log(`  network: ${entry.network ?? "(not set)"}   status: ${entry.status}`);
+  console.log("");
+  if (passed.length > 0) {
+    console.log("  PASSED:");
+    for (const p of passed) console.log(`    ✓ ${p}`);
+  }
+  if (warnings.length > 0) {
+    console.log("  RESTRICTIONS (import proceeds, but these are enforced/flagged):");
+    for (const w of warnings) console.log(`    ⚠ ${w}`);
+  }
+  if (blocked.length > 0) {
+    console.log("  BLOCKED:");
+    for (const b of blocked) console.log(`    ✗ ${b}`);
+  }
+  console.log("");
+
+  if (blocked.length > 0) {
+    return { blocked: true, reason: blocked[0], entry };
+  }
+  return { blocked: false, entry, imagesBlocked: entry.imageUsagePermission === "pending", checkPlagiarism: entry.noPlagiarism === true };
+}
+
+const complianceResult = printComplianceReport(complianceEntry);
+if (complianceResult.blocked) {
+  console.error(`Import blocked: ${complianceResult.reason}`);
+  console.error("No files were written.");
+  process.exit(1);
+}
+const IMAGES_BLOCKED_BY_COMPLIANCE = complianceResult.imagesBlocked;
+const CHECK_PLAGIARISM = complianceResult.checkPlagiarism;
+
+// ---------------------------------------------------------------------
 // 2. Column mapping
 // ---------------------------------------------------------------------
 
@@ -232,6 +364,21 @@ function splitImages(raw) {
     .filter(Boolean);
 }
 
+/** Kept in sync by hand with lib/partner-compliance.ts's looksCopiedVerbatim
+ * (this script is plain Node ESM and can't import that .ts file directly).
+ * Conservative near-duplicate check used only when the partner's
+ * noPlagiarism flag is set — flags a description as needing manual
+ * rewrite when it's a long, close match against the raw feed text, not
+ * for any incidental short-phrase overlap. */
+function looksCopiedVerbatim(generatedDescription, sourceFeedText) {
+  const normalize = (s) => (s || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const a = normalize(generatedDescription);
+  const b = normalize(sourceFeedText);
+  if (!a || !b) return false;
+  if (a.length < 40 || b.length < 40) return false;
+  return a === b || a.includes(b) || b.includes(a);
+}
+
 // ---------------------------------------------------------------------
 // 5. Parse + validate + classify
 // ---------------------------------------------------------------------
@@ -274,6 +421,7 @@ console.log("");
 const seenSlugs = new Map(); // slug -> count, for de-duplication
 const products = [];
 const warnings = [];
+const plagiarismFlags = []; // only populated when CHECK_PLAGIARISM is true
 let skippedRows = 0;
 
 for (const [i, row] of parsed.data.entries()) {
@@ -330,10 +478,15 @@ for (const [i, row] of parsed.data.entries()) {
     idx === 0 ? `/images/${PARTNER_ID}/${slug}.webp` : `/images/${PARTNER_ID}/${slug}-${idx + 1}.webp`
   );
 
+  const finalDescription = description || `${name} from ${PARTNER_NAME}.`;
+  if (CHECK_PLAGIARISM && looksCopiedVerbatim(finalDescription, description)) {
+    plagiarismFlags.push({ name, slug, rowNum });
+  }
+
   products.push({
     slug,
     name,
-    description: description || `${name} from ${PARTNER_NAME}.`,
+    description: finalDescription,
     price,
     originalPrice,
     deepLink,
@@ -360,6 +513,23 @@ if (warnings.length > 0) {
 console.log(`\nCategory -> parent category breakdown:`);
 for (const [key, count] of [...categoryBreakdown.entries()].sort()) {
   console.log(`  ${count.toString().padStart(4)}  ${key}`);
+}
+
+if (CHECK_PLAGIARISM) {
+  if (plagiarismFlags.length > 0) {
+    console.log(
+      `\n⚠ COMPLIANCE: ${plagiarismFlags.length} description(s) closely match the raw feed text and need manual rewrite before going live (noPlagiarism is set for this partner):`
+    );
+    for (const f of plagiarismFlags.slice(0, 20)) {
+      console.log(`  - row ${f.rowNum} ("${f.name}", slug: ${f.slug})`);
+    }
+    if (plagiarismFlags.length > 20) console.log(`  ... and ${plagiarismFlags.length - 20} more`);
+    console.log(
+      `  These products were still written to the data file (this check informs manual review, it doesn't block import) — rewrite each flagged description independently before this partner goes live.`
+    );
+  } else {
+    console.log(`\n✓ COMPLIANCE: noPlagiarism check ran on ${products.length} product(s) — no close/verbatim matches against the raw feed text found.`);
+  }
 }
 
 if (products.length === 0) {
@@ -398,7 +568,15 @@ async function downloadAndResize(url, destRelPath) {
 
 let imageResults = { ok: 0, skipped: 0, failed: [] };
 
-if (!args["skip-images"]) {
+if (IMAGES_BLOCKED_BY_COMPLIANCE) {
+  console.log(
+    `\n⚠ COMPLIANCE: imageUsagePermission is "pending" for this partner — not downloading real images. ` +
+      `The live site substitutes a placeholder image for every product from this partner (see ` +
+      `lib/partner-compliance.ts's canShowRealImages) regardless of what's on disk, so skipping the ` +
+      `download here just avoids fetching images that can't be shown yet. Re-run this script once ` +
+      `imageUsagePermission is updated to "confirmed" in lib/partner-compliance.json to fetch them.`
+  );
+} else if (!args["skip-images"]) {
   console.log(`\nDownloading and resizing images (WebP, max 1600x1600)...`);
   const CONCURRENCY = 8;
   const jobs = products.flatMap((p) =>
@@ -557,11 +735,29 @@ partnersSrc = partnersSrc.replace(registryMarker, registryEntry + registryMarker
 writeFileSync(partnersPath, partnersSrc);
 console.log(`Wired "${PARTNER_ID}" into lib/partners.ts (import + PARTNERS entry).`);
 
+const stillNeeded = [
+  `app/${PARTNER_ID}/page.tsx (category-grouped listing) and app/${PARTNER_ID}/[slug]/page.tsx (product detail page) — copy an existing partner's (e.g. app/evdance/) and swap the partner id/name.`,
+];
+if (IMAGES_BLOCKED_BY_COMPLIANCE) {
+  stillNeeded.push(
+    `Get imageUsagePermission confirmed for "${PARTNER_ID}" in lib/partner-compliance.json, then re-run this script to fetch real images — until then every product from this partner shows the placeholder image site-wide.`
+  );
+}
+if (CHECK_PLAGIARISM && plagiarismFlags.length > 0) {
+  stillNeeded.push(
+    `Manually rewrite the ${plagiarismFlags.length} flagged description(s) above in lib/${PARTNER_ID}-data.ts — noPlagiarism is set for this partner and they currently match the raw feed text closely.`
+  );
+}
+if (complianceEntry.excludedProducts === true) {
+  stillNeeded.push(
+    `Verify per-SKU commission eligibility for "${PARTNER_ID}" before manually re-enabling it in Best Sellers/Deals — lib/partners.ts excludes this partner from both by default because excludedProducts is set.`
+  );
+}
+stillNeeded.push("Commit and push.");
+
 console.log(
   `\nStill needed before this partner is live:\n` +
-    `  - app/${PARTNER_ID}/page.tsx (category-grouped listing) and app/${PARTNER_ID}/[slug]/page.tsx ` +
-    `(product detail page) — copy an existing partner's (e.g. app/evdance/) and swap the partner id/name.\n` +
-    `  - Commit and push.`
+    stillNeeded.map((item) => `  - ${item}`).join("\n")
 );
 
 // ---------------------------------------------------------------------

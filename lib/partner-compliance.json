@@ -1,0 +1,80 @@
+{
+  "$comment": "Compliance registry — the single source of truth for whether a partner's terms have been reviewed and what restrictions apply. Every partner that has ever been reviewed (active, pending, or reviewed-but-not-applied) gets an entry here, even if nothing from that partner is live yet — this is a record of terms review, not a list of live partners. lib/partner-compliance.ts reads this file to gate every import (scripts/import-partner.mjs) and every render of partner data on the live site. Update this file whenever new terms are reviewed or a partner's status changes — nothing else needs to change for the gate to pick it up.",
+  "partners": {
+    "brooklyn-delhi": {
+      "network": "AWIN",
+      "status": "active",
+      "commissionRate": "15%",
+      "cookieDays": 30,
+      "imageUsagePermission": "pending",
+      "imageUsageNote": "Awaiting written confirmation from Malika — do not display product images until confirmed; use placeholder if needed",
+      "comparisonEngineConfirmed": true
+    },
+    "evdance": {
+      "network": "AWIN",
+      "status": "active",
+      "commissionBase": { "includesVAT": true, "includesDelivery": true, "includesCCFees": true, "includesGiftWrap": true },
+      "comparisonEngineConfirmed": true
+    },
+    "golden-maple": {
+      "network": "AWIN",
+      "status": "active",
+      "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": false, "includesGiftWrap": false },
+      "comparisonEngineConfirmed": true
+    },
+    "aaawave": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "commissionRate": "up to 2.5%",
+      "cookieDays": 90,
+      "comparisonEngineConfirmed": true
+    },
+    "dignity-lifts": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "noPlagiarism": true,
+      "noPlagiarismNote": "Cannot copy product descriptions or website text verbatim — must be written independently or sourced only from the AWIN product feed",
+      "noCouponSiteBehavior": true,
+      "comparisonEngineConfirmed": true
+    },
+    "alorair-crawlspace": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "commissionRate": "13-15%",
+      "cookieDays": 90,
+      "excludedProducts": true,
+      "excludedProductsNote": "Some SKUs excluded from commission — verify per-product before featuring in Best Sellers/Deals",
+      "ftcDisclosureRequired": true,
+      "comparisonEngineConfirmed": true
+    },
+    "energy-muse": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "noMedicalClaims": true,
+      "noMedicalClaimsNote": "No claims about curing/treating ailments — keep descriptions factual only",
+      "priceSyncSensitive": true,
+      "priceSyncNote": "Advertiser explicitly warns prices change often — sync feed frequently or omit price from static descriptions",
+      "googleShoppingAllowed": false,
+      "comparisonEngineConfirmed": false,
+      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms — verify before going live"
+    },
+    "advanced-clinicals": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "commissionRate": "not disclosed until accepted, subject to change",
+      "couponSharingRestricted": true,
+      "comparisonEngineConfirmed": false,
+      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms — verify before going live"
+    },
+    "beautyologie-caire-beauty": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "commissionRate": "15%",
+      "noDiscountLanguageNearBrand": true,
+      "noDiscountLanguageNote": "Cannot pair brand name with 'best prices/discount/% off' language",
+      "noIncentivizedTraffic": true,
+      "writtenConsentForContent": true,
+      "comparisonEngineConfirmed": true
+    }
+  }
+}

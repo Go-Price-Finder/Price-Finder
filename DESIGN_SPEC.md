@@ -1,6 +1,6 @@
 # Price Finder — Design & Import Specification
 
-This document is the enforced contract for how a new partner's product data becomes a live, correctly formatted, correctly categorized, searchable part of Price Finder. It covers five things: the product card layout, the category system, the homepage sections, search, and image handling. For each one, it says what the rule is, where it's enforced in code, and — honestly — whether "enforced" means "the site can't render it wrong" or "the import script won't let bad data through."
+This document is the enforced contract for how a new partner's product data becomes a live, correctly formatted, correctly categorized, searchable part of Price Finder. It covers six things: the compliance gate, the product card layout, the category system, the homepage sections, search, and image handling. For each one, it says what the rule is, where it's enforced in code, and — honestly — whether "enforced" means "the site can't render it wrong" or "the import script won't let bad data through."
 
 Two different enforcement mechanisms are at work here, and it matters which one applies to which rule:
 
@@ -8,6 +8,38 @@ Two different enforcement mechanisms are at work here, and it matters which one 
 - **Enforced by the import script (categorization, images, data shape):** `scripts/import-partner.mjs` validates and transforms a partner's raw CSV before it ever reaches the app. This is enforcement at the data layer, not the render layer — it stops bad data from being written to `lib/<partner>-data.ts` in the first place.
 
 Search is a bit of both: the ranking algorithm is fixed code, but its precision was hand-tuned against this catalog's real data and should be re-checked if the catalog changes shape a lot (see the Search section).
+
+---
+
+## 0. Compliance Gate
+
+Hard requirement: no partner's products ever display on the live site, and no new partner is ever imported, unless that partner has passed terms review. This is checked in two independent places against one registry, so there's no single point of failure that could let a non-compliant partner through:
+
+- **`scripts/import-partner.mjs`** checks first, before parsing the CSV or writing anything to disk. A partner that fails the hard gate below gets blocked immediately — no data file, no registry wiring, nothing written.
+- **`lib/partners.ts`** checks again at render time, independent of the import script. `PARTNERS` (the one list every homepage section, partner page, category page, and search query actually reads from) is `ALL_WIRED_PARTNERS` filtered through the same gate. This matters because a partner's data file existing and being wired into the codebase isn't proof it's still compliant — a status can change after import, or someone could wire a partner in by hand without running the script. The render-time check means neither of those can put a non-compliant partner's products in front of a shopper.
+
+Both checks read `lib/partner-compliance.json` — one registry, one entry per partner (active or not), so an import-time decision and a render-time decision can never disagree.
+
+**The hard gate** — any one of these blocks the partner entirely (import script exits before writing anything; live site never returns that partner's products from `PARTNERS`):
+
+1. No entry for the partner in the registry at all → *"Partner not found in compliance registry — terms must be reviewed before import."*
+2. `status` isn't `"active"` → *"Partner is not yet an approved/active affiliate — do not display products live."* (`"pending"` and `"reviewed-not-applied"` both block; only `"active"` passes.)
+3. `comparisonEngineConfirmed` is explicitly `false` → *"Partner type hasn't been confirmed as eligible for a comparison site."* — a stricter, comparison-site-specific bar than just "affiliate approved," since some AWIN terms don't confirm eligibility for that specific business model even when the affiliate relationship itself is fine.
+
+**Softer per-partner restrictions** — these don't block the import, but ARE mechanically enforced or flagged:
+
+4. `imageUsagePermission: "pending"` → every real product photo from that partner is replaced with a local placeholder image (`/images/_placeholders/image-pending.png`, reading "Image pending — partner permission not yet confirmed") — enforced in `lib/partners.ts`'s `normalizeProduct()` via `canShowRealImages()`, so it applies regardless of whether the import script actually downloaded real images or not. Currently gates Brooklyn Delhi (awaiting written image-usage confirmation) — its 29 products still display with real names, prices, categories, and working "View on Brooklyn Delhi" links, just with the placeholder photo instead of a real one.
+5. `noPlagiarism: true` → the import script compares each product's final description against that row's raw feed text and flags close/verbatim matches in its compliance report for manual rewrite before the partner goes live. This doesn't block the import (the flagged products are still written to the data file) — it's a review flag, not a data-quality gate, since a feed-sourced description is often explicitly permitted by the partner's own terms (only independently-written or feed-sourced text is disallowed from being copied from the vendor's *website* verbatim).
+6. `excludedProducts: true` → that partner's products are excluded from Best Sellers and Deals entirely (`lib/partners.ts`'s `getFeaturedDeals()`/`getBestSellers()` both filter out any partner with this flag) until each SKU is individually verified as commission-eligible. Products still appear on the partner's own page and in search — this only gates curated placements where featuring a commission-excluded SKU would be worse than not featuring it at all.
+
+**Verified working**, tested against real scenarios (a synthetic test partner and existing registry entries, since none of the "reviewed-not-applied" partners have data to actually import yet):
+
+- An unrecognized partner ID → blocked, zero files written, exit code 1.
+- `aaawave` (`status: "reviewed-not-applied"`) → blocked with the exact reason, before any CSV parsing.
+- `energy-muse` (`comparisonEngineConfirmed: false`) → blocked, reporting both the status and comparison-engine reasons together.
+- `brooklyn-delhi` (`active`, but `imageUsagePermission: "pending"`) → import proceeds, image download is skipped with an explanation, and confirmed live on the running site: every Brooklyn Delhi product card shows the placeholder image instead of a real photo, while EVDANCE and Golden Maple (no image restriction) are unaffected.
+
+**Updating this registry**: edit `lib/partner-compliance.json` only — add a new partner's entry, or change an existing one's `status`/`imageUsagePermission`/etc. Both the import script and the live site pick up the change automatically; nothing else needs to change for a compliance decision to take effect everywhere.
 
 ---
 

@@ -5,12 +5,27 @@
  * /trending, /deals, and /products demo pages).
  *
  * Everything real on the homepage (Featured Deals, Best Sellers, Popular
- * Categories, Our Partners, search) is driven from this file, which is
- * intentionally the single place a new partner gets wired in: add the
- * partner's product data file, add one entry to PARTNERS below, and
- * every section that reads from getAllRealProducts()/getRealCategories()
- * picks it up automatically — no other file needs to change.
+ * Categories, Our Partners, search) is driven from this file.
+ *
+ * Onboarding a new partner is meant to be scriptable, not a hand-edit:
+ * run `node scripts/import-partner.mjs` (see that file's header comment)
+ * and it does every step below for you —
+ *   1. generates lib/<partner-id>-data.ts from the source CSV
+ *   2. inserts the import statement at PARTNER_IMPORTS_MARKER below
+ *   3. inserts the PARTNERS array entry at PARTNER_REGISTRY_MARKER below
+ * Every partner's data file shares one shape (see `RawPartnerProduct`
+ * below), so a single generic `normalizeProduct` handles all of them —
+ * there is deliberately no per-partner normalizer function to remember to
+ * add or forget (that gap — a partner's data file existing but never
+ * being wired into PARTNERS — is exactly what caused EVDANCE and Golden
+ * Maple to silently show 0 products on the live site after their first
+ * import; see the 2026-07-25 history note in the project's build-notes
+ * doc). If you're editing this file by hand instead of via the script,
+ * only ever add new lines at the two markers below — everything else
+ * should stay generic.
  */
+
+import { getParentCategory } from "./category-map";
 
 import {
   BROOKLYN_DELHI_PRODUCTS,
@@ -21,6 +36,31 @@ import {
   GOLDEN_MAPLE_PRODUCTS,
   type GoldenMapleProduct,
 } from "./golden-maple-data";
+// PARTNER_IMPORTS_MARKER — scripts/import-partner.mjs inserts new
+// `import { X_PRODUCTS, type XProduct } from "./x-data";` lines directly
+// above this comment. Don't remove the comment itself.
+
+/** The shape every partner's raw per-product data file already uses
+ * (see lib/brooklyn-delhi-data.ts, lib/evdance-data.ts,
+ * lib/golden-maple-data.ts) — every field here except `category` is
+ * passed through as-is by normalizeProduct below. Partner-specific
+ * `*Product` types (e.g. `EvdanceProduct`) are structurally identical to
+ * this and just narrow `category` to that partner's own string union;
+ * TypeScript's structural typing lets normalizeProduct accept any of them
+ * without a cast. */
+type RawPartnerProduct = {
+  slug: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  deepLink: string;
+  image: string;
+  images: string[];
+  category: string;
+  badge?: string;
+  rating?: { stars: number; count: number };
+};
 
 /** The shape every partner's products get normalized to, so homepage
  * sections and search can treat every real retailer identically instead
@@ -37,7 +77,17 @@ export type RealProduct = {
   originalPrice?: number;
   image: string;
   images: string[];
+  /** Specific subcategory as the partner's own data names it (e.g.
+   * "Brushes", "Extension Cords & Cables") — shown on product cards and
+   * partner pages. */
   category: string;
+  /** Broad, browsable parent category (e.g. "Art & Craft Supplies")
+   * auto-derived from `category` via lib/category-map.ts — this is what
+   * Popular Categories tiles and /category pages group by, so a handful
+   * of partners with a dozen-plus subcategories between them still
+   * produce a small, useful set of category tiles instead of one tile
+   * per subcategory. */
+  parentCategory: string;
   badge?: string;
   rating?: { stars: number; count: number };
   deepLink: string;
@@ -57,12 +107,19 @@ export type Partner = {
   products: RealProduct[];
 };
 
-function normalizeBrooklynDelhi(product: BrooklynDelhiProduct): RealProduct {
+/** The one normalizer every partner's products go through. Partner data
+ * files intentionally all share `RawPartnerProduct`'s shape so this never
+ * needs a partner-specific variant — see the file-level comment. */
+function normalizeProduct(
+  product: RawPartnerProduct,
+  partnerId: string,
+  partnerName: string
+): RealProduct {
   return {
-    id: `brooklyn-delhi:${product.slug}`,
+    id: `${partnerId}:${product.slug}`,
     slug: product.slug,
-    partnerId: "brooklyn-delhi",
-    partnerName: "Brooklyn Delhi",
+    partnerId,
+    partnerName,
     name: product.name,
     description: product.description,
     price: product.price,
@@ -70,68 +127,29 @@ function normalizeBrooklynDelhi(product: BrooklynDelhiProduct): RealProduct {
     image: product.image,
     images: product.images,
     category: product.category,
+    parentCategory: getParentCategory(product.category).name,
     badge: product.badge,
     rating: product.rating,
     deepLink: product.deepLink,
-    href: `/brooklyn-delhi/${product.slug}`,
+    href: `/${partnerId}/${product.slug}`,
   };
 }
 
 const BROOKLYN_DELHI_REAL_PRODUCTS = BROOKLYN_DELHI_PRODUCTS.map(
-  normalizeBrooklynDelhi
+  (p: BrooklynDelhiProduct) => normalizeProduct(p, "brooklyn-delhi", "Brooklyn Delhi")
 );
-
-// EVDANCE and Golden Maple's data files don't carry rating/badge fields
-// (the source Awin feed has neither) — normalizing them here just omits
-// those keys rather than fabricating placeholder values, consistent with
-// how normalizeBrooklynDelhi only ever passes through what its own real
-// data actually has.
-function normalizeEvdance(product: EvdanceProduct): RealProduct {
-  return {
-    id: `evdance:${product.slug}`,
-    slug: product.slug,
-    partnerId: "evdance",
-    partnerName: "EVDANCE",
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    image: product.image,
-    images: product.images,
-    category: product.category,
-    deepLink: product.deepLink,
-    href: `/evdance/${product.slug}`,
-  };
-}
-
-const EVDANCE_REAL_PRODUCTS = EVDANCE_PRODUCTS.map(normalizeEvdance);
-
-function normalizeGoldenMaple(product: GoldenMapleProduct): RealProduct {
-  return {
-    id: `golden-maple:${product.slug}`,
-    slug: product.slug,
-    partnerId: "golden-maple",
-    partnerName: "Golden Maple",
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    image: product.image,
-    images: product.images,
-    category: product.category,
-    deepLink: product.deepLink,
-    href: `/golden-maple/${product.slug}`,
-  };
-}
-
+const EVDANCE_REAL_PRODUCTS = EVDANCE_PRODUCTS.map((p: EvdanceProduct) =>
+  normalizeProduct(p, "evdance", "EVDANCE")
+);
 const GOLDEN_MAPLE_REAL_PRODUCTS = GOLDEN_MAPLE_PRODUCTS.map(
-  normalizeGoldenMaple
+  (p: GoldenMapleProduct) => normalizeProduct(p, "golden-maple", "Golden Maple")
 );
 
 /**
- * Every real, active partner. Add a new entry here (and its own
- * `normalize*` mapper above) to onboard another partner — every section
- * that reads from this file auto-populates.
+ * Every real, active partner. scripts/import-partner.mjs appends new
+ * entries at PARTNER_REGISTRY_MARKER below — every section that reads
+ * from getAllRealProducts()/getRealCategories() picks a new entry up
+ * automatically, no other file needs to change.
  */
 export const PARTNERS: Partner[] = [
   {
@@ -155,6 +173,9 @@ export const PARTNERS: Partner[] = [
     href: "/golden-maple",
     products: GOLDEN_MAPLE_REAL_PRODUCTS,
   },
+  // PARTNER_REGISTRY_MARKER — scripts/import-partner.mjs inserts new
+  // `{ id, name, tagline, href, products }` entries directly above this
+  // comment. Don't remove the comment itself.
 ];
 
 export function getAllRealProducts(): RealProduct[] {
@@ -183,17 +204,20 @@ export function slugifyRealCategory(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-/** Only categories that currently have at least one real product —
- * auto-shrinks/grows as partners and their catalogs change. Each
- * category's tile image is its first product's real photo, not a
- * placeholder. */
+/** Parent categories that currently have at least one real product —
+ * auto-shrinks/grows as partners and their catalogs change. Grouped by
+ * `parentCategory` (see lib/category-map.ts), not the specific `category`
+ * subcategory, so a handful of partners with a dozen-plus subcategories
+ * between them still produce a small, browsable set of tiles instead of
+ * one tile per subcategory. Each category's tile image is its first
+ * product's real photo, not a placeholder. */
 export function getRealCategories(): RealCategory[] {
   const products = getAllRealProducts();
   const byCategory = new Map<string, RealProduct[]>();
   for (const product of products) {
-    const list = byCategory.get(product.category) ?? [];
+    const list = byCategory.get(product.parentCategory) ?? [];
     list.push(product);
-    byCategory.set(product.category, list);
+    byCategory.set(product.parentCategory, list);
   }
   return Array.from(byCategory.entries()).map(([name, items]) => ({
     slug: slugifyRealCategory(name),
@@ -203,9 +227,10 @@ export function getRealCategories(): RealCategory[] {
   }));
 }
 
-/** A single real category by its slug, plus only the real products in it
- * — used by the dedicated per-category page so clicking "Food" on Popular
- * Categories shows just Food, not every category stacked on one page. */
+/** A single parent category by its slug, plus only the real products in
+ * it — used by the dedicated per-category page so clicking "Art & Craft
+ * Supplies" on Popular Categories shows every product from every partner
+ * in that parent category, not just one partner's or one subcategory's. */
 export function getCategoryBySlug(
   slug: string
 ): (RealCategory & { products: RealProduct[] }) | undefined {
@@ -213,7 +238,9 @@ export function getCategoryBySlug(
   if (!category) return undefined;
   return {
     ...category,
-    products: getAllRealProducts().filter((p) => p.category === category.name),
+    products: getAllRealProducts().filter(
+      (p) => p.parentCategory === category.name
+    ),
   };
 }
 
@@ -245,19 +272,4 @@ export function getBestSellers(partnerIds?: string[]): RealProduct[] {
     .filter((p) => p.rating)
     .sort((a, b) => (b.rating?.stars ?? 0) - (a.rating?.stars ?? 0))
     .slice(0, 8);
-}
-
-/** Simple case-insensitive substring search across name, description, and
- * category — real, functioning search over the real product catalog
- * (as opposed to the mock catalog's non-functional search bar). */
-export function searchRealProducts(query: string): RealProduct[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return [];
-  return getAllRealProducts().filter(
-    (p) =>
-      p.name.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      p.partnerName.toLowerCase().includes(q)
-  );
 }

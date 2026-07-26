@@ -13,10 +13,10 @@ import PriceHistorySparkline from "./PriceHistorySparkline";
  * real-product card.
  *
  * Clicking the image/name goes to this product's own detail page on Price
- * Finder (not straight out to the partner's site) — the outbound purchase
- * link only happens via the explicit "Buy Now" button. "View Details" and
- * "Buy Now" sit together in one row so it's always clear which click does
- * what.
+ * Finder (not straight out to the partner's site) — the outbound
+ * affiliate link only happens via the explicit "View on [Partner]" button.
+ * "View Details" and "View on [Partner]" sit together in one row so it's
+ * always clear which click does what.
  *
  * Every optional row below (rating, price-history) reserves its height
  * even when that product has no data for it, instead of only rendering
@@ -118,11 +118,15 @@ export default function RealProductCard({
           originalPrice={product.originalPrice}
         />
 
-        {/* View Details (internal) and Buy Now (outbound) together on one
-            row, same size, so it's obvious both are equally valid next
-            steps rather than one being a disabled/secondary action.
-            mt-auto pins this to the bottom of the card regardless of how
-            much space the content above takes up. */}
+        {/* View Details (internal) and "View on [Partner]" (outbound,
+            the affiliate deep link) together on one row, same size, so
+            it's obvious both are equally valid next steps rather than one
+            being a disabled/secondary action. The outbound button's label
+            names the actual partner rather than a generic "Buy Now" —
+            more accurate for an affiliate referral link that lands on the
+            partner's own store, not a completed purchase on this site.
+            mt-auto pins this row to the bottom of the card regardless of
+            how much space the content above takes up. */}
         <div className="mt-auto flex items-center gap-2 pt-1">
           <Link
             href={product.href}
@@ -136,7 +140,7 @@ export default function RealProductCard({
             rel="noopener noreferrer sponsored"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-3 py-2 text-xs font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
           >
-            Buy Now
+            View on {product.partnerName}
             <ExternalLinkIcon className="h-3 w-3" />
           </a>
         </div>

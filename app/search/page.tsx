@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import RealProductCard from "@/components/RealProductCard";
-import { searchRealProducts } from "@/lib/partners";
+import { searchRealProducts } from "@/lib/search";
 
 export const metadata: Metadata = {
   title: "Search — Price Finder",

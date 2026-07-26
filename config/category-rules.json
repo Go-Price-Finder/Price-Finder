@@ -1,0 +1,34 @@
+{
+  "$comment": "Single source of truth for the parent-category taxonomy. Consumed by both lib/category-map.ts (the Next.js app) and scripts/import-partner.mjs (the import script), so a product's parent category is guaranteed identical whether it's being rendered on the site or being classified during import. Rules are checked in array order, first match wins, matched as a case-insensitive substring against the raw subcategory name. A raw subcategory that matches nothing falls through to the 'fallback' parent below — so every product always gets a parent category, even one from a keyword set nobody anticipated yet. To add a new parent category (or teach an existing one about a new kind of product), edit this file only — nothing else needs to change.",
+  "parents": [
+    {
+      "slug": "ev-charging-accessories",
+      "name": "EV Charging & Accessories",
+      "keywords": ["ev ", "ev-", "ev&", "charg", "extension cord"]
+    },
+    {
+      "slug": "food-kitchen",
+      "name": "Food & Kitchen",
+      "keywords": ["food", "cook", "kitchen", "snack", "condiment", "grocery", "fridge", "pantry", "beverage"]
+    },
+    {
+      "slug": "apparel-accessories",
+      "name": "Apparel & Accessories",
+      "keywords": ["cloth", "apparel", "wear", "bag", "tote", "shirt", "hat", "shoe"]
+    },
+    {
+      "slug": "art-craft-supplies",
+      "name": "Art & Craft Supplies",
+      "keywords": ["art", "craft", "brush", "paint", "draw", "model", "hobby", "miniature", "tape", "adhesive", "instrument", "collect", "toy", "beauty"]
+    },
+    {
+      "slug": "home-living",
+      "name": "Home & Living",
+      "keywords": ["home", "decor", "garden", "furniture", "storage", "organiz"]
+    }
+  ],
+  "fallback": {
+    "slug": "general-merchandise",
+    "name": "General Merchandise"
+  }
+}

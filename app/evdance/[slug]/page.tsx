@@ -119,7 +119,7 @@ export default async function EvdanceProductPage({
                   rel="noopener noreferrer sponsored"
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-6 py-3 text-sm font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
                 >
-                  Buy Now
+                  View on EVDANCE
                   <ExternalLinkIcon className="h-3.5 w-3.5" />
                 </a>
                 <a
@@ -131,7 +131,7 @@ export default async function EvdanceProductPage({
               </div>
 
               <p className="text-xs text-ivory-400">
-                Buy Now takes you to EVDANCE&rsquo;s own store to complete your purchase.
+                &ldquo;View on EVDANCE&rdquo; takes you to EVDANCE&rsquo;s own store to complete your purchase.
               </p>
 
               <div id="details" className="mt-4 scroll-mt-24 border-t border-gilt-500/20 pt-6">

@@ -6,8 +6,11 @@
       "status": "active",
       "commissionRate": "15%",
       "cookieDays": 30,
-      "imageUsagePermission": "pending",
-      "imageUsageNote": "Awaiting written confirmation from Malika — do not display product images until confirmed; use placeholder if needed",
+      "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": false, "includesGiftWrap": false },
+      "imageUsagePermission": "assessed-low-risk",
+      "imageUsageNote": "No branding guidelines in partner terms; content use is encouraged. Proceeding with attribution based on terms language and risk assessment — written confirmation from Malika has not been received yet.",
+      "noBrandedPaidSearch": true,
+      "noUnauthorizedCoupons": true,
       "comparisonEngineConfirmed": true
     },
     "evdance": {

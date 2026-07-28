@@ -81,16 +81,6 @@ export default function Hero() {
           />
         </motion.div>
 
-        <motion.p
-          initial="hidden"
-          animate="visible"
-          custom={0.06}
-          variants={fadeUp}
-          className="font-display text-base italic text-gilt-500"
-        >
-          Find better deals.
-        </motion.p>
-
         <motion.h1
           initial="hidden"
           animate="visible"
@@ -98,9 +88,9 @@ export default function Hero() {
           variants={fadeUp}
           className="text-balance font-display text-4xl font-medium leading-[1.1] tracking-tight text-ivory-50 sm:text-6xl md:text-[68px]"
         >
-          Compare prices <span className="italic text-gilt-400">before</span>
+          Find better deals.
           <br />
-          you click buy.
+          <span className="italic text-gilt-400">Shop smarter.</span>
         </motion.h1>
 
         <motion.p

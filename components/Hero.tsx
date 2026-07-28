@@ -17,12 +17,6 @@ const STATS = [
   { value: "Daily", label: "Price checks" },
 ];
 
-// Real terms that match real products in the catalog (lib/partners.ts) —
-// each one returns actual search results, unlike the old placeholder
-// terms ("Air fryers", "Standing desks", etc.) which didn't match
-// anything in the sanitized mock catalog either.
-const POPULAR_TERMS = ["Achaar", "Chutney", "Curry", "Cookbook"];
-
 export default function Hero() {
   // scrollProgress is unused now that HeroScene's background is gone, but
   // sectionRef is kept wired up for whatever scroll-linked effect replaces
@@ -118,19 +112,6 @@ export default function Hero() {
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <PartnerFilterBar />
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-ivory-300">
-            <span>Popular:</span>
-            {POPULAR_TERMS.map((term) => (
-              <a
-                key={term}
-                href={`/search?q=${encodeURIComponent(term)}`}
-                className="rounded-full border border-gilt-500/25 bg-noir-800 px-3 py-1 font-medium text-ivory-100 transition-all duration-200 hover:border-gilt-400/40 hover:bg-gilt-500/10 hover:text-gilt-400"
-              >
-                {term}
-              </a>
-            ))}
           </div>
         </motion.div>
 

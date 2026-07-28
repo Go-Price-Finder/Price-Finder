@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { RealProduct } from "@/lib/partners";
-import { ExternalLinkIcon, StarIcon } from "./icons";
+import { StarIcon } from "./icons";
 import PriceHistorySparkline from "./PriceHistorySparkline";
 
 /**
@@ -12,11 +12,12 @@ import PriceHistorySparkline from "./PriceHistorySparkline";
  * (homepage, partner pages, /search, /category) needs the same
  * real-product card.
  *
- * Clicking the image/name goes to this product's own detail page on Price
- * Finder (not straight out to the partner's site) — the outbound
- * affiliate link only happens via the explicit "View on [Partner]" button.
- * "View Details" and "View on [Partner]" sit together in one row so it's
- * always clear which click does what.
+ * A single "View" button goes to this product's own detail page on Price
+ * Finder — that page is where the explicit choice to continue to the
+ * partner's store lives (its "View on [Partner]" button), not the card
+ * itself. Naming a specific retailer on every card in a grid of dozens
+ * added noise without adding a decision the shopper needed to make yet;
+ * the card's job is just to get them to the one product they clicked.
  *
  * Every optional row below (rating, price-history) reserves its height
  * even when that product has no data for it, instead of only rendering
@@ -118,31 +119,17 @@ export default function RealProductCard({
           originalPrice={product.originalPrice}
         />
 
-        {/* View Details (internal) and "View on [Partner]" (outbound,
-            the affiliate deep link) together on one row, same size, so
-            it's obvious both are equally valid next steps rather than one
-            being a disabled/secondary action. The outbound button's label
-            names the actual partner rather than a generic "Buy Now" —
-            more accurate for an affiliate referral link that lands on the
-            partner's own store, not a completed purchase on this site.
-            mt-auto pins this row to the bottom of the card regardless of
-            how much space the content above takes up. */}
-        <div className="mt-auto flex items-center gap-2 pt-1">
+        {/* Single "View" button — the choice to continue to the specific
+            partner/retailer is offered on the product detail page this
+            links to, not here. mt-auto pins this to the bottom of the
+            card regardless of how much space the content above takes up. */}
+        <div className="mt-auto pt-1">
           <Link
             href={product.href}
-            className="flex-1 rounded-full border border-gilt-500/30 bg-noir-700 px-3 py-2 text-center text-xs font-semibold text-ivory-100 transition-colors hover:border-gilt-400 hover:text-gilt-400"
+            className="block w-full rounded-full bg-gilt-500 px-3 py-2 text-center text-xs font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
           >
-            View Details
+            View
           </Link>
-          <a
-            href={product.deepLink}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-3 py-2 text-xs font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
-          >
-            View on {product.partnerName}
-            <ExternalLinkIcon className="h-3 w-3" />
-          </a>
         </div>
       </div>
     </article>

@@ -7,6 +7,7 @@ import LoyaltySection from "@/components/LoyaltySection";
 import BestSellers from "@/components/BestSellers";
 import SavingsDashboard from "@/components/SavingsDashboard";
 import PopularCategories from "@/components/PopularCategories";
+import WhyTrustPrices from "@/components/WhyTrustPrices";
 import WhyPriceFinder from "@/components/WhyPriceFinder";
 import HowItWorks from "@/components/HowItWorks";
 import Footer from "@/components/Footer";
@@ -36,6 +37,7 @@ export default function Home() {
         <BestSellers />
         <SavingsDashboard />
         <PopularCategories />
+        <WhyTrustPrices />
         <WhyPriceFinder />
         <HowItWorks />
       </main>

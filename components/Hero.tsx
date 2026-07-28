@@ -1,21 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import SearchBar from "./SearchBar";
 import PartnerFilterBar from "./PartnerFilterBar";
-import { StoreIcon, TagIcon, TrendingUpIcon } from "./icons";
+import LogoMark from "./LogoMark";
+import { getAllRealProducts, PARTNERS } from "@/lib/partners";
 import { useSectionScrollProgress } from "@/lib/useThreeScene";
 
-// No real usage data exists yet — every one of these used to be a made-up
-// number (stores tracked, prices compared, average savings). Rather than
-// invent plausible-looking figures, each stat now says plainly that the
-// data isn't in yet; swap in real numbers once there's real traffic to
-// measure.
+// Real numbers from the live catalog (lib/partners.ts), computed once at
+// module scope rather than invented — replaces the old "Data collection in
+// progress" placeholders, which undercut trust once the site actually had
+// real data behind it.
 const STATS = [
-  { icon: StoreIcon, label: "Stores tracked" },
-  { icon: TagIcon, label: "Prices compared daily" },
-  { icon: TrendingUpIcon, label: "Average savings" },
+  { value: String(getAllRealProducts().length), label: "Products tracked" },
+  { value: String(PARTNERS.length), label: "Partner stores" },
+  { value: "Daily", label: "Price checks" },
 ];
 
 // Real terms that match real products in the catalog (lib/partners.ts) —
@@ -72,32 +71,25 @@ export default function Hero() {
           variants={fadeUp}
           className="mx-auto mb-6 flex justify-center"
         >
-          {/* The full Price Finder emblem — large and detailed, distinct
-              from the small icon-only mark used in the nav (see Logo.tsx).
-              This is the first thing a visitor sees, sitting directly above
-              the headline. logo-one.png is a higher-resolution source
-              (1024x1024, up from the previous 512x512 logo.png) so it stays
-              crisp at this size instead of upscaling and looking blurry. */}
-          <Image
-            src="/images/logo/logo-one.png"
-            alt="Price Finder"
-            width={1024}
-            height={1024}
-            priority
-            className="h-24 w-24 drop-shadow-[0_8px_24px_rgba(184,147,95,0.35)] sm:h-32 sm:w-32 md:h-36 md:w-36"
+          {/* Same flat vector mark as the nav (LogoMark), just larger — one
+              source instead of a separate high-res raster export, so the
+              emblem stays crisp at any size and never drifts out of sync
+              with the small nav icon. */}
+          <LogoMark
+            size={112}
+            className="h-24 w-24 drop-shadow-[0_8px_24px_rgba(184,147,95,0.25)] sm:h-32 sm:w-32 md:h-36 md:w-36"
           />
         </motion.div>
 
-        <motion.div
+        <motion.p
           initial="hidden"
           animate="visible"
           custom={0.06}
           variants={fadeUp}
-          className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-gilt-500/25 bg-noir-800/70 px-4 py-1.5 text-xs font-medium text-ivory-100 shadow-soft backdrop-blur-sm"
+          className="font-display text-base italic text-gilt-500"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-gilt-500" />
-          Data collection in progress
-        </motion.div>
+          Find better deals.
+        </motion.p>
 
         <motion.h1
           initial="hidden"
@@ -106,9 +98,9 @@ export default function Hero() {
           variants={fadeUp}
           className="text-balance font-display text-4xl font-medium leading-[1.1] tracking-tight text-ivory-50 sm:text-6xl md:text-[68px]"
         >
-          Find better deals.
+          Compare prices <span className="italic text-gilt-400">before</span>
           <br />
-          <span className="italic text-gilt-400">Shop smarter.</span>
+          you click buy.
         </motion.h1>
 
         <motion.p
@@ -118,8 +110,8 @@ export default function Hero() {
           variants={fadeUp}
           className="mx-auto mt-6 max-w-xl text-balance text-base leading-relaxed text-ivory-300 sm:text-lg"
         >
-          Price Finder helps you compare prices across retailers, all in one
-          place. Search once, compare easily.
+          Real listings from real stores — no sponsored rankings, no
+          fabricated discounts, checked every day.
         </motion.p>
 
         <motion.div
@@ -159,14 +151,13 @@ export default function Hero() {
           variants={fadeUp}
           className="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-4 sm:gap-8"
         >
-          {STATS.map(({ icon: Icon, label }) => (
+          {STATS.map(({ value, label }) => (
             <div
               key={label}
-              className="flex flex-col items-center gap-2 rounded-2xl border border-gilt-500/20 bg-noir-800/60 px-3 py-5 shadow-soft backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
+              className="flex flex-col items-center gap-1 rounded-2xl border border-gilt-500/20 bg-noir-800/60 px-3 py-5 shadow-soft backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
             >
-              <Icon className="h-6 w-6 text-gilt-400" />
-              <span className="text-balance text-center text-xs font-medium text-ivory-200 sm:text-sm">
-                Data collection in progress
+              <span className="font-display text-2xl font-semibold tabular-nums text-ivory-50 sm:text-3xl">
+                {value}
               </span>
               <span className="text-center text-[11px] uppercase tracking-wide text-ivory-300 sm:text-xs">
                 {label}

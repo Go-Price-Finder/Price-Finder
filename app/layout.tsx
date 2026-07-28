@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Schibsted_Grotesk, Fraunces } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 import Providers from "./providers";
 import CinematicBackground from "@/components/CinematicBackground";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Replaces Inter — an editorial-house grotesk (built for a Scandinavian
+// news/media publisher) instead of the generic default, per the approved
+// visual-direction redesign. See PHASE1 design-direction discussion for
+// why this pairs with Fraunces specifically.
+const schibsted = Schibsted_Grotesk({
+  variable: "--font-schibsted",
   subsets: ["latin"],
   display: "swap",
 });
@@ -53,7 +57,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${schibsted.variable} ${fraunces.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

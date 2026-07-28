@@ -83,11 +83,11 @@ export default function RealProductCard({
             {product.name}
           </Link>
           <div className="shrink-0 text-right">
-            <span className="font-display text-lg font-semibold text-price-text">
+            <span className="font-display text-lg font-semibold tabular-nums text-price-text">
               ${product.price.toLocaleString()}
             </span>
             {hasDiscount && (
-              <span className="ml-1.5 text-xs text-ivory-400 line-through">
+              <span className="ml-1.5 text-xs tabular-nums text-ivory-400 line-through">
                 ${(product.originalPrice as number).toLocaleString()}
               </span>
             )}

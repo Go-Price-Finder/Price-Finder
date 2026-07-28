@@ -97,11 +97,11 @@ export default async function BrooklynDelhiProductPage({
               )}
 
               <div className="flex items-baseline gap-3">
-                <span className="font-display text-3xl font-semibold text-price-text">
+                <span className="font-display text-3xl font-semibold tabular-nums text-price-text">
                   ${product.price.toLocaleString()}
                 </span>
                 {hasDiscount && (
-                  <span className="text-base text-ivory-400 line-through">
+                  <span className="text-base tabular-nums text-ivory-400 line-through">
                     ${(product.originalPrice as number).toLocaleString()}
                   </span>
                 )}

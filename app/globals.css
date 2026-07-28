@@ -207,20 +207,6 @@ body {
   text-wrap: balance;
 }
 
-/* Soft circular light glow — restored for the light theme's cream/sage
-   palette (see components/CinematicBackground.tsx), matching the original
-   Dream Décor-inspired design direction. Explicitly hidden in dark theme,
-   which keeps its flat, glow-free background per the Brew Haven direction
-   — the two backdrop treatments are intentionally different, not a single
-   effect reused across both. */
-.light-theme-glow {
-  opacity: 1;
-  transition: opacity 0.25s ease;
-}
-:root[data-theme="dark"] .light-theme-glow {
-  opacity: 0;
-}
-
 ::selection {
   background: var(--color-gilt-500);
   color: var(--color-noir-950);

@@ -43,7 +43,7 @@ export type PartnerComplianceEntry = {
   commissionRate?: string;
   commissionBase?: CommissionBase;
   cookieDays?: number;
-  imageUsagePermission?: "pending" | "confirmed";
+  imageUsagePermission?: "pending" | "confirmed" | "assessed-low-risk";
   imageUsageNote?: string;
   noPlagiarism?: boolean;
   noPlagiarismNote?: string;
@@ -65,9 +65,43 @@ export type PartnerComplianceEntry = {
   comparisonEngineNote?: string;
 };
 
+/** The only values `imageUsagePermission` is allowed to hold — checked
+ * against the raw JSON below so an informal/typo'd string (e.g. a value
+ * copy-pasted from a chat message) can't silently slip through a type
+ * assertion and be treated as an implicit pass. See validateComplianceRegistry. */
+const VALID_IMAGE_USAGE_PERMISSIONS = ["pending", "confirmed", "assessed-low-risk"] as const;
+
+/**
+ * Fails the build/import fast on a malformed registry entry, rather than
+ * letting `as { partners: Record<string, PartnerComplianceEntry> }` below
+ * wave through a value TypeScript never actually checked at runtime — the
+ * JSON file has no compiler to enforce its own type. Scoped to
+ * imageUsagePermission specifically, since that's the field whose value
+ * directly controls whether real partner images go live.
+ */
+function validateComplianceRegistry(
+  partners: Record<string, PartnerComplianceEntry>
+): void {
+  for (const [partnerId, entry] of Object.entries(partners)) {
+    const permission = entry.imageUsagePermission;
+    if (
+      permission !== undefined &&
+      !(VALID_IMAGE_USAGE_PERMISSIONS as readonly string[]).includes(permission)
+    ) {
+      throw new Error(
+        `lib/partner-compliance.json: partner "${partnerId}" has an invalid ` +
+          `imageUsagePermission value ${JSON.stringify(permission)} — must be ` +
+          `one of ${VALID_IMAGE_USAGE_PERMISSIONS.map((v) => `"${v}"`).join(", ")}.`
+      );
+    }
+  }
+}
+
 const PARTNERS: Record<string, PartnerComplianceEntry> = (
   complianceRegistry as { partners: Record<string, PartnerComplianceEntry> }
 ).partners;
+
+validateComplianceRegistry(PARTNERS);
 
 /** Local placeholder image shown in place of a partner's real product
  * photos whenever that partner's imageUsagePermission is "pending" —
@@ -132,12 +166,21 @@ export function isPartnerLive(partnerId: string): boolean {
   return checkImportGate(partnerId).allowed;
 }
 
-/** False whenever this partner's real product images must not be shown
- * yet (imageUsagePermission still "pending") — callers should substitute
- * IMAGE_PENDING_PLACEHOLDER instead of the product's real image/images. */
+/**
+ * True only when imageUsagePermission is explicitly "confirmed" (partner
+ * gave written permission) or "assessed-low-risk" (terms reviewed, no
+ * image/branding restriction found, documented judgment call to proceed
+ * without written sign-off). Deliberately an explicit allow-list rather
+ * than `!== "pending"` — an inverse check would treat any unrecognized or
+ * mistyped value as an implicit pass, which is exactly how an informal
+ * string once slipped through and unlocked images without real
+ * confirmation. Anything else, including "pending" or a value outside the
+ * three defined ones, fails closed and callers should substitute
+ * IMAGE_PENDING_PLACEHOLDER instead of the product's real image/images.
+ */
 export function canShowRealImages(partnerId: string): boolean {
-  const entry = getComplianceEntry(partnerId);
-  return entry?.imageUsagePermission !== "pending";
+  const permission = getComplianceEntry(partnerId)?.imageUsagePermission;
+  return permission === "confirmed" || permission === "assessed-low-risk";
 }
 
 /** True when this partner's product descriptions must be manually

@@ -17,6 +17,8 @@
       "network": "AWIN",
       "status": "active",
       "commissionBase": { "includesVAT": true, "includesDelivery": true, "includesCCFees": true, "includesGiftWrap": true },
+      "imageUsagePermission": "assessed-low-risk",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/67740) — every section (Branding, Publishers, PPC, Transactions, De-Duplication) is either unanswered or contains no image/content/branding usage language at all; Branding tab holds only generic program-overview marketing copy, not usage rules. This is genuine silence, not explicit permission — no restriction was found, but none was granted either. Proceeding assessed-low-risk on that basis, same treatment as Brooklyn Delhi. Revisit if EVDANCE ever publishes real terms.",
       "comparisonEngineConfirmed": true
     },
     "golden-maple": {

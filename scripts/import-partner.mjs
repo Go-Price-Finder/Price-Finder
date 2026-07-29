@@ -694,11 +694,25 @@ const normalizeLine =
   `const ${normalizedVar} = ${upperId}_PRODUCTS.map((p: ${pascalId}Product) =>\n` +
   `  normalizeProduct(p, "${PARTNER_ID}", "${PARTNER_NAME}")\n` +
   `);\n`;
-// Insert the normalize call right before the PARTNERS array declaration.
-partnersSrc = partnersSrc.replace(
-  "export const PARTNERS: Partner[] = [",
-  `${normalizeLine}\nexport const PARTNERS: Partner[] = [`
-);
+// Insert the normalize call right before the raw registry array
+// declaration (ALL_WIRED_PARTNERS, filtered through the compliance gate
+// into the exported PARTNERS below it — see that file's own comments).
+// Checked explicitly rather than a bare .replace(), which silently no-ops
+// on no match: that's exactly what happened here once — Canvas Vows'
+// registry entry referenced CANVAS_VOWS_REAL_PRODUCTS, but this line
+// never got inserted because the search string still said the pre-
+// compliance-gate "export const PARTNERS: Partner[] = [", which no
+// longer exists verbatim. Caught by tsc, not by this script.
+const registryArrayDecl = "const ALL_WIRED_PARTNERS: Partner[] = [";
+if (!partnersSrc.includes(registryArrayDecl)) {
+  console.error(
+    `\nlib/partners.ts's registry array declaration has changed — expected to find ` +
+      `${JSON.stringify(registryArrayDecl)} but it's not there. Update registryArrayDecl in this ` +
+      `script to match, then re-run. The data file was still written to ${dataFilePath}.`
+  );
+  process.exit(1);
+}
+partnersSrc = partnersSrc.replace(registryArrayDecl, `${normalizeLine}\n${registryArrayDecl}`);
 
 const registryEntry =
   `  {\n` +

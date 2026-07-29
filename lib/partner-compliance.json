@@ -92,7 +92,7 @@
     },
     "canvas-vows": {
       "network": "AWIN",
-      "status": "reviewed-not-applied",
+      "status": "active",
       "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": true, "includesGiftWrap": true },
       "noCouponSiteBehavior": true,
       "noCouponSiteBehaviorNote": "Coupon sites are not allowed in this affiliate program at all.",

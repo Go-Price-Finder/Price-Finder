@@ -57,6 +57,7 @@ import {
   GOLDEN_MAPLE_PRODUCTS,
   type GoldenMapleProduct,
 } from "./golden-maple-data";
+import { CANVAS_VOWS_PRODUCTS, type CanvasVowsProduct } from "./canvas-vows-data";
 // PARTNER_IMPORTS_MARKER — scripts/import-partner.mjs inserts new
 // `import { X_PRODUCTS, type XProduct } from "./x-data";` lines directly
 // above this comment. Don't remove the comment itself.
@@ -187,6 +188,9 @@ const EVDANCE_REAL_PRODUCTS = EVDANCE_PRODUCTS.map((p: EvdanceProduct) =>
 const GOLDEN_MAPLE_REAL_PRODUCTS = GOLDEN_MAPLE_PRODUCTS.map(
   (p: GoldenMapleProduct) => normalizeProduct(p, "golden-maple", "Golden Maple")
 );
+const CANVAS_VOWS_REAL_PRODUCTS = CANVAS_VOWS_PRODUCTS.map((p: CanvasVowsProduct) =>
+  normalizeProduct(p, "canvas-vows", "Canvas Vows")
+);
 
 /**
  * Every partner wired into the codebase — NOT the same as "every partner
@@ -216,6 +220,13 @@ const ALL_WIRED_PARTNERS: Partner[] = [
     tagline: "Artist brushes, model-making & miniature painting supplies",
     href: "/golden-maple",
     products: GOLDEN_MAPLE_REAL_PRODUCTS,
+  },
+  {
+    id: "canvas-vows",
+    name: "Canvas Vows",
+    tagline: "Personalized wedding vow & anniversary canvas wall art",
+    href: "/canvas-vows",
+    products: CANVAS_VOWS_REAL_PRODUCTS,
   },
   // PARTNER_REGISTRY_MARKER — scripts/import-partner.mjs inserts new
   // `{ id, name, tagline, href, products }` entries directly above this

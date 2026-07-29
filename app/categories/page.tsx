@@ -3,7 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ChevronRightIcon, ChevronDownIcon } from "@/components/icons";
-import { getAllRealProducts } from "@/lib/partners";
+import { getAllRealProducts, slugifyRealCategory } from "@/lib/partners";
 import { mapProductToCategory } from "@/lib/category-mapper";
 import taxonomy from "@/config/walmart-taxonomy.json";
 
@@ -17,17 +17,23 @@ export const metadata: Metadata = {
  * Product counts are computed live against the CURRENT real catalog only
  * (lib/partners.ts's getAllRealProducts(), the 449 already-live products)
  * via lib/category-mapper.ts — not the four new-partner feeds tested
- * separately, which are explicitly not being imported yet. This is a
- * preview of the new Walmart-style taxonomy, not a replacement for the
- * existing /category/[slug] pages, which still use the older, simpler
- * lib/category-map.ts taxonomy the real catalog is actually organized by
- * today. The two systems aren't reconciled yet — this page is read-only
- * scaffolding for that future work, not a live product browser.
+ * separately, which are explicitly not being imported yet.
+ *
+ * This taxonomy IS what /category/[slug] runs on now (Stage 4), at the
+ * department level specifically — the deepest level with its own real
+ * page. Stage 5 connects the two: a populated department here gets a
+ * "View all products" link straight to its /category/[slug] page,
+ * generated via the same slugifyRealCategory() that page's data layer
+ * uses, so the two can't drift on what a department's slug is. Category/
+ * productTypeGroup/productType levels stay display-only — there's no
+ * dedicated page for them to link to.
  *
  * Categories with zero products are shown, not hidden, and marked "Coming
  * soon" — this taxonomy is meant to be the complete structure everything
  * eventually maps into, so hiding the empty parts would undersell what
- * it's actually for.
+ * it's actually for. They deliberately don't link anywhere: /category/
+ * [slug] can't even resolve a department that has no products yet, so a
+ * link would be a dead end. Revisit once a partner actually populates one.
  */
 function computeCounts() {
   const deptCounts = new Map<string, number>();
@@ -111,6 +117,19 @@ export default function CategoriesPage() {
                       >
                         {deptTotal > 0 ? `${deptTotal} products` : "Coming soon"}
                       </span>
+                      {deptTotal > 0 && (
+                        // A distinct clickable target from the <summary> row
+                        // itself (which toggles the accordion) — nesting a
+                        // navigation link inside the toggle would make
+                        // clicking near the department name unexpectedly
+                        // leave the page instead of expanding it.
+                        <Link
+                          href={`/category/${slugifyRealCategory(dept.name)}`}
+                          className="whitespace-nowrap text-xs font-semibold text-gilt-400 underline decoration-gilt-500/40 underline-offset-2 transition-colors hover:text-gilt-300"
+                        >
+                          View all products →
+                        </Link>
+                      )}
                       <ChevronDownIcon className="h-4 w-4 text-ivory-400 transition-transform duration-200 group-open:rotate-180" />
                     </span>
                   </summary>

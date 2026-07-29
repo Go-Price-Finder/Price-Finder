@@ -40,7 +40,7 @@
  * getFeaturedDeals/getBestSellers below.
  */
 
-import { mapProductToCategory } from "./category-mapper";
+import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
 import {
   IMAGE_PENDING_PLACEHOLDER,
   canShowRealImages,
@@ -312,6 +312,115 @@ export function getCategoryBySlug(
       (p) => p.parentCategory === category.name
     ),
   };
+}
+
+/** Every real product mapped through lib/category-mapper.ts's full
+ * 4-level taxonomy (department/category/productTypeGroup/productType),
+ * excluding anything that comes back Unclassified. Shared by
+ * getProductsByCategoryPath and getPopulatedCategoryPaths below so the
+ * mapping is computed the same way in both places — product-type and
+ * productTypeGroup names collide often across the taxonomy (e.g.
+ * "T-Shirts" appears under 4 different categories, "Wet Palettes" appears
+ * twice within the same Arts & Crafts category), so matching a specific
+ * leaf always requires the full path, never just the leaf name alone. */
+let mappedProductsCache: { product: RealProduct; mapping: CategoryMapping }[] | null = null;
+
+function mapAllRealProductsToCategory(): {
+  product: RealProduct;
+  mapping: CategoryMapping;
+}[] {
+  // Memoized per process — mapProductToCategory() scores every product
+  // against all ~388 taxonomy leaves, and this function used to run that
+  // in full on every call. Once the nested /category/[slug]/[...path]
+  // page existed, that meant every one of its ~20 static pages doing it
+  // twice (generateMetadata + the page component itself), all running in
+  // parallel across build workers — which is what turned an unnoticeable
+  // cost on the single /categories page into every leaf page timing out
+  // past Next.js's 60s static-generation limit. The underlying product
+  // data is fixed for the lifetime of a process (a real deploy requires a
+  // rebuild anyway), so caching here is safe, not just faster.
+  if (mappedProductsCache) return mappedProductsCache;
+  mappedProductsCache = getAllRealProducts()
+    .map((product) => ({
+      product,
+      mapping: mapProductToCategory({
+        title: product.name,
+        description: product.description,
+        brand: product.partnerName,
+        partnerCategory: product.category,
+        price: product.price,
+        url: product.deepLink,
+        partnerId: product.partnerId,
+      }),
+    }))
+    .filter(({ mapping }) => mapping.department !== "Unclassified");
+  return mappedProductsCache;
+}
+
+/** Every (department, category, productTypeGroup, productType) leaf that
+ * currently has at least one real product, as slug segments — used by the
+ * nested /category/[slug]/[...path] page's generateStaticParams so every
+ * populated leaf is pre-rendered at build time, same as every other page
+ * on the site. */
+export function getPopulatedCategoryPaths(): {
+  deptSlug: string;
+  path: [string, string, string];
+}[] {
+  const seen = new Map<string, { deptSlug: string; path: [string, string, string] }>();
+  for (const { mapping } of mapAllRealProductsToCategory()) {
+    const deptSlug = slugifyRealCategory(mapping.department);
+    const catSlug = slugifyRealCategory(mapping.category);
+    const ptgSlug = slugifyRealCategory(mapping.productTypeGroup);
+    const typeSlug = slugifyRealCategory(mapping.productType);
+    const key = `${deptSlug}/${catSlug}/${ptgSlug}/${typeSlug}`;
+    if (!seen.has(key)) {
+      seen.set(key, { deptSlug, path: [catSlug, ptgSlug, typeSlug] });
+    }
+  }
+  return [...seen.values()];
+}
+
+export type CategoryPathResult = {
+  department: string;
+  category: string;
+  productTypeGroup: string;
+  productType: string;
+  products: RealProduct[];
+};
+
+/** A single product-type leaf by its full taxonomy path (the department's
+ * slug plus category/productTypeGroup/productType slugs), plus only the
+ * real products in it — used by the nested /category/[slug]/[...path]
+ * page so clicking a populated product type on /categories shows just
+ * that leaf's products, not its whole parent department. */
+export function getProductsByCategoryPath(
+  deptSlug: string,
+  catSlug: string,
+  ptgSlug: string,
+  typeSlug: string
+): CategoryPathResult | undefined {
+  let resolved: Omit<CategoryPathResult, "products"> | undefined;
+  const products: RealProduct[] = [];
+
+  for (const { product, mapping } of mapAllRealProductsToCategory()) {
+    if (
+      slugifyRealCategory(mapping.department) !== deptSlug ||
+      slugifyRealCategory(mapping.category) !== catSlug ||
+      slugifyRealCategory(mapping.productTypeGroup) !== ptgSlug ||
+      slugifyRealCategory(mapping.productType) !== typeSlug
+    ) {
+      continue;
+    }
+    resolved ??= {
+      department: mapping.department,
+      category: mapping.category,
+      productTypeGroup: mapping.productTypeGroup,
+      productType: mapping.productType,
+    };
+    products.push(product);
+  }
+
+  return resolved ? { ...resolved, products } : undefined;
 }
 
 /** Real markdowns only — a product counts as a deal when it has a real

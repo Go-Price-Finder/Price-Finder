@@ -20,21 +20,33 @@ export const metadata: Metadata = {
  * separately, which are explicitly not being imported yet.
  *
  * This taxonomy IS what /category/[slug] runs on now (Stage 4), at the
- * department level specifically — the deepest level with its own real
- * page. Stage 5 connects the two: a populated department here gets a
- * "View all products" link straight to its /category/[slug] page,
- * generated via the same slugifyRealCategory() that page's data layer
- * uses, so the two can't drift on what a department's slug is. Category/
- * productTypeGroup/productType levels stay display-only — there's no
- * dedicated page for them to link to.
+ * department level, and — for a specific product type — the nested
+ * /category/[slug]/[...path] page (department > category > productTypeGroup
+ * > productType). Category and productTypeGroup levels don't get their
+ * own pages; only department and product-type do, so only those two
+ * levels are ever links below.
+ *
+ * Counts below are keyed by full path (pathKey), not by leaf name alone —
+ * category/productTypeGroup/productType names collide constantly across
+ * the taxonomy ("T-Shirts" appears under 4 different categories, "Wet
+ * Palettes" appears twice within the same Arts & Crafts category), so a
+ * name-only key would show the same count under every branch that shares
+ * that name, whether or not that branch actually has any products. Every
+ * lookup below rebuilds the same path used to populate the map, so a
+ * given leaf's count always reflects only its own branch.
  *
  * Categories with zero products are shown, not hidden, and marked "Coming
  * soon" — this taxonomy is meant to be the complete structure everything
  * eventually maps into, so hiding the empty parts would undersell what
- * it's actually for. They deliberately don't link anywhere: /category/
- * [slug] can't even resolve a department that has no products yet, so a
- * link would be a dead end. Revisit once a partner actually populates one.
+ * it's actually for. They deliberately don't link anywhere: neither
+ * /category/[slug] nor the nested product-type page can resolve a branch
+ * that has no products yet, so a link would be a dead end. Revisit once a
+ * partner actually populates one.
  */
+function pathKey(...parts: string[]): string {
+  return parts.join("|||");
+}
+
 function computeCounts() {
   const deptCounts = new Map<string, number>();
   const catCounts = new Map<string, number>();
@@ -52,10 +64,14 @@ function computeCounts() {
       partnerId: product.partnerId,
     });
     if (mapping.department === "Unclassified") continue;
-    deptCounts.set(mapping.department, (deptCounts.get(mapping.department) ?? 0) + 1);
-    catCounts.set(mapping.category, (catCounts.get(mapping.category) ?? 0) + 1);
-    ptgCounts.set(mapping.productTypeGroup, (ptgCounts.get(mapping.productTypeGroup) ?? 0) + 1);
-    ptCounts.set(mapping.productType, (ptCounts.get(mapping.productType) ?? 0) + 1);
+    const { department, category, productTypeGroup, productType } = mapping;
+    deptCounts.set(department, (deptCounts.get(department) ?? 0) + 1);
+    const catKey = pathKey(department, category);
+    catCounts.set(catKey, (catCounts.get(catKey) ?? 0) + 1);
+    const ptgKey = pathKey(department, category, productTypeGroup);
+    ptgCounts.set(ptgKey, (ptgCounts.get(ptgKey) ?? 0) + 1);
+    const ptKey = pathKey(department, category, productTypeGroup, productType);
+    ptCounts.set(ptKey, (ptCounts.get(ptKey) ?? 0) + 1);
   }
 
   return { deptCounts, catCounts, ptgCounts, ptCounts };
@@ -135,7 +151,7 @@ export default function CategoriesPage() {
 
                   <div className="flex flex-col gap-6 border-t border-gilt-500/15 px-5 pb-6 pt-5">
                     {dept.categories.map((cat) => {
-                      const catTotal = catCounts.get(cat.name) ?? 0;
+                      const catTotal = catCounts.get(pathKey(dept.name, cat.name)) ?? 0;
                       return (
                         <div key={cat.id}>
                           <div className="mb-2 flex items-baseline justify-between gap-2">
@@ -153,7 +169,8 @@ export default function CategoriesPage() {
 
                           <div className="flex flex-col gap-3">
                             {cat.productTypeGroups.map((ptg) => {
-                              const ptgTotal = ptgCounts.get(ptg.name) ?? 0;
+                              const ptgTotal =
+                                ptgCounts.get(pathKey(dept.name, cat.name, ptg.name)) ?? 0;
                               return (
                                 <div key={ptg.id}>
                                   <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-ivory-400">
@@ -162,19 +179,25 @@ export default function CategoriesPage() {
                                   </p>
                                   <div className="flex flex-wrap gap-1.5">
                                     {ptg.productTypes.map((pt) => {
-                                      const count = ptCounts.get(pt) ?? 0;
+                                      const count =
+                                        ptCounts.get(pathKey(dept.name, cat.name, ptg.name, pt)) ?? 0;
+                                      const badgeClass = `rounded-full border px-2.5 py-1 text-[11px] font-medium ${
+                                        count > 0
+                                          ? "border-gilt-500/30 bg-gilt-500/10 text-ivory-100 transition-colors hover:border-gilt-500/60 hover:bg-gilt-500/20"
+                                          : "border-noir-600 text-ivory-400"
+                                      }`;
+                                      if (count === 0) {
+                                        return (
+                                          <span key={pt} className={badgeClass}>
+                                            {pt} — Coming soon
+                                          </span>
+                                        );
+                                      }
+                                      const href = `/category/${slugifyRealCategory(dept.name)}/${slugifyRealCategory(cat.name)}/${slugifyRealCategory(ptg.name)}/${slugifyRealCategory(pt)}`;
                                       return (
-                                        <span
-                                          key={pt}
-                                          className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${
-                                            count > 0
-                                              ? "border-gilt-500/30 bg-gilt-500/10 text-ivory-100"
-                                              : "border-noir-600 text-ivory-400"
-                                          }`}
-                                        >
-                                          {pt}
-                                          {count > 0 ? ` (${count})` : " — Coming soon"}
-                                        </span>
+                                        <Link key={pt} href={href} className={badgeClass}>
+                                          {pt} ({count})
+                                        </Link>
                                       );
                                     })}
                                   </div>

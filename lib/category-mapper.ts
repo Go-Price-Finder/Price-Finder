@@ -277,7 +277,6 @@ const PARTNER_BIAS: Record<string, PartnerBiasRule[]> = {
     { category: "Watches", bonus: 25 },
     { productType: "Luxury Watches", bonus: 15 },
   ],
-  "canvas-vows": [{ productTypeGroup: "Home Décor", bonus: 18 }],
   giftlab: [{ department: "Home", bonus: 4 }],
   "brooklyn-delhi": [{ department: "Grocery & Food", bonus: 12 }],
   evdance: [{ category: "EV Charging", bonus: 30 }],
@@ -464,9 +463,28 @@ function goldenMapleOverride(product: ProductInput): LeafNode | null {
   return null;
 }
 
+// Canvas Vows' entire real feed (204 products, verified against the live
+// AWIN feed) is personalized wall-hangable canvas prints — vow/anniversary
+// canvases, family name signs, star maps, "guest book" canvases guests
+// sign directly. Every product's description confirms it ships as a
+// ready-to-hang canvas, including the ones that don't sound like it from
+// the title alone ("Wedding Guest Book": "Your design is printed onto a
+// canvas... Ready to hang"). No sub-differentiation needed — unlike
+// Brooklyn Delhi/Golden Maple, this partner's whole catalog is one product
+// type, so the override doesn't branch on keywords at all.
+function canvasVowsOverride(): LeafNode {
+  return {
+    department: "Home",
+    category: "Decor",
+    productTypeGroup: "Wall Decor",
+    productType: "Wall Art",
+  };
+}
+
 const PARTNER_OVERRIDES: Record<string, (product: ProductInput) => LeafNode | null> = {
   "brooklyn-delhi": brooklynDelhiOverride,
   "golden-maple": goldenMapleOverride,
+  "canvas-vows": canvasVowsOverride,
 };
 
 // ---------------------------------------------------------------------------

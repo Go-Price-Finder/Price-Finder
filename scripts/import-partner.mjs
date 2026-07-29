@@ -8,23 +8,24 @@
  *   1. Parses the CSV and validates every row (required fields, positive
  *      price, well-formed deep link, description length) — bad rows are
  *      skipped with a warning, never silently dropped without saying so.
- *   2. Auto-categorizes every product into a parent category by keyword,
- *      using the SAME rules file (config/category-rules.json) the live
- *      site uses to render category tiles — so a product is guaranteed to
- *      land in the same parent category here as it will on the site.
- *   3. Downloads and resizes every product image (see IMAGE SPEC below),
+ *   2. Downloads and resizes every product image (see IMAGE SPEC below),
  *      skipping any file that already exists so an interrupted run can
  *      just be re-run.
- *   4. Generates lib/<partner-id>-data.ts from the same shape every other
- *      partner's data file already uses.
- *   5. Wires the partner into lib/partners.ts automatically — inserts an
+ *   3. Generates lib/<partner-id>-data.ts from the same shape every other
+ *      partner's data file already uses. Category classification
+ *      (Walmart-taxonomy department/category, via lib/category-mapper.ts)
+ *      happens live on the site at render time, not at import time — see
+ *      lib/partners.ts's normalizeProduct, which is the single place every
+ *      partner's raw `category` string gets mapped, so there's nothing to
+ *      duplicate here.
+ *   4. Wires the partner into lib/partners.ts automatically — inserts an
  *      import line and a PARTNERS array entry at the two marker comments
  *      in that file. This is the step that got missed by hand during the
  *      EVDANCE/Golden Maple import (see lib/partners.ts's own header
  *      comment and the project's build-notes doc) and caused a fully
  *      "complete-looking" import to silently show 0 products on the live
  *      site. Doing it here, mechanically, removes that failure mode.
- *   6. Runs `tsc --noEmit` and `eslint` against the result and reports
+ *   5. Runs `tsc --noEmit` and `eslint` against the result and reports
  *      pass/fail, so a broken import is caught immediately instead of
  *      discovered later.
  *
@@ -152,9 +153,8 @@ const TAGLINE = args.tagline ?? "";
 // 0. Compliance gate — reads the SAME registry the live site's own
 //    render-time gate reads (lib/partner-compliance.ts), so a partner
 //    that's blocked here could never have snuck through some other way.
-//    This runs before any CSV parsing, category classification, image
-//    downloading, or file writing — a blocked partner leaves no trace on
-//    disk.
+//    This runs before any CSV parsing, image downloading, or file
+//    writing — a blocked partner leaves no trace on disk.
 // ---------------------------------------------------------------------
 
 const complianceRegistry = JSON.parse(
@@ -306,27 +306,7 @@ function resolveColumn(headers, field) {
 }
 
 // ---------------------------------------------------------------------
-// 3. Category classification — reads the SAME rules file the live site
-//    uses (lib/category-map.ts), so a product's parent category here is
-//    guaranteed identical to what it'll be on the site.
-// ---------------------------------------------------------------------
-
-const categoryRules = JSON.parse(
-  readFileSync(join(ROOT, "config", "category-rules.json"), "utf-8")
-);
-
-function getParentCategory(rawCategory) {
-  const haystack = (rawCategory || "").toLowerCase();
-  for (const rule of categoryRules.parents) {
-    if (rule.keywords.some((kw) => haystack.includes(kw))) {
-      return rule.name;
-    }
-  }
-  return categoryRules.fallback.name;
-}
-
-// ---------------------------------------------------------------------
-// 4. Helpers
+// 3. Helpers
 // ---------------------------------------------------------------------
 
 function slugify(text) {
@@ -380,7 +360,7 @@ function looksCopiedVerbatim(generatedDescription, sourceFeedText) {
 }
 
 // ---------------------------------------------------------------------
-// 5. Parse + validate + classify
+// 4. Parse + validate + classify
 // ---------------------------------------------------------------------
 
 const csvRaw = readFileSync(args.csv, "utf-8");
@@ -494,14 +474,12 @@ for (const [i, row] of parsed.data.entries()) {
     images: imagePaths,
     imageUrls: allImageUrls, // not written to the data file — used for downloading below
     category: rawCategory.trim() || "Uncategorized",
-    parentCategory: getParentCategory(rawCategory),
   });
 }
 
 const categoryBreakdown = new Map();
 for (const p of products) {
-  const key = `${p.category} -> ${p.parentCategory}`;
-  categoryBreakdown.set(key, (categoryBreakdown.get(key) ?? 0) + 1);
+  categoryBreakdown.set(p.category, (categoryBreakdown.get(p.category) ?? 0) + 1);
 }
 
 console.log(`Parsed ${parsed.data.length} rows: ${products.length} valid, ${skippedRows} skipped.`);
@@ -510,7 +488,7 @@ if (warnings.length > 0) {
   for (const w of warnings.slice(0, 30)) console.log(`  - ${w}`);
   if (warnings.length > 30) console.log(`  ... and ${warnings.length - 30} more`);
 }
-console.log(`\nCategory -> parent category breakdown:`);
+console.log(`\nRaw category breakdown (Walmart-taxonomy classification happens live on the site, not here):`);
 for (const [key, count] of [...categoryBreakdown.entries()].sort()) {
   console.log(`  ${count.toString().padStart(4)}  ${key}`);
 }
@@ -543,7 +521,7 @@ if (args["dry-run"]) {
 }
 
 // ---------------------------------------------------------------------
-// 6. Download + resize images
+// 5. Download + resize images
 // ---------------------------------------------------------------------
 
 async function downloadAndResize(url, destRelPath) {
@@ -606,7 +584,7 @@ if (IMAGES_BLOCKED_BY_COMPLIANCE) {
 }
 
 // ---------------------------------------------------------------------
-// 7. Generate lib/<partner-id>-data.ts
+// 6. Generate lib/<partner-id>-data.ts
 // ---------------------------------------------------------------------
 
 const pascalId = PARTNER_ID.replace(/(^|-)([a-z])/g, (_, __, c) => c.toUpperCase());
@@ -681,7 +659,7 @@ writeFileSync(dataFilePath, dataFileContents);
 console.log(`\nWrote ${dataFilePath.replace(ROOT + "/", "")} (${products.length} products).`);
 
 // ---------------------------------------------------------------------
-// 8. Wire into lib/partners.ts at the marker comments
+// 7. Wire into lib/partners.ts at the marker comments
 // ---------------------------------------------------------------------
 
 const partnersPath = join(ROOT, "lib", "partners.ts");
@@ -761,7 +739,7 @@ console.log(
 );
 
 // ---------------------------------------------------------------------
-// 9. Self-verify
+// 8. Self-verify
 // ---------------------------------------------------------------------
 
 if (!args["no-verify"]) {

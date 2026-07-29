@@ -40,7 +40,7 @@
  * getFeaturedDeals/getBestSellers below.
  */
 
-import { getParentCategory } from "./category-map";
+import { mapProductToCategory } from "./category-mapper";
 import {
   IMAGE_PENDING_PLACEHOLDER,
   canShowRealImages,
@@ -102,12 +102,14 @@ export type RealProduct = {
    * "Brushes", "Extension Cords & Cables") — shown on product cards and
    * partner pages. */
   category: string;
-  /** Broad, browsable parent category (e.g. "Art & Craft Supplies")
-   * auto-derived from `category` via lib/category-map.ts — this is what
-   * Popular Categories tiles and /category pages group by, so a handful
-   * of partners with a dozen-plus subcategories between them still
-   * produce a small, useful set of category tiles instead of one tile
-   * per subcategory. */
+  /** Walmart-taxonomy department (e.g. "Toys & Games") auto-derived via
+   * lib/category-mapper.ts — this is what /category pages group by, so a
+   * handful of partners with a dozen-plus raw subcategories between them
+   * still produce a small, useful set of category pages instead of one
+   * page per subcategory. Department, not the mapper's full 4-level
+   * depth, per the Stage 3 recommendation: most populated categories are
+   * 1:1 with their department anyway, and going deeper would mean several
+   * single-digit-product pages. */
   parentCategory: string;
   badge?: string;
   rating?: { stars: number; count: number };
@@ -160,7 +162,15 @@ function normalizeProduct(
       ? product.images
       : [IMAGE_PENDING_PLACEHOLDER],
     category: product.category,
-    parentCategory: getParentCategory(product.category).name,
+    parentCategory: mapProductToCategory({
+      title: product.name,
+      description: product.description,
+      brand: partnerName,
+      partnerCategory: product.category,
+      price: product.price,
+      url: product.deepLink,
+      partnerId,
+    }).department,
     badge: product.badge,
     rating: product.rating,
     deepLink: product.deepLink,
@@ -264,13 +274,13 @@ export function slugifyRealCategory(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-/** Parent categories that currently have at least one real product —
+/** Departments that currently have at least one real product —
  * auto-shrinks/grows as partners and their catalogs change. Grouped by
- * `parentCategory` (see lib/category-map.ts), not the specific `category`
- * subcategory, so a handful of partners with a dozen-plus subcategories
- * between them still produce a small, browsable set of tiles instead of
- * one tile per subcategory. Each category's tile image is its first
- * product's real photo, not a placeholder. */
+ * `parentCategory` (see lib/category-mapper.ts), not the specific
+ * `category` subcategory, so a handful of partners with a dozen-plus raw
+ * subcategories between them still produce a small, browsable set of
+ * pages instead of one per subcategory. Each category's image is its
+ * first product's real photo, not a placeholder. */
 export function getRealCategories(): RealCategory[] {
   const products = getAllRealProducts();
   const byCategory = new Map<string, RealProduct[]>();
@@ -287,10 +297,10 @@ export function getRealCategories(): RealCategory[] {
   }));
 }
 
-/** A single parent category by its slug, plus only the real products in
- * it — used by the dedicated per-category page so clicking "Art & Craft
- * Supplies" on Popular Categories shows every product from every partner
- * in that parent category, not just one partner's or one subcategory's. */
+/** A single department by its slug, plus only the real products in it —
+ * used by the dedicated /category/[slug] page, showing every product from
+ * every partner in that department, not just one partner's or one raw
+ * subcategory's. */
 export function getCategoryBySlug(
   slug: string
 ): (RealCategory & { products: RealProduct[] }) | undefined {

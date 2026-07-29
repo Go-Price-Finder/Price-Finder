@@ -11,15 +11,19 @@ import { useWishlist } from "@/lib/wishlist-context";
 import { useAuth } from "@/lib/auth-context";
 import { signOutAction } from "@/lib/supabase/actions";
 
-// Brooklyn Delhi is discoverable via the homepage's Our Partners /
-// Popular Categories sections and its own /brooklyn-delhi page, so it's
-// deliberately not a standing top-nav item — nav stays generic
-// (Trending/Categories/How It Works/Deals) instead of naming individual
-// partners, since that list should scale to many partners later without
-// needing to grow forever.
+// Brooklyn Delhi is discoverable via the homepage's Our Partners section
+// and its own /brooklyn-delhi page, so it's deliberately not a standing
+// top-nav item — nav stays generic (Trending/Categories/How It Works/
+// Deals) instead of naming individual partners, since that list should
+// scale to many partners later without needing to grow forever.
+//
+// "Categories" points at the dedicated /categories page (the full
+// Walmart-taxonomy browser) rather than the old homepage "Browse by
+// category" section's #categories anchor, which no longer exists — that
+// section was removed from the homepage in favor of this page.
 const NAV_LINKS = [
   { label: "Trending", href: "/trending" },
-  { label: "Categories", href: "/#categories" },
+  { label: "Categories", href: "/categories" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Deals", href: "/deals" },
 ];

@@ -53,7 +53,7 @@ export default async function CategoryPage({
               Home
             </Link>
             <ChevronRightIcon className="h-3 w-3" />
-            <Link href="/#categories" className="transition-colors hover:text-gilt-400">
+            <Link href="/categories" className="transition-colors hover:text-gilt-400">
               Categories
             </Link>
             <ChevronRightIcon className="h-3 w-3" />

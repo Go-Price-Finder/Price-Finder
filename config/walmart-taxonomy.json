@@ -1,0 +1,525 @@
+{
+  "$comment": "Manually constructed, comprehensive approximation of Walmart's department -> category -> product type group -> product type hierarchy. NOT scraped or pulled from Walmart's actual live taxonomy/API (no access to that) -- built to be realistic and genuinely useful as a mapping target for lib/category-mapper.ts, not to claim byte-for-byte fidelity to Walmart's real internal system. IDs are sequential and stable -- once referenced by mapper output or stored data, don't renumber existing entries; append new ones instead.",
+  "departments": [
+    {
+      "id": "dept-001",
+      "name": "Apparel & Accessories",
+      "categories": [
+        {
+          "id": "cat-001",
+          "name": "Women's Clothing",
+          "productTypeGroups": [
+            { "id": "ptg-001", "name": "Dresses", "productTypes": ["Casual Dresses", "Formal Dresses", "Maxi Dresses", "Sundresses"] },
+            { "id": "ptg-002", "name": "Tops", "productTypes": ["T-Shirts", "Blouses", "Sweaters", "Tank Tops", "Cardigans"] },
+            { "id": "ptg-003", "name": "Bottoms", "productTypes": ["Jeans", "Leggings", "Skirts", "Shorts"] },
+            { "id": "ptg-004", "name": "Outerwear", "productTypes": ["Jackets", "Coats", "Vests"] }
+          ]
+        },
+        {
+          "id": "cat-002",
+          "name": "Men's Clothing",
+          "productTypeGroups": [
+            { "id": "ptg-005", "name": "Tops", "productTypes": ["T-Shirts", "Dress Shirts", "Polo Shirts", "Sweaters"] },
+            { "id": "ptg-006", "name": "Bottoms", "productTypes": ["Jeans", "Chinos", "Shorts", "Dress Pants"] },
+            { "id": "ptg-007", "name": "Outerwear", "productTypes": ["Jackets", "Coats", "Vests"] },
+            { "id": "ptg-008", "name": "Suits & Formalwear", "productTypes": ["Suits", "Blazers", "Tuxedos"] }
+          ]
+        },
+        {
+          "id": "cat-003",
+          "name": "Kids' Clothing",
+          "productTypeGroups": [
+            { "id": "ptg-009", "name": "Girls' Clothing", "productTypes": ["Dresses", "Tops", "Leggings", "Pajamas"] },
+            { "id": "ptg-010", "name": "Boys' Clothing", "productTypes": ["T-Shirts", "Shorts", "Pajamas", "Jackets"] },
+            { "id": "ptg-011", "name": "Baby Clothing", "productTypes": ["Onesies", "Rompers", "Sleepers"] }
+          ]
+        },
+        {
+          "id": "cat-058",
+          "name": "Unisex Clothing",
+          "productTypeGroups": [
+            { "id": "ptg-100", "name": "Tops", "productTypes": ["T-Shirts", "Hoodies", "Sweatshirts", "Tank Tops"] },
+            { "id": "ptg-101", "name": "Bottoms", "productTypes": ["Jeans", "Shorts", "Sweatpants"] },
+            { "id": "ptg-102", "name": "Outerwear", "productTypes": ["Jackets", "Vests"] }
+          ]
+        },
+        {
+          "id": "cat-004",
+          "name": "Shoes",
+          "productTypeGroups": [
+            { "id": "ptg-012", "name": "Women's Shoes", "productTypes": ["Sneakers", "Sandals", "Boots", "Heels", "Flats"] },
+            { "id": "ptg-013", "name": "Men's Shoes", "productTypes": ["Sneakers", "Boots", "Dress Shoes", "Sandals"] },
+            { "id": "ptg-014", "name": "Kids' Shoes", "productTypes": ["Sneakers", "Sandals", "Boots"] }
+          ]
+        },
+        {
+          "id": "cat-005",
+          "name": "Bags & Accessories",
+          "productTypeGroups": [
+            { "id": "ptg-015", "name": "Handbags", "productTypes": ["Totes", "Crossbody Bags", "Clutches", "Backpacks"] },
+            { "id": "ptg-016", "name": "Accessories", "productTypes": ["Belts", "Scarves", "Hats", "Gloves", "Sunglasses"] }
+          ]
+        },
+        {
+          "id": "cat-006",
+          "name": "Jewelry",
+          "productTypeGroups": [
+            { "id": "ptg-017", "name": "Fine Jewelry", "productTypes": ["Necklaces", "Earrings", "Bracelets", "Rings"] },
+            { "id": "ptg-018", "name": "Fashion Jewelry", "productTypes": ["Costume Necklaces", "Costume Earrings", "Anklets"] }
+          ]
+        },
+        {
+          "id": "cat-007",
+          "name": "Watches",
+          "productTypeGroups": [
+            { "id": "ptg-019", "name": "Watches", "productTypes": ["Luxury Watches", "Smartwatches", "Casual Watches", "Dress Watches"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-002",
+      "name": "Home",
+      "categories": [
+        {
+          "id": "cat-008",
+          "name": "Bedroom",
+          "productTypeGroups": [
+            { "id": "ptg-020", "name": "Bedding", "productTypes": ["Mattresses", "Sheets", "Comforters", "Pillows", "Mattress Toppers"] },
+            { "id": "ptg-021", "name": "Bedroom Furniture", "productTypes": ["Bed Frames", "Nightstands", "Dressers", "Armoires"] }
+          ]
+        },
+        {
+          "id": "cat-009",
+          "name": "Living Room",
+          "productTypeGroups": [
+            { "id": "ptg-022", "name": "Living Room Furniture", "productTypes": ["Sofas", "Coffee Tables", "TV Stands", "Chairs", "Recliners"] },
+            { "id": "ptg-023", "name": "Living Room Decor", "productTypes": ["Throw Pillows", "Area Rugs", "Curtains"] }
+          ]
+        },
+        {
+          "id": "cat-010",
+          "name": "Kitchen",
+          "productTypeGroups": [
+            { "id": "ptg-024", "name": "Cookware", "productTypes": ["Pots & Pans", "Bakeware", "Cutlery", "Cutting Boards"] },
+            { "id": "ptg-025", "name": "Small Appliances", "productTypes": ["Blenders", "Toasters", "Coffee Makers", "Air Fryers"] },
+            { "id": "ptg-026", "name": "Kitchen Storage", "productTypes": ["Food Containers", "Pantry Organizers"] }
+          ]
+        },
+        {
+          "id": "cat-011",
+          "name": "Dining",
+          "productTypeGroups": [
+            { "id": "ptg-027", "name": "Dining Furniture", "productTypes": ["Dining Tables", "Dining Chairs", "Bar Stools"] },
+            { "id": "ptg-028", "name": "Tableware", "productTypes": ["Dinnerware Sets", "Glassware", "Flatware", "Serveware"] }
+          ]
+        },
+        {
+          "id": "cat-012",
+          "name": "Bathroom",
+          "productTypeGroups": [
+            { "id": "ptg-029", "name": "Bath Linens", "productTypes": ["Towels", "Bath Mats", "Shower Curtains"] },
+            { "id": "ptg-030", "name": "Bathroom Fixtures & Storage", "productTypes": ["Bathroom Organizers", "Soap Dispensers", "Mirrors"] }
+          ]
+        },
+        {
+          "id": "cat-013",
+          "name": "Decor",
+          "productTypeGroups": [
+            { "id": "ptg-031", "name": "Wall Decor", "productTypes": ["Wall Art", "Mirrors", "Wall Shelves", "Clocks"] },
+            { "id": "ptg-032", "name": "Home Décor", "productTypes": ["Candles", "Vases", "Decorative Pillows", "Picture Frames", "Artificial Plants"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-003",
+      "name": "Electronics",
+      "categories": [
+        {
+          "id": "cat-014",
+          "name": "Laptops",
+          "productTypeGroups": [
+            { "id": "ptg-033", "name": "Laptops", "productTypes": ["Windows Laptops", "MacBooks", "Chromebooks", "2-in-1 Laptops"] },
+            { "id": "ptg-034", "name": "Laptop Accessories", "productTypes": ["Laptop Bags", "Laptop Chargers", "Docking Stations"] }
+          ]
+        },
+        {
+          "id": "cat-015",
+          "name": "Tablets",
+          "productTypeGroups": [
+            { "id": "ptg-035", "name": "Tablets", "productTypes": ["iPads", "Android Tablets", "Kids Tablets"] },
+            { "id": "ptg-036", "name": "Tablet Accessories", "productTypes": ["Tablet Cases", "Styluses", "Keyboard Covers"] }
+          ]
+        },
+        {
+          "id": "cat-016",
+          "name": "Phones",
+          "productTypeGroups": [
+            { "id": "ptg-037", "name": "Smartphones", "productTypes": ["iPhones", "Android Phones", "Prepaid Phones"] },
+            { "id": "ptg-038", "name": "Phone Accessories", "productTypes": ["Phone Cases", "Chargers", "Screen Protectors", "Power Banks"] }
+          ]
+        },
+        {
+          "id": "cat-017",
+          "name": "Cameras",
+          "productTypeGroups": [
+            { "id": "ptg-039", "name": "Cameras", "productTypes": ["DSLR Cameras", "Mirrorless Cameras", "Point-and-Shoot Cameras", "Action Cameras"] },
+            { "id": "ptg-040", "name": "Camera Accessories", "productTypes": ["Camera Lenses", "Tripods", "Memory Cards"] }
+          ]
+        },
+        {
+          "id": "cat-018",
+          "name": "Audio",
+          "productTypeGroups": [
+            { "id": "ptg-041", "name": "Headphones & Earbuds", "productTypes": ["Wireless Earbuds", "Over-Ear Headphones", "Noise-Canceling Headphones"] },
+            { "id": "ptg-042", "name": "Speakers", "productTypes": ["Bluetooth Speakers", "Soundbars", "Home Theater Systems"] }
+          ]
+        },
+        {
+          "id": "cat-019",
+          "name": "Gaming",
+          "productTypeGroups": [
+            { "id": "ptg-043", "name": "Gaming Consoles", "productTypes": ["PlayStation", "Xbox", "Nintendo Switch"] },
+            { "id": "ptg-044", "name": "Gaming Accessories", "productTypes": ["Controllers", "Gaming Headsets", "Gaming Chairs"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-004",
+      "name": "Grocery & Food",
+      "categories": [
+        {
+          "id": "cat-020",
+          "name": "Fresh",
+          "productTypeGroups": [
+            { "id": "ptg-045", "name": "Fresh Produce", "productTypes": ["Fruits", "Vegetables"] },
+            { "id": "ptg-046", "name": "Fresh Meat & Seafood", "productTypes": ["Beef", "Poultry", "Seafood"] },
+            { "id": "ptg-047", "name": "Dairy & Eggs", "productTypes": ["Milk", "Cheese", "Yogurt", "Eggs"] }
+          ]
+        },
+        {
+          "id": "cat-021",
+          "name": "Packaged",
+          "productTypeGroups": [
+            { "id": "ptg-048", "name": "Pantry Staples", "productTypes": ["Pasta", "Rice", "Canned Goods", "Condiments", "Sauces"] },
+            { "id": "ptg-049", "name": "Baking", "productTypes": ["Flour", "Sugar", "Baking Mixes", "Spices"] }
+          ]
+        },
+        {
+          "id": "cat-022",
+          "name": "Beverages",
+          "productTypeGroups": [
+            { "id": "ptg-050", "name": "Non-Alcoholic Beverages", "productTypes": ["Coffee", "Tea", "Soda", "Juice", "Water"] },
+            { "id": "ptg-051", "name": "Alcoholic Beverages", "productTypes": ["Beer", "Wine", "Spirits"] }
+          ]
+        },
+        {
+          "id": "cat-023",
+          "name": "Snacks",
+          "productTypeGroups": [
+            { "id": "ptg-052", "name": "Snacks", "productTypes": ["Chips", "Crackers", "Cookies", "Nuts", "Granola Bars"] },
+            { "id": "ptg-053", "name": "Candy", "productTypes": ["Chocolate", "Gummy Candy", "Mints"] }
+          ]
+        },
+        {
+          "id": "cat-024",
+          "name": "International",
+          "productTypeGroups": [
+            { "id": "ptg-054", "name": "International Foods", "productTypes": ["Indian Condiments & Chutneys", "Achaar & Pickles", "Curries & Simmer Sauces", "Asian Sauces", "Mexican Cuisine", "Mediterranean Cuisine", "Cookbooks"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-005",
+      "name": "Beauty & Personal Care",
+      "categories": [
+        {
+          "id": "cat-025",
+          "name": "Makeup",
+          "productTypeGroups": [
+            { "id": "ptg-055", "name": "Face Makeup", "productTypes": ["Foundation", "Concealer", "Powder", "Blush"] },
+            { "id": "ptg-056", "name": "Eye Makeup", "productTypes": ["Mascara", "Eyeshadow", "Eyeliner"] },
+            { "id": "ptg-057", "name": "Lip Makeup", "productTypes": ["Lipstick", "Lip Gloss", "Lip Liner"] }
+          ]
+        },
+        {
+          "id": "cat-026",
+          "name": "Skincare",
+          "productTypeGroups": [
+            { "id": "ptg-058", "name": "Facial Skincare", "productTypes": ["Moisturizers", "Cleansers", "Serums", "Sunscreen"] },
+            { "id": "ptg-059", "name": "Body Care", "productTypes": ["Body Lotion", "Body Wash", "Body Scrubs"] }
+          ]
+        },
+        {
+          "id": "cat-027",
+          "name": "Haircare",
+          "productTypeGroups": [
+            { "id": "ptg-060", "name": "Hair Products", "productTypes": ["Shampoo", "Conditioner", "Hair Styling Products", "Hair Treatments"] },
+            { "id": "ptg-061", "name": "Hair Tools", "productTypes": ["Hair Dryers", "Straighteners", "Curling Irons"] }
+          ]
+        },
+        {
+          "id": "cat-028",
+          "name": "Fragrances",
+          "productTypeGroups": [
+            { "id": "ptg-062", "name": "Fragrances", "productTypes": ["Women's Perfume", "Men's Cologne", "Unisex Fragrances"] }
+          ]
+        },
+        {
+          "id": "cat-029",
+          "name": "Men's Grooming",
+          "productTypeGroups": [
+            { "id": "ptg-063", "name": "Men's Grooming", "productTypes": ["Shaving Razors", "Shaving Cream", "Beard Care", "Men's Deodorant"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-006",
+      "name": "Sports & Outdoors",
+      "categories": [
+        {
+          "id": "cat-030",
+          "name": "Exercise & Fitness",
+          "productTypeGroups": [
+            { "id": "ptg-064", "name": "Fitness Equipment", "productTypes": ["Treadmills", "Dumbbells", "Yoga Mats", "Resistance Bands"] },
+            { "id": "ptg-065", "name": "Fitness Apparel", "productTypes": ["Athletic Wear", "Sports Bras", "Workout Leggings"] }
+          ]
+        },
+        {
+          "id": "cat-031",
+          "name": "Camping",
+          "productTypeGroups": [
+            { "id": "ptg-066", "name": "Camping Gear", "productTypes": ["Tents", "Sleeping Bags", "Camping Chairs", "Coolers"] }
+          ]
+        },
+        {
+          "id": "cat-032",
+          "name": "Fishing",
+          "productTypeGroups": [
+            { "id": "ptg-067", "name": "Fishing Gear", "productTypes": ["Fishing Rods", "Fishing Reels", "Tackle Boxes", "Fishing Line"] }
+          ]
+        },
+        {
+          "id": "cat-033",
+          "name": "Bikes",
+          "productTypeGroups": [
+            { "id": "ptg-068", "name": "Bikes & Accessories", "productTypes": ["Mountain Bikes", "Road Bikes", "Kids Bikes", "Bike Helmets"] }
+          ]
+        },
+        {
+          "id": "cat-034",
+          "name": "Outdoor Sports",
+          "productTypeGroups": [
+            { "id": "ptg-069", "name": "Team Sports", "productTypes": ["Basketballs", "Soccer Balls", "Footballs"] },
+            { "id": "ptg-070", "name": "Individual Outdoor Sports", "productTypes": ["Golf Clubs", "Tennis Rackets", "Skateboards"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-007",
+      "name": "Toys & Games",
+      "categories": [
+        {
+          "id": "cat-035",
+          "name": "Arts & Crafts",
+          "productTypeGroups": [
+            { "id": "ptg-071", "name": "Craft Supplies", "productTypes": ["Paint Brushes", "Model Making Kits", "Craft Paper", "Beads", "Craft Tape & Adhesives"] },
+            { "id": "ptg-072", "name": "Drawing & Painting", "productTypes": ["Watercolor Sets", "Sketch Pads", "Colored Pencils"] },
+            { "id": "ptg-095", "name": "Miniature & Hobby Painting", "productTypes": ["Miniature Detail Brushes", "Dry Brushes", "Wet Palettes", "Miniature Paint Sets", "Painting Handles & Grips", "Brush Cleaners", "Mixing Palettes & Trays", "Brush Cases & Organizers"] },
+            { "id": "ptg-096", "name": "Model & Miniature Making", "productTypes": ["Modeling Rods & Tubes", "Scenic Terrain Materials", "Miniature Display Stands", "Model Cutting & Sanding Tools", "Model Storage & Organizers", "Hobby Clamps & Vises", "Model Scribers & Panel Line Tools", "Miniature Carrying Cases"] },
+            { "id": "ptg-097", "name": "Calligraphy Supplies", "productTypes": ["Calligraphy Brushes", "Calligraphy Brush Sets"] },
+            { "id": "ptg-098", "name": "Tabletop Gaming Accessories", "productTypes": ["Dice Sets", "Terrain & Basing Kits"] },
+            { "id": "ptg-103", "name": "Miniature Brush", "productTypes": ["Detail Brush", "Dry Brush", "Base Brush", "Kolinsky Sable Brush", "Synthetic Hair"] },
+            { "id": "ptg-104", "name": "Paints", "productTypes": ["Miniature Paints"] },
+            { "id": "ptg-105", "name": "Tools & Accessories", "productTypes": ["Painting Handle", "Wet Palettes", "Storage & Cleaning", "Cutting & Sanding"] },
+            { "id": "ptg-106", "name": "Art Brushes", "productTypes": ["Watercolor Brush", "Masters Collection", "Chinese Calligraphy Brush", "Acrylic & Oil Brush"] }
+          ]
+        },
+        {
+          "id": "cat-036",
+          "name": "Building Sets",
+          "productTypeGroups": [
+            { "id": "ptg-073", "name": "Building Sets", "productTypes": ["Building Blocks", "Construction Sets", "Model Kits"] }
+          ]
+        },
+        {
+          "id": "cat-037",
+          "name": "Action Figures",
+          "productTypeGroups": [
+            { "id": "ptg-074", "name": "Action Figures", "productTypes": ["Superhero Figures", "Collectible Figures", "Vehicles & Playsets"] }
+          ]
+        },
+        {
+          "id": "cat-038",
+          "name": "Dolls",
+          "productTypeGroups": [
+            { "id": "ptg-075", "name": "Dolls", "productTypes": ["Fashion Dolls", "Baby Dolls", "Doll Accessories"] }
+          ]
+        },
+        {
+          "id": "cat-039",
+          "name": "Games & Puzzles",
+          "productTypeGroups": [
+            { "id": "ptg-076", "name": "Games", "productTypes": ["Board Games", "Card Games", "Puzzles"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-008",
+      "name": "Pet Supplies",
+      "categories": [
+        {
+          "id": "cat-040",
+          "name": "Pet Clothing",
+          "productTypeGroups": [
+            { "id": "ptg-077", "name": "Pet Clothing & Accessories", "productTypes": ["Dog Apparel", "Pet Collars & Leashes", "Pet Costumes"] }
+          ]
+        },
+        {
+          "id": "cat-041",
+          "name": "Pet Furniture",
+          "productTypeGroups": [
+            { "id": "ptg-078", "name": "Pet Furniture", "productTypes": ["Pet Beds", "Cat Trees", "Crates & Kennels"] }
+          ]
+        },
+        {
+          "id": "cat-042",
+          "name": "Pet Food & Treats",
+          "productTypeGroups": [
+            { "id": "ptg-079", "name": "Pet Food", "productTypes": ["Dog Food", "Cat Food", "Small Animal Food"] },
+            { "id": "ptg-080", "name": "Pet Treats", "productTypes": ["Dog Treats", "Cat Treats"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-009",
+      "name": "Automotive",
+      "categories": [
+        {
+          "id": "cat-043",
+          "name": "Tires",
+          "productTypeGroups": [
+            { "id": "ptg-081", "name": "Tires", "productTypes": ["All-Season Tires", "Winter Tires", "Performance Tires"] }
+          ]
+        },
+        {
+          "id": "cat-044",
+          "name": "Auto Parts",
+          "productTypeGroups": [
+            { "id": "ptg-082", "name": "Replacement Parts", "productTypes": ["Batteries", "Brake Pads", "Filters", "Belts & Hoses"] }
+          ]
+        },
+        {
+          "id": "cat-045",
+          "name": "Auto Accessories",
+          "productTypeGroups": [
+            { "id": "ptg-083", "name": "Auto Accessories", "productTypes": ["Floor Mats", "Seat Covers", "Phone Mounts", "Cargo Organizers"] }
+          ]
+        },
+        {
+          "id": "cat-046",
+          "name": "Tools",
+          "productTypeGroups": [
+            { "id": "ptg-084", "name": "Automotive Tools", "productTypes": ["Jacks", "Tool Kits", "Diagnostic Tools"] }
+          ]
+        },
+        {
+          "id": "cat-047",
+          "name": "Detailing",
+          "productTypeGroups": [
+            { "id": "ptg-085", "name": "Car Care", "productTypes": ["Car Wash Soap", "Wax & Polish", "Interior Cleaners"] }
+          ]
+        },
+        {
+          "id": "cat-056",
+          "name": "EV Charging",
+          "productTypeGroups": [
+            { "id": "ptg-094", "name": "EV Charging Equipment", "productTypes": ["Portable EV Chargers", "Wall-Mounted EV Chargers", "EV Charging Cables", "EV Charging Adapters", "EV Extension Cords"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-010",
+      "name": "Household Essentials",
+      "categories": [
+        {
+          "id": "cat-048",
+          "name": "Cleaning",
+          "productTypeGroups": [
+            { "id": "ptg-086", "name": "Cleaning Supplies", "productTypes": ["All-Purpose Cleaners", "Glass Cleaners", "Disinfecting Wipes", "Mops & Brooms"] }
+          ]
+        },
+        {
+          "id": "cat-049",
+          "name": "Laundry",
+          "productTypeGroups": [
+            { "id": "ptg-087", "name": "Laundry Supplies", "productTypes": ["Laundry Detergent", "Fabric Softener", "Stain Removers", "Dryer Sheets"] }
+          ]
+        },
+        {
+          "id": "cat-050",
+          "name": "Paper Products",
+          "productTypeGroups": [
+            { "id": "ptg-088", "name": "Paper Goods", "productTypes": ["Paper Towels", "Toilet Paper", "Facial Tissue", "Napkins"] }
+          ]
+        },
+        {
+          "id": "cat-051",
+          "name": "Batteries",
+          "productTypeGroups": [
+            { "id": "ptg-089", "name": "Batteries", "productTypes": ["AA Batteries", "AAA Batteries", "Rechargeable Batteries", "9V Batteries"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-011",
+      "name": "Party Supplies",
+      "categories": [
+        {
+          "id": "cat-052",
+          "name": "Decorations",
+          "productTypeGroups": [
+            { "id": "ptg-090", "name": "Party Decorations", "productTypes": ["Banners", "Table Covers", "Centerpieces"] }
+          ]
+        },
+        {
+          "id": "cat-053",
+          "name": "Balloons",
+          "productTypeGroups": [
+            { "id": "ptg-091", "name": "Balloons", "productTypes": ["Latex Balloons", "Foil Balloons", "Balloon Kits"] }
+          ]
+        },
+        {
+          "id": "cat-054",
+          "name": "Gift Wrap",
+          "productTypeGroups": [
+            { "id": "ptg-092", "name": "Gift Wrap & Bags", "productTypes": ["Wrapping Paper", "Gift Bags", "Ribbon & Bows", "Gift Tags"] }
+          ]
+        },
+        {
+          "id": "cat-055",
+          "name": "Party Favors",
+          "productTypeGroups": [
+            { "id": "ptg-093", "name": "Party Favors", "productTypes": ["Goodie Bags", "Novelty Toys", "Party Favor Sets"] }
+          ]
+        },
+        {
+          "id": "cat-057",
+          "name": "Novelty & Gifts",
+          "productTypeGroups": [
+            { "id": "ptg-099", "name": "Novelty Merchandise", "productTypes": ["Souvenir Magnets", "Tote Bags", "Branded Apparel", "Keychains", "Stickers"] }
+          ]
+        }
+      ]
+    }
+  ]
+}

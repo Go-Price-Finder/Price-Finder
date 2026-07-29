@@ -103,7 +103,6 @@ export default function CategoriesPage() {
                 <details
                   key={dept.id}
                   className="group overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft"
-                  {...(deptTotal > 0 ? { open: true } : {})}
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5">
                     <span className="font-display text-xl font-semibold text-ivory-50">

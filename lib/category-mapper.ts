@@ -408,7 +408,7 @@ function goldenMapleOverride(product: ProductInput): LeafNode | null {
   // Paintbrush"), which a plain "brush" word-boundary check misses entirely.
   const hasBrush = has("brush", "paintbrush");
   const artsCrafts = (productTypeGroup: string, productType: string): LeafNode => ({
-    department: "Toys & Games",
+    department: "Arts & Crafts",
     category: "Arts & Crafts",
     productTypeGroup,
     productType,

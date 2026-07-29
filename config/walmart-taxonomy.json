@@ -325,22 +325,6 @@
       "name": "Toys & Games",
       "categories": [
         {
-          "id": "cat-035",
-          "name": "Arts & Crafts",
-          "productTypeGroups": [
-            { "id": "ptg-071", "name": "Craft Supplies", "productTypes": ["Paint Brushes", "Model Making Kits", "Craft Paper", "Beads", "Craft Tape & Adhesives"] },
-            { "id": "ptg-072", "name": "Drawing & Painting", "productTypes": ["Watercolor Sets", "Sketch Pads", "Colored Pencils"] },
-            { "id": "ptg-095", "name": "Miniature & Hobby Painting", "productTypes": ["Miniature Detail Brushes", "Dry Brushes", "Wet Palettes", "Miniature Paint Sets", "Painting Handles & Grips", "Brush Cleaners", "Mixing Palettes & Trays", "Brush Cases & Organizers"] },
-            { "id": "ptg-096", "name": "Model & Miniature Making", "productTypes": ["Modeling Rods & Tubes", "Scenic Terrain Materials", "Miniature Display Stands", "Model Cutting & Sanding Tools", "Model Storage & Organizers", "Hobby Clamps & Vises", "Model Scribers & Panel Line Tools", "Miniature Carrying Cases"] },
-            { "id": "ptg-097", "name": "Calligraphy Supplies", "productTypes": ["Calligraphy Brushes", "Calligraphy Brush Sets"] },
-            { "id": "ptg-098", "name": "Tabletop Gaming Accessories", "productTypes": ["Dice Sets", "Terrain & Basing Kits"] },
-            { "id": "ptg-103", "name": "Miniature Brush", "productTypes": ["Detail Brush", "Dry Brush", "Base Brush", "Kolinsky Sable Brush", "Synthetic Hair"] },
-            { "id": "ptg-104", "name": "Paints", "productTypes": ["Miniature Paints"] },
-            { "id": "ptg-105", "name": "Tools & Accessories", "productTypes": ["Painting Handle", "Wet Palettes", "Storage & Cleaning", "Cutting & Sanding"] },
-            { "id": "ptg-106", "name": "Art Brushes", "productTypes": ["Watercolor Brush", "Masters Collection", "Chinese Calligraphy Brush", "Acrylic & Oil Brush"] }
-          ]
-        },
-        {
           "id": "cat-036",
           "name": "Building Sets",
           "productTypeGroups": [
@@ -517,6 +501,28 @@
           "name": "Novelty & Gifts",
           "productTypeGroups": [
             { "id": "ptg-099", "name": "Novelty Merchandise", "productTypes": ["Souvenir Magnets", "Tote Bags", "Branded Apparel", "Keychains", "Stickers"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dept-012",
+      "name": "Arts & Crafts",
+      "categories": [
+        {
+          "id": "cat-035",
+          "name": "Arts & Crafts",
+          "productTypeGroups": [
+            { "id": "ptg-071", "name": "Craft Supplies", "productTypes": ["Paint Brushes", "Model Making Kits", "Craft Paper", "Beads", "Craft Tape & Adhesives"] },
+            { "id": "ptg-072", "name": "Drawing & Painting", "productTypes": ["Watercolor Sets", "Sketch Pads", "Colored Pencils"] },
+            { "id": "ptg-095", "name": "Miniature & Hobby Painting", "productTypes": ["Miniature Detail Brushes", "Dry Brushes", "Wet Palettes", "Miniature Paint Sets", "Painting Handles & Grips", "Brush Cleaners", "Mixing Palettes & Trays", "Brush Cases & Organizers"] },
+            { "id": "ptg-096", "name": "Model & Miniature Making", "productTypes": ["Modeling Rods & Tubes", "Scenic Terrain Materials", "Miniature Display Stands", "Model Cutting & Sanding Tools", "Model Storage & Organizers", "Hobby Clamps & Vises", "Model Scribers & Panel Line Tools", "Miniature Carrying Cases"] },
+            { "id": "ptg-097", "name": "Calligraphy Supplies", "productTypes": ["Calligraphy Brushes", "Calligraphy Brush Sets"] },
+            { "id": "ptg-098", "name": "Tabletop Gaming Accessories", "productTypes": ["Dice Sets", "Terrain & Basing Kits"] },
+            { "id": "ptg-103", "name": "Miniature Brush", "productTypes": ["Detail Brush", "Dry Brush", "Base Brush", "Kolinsky Sable Brush", "Synthetic Hair"] },
+            { "id": "ptg-104", "name": "Paints", "productTypes": ["Miniature Paints"] },
+            { "id": "ptg-105", "name": "Tools & Accessories", "productTypes": ["Painting Handle", "Wet Palettes", "Storage & Cleaning", "Cutting & Sanding"] },
+            { "id": "ptg-106", "name": "Art Brushes", "productTypes": ["Watercolor Brush", "Masters Collection", "Chinese Calligraphy Brush", "Acrylic & Oil Brush"] }
           ]
         }
       ]

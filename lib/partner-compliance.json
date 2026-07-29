@@ -125,6 +125,25 @@
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/109230) — a clear, intentional grant, not silence: the program overview explicitly lists 'High-Converting Creative Assets: Access to professional imagery showcasing our unique quick-release technology' as an affiliate benefit, and separately names 'SEO-Driven Marketers & Review Sites: For high-intent traffic looking for premium watch alternatives' as a target partner type — both verified verbatim. Strongest basis of any partner reviewed so far.",
       "comparisonEngineConfirmed": true
+    },
+    "cosabella": {
+      "network": "AWIN",
+      "status": "reviewed-not-applied",
+      "commissionRate": "3% default, up to 25% via tiered bonus, plus a $35 stacking bonus per 15 confirmed sales",
+      "cookieDays": 30,
+      "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": false, "includesGiftWrap": false },
+      "imageUsagePermission": "confirmed",
+      "imageUsageNote": "Confirmed via Cosabella's own official Program Terms and Conditions PDF (Social Media Quick-Reference Guide, '4. Approved Imagery'): 'If you need brand assets, you may only use the official, authorized images provided directly within your publisher dashboard. Do not pull unapproved images from Google or third-party sites.' Verified verbatim in the formal, binding terms document — a direct written grant published by the partner, not our own risk assessment of ambiguous language (the separate marketing-overview PDF uses softer language: 'Wide range of banners, text links, product feeds, reels, and seasonal creative assets').",
+      "noTrademarkBidding": true,
+      "noTrademarkBiddingNote": "Terms state explicitly: 'We do NOT allow trademark bidding.' Direct linking is allowed, but not on trademark terms. Brand terms (e.g. \"Cosabella\") are also listed as an ineligible-for-commission paid-search keyword.",
+      "noBrandedPaidSearch": true,
+      "noUnauthorizedCoupons": true,
+      "noUnauthorizedCouponsNote": "Only voucher codes listed as Active in Cosabella's 'My Offers' section on Awin are authorized; unauthorized, expired, fabricated, or third-party-sourced codes are strictly prohibited and can result in commission reversal.",
+      "noBrandComparisonWording": true,
+      "noBrandComparisonWordingNote": "Terms explicitly restrict wording in marketing that compares Cosabella to other fashion brands ('Publishers are not allowed to use wording in their marketing that compares Cosabella to other fashion brands'). Assessed as not applicable to GoPriceFinder's current model, which compares the same product's price across retailers, not brand-vs-brand marketing copy. Flagged here for future reference in case site copy or marketing language ever shifts toward brand-vs-brand comparative claims.",
+      "ftcDisclosureRequired": true,
+      "comparisonEngineConfirmed": true,
+      "comparisonEngineNote": "Comparison shopping service (CSS) and Comparison engine are both explicitly listed among Cosabella's allowed partner types in their AWIN program terms."
     }
   }
 }

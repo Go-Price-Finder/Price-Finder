@@ -258,9 +258,9 @@ function priceBonus(price: number, leaf: LeafNode): number {
 // ---------------------------------------------------------------------------
 // Partner-specific bias — lightweight nudges, additive on top of the
 // generic signals above, not a replacement for them. Deliberately weak
-// for partners with genuinely mixed inventory (Giftlab) and strong only
-// where a partner's whole catalog really is that one thing (King Koil,
-// Tsarbomba, EVDANCE).
+// for partners with genuinely mixed inventory (Brooklyn Delhi) and strong
+// only where a partner's whole catalog really is that one thing (King
+// Koil, Tsarbomba, EVDANCE).
 // ---------------------------------------------------------------------------
 
 type PartnerBiasRule = {
@@ -277,7 +277,6 @@ const PARTNER_BIAS: Record<string, PartnerBiasRule[]> = {
     { category: "Watches", bonus: 25 },
     { productType: "Luxury Watches", bonus: 15 },
   ],
-  giftlab: [{ department: "Home", bonus: 4 }],
   "brooklyn-delhi": [{ department: "Grocery & Food", bonus: 12 }],
   evdance: [{ category: "EV Charging", bonus: 30 }],
   "golden-maple": [{ category: "Arts & Crafts", bonus: 18 }],

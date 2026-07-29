@@ -56,7 +56,6 @@ const FEED_AUDIT_TARGETS: { match: string; partnerId: string }[] = [
   { match: "Canvas Vows", partnerId: "canvas-vows" },
   { match: "King Koil", partnerId: "king-koil" },
   { match: "Tsarbomba", partnerId: "tsar-bomba" },
-  { match: "Giftlab", partnerId: "giftlab" },
 ];
 
 type ProgrammeRow = {
@@ -225,7 +224,7 @@ async function main() {
   }
 
   // --- Deep per-partner feed audit ---
-  printSection("FEED AUDIT — CANVAS VOWS / KING KOIL / TSARBOMBA / GIFTLAB");
+  printSection("FEED AUDIT — CANVAS VOWS / KING KOIL / TSARBOMBA");
   for (const target of FEED_AUDIT_TARGETS) {
     console.log(`\n--- ${target.match} (partner-compliance id: "${target.partnerId}") ---`);
 

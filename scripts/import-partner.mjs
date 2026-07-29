@@ -309,11 +309,21 @@ function resolveColumn(headers, field) {
 // 3. Helpers
 // ---------------------------------------------------------------------
 
+// Capped at 80 chars: some feeds (e.g. Tsarbomba's "Skunk Works Collection"
+// listing) put a full marketing sentence in the name field instead of a
+// short title. Uncapped, that produced a 299-char slug whose full image
+// path exceeded Windows' 260-char MAX_PATH and failed every download for
+// that product with "unable to open for write" — a real, reproducible
+// failure, not a network issue. Collisions from truncation are handled by
+// the existing seenSlugs de-dup logic below, same as same-name variants.
+const MAX_SLUG_LENGTH = 80;
 function slugify(text) {
-  return text
+  const slug = text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+  if (slug.length <= MAX_SLUG_LENGTH) return slug;
+  return slug.slice(0, MAX_SLUG_LENGTH).replace(/-+$/g, "");
 }
 
 function parsePrice(raw) {

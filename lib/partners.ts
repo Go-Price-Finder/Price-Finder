@@ -58,6 +58,8 @@ import {
   type GoldenMapleProduct,
 } from "./golden-maple-data";
 import { CANVAS_VOWS_PRODUCTS, type CanvasVowsProduct } from "./canvas-vows-data";
+import { KING_KOIL_PRODUCTS, type KingKoilProduct } from "./king-koil-data";
+import { TSAR_BOMBA_PRODUCTS, type TsarBombaProduct } from "./tsar-bomba-data";
 // PARTNER_IMPORTS_MARKER — scripts/import-partner.mjs inserts new
 // `import { X_PRODUCTS, type XProduct } from "./x-data";` lines directly
 // above this comment. Don't remove the comment itself.
@@ -199,6 +201,14 @@ const CANVAS_VOWS_REAL_PRODUCTS = CANVAS_VOWS_PRODUCTS.map((p: CanvasVowsProduct
  * getAllRealProducts()/getRealCategories() picks a new entry up
  * automatically, no other file needs to change.
  */
+const KING_KOIL_REAL_PRODUCTS = KING_KOIL_PRODUCTS.map((p: KingKoilProduct) =>
+  normalizeProduct(p, "king-koil", "King Koil")
+);
+
+const TSAR_BOMBA_REAL_PRODUCTS = TSAR_BOMBA_PRODUCTS.map((p: TsarBombaProduct) =>
+  normalizeProduct(p, "tsar-bomba", "Tsar Bomba")
+);
+
 const ALL_WIRED_PARTNERS: Partner[] = [
   {
     id: "brooklyn-delhi",
@@ -227,6 +237,20 @@ const ALL_WIRED_PARTNERS: Partner[] = [
     tagline: "Personalized wedding vow & anniversary canvas wall art",
     href: "/canvas-vows",
     products: CANVAS_VOWS_REAL_PRODUCTS,
+  },
+  {
+    id: "king-koil",
+    name: "King Koil",
+    tagline: "Air mattresses and inflatable bedding from King Koil",
+    href: "/king-koil",
+    products: KING_KOIL_REAL_PRODUCTS,
+  },
+  {
+    id: "tsar-bomba",
+    name: "Tsar Bomba",
+    tagline: "Bold statement watches for men and women",
+    href: "/tsar-bomba",
+    products: TSAR_BOMBA_REAL_PRODUCTS,
   },
   // PARTNER_REGISTRY_MARKER — scripts/import-partner.mjs inserts new
   // `{ id, name, tagline, href, products }` entries directly above this

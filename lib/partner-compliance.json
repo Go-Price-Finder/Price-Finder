@@ -102,7 +102,7 @@
     },
     "king-koil": {
       "network": "AWIN",
-      "status": "reviewed-not-applied",
+      "status": "active",
       "commissionRate": "10% (full-price sales only)",
       "cookieDays": 30,
       "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": false, "includesGiftWrap": false },
@@ -118,7 +118,7 @@
     },
     "tsar-bomba": {
       "network": "AWIN",
-      "status": "reviewed-not-applied",
+      "status": "active",
       "commissionRate": "6-12%",
       "cookieDays": 30,
       "commissionBase": { "includesVAT": true, "includesDelivery": true, "includesCCFees": true, "includesGiftWrap": true },

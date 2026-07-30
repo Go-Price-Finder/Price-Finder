@@ -2,6 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // Trimmed from Next's default 8 deviceSizes (which go up to 3840px) —
+    // checked every real next/image usage on the site: product-card grids
+    // (the highest-volume usage, appears on every listing page) use
+    // 25vw/33vw/50vw sizes and never need more than ~960px even at 3x DPR
+    // since every layout is capped at max-w-7xl (1280px); the widest real
+    // case (ProductGallery's mobile 100vw hero image at a ~1024px tablet
+    // breakpoint, 2x DPR) tops out around 2046px, which the remaining
+    // 1920px bucket covers closely enough. Dropping 2048/3840 cuts the
+    // size-variant matrix by 25% for image-optimization transformations
+    // without affecting real rendered quality. imageSizes intentionally
+    // left at the default — both fixed-size usages on the site (the
+    // gallery's 64px thumbnails, loyalty-icons' 256px icons) already map
+    // cleanly onto it.
+    deviceSizes: [384, 640, 750, 828, 1080, 1200, 1920],
     remotePatterns: [
       {
         protocol: "https",

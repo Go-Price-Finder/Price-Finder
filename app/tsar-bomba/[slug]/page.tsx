@@ -7,7 +7,7 @@ import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { TSAR_BOMBA_PRODUCTS } from "@/lib/tsar-bomba-data";
-import { getAllRealProducts, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
 
 export function generateStaticParams() {
   return TSAR_BOMBA_PRODUCTS.map((product) => ({ slug: product.slug }));
@@ -22,7 +22,10 @@ export async function generateMetadata({
   const product = getRealProduct("tsar-bomba", slug);
   if (!product) return { title: "Not found — Price Finder" };
   return {
-    title: `${product.name} — Tsar Bomba — Price Finder`,
+    // Suffix disambiguates same-named SKUs — see the SEO audit's
+    // duplicate-metadata finding and getProductTitleSuffix's own comment
+    // for why price alone isn't always enough.
+    title: `${product.name} — ${getProductTitleSuffix(product)} — Tsar Bomba — Price Finder`,
     description: product.description.slice(0, 155),
   };
 }

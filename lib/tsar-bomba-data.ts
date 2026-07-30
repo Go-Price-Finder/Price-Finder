@@ -28,6 +28,9 @@ export type TsarBombaProduct = {
   image: string;
   images: string[];
   category: TsarBombaProductCategory;
+  /** Distinguishes SKUs that share both name and price — see
+   * lib/partners.ts's getProductTitleSuffix. */
+  variantLabel?: string;
 };
 
 export const TSAR_BOMBA_CATEGORIES: TsarBombaProductCategory[] = [
@@ -2275,6 +2278,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja.webp"],
     category: "Men's Watches",
+    variantLabel: "Gold",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2",
@@ -2285,6 +2289,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2.webp"],
     category: "Men's Watches",
+    variantLabel: "Black",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3",
@@ -2295,6 +2300,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3.webp"],
     category: "Men's Watches",
+    variantLabel: "Green",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4",
@@ -2305,6 +2311,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4.webp"],
     category: "Men's Watches",
+    variantLabel: "Red",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-lake-blue-stainless-steel-case-ceramic-bezel-ja",
@@ -2465,6 +2472,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses.webp"],
     category: "Men's Watches",
+    variantLabel: "White",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2",
@@ -2475,6 +2483,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2.webp"],
     category: "Men's Watches",
+    variantLabel: "Black Silver",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3",
@@ -2485,6 +2494,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3.webp"],
     category: "Men's Watches",
+    variantLabel: "Lonized Blue",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4",
@@ -2495,6 +2505,7 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4.webp"],
     category: "Men's Watches",
+    variantLabel: "Black",
   },
   {
     slug: "atomic-interchangeable-ceramic-edition-black",

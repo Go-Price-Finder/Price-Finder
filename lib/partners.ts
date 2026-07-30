@@ -84,6 +84,12 @@ type RawPartnerProduct = {
   category: string;
   badge?: string;
   rating?: { stars: number; count: number };
+  /** A real feed detail (e.g. color) that distinguishes this SKU from
+   * another one sharing its name and price — see getProductTitleSuffix
+   * below. Not shown anywhere in the UI on its own; only used to keep
+   * <title> tags unique. Absent for every partner except the handful of
+   * specific Tsar Bomba products that actually need it. */
+  variantLabel?: string;
 };
 
 /** The shape every partner's products get normalized to, so homepage
@@ -119,6 +125,8 @@ export type RealProduct = {
   deepLink: string;
   /** Path to this product's own detail page on Price Finder. */
   href: string;
+  /** See RawPartnerProduct.variantLabel. */
+  variantLabel?: string;
 };
 
 export type Partner = {
@@ -178,6 +186,7 @@ function normalizeProduct(
     rating: product.rating,
     deepLink: product.deepLink,
     href: `/${partnerId}/${product.slug}`,
+    variantLabel: product.variantLabel,
   };
 }
 
@@ -296,6 +305,30 @@ export function getRealProduct(
   slug: string
 ): RealProduct | undefined {
   return getPartner(partnerId)?.products.find((p) => p.slug === slug);
+}
+
+/**
+ * The " — $price[ — detail]" suffix every partner's product <title> uses
+ * (see each app/<partner>/[slug]/page.tsx's generateMetadata) — centralized
+ * here, not duplicated per partner, per the SEO-audit duplicate-title fix.
+ * Price alone disambiguates most same-named SKUs (different price
+ * variants), but a few partners' feeds have genuinely distinct SKUs that
+ * share both name AND price (real coincidences, verified case by case —
+ * e.g. two different Tsar Bomba colorways priced identically). For those,
+ * this falls back to variantLabel (a real feed detail, when one exists and
+ * actually differs) or, failing that, a stable "N of M" index — never
+ * fabricated color/size text.
+ */
+export function getProductTitleSuffix(product: RealProduct): string {
+  const priceLabel = `$${product.price.toLocaleString()}`;
+  const siblings = getPartner(product.partnerId)?.products ?? [];
+  const colliding = siblings.filter(
+    (p) => p.name === product.name && p.price === product.price
+  );
+  if (colliding.length <= 1) return priceLabel;
+  if (product.variantLabel) return `${priceLabel} — ${product.variantLabel}`;
+  const index = colliding.findIndex((p) => p.slug === product.slug) + 1;
+  return `${priceLabel} — ${index} of ${colliding.length}`;
 }
 
 export type RealCategory = {

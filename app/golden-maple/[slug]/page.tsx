@@ -7,7 +7,7 @@ import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { GOLDEN_MAPLE_PRODUCTS } from "@/lib/golden-maple-data";
-import { getAllRealProducts, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
 
 export function generateStaticParams() {
   return GOLDEN_MAPLE_PRODUCTS.map((product) => ({ slug: product.slug }));
@@ -22,7 +22,13 @@ export async function generateMetadata({
   const product = getRealProduct("golden-maple", slug);
   if (!product) return { title: "Not found — Price Finder" };
   return {
-    title: `${product.name} — Golden Maple — Price Finder`,
+    // Suffix disambiguates same-named SKUs — see the SEO audit's
+    // duplicate-metadata finding and getProductTitleSuffix's own comment
+    // for why price alone isn't always enough. (Golden Maple itself turned
+    // out to have zero real duplicates once verified — this was a false
+    // positive in the original audit regex — but uses the same shared
+    // helper for consistency.)
+    title: `${product.name} — ${getProductTitleSuffix(product)} — Golden Maple — Price Finder`,
     description: product.description.slice(0, 155),
   };
 }

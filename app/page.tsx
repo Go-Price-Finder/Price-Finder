@@ -9,11 +9,14 @@ import WhyTrustPrices from "@/components/WhyTrustPrices";
 import WhyPriceFinder from "@/components/WhyPriceFinder";
 import HowItWorks from "@/components/HowItWorks";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
+import { buildOrganizationJsonLd } from "@/lib/structured-data";
 
 export default function Home() {
   return (
     <>
       <Header />
+      <JsonLd data={buildOrganizationJsonLd()} />
       {/* Section order: Hero (search + stats) → Future of Website (new
           vision statement) → Our Partners → Under Construction → Loyalty
           → Savings Dashboard → Why Trust Prices → Why Price Finder →

@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
 import { getCategoryBySlug, getRealCategories } from "@/lib/partners";
+import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
 
 /**
  * Dedicated single-category page — this is where Popular Categories tiles
@@ -43,9 +45,18 @@ export default async function CategoryPage({
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 
+  // Matches the visible breadcrumb nav below exactly — same 3 crumbs,
+  // same order, all three are real links here so all three get a url.
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Categories", url: `${SITE_URL}/categories` },
+    { name: category.name, url: `${SITE_URL}/category/${category.slug}` },
+  ]);
+
   return (
     <>
       <Header />
+      <JsonLd data={breadcrumbJsonLd} />
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-ivory-400">

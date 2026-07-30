@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
 import { getProductsByCategoryPath, getPopulatedCategoryPaths } from "@/lib/partners";
+import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
 
 /**
  * Nested product-type page — where a populated product-type pill on
@@ -52,9 +54,24 @@ export default async function CategoryLeafPage({
   const result = resolvePath(slug, path);
   if (!result) notFound();
 
+  // Matches the visible breadcrumb nav below exactly — same 6 crumbs, same
+  // order. Category and ProductTypeGroup render as plain text there (no
+  // dedicated page exists for either level), so they get no url here
+  // either — that absence mirrors the real page rather than inventing a
+  // URL that doesn't resolve to anything.
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Categories", url: `${SITE_URL}/categories` },
+    { name: result.department, url: `${SITE_URL}/category/${slug}` },
+    { name: result.category },
+    { name: result.productTypeGroup },
+    { name: result.productType, url: `${SITE_URL}/category/${slug}/${path.join("/")}` },
+  ]);
+
   return (
     <>
       <Header />
+      <JsonLd data={breadcrumbJsonLd} />
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-ivory-400">

@@ -3,11 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { BROOKLYN_DELHI_PRODUCTS } from "@/lib/brooklyn-delhi-data";
 import { getAllRealProducts, getRealProduct } from "@/lib/partners";
+import { buildProductJsonLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return BROOKLYN_DELHI_PRODUCTS.map((product) => ({ slug: product.slug }));
@@ -46,6 +48,7 @@ export default async function BrooklynDelhiProductPage({
   return (
     <>
       <Header />
+      <JsonLd data={buildProductJsonLd(product)} />
       <main className="flex-1">
         {/* Breadcrumb — Home / Brooklyn Delhi / Product Name */}
         <div className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">

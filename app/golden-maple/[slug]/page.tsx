@@ -3,11 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { GOLDEN_MAPLE_PRODUCTS } from "@/lib/golden-maple-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
+import { buildProductJsonLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return GOLDEN_MAPLE_PRODUCTS.map((product) => ({ slug: product.slug }));
@@ -52,6 +54,7 @@ export default async function GoldenMapleProductPage({
   return (
     <>
       <Header />
+      <JsonLd data={buildProductJsonLd(product)} />
       <main className="flex-1">
         {/* Breadcrumb — Home / Golden Maple / Product Name */}
         <div className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">

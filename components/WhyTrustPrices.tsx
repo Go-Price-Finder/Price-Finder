@@ -11,7 +11,7 @@ import { CheckIcon } from "./icons";
 const TRUST_POINTS = [
   {
     title: "Every affiliate link is disclosed.",
-    body: "We earn a commission when you buy — that's stated on every product page, not buried in a footer.",
+    body: "We earn a commission when you buy — disclosed in our site footer and full disclosure page.",
   },
   {
     title: "Prices are checked weekly,",

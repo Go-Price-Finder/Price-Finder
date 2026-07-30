@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/deals`, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/trending`, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/how-it-works`, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${SITE_URL}/affiliate-disclosure`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   const departmentPages: MetadataRoute.Sitemap = getRealCategories().map((category) => ({

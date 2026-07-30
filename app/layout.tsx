@@ -27,6 +27,11 @@ export const metadata: Metadata = {
   title: "Price Finder — Compare Prices, Shop Smarter",
   description:
     "Price Finder helps you compare prices across stores, so you can shop smarter and find better deals.",
+  verification: {
+    // Renders as <meta name="google-site-verification" content="..." />
+    // for Google Search Console site-ownership verification.
+    google: "OgfmyT1havQ_7c2aaVAa0hWqIjoVeHZ2CATa2th_Fjc",
+  },
   other: {
     // Site-ownership verification for the FlexOffers affiliate network —
     // renders as <meta name="fo-verify" content="..." /> in <head> via

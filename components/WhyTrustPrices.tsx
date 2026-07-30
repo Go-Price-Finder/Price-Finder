@@ -14,7 +14,7 @@ const TRUST_POINTS = [
     body: "We earn a commission when you buy — that's stated on every product page, not buried in a footer.",
   },
   {
-    title: "Prices are checked daily,",
+    title: "Prices are checked weekly,",
     body: "and each listing shows when it was last verified.",
   },
   {

@@ -2,9 +2,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FutureOfWebsite from "@/components/FutureOfWebsite";
 import OurPartners from "@/components/OurPartners";
-import UnderConstruction from "@/components/UnderConstruction";
 import LoyaltySection from "@/components/LoyaltySection";
-import SavingsDashboard from "@/components/SavingsDashboard";
 import WhyTrustPrices from "@/components/WhyTrustPrices";
 import WhyPriceFinder from "@/components/WhyPriceFinder";
 import HowItWorks from "@/components/HowItWorks";
@@ -18,9 +16,12 @@ export default function Home() {
       <Header />
       <JsonLd data={buildOrganizationJsonLd()} />
       {/* Section order: Hero (search + stats) → Future of Website (new
-          vision statement) → Our Partners → Under Construction → Loyalty
-          → Savings Dashboard → Why Trust Prices → Why Price Finder →
-          How It Works.
+          vision statement) → Our Partners → Loyalty → Why Trust Prices →
+          Why Price Finder → How It Works.
+
+          Under Construction and Savings Dashboard were removed — the
+          former was stale copy (referenced "first three" partners; we're
+          at six now), the latter per explicit request.
 
           Featured Deals and Best Sellers were removed from the homepage
           per the streamlined redesign — both still exist as their own
@@ -35,9 +36,7 @@ export default function Home() {
         <Hero />
         <FutureOfWebsite />
         <OurPartners />
-        <UnderConstruction />
         <LoyaltySection />
-        <SavingsDashboard />
         <WhyTrustPrices />
         <WhyPriceFinder />
         <HowItWorks />

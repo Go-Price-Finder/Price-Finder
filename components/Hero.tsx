@@ -14,7 +14,7 @@ import { useSectionScrollProgress } from "@/lib/useThreeScene";
 const STATS = [
   { value: String(getAllRealProducts().length), label: "Products tracked" },
   { value: String(PARTNERS.length), label: "Partner stores" },
-  { value: "Daily", label: "Price checks" },
+  { value: "Weekly", label: "Price checks" },
 ];
 
 export default function Hero() {
@@ -95,7 +95,7 @@ export default function Hero() {
           className="mx-auto mt-6 max-w-xl text-balance text-base leading-relaxed text-ivory-300 sm:text-lg"
         >
           Real listings from real stores — no sponsored rankings, no
-          fabricated discounts, checked every day.
+          fabricated discounts, checked every week.
         </motion.p>
 
         <motion.div

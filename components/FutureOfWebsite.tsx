@@ -22,7 +22,7 @@ export default function FutureOfWebsite() {
           fabricated discounts that make so much of online shopping feel
           untrustworthy. Right now that means a small, hand-picked group of
           partners — but every product you see is real, and every price is
-          checked daily.
+          checked weekly.
         </p>
         <p>
           As we grow, expect more stores, a wider range of categories, and

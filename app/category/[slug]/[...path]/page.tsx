@@ -54,17 +54,19 @@ export default async function CategoryLeafPage({
   const result = resolvePath(slug, path);
   if (!result) notFound();
 
-  // Matches the visible breadcrumb nav below exactly — same 6 crumbs, same
-  // order. Category and ProductTypeGroup render as plain text there (no
-  // dedicated page exists for either level), so they get no url here
-  // either — that absence mirrors the real page rather than inventing a
-  // URL that doesn't resolve to anything.
+  // Only the levels that have a real page of their own go in here — not
+  // all 6 visible breadcrumb crumbs. Category and ProductTypeGroup render
+  // as plain text on the page (no dedicated URL exists for either), and
+  // Google's BreadcrumbList spec requires a url on every non-final item;
+  // omitting it (rather than inventing one) makes the whole BreadcrumbList
+  // fail Rich Results validation — confirmed via Google's actual Rich
+  // Results Test. Dropping those two levels here instead keeps every
+  // included item real (a genuine page with a genuine url) and passes
+  // validation, at the cost of not mirroring all 6 visual crumbs 1:1.
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Categories", url: `${SITE_URL}/categories` },
     { name: result.department, url: `${SITE_URL}/category/${slug}` },
-    { name: result.category },
-    { name: result.productTypeGroup },
     { name: result.productType, url: `${SITE_URL}/category/${slug}/${path.join("/")}` },
   ]);
 

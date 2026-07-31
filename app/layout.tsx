@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, Fraunces } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 import Providers from "./providers";
@@ -74,6 +75,10 @@ export default function RootLayout({
             a Vercel deployment (no env vars needed), so it's safe to render
             unconditionally including in local dev. */}
         <Analytics />
+        {/* Vercel Speed Insights — real Core Web Vitals (LCP/CLS/INP/TTFB)
+            per page, visible in the Vercel dashboard's Speed Insights tab.
+            Same no-op-outside-Vercel behavior as Analytics above. */}
+        <SpeedInsights />
       </body>
     </html>
   );

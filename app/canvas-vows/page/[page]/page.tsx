@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
@@ -8,23 +9,48 @@ import { ChevronRightIcon } from "@/components/icons";
 import { getPartner } from "@/lib/partners";
 import { paginate } from "@/lib/pagination";
 
-export const metadata: Metadata = {
-  title: "Canvas Vows — Price Finder",
-  description:
-    "Shop Canvas Vows' personalized wedding vow, anniversary, and family-name canvas wall art — real products, real prices, straight from the maker.",
-};
+export function generateStaticParams() {
+  const partner = getPartner("canvas-vows");
+  const { totalPages } = paginate(partner?.products ?? [], 1);
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+    page: String(i + 2),
+  }));
+}
 
-/**
- * Already a flat grid (see the removed comment below for why — Canvas
- * Vows' feed has no real raw categories), now also paginated for the same
- * reason as Golden Maple/Tsar Bomba: 204 products in one page load was a
- * real, measured 1.5MB+ payload. Page 1 lives here; pages 2+ live at
- * /canvas-vows/page/[page].
- */
-export default function CanvasVowsPage() {
+function resolvePage(pageParam: string) {
+  const page = Number(pageParam);
+  if (!Number.isInteger(page) || page < 2) return undefined;
   const partner = getPartner("canvas-vows");
   const allProducts = partner?.products ?? [];
-  const { items: products, totalPages } = paginate(allProducts, 1);
+  const result = paginate(allProducts, page);
+  if (result.currentPage !== page) return undefined;
+  return { ...result, allProductsCount: allProducts.length };
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}): Promise<Metadata> {
+  const { page } = await params;
+  const result = resolvePage(page);
+  if (!result) return { title: "Not found — Price Finder" };
+  return {
+    title: `Canvas Vows — Page ${result.currentPage} — Price Finder`,
+    description:
+      "Shop Canvas Vows' personalized wedding vow, anniversary, and family-name canvas wall art — real products, real prices, straight from the maker.",
+  };
+}
+
+export default async function CanvasVowsPagedPage({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}) {
+  const { page } = await params;
+  const result = resolvePage(page);
+  if (!result) notFound();
+  const { items: products, currentPage, totalPages, allProductsCount } = result;
 
   return (
     <>
@@ -36,7 +62,11 @@ export default function CanvasVowsPage() {
               Home
             </Link>
             <ChevronRightIcon className="h-3 w-3" />
-            <span className="text-ivory-200">Canvas Vows</span>
+            <Link href="/canvas-vows" className="transition-colors hover:text-gilt-400">
+              Canvas Vows
+            </Link>
+            <ChevronRightIcon className="h-3 w-3" />
+            <span className="text-ivory-200">Page {currentPage}</span>
           </nav>
         </div>
 
@@ -50,7 +80,7 @@ export default function CanvasVowsPage() {
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-ivory-300 sm:text-base">
               Personalized wedding vow, anniversary, and family-name canvas
-              wall art from Canvas Vows — {allProducts.length} products.
+              wall art from Canvas Vows — {allProductsCount} products.
               Every price and link below goes straight to Canvas
               Vows&rsquo; own store.
             </p>
@@ -63,7 +93,7 @@ export default function CanvasVowsPage() {
               <RealProductCard key={product.id} product={product} />
             ))}
           </div>
-          <Pagination basePath="/canvas-vows" currentPage={1} totalPages={totalPages} />
+          <Pagination basePath="/canvas-vows" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </main>
       <Footer />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
@@ -8,22 +9,48 @@ import { ChevronRightIcon } from "@/components/icons";
 import { getPartner } from "@/lib/partners";
 import { paginate } from "@/lib/pagination";
 
-export const metadata: Metadata = {
-  title: "Tsar Bomba — Price Finder",
-  description:
-    "Shop Tsar Bomba's watches for men and women — real products, real prices, straight from the maker.",
-};
+export function generateStaticParams() {
+  const partner = getPartner("tsar-bomba");
+  const { totalPages } = paginate(partner?.products ?? [], 1);
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+    page: String(i + 2),
+  }));
+}
 
-/**
- * Flat, paginated grid rather than the old per-raw-category sections —
- * see app/golden-maple/page.tsx's comment for why (same reasoning, same
- * lib/pagination.ts slicing). Page 1 lives here; pages 2+ live at
- * /tsar-bomba/page/[page].
- */
-export default function TsarBombaPage() {
+function resolvePage(pageParam: string) {
+  const page = Number(pageParam);
+  if (!Number.isInteger(page) || page < 2) return undefined;
   const partner = getPartner("tsar-bomba");
   const allProducts = partner?.products ?? [];
-  const { items: products, totalPages } = paginate(allProducts, 1);
+  const result = paginate(allProducts, page);
+  if (result.currentPage !== page) return undefined;
+  return { ...result, allProductsCount: allProducts.length };
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}): Promise<Metadata> {
+  const { page } = await params;
+  const result = resolvePage(page);
+  if (!result) return { title: "Not found — Price Finder" };
+  return {
+    title: `Tsar Bomba — Page ${result.currentPage} — Price Finder`,
+    description:
+      "Shop Tsar Bomba's watches for men and women — real products, real prices, straight from the maker.",
+  };
+}
+
+export default async function TsarBombaPagedPage({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}) {
+  const { page } = await params;
+  const result = resolvePage(page);
+  if (!result) notFound();
+  const { items: products, currentPage, totalPages, allProductsCount } = result;
 
   return (
     <>
@@ -35,7 +62,11 @@ export default function TsarBombaPage() {
               Home
             </Link>
             <ChevronRightIcon className="h-3 w-3" />
-            <span className="text-ivory-200">Tsar Bomba</span>
+            <Link href="/tsar-bomba" className="transition-colors hover:text-gilt-400">
+              Tsar Bomba
+            </Link>
+            <ChevronRightIcon className="h-3 w-3" />
+            <span className="text-ivory-200">Page {currentPage}</span>
           </nav>
         </div>
 
@@ -49,7 +80,7 @@ export default function TsarBombaPage() {
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-ivory-300 sm:text-base">
               Bold statement watches for men and women from Tsar Bomba —{" "}
-              {allProducts.length} products. Every price and link below goes
+              {allProductsCount} products. Every price and link below goes
               straight to Tsar Bomba&rsquo;s own store.
             </p>
           </div>
@@ -61,7 +92,7 @@ export default function TsarBombaPage() {
               <RealProductCard key={product.id} product={product} />
             ))}
           </div>
-          <Pagination basePath="/tsar-bomba" currentPage={1} totalPages={totalPages} />
+          <Pagination basePath="/tsar-bomba" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </main>
       <Footer />

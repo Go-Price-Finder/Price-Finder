@@ -5,6 +5,7 @@ import {
   getRealCategories,
   getPopulatedCategoryPaths,
 } from "@/lib/partners";
+import { paginate } from "@/lib/pagination";
 
 const SITE_URL = "https://gopricefinder.com";
 
@@ -45,11 +46,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
+  // Page 2+ of the large-catalog partners paginated at build time (see
+  // lib/pagination.ts) — page 1 is already covered by partnerPages above.
+  const partnerPaginationPages: MetadataRoute.Sitemap = PARTNERS.flatMap((partner) => {
+    const { totalPages } = paginate(partner.products, 1);
+    return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+      url: `${SITE_URL}${partner.href}/page/${i + 2}`,
+      changeFrequency: "daily" as const,
+      priority: 0.5,
+    }));
+  });
+
   const productPages: MetadataRoute.Sitemap = getAllRealProducts().map((product) => ({
     url: `${SITE_URL}${product.href}`,
     changeFrequency: "daily",
     priority: 0.5,
   }));
 
-  return [...staticPages, ...departmentPages, ...leafPages, ...partnerPages, ...productPages];
+  return [
+    ...staticPages,
+    ...departmentPages,
+    ...leafPages,
+    ...partnerPages,
+    ...partnerPaginationPages,
+    ...productPages,
+  ];
 }

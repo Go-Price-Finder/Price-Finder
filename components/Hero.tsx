@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import SearchBar from "./SearchBar";
-import PartnerFilterBar from "./PartnerFilterBar";
 import LogoMark from "./LogoMark";
 import { getAllRealProducts, PARTNERS } from "@/lib/partners";
 import { useSectionScrollProgress } from "@/lib/useThreeScene";
@@ -109,10 +108,6 @@ export default function Hero() {
             size="lg"
             placeholder="Try “achaar” or “chutney”…"
           />
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <PartnerFilterBar />
-          </div>
         </motion.div>
 
         <motion.div

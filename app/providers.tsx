@@ -1,7 +1,6 @@
 "use client";
 
 import { AuthProvider } from "@/lib/auth-context";
-import { PartnerFilterProvider } from "@/lib/partner-filter-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import SmoothScrollProvider from "@/lib/SmoothScroll";
 import { ThemeProvider } from "@/lib/theme-context";
@@ -11,9 +10,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <AuthProvider>
         <WishlistProvider>
-          <PartnerFilterProvider>
-            <SmoothScrollProvider>{children}</SmoothScrollProvider>
-          </PartnerFilterProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </WishlistProvider>
       </AuthProvider>
     </ThemeProvider>

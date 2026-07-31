@@ -6,8 +6,8 @@ import RealProductCard from "@/components/RealProductCard";
 import { searchRealProducts } from "@/lib/search";
 
 export const metadata: Metadata = {
-  title: "Search — Price Finder",
-  description: "Search real products across every Price Finder partner.",
+  title: "Search — Go Price Finder",
+  description: "Search real products across every Go Price Finder partner.",
 };
 
 export default async function SearchPage({
@@ -27,7 +27,7 @@ export default async function SearchPage({
             Search
           </span>
           <h1 className="mt-2 text-balance font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
-            {q ? `Results for “${q}”` : "Search Price Finder"}
+            {q ? `Results for “${q}”` : "Search Go Price Finder"}
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
 
@@ -56,8 +56,8 @@ export default async function SearchPage({
                 {results.length} result{results.length === 1 ? "" : "s"}
               </p>
               <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-                {results.map((product) => (
-                  <RealProductCard key={product.id} product={product} />
+                {results.map((product, index) => (
+                  <RealProductCard key={product.id} product={product} priority={index < 4} />
                 ))}
               </div>
             </>

@@ -29,9 +29,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
-  if (!category) return { title: "Not found — Price Finder" };
+  if (!category) return { title: "Not found — Go Price Finder" };
   return {
-    title: `${category.name} — Price Finder`,
+    title: `${category.name} — Go Price Finder`,
     description: `Every real ${category.name.toLowerCase()} product we're tracking, from all our partners.`,
   };
 }
@@ -95,8 +95,8 @@ export default async function CategoryPage({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {category.products.map((product) => (
-                <RealProductCard key={product.id} product={product} />
+              {category.products.map((product, index) => (
+                <RealProductCard key={product.id} product={product} priority={index < 4} />
               ))}
             </div>
           )}

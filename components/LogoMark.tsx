@@ -1,5 +1,5 @@
 /**
- * The Price Finder mark, redrawn flat for the editorial redesign — same
+ * The Go Price Finder mark, redrawn flat for the editorial redesign — same
  * concept as the original glossy/dimensional icon (an 8-point compass star
  * with a magnifying glass over it), but as a two-tone vector instead of a
  * shaded raster illustration, so it actually fits the flat design direction

@@ -8,7 +8,7 @@ import { getPartner, slugifyRealCategory } from "@/lib/partners";
 import { EVDANCE_CATEGORIES } from "@/lib/evdance-data";
 
 export const metadata: Metadata = {
-  title: "EVDANCE — Price Finder",
+  title: "EVDANCE — Go Price Finder",
   description:
     "Shop EVDANCE's EV charging cables, adapters, and portable chargers — real products, real prices, straight from the maker.",
 };
@@ -50,29 +50,32 @@ export default function EvdancePage() {
 
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="flex flex-col gap-14">
-            {EVDANCE_CATEGORIES.map((category) => {
-              const items = products.filter((p) => p.category === category);
-              if (items.length === 0) return null;
+            {(() => {
+              let priorityIndex = 0;
+              return EVDANCE_CATEGORIES.map((category) => {
+                const items = products.filter((p) => p.category === category);
+                if (items.length === 0) return null;
 
-              return (
-                <section key={category} id={slugifyRealCategory(category)} className="scroll-mt-24">
-                  <div className="flex items-baseline justify-between gap-4 border-b border-gilt-500/25 pb-3">
-                    <h2 className="font-display text-xl font-semibold text-ivory-50 sm:text-2xl">
-                      {category}
-                    </h2>
-                    <span className="text-xs font-medium text-ivory-400">
-                      {items.length} item{items.length === 1 ? "" : "s"}
-                    </span>
-                  </div>
+                return (
+                  <section key={category} id={slugifyRealCategory(category)} className="scroll-mt-24">
+                    <div className="flex items-baseline justify-between gap-4 border-b border-gilt-500/25 pb-3">
+                      <h2 className="font-display text-xl font-semibold text-ivory-50 sm:text-2xl">
+                        {category}
+                      </h2>
+                      <span className="text-xs font-medium text-ivory-400">
+                        {items.length} item{items.length === 1 ? "" : "s"}
+                      </span>
+                    </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-                    {items.map((product) => (
-                      <RealProductCard key={product.id} product={product} />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
+                    <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+                      {items.map((product) => (
+                        <RealProductCard key={product.id} product={product} priority={priorityIndex++ < 4} />
+                      ))}
+                    </div>
+                  </section>
+                );
+              });
+            })()}
           </div>
         </div>
       </main>

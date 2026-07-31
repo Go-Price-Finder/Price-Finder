@@ -9,7 +9,7 @@ import { getPartner } from "@/lib/partners";
 import { paginate } from "@/lib/pagination";
 
 export const metadata: Metadata = {
-  title: "Golden Maple — Price Finder",
+  title: "Golden Maple — Go Price Finder",
   description:
     "Shop Golden Maple's art brushes, model-making tools, and craft supplies — real products, real prices, straight from the maker.",
 };
@@ -61,8 +61,8 @@ export default function GoldenMaplePage() {
 
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {products.map((product) => (
-              <RealProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <RealProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
           <Pagination basePath="/golden-maple" currentPage={1} totalPages={totalPages} />

@@ -34,9 +34,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { page } = await params;
   const result = resolvePage(page);
-  if (!result) return { title: "Not found — Price Finder" };
+  if (!result) return { title: "Not found — Go Price Finder" };
   return {
-    title: `Tsar Bomba — Page ${result.currentPage} — Price Finder`,
+    title: `Tsar Bomba — Page ${result.currentPage} — Go Price Finder`,
     description:
       "Shop Tsar Bomba's watches for men and women — real products, real prices, straight from the maker.",
   };
@@ -88,8 +88,8 @@ export default async function TsarBombaPagedPage({
 
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {products.map((product) => (
-              <RealProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <RealProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
           <Pagination basePath="/tsar-bomba" currentPage={currentPage} totalPages={totalPages} />

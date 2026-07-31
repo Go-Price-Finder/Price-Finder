@@ -8,9 +8,9 @@ import { mapProductToCategory } from "@/lib/category-mapper";
 import taxonomy from "@/config/walmart-taxonomy.json";
 
 export const metadata: Metadata = {
-  title: "Categories — Price Finder",
+  title: "Categories — Go Price Finder",
   description:
-    "Browse Price Finder's full category taxonomy, department by department.",
+    "Browse Go Price Finder's full category taxonomy, department by department.",
 };
 
 /**
@@ -99,7 +99,7 @@ export default function CategoriesPage() {
             Categories
           </span>
           <h1 className="mt-2 text-balance font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
-            Browse everything Price Finder tracks
+            Browse everything Go Price Finder tracks
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">

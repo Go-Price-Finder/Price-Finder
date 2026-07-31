@@ -7,9 +7,9 @@ import { ChevronRightIcon } from "@/components/icons";
 import { getBestSellers } from "@/lib/partners";
 
 export const metadata: Metadata = {
-  title: "Trending — Price Finder",
+  title: "Trending — Go Price Finder",
   description:
-    "Trending products across every real Price Finder partner — right now that's the same list as our Best Sellers.",
+    "Trending products across every real Go Price Finder partner — right now that's the same list as our Best Sellers.",
 };
 
 /**
@@ -62,8 +62,8 @@ export default function TrendingPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((product) => (
-                <RealProductCard key={product.id} product={product} />
+              {products.map((product, index) => (
+                <RealProductCard key={product.id} product={product} priority={index < 4} />
               ))}
             </div>
           )}

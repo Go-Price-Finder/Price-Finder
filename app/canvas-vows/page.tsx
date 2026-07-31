@@ -9,7 +9,7 @@ import { getPartner } from "@/lib/partners";
 import { paginate } from "@/lib/pagination";
 
 export const metadata: Metadata = {
-  title: "Canvas Vows — Price Finder",
+  title: "Canvas Vows — Go Price Finder",
   description:
     "Shop Canvas Vows' personalized wedding vow, anniversary, and family-name canvas wall art — real products, real prices, straight from the maker.",
 };
@@ -59,8 +59,8 @@ export default function CanvasVowsPage() {
 
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {products.map((product) => (
-              <RealProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <RealProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
           <Pagination basePath="/canvas-vows" currentPage={1} totalPages={totalPages} />

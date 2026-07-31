@@ -22,9 +22,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = getRealProduct("evdance", slug);
-  if (!product) return { title: "Not found — Price Finder" };
+  if (!product) return { title: "Not found — Go Price Finder" };
   return {
-    title: `${product.name} — EVDANCE — Price Finder`,
+    title: `${product.name} — EVDANCE — Go Price Finder`,
     description: product.description.slice(0, 155),
   };
 }

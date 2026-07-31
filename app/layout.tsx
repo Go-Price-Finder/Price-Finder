@@ -25,9 +25,9 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Price Finder — Compare Prices, Shop Smarter",
+  title: "Go Price Finder — Compare Prices, Shop Smarter",
   description:
-    "Price Finder helps you compare prices across stores, so you can shop smarter and find better deals.",
+    "Go Price Finder helps you compare prices across stores, so you can shop smarter and find better deals.",
   verification: {
     // Renders as <meta name="google-site-verification" content="..." />
     // for Google Search Console site-ownership verification.

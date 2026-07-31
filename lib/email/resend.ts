@@ -36,4 +36,4 @@ export const resend = {
  * only.
  */
 export const EMAIL_FROM =
-  process.env.RESEND_FROM_EMAIL ?? "Price Finder <onboarding@resend.dev>";
+  process.env.RESEND_FROM_EMAIL ?? "Go Price Finder <onboarding@resend.dev>";

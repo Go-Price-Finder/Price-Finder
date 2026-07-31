@@ -201,7 +201,7 @@ export default function AuthForm({
           </>
         ) : (
           <>
-            New to Price Finder?{" "}
+            New to Go Price Finder?{" "}
             <Link
               href="/auth/signup"
               className="font-medium text-gilt-400 transition-colors hover:text-gilt-300"

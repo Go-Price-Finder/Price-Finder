@@ -51,7 +51,7 @@ export function renderPriceDropAlertEmail(params: PriceDropEmailParams) {
           <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
             <tr>
               <td style="padding-bottom:24px;text-align:center;">
-                <span style="font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#3a7a46;">Price Finder</span>
+                <span style="font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#3a7a46;">Go Price Finder</span>
               </td>
             </tr>
             <tr>
@@ -111,7 +111,7 @@ export function renderPriceDropAlertEmail(params: PriceDropEmailParams) {
             <tr>
               <td style="padding-top:24px;text-align:center;">
                 <p style="margin:0;font-size:12px;color:#a39d94;">
-                  You're receiving this because you set a price alert on Price Finder.
+                  You're receiving this because you set a price alert on Go Price Finder.
                 </p>
               </td>
             </tr>

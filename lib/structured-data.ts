@@ -1,7 +1,7 @@
 import type { RealProduct } from "./partners";
 
 export const SITE_URL = "https://gopricefinder.com";
-export const SITE_NAME = "Price Finder";
+export const SITE_NAME = "Go Price Finder";
 
 /**
  * schema.org/Product JSON-LD for a real product detail page. Every field

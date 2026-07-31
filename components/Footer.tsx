@@ -46,7 +46,7 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory-300">
-              Price Finder helps you find better deals. Data collection in
+              Go Price Finder helps you find better deals. Data collection in
               progress.
             </p>
 
@@ -88,7 +88,7 @@ export default function Footer() {
             than only reachable via the Support-column link above (see
             /affiliate-disclosure for the full version). */}
         <p className="mt-10 max-w-3xl text-xs leading-relaxed text-ivory-400">
-          Price Finder participates in affiliate programs, including AWIN.
+          Go Price Finder participates in affiliate programs, including AWIN.
           We may earn a commission when you buy through a link on this site,
           at no additional cost to you. This never affects which products we
           show or how they&rsquo;re ranked.{" "}
@@ -103,7 +103,7 @@ export default function Footer() {
 
         <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-gilt-500/25 pt-8 sm:flex-row">
           <p className="text-xs text-ivory-400">
-            © {new Date().getFullYear()} Price Finder. All rights reserved.
+            © {new Date().getFullYear()} Go Price Finder. All rights reserved.
             {" · "}
             <a
               href={`mailto:${CONTACT_EMAIL}`}

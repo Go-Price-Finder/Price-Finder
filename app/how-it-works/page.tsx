@@ -7,9 +7,9 @@ import { SearchIcon, BellIcon, TrendingUpIcon } from "@/components/icons";
 import { TIERS, TIER_PERKS } from "@/lib/loyalty";
 
 export const metadata: Metadata = {
-  title: "How It Works — Price Finder",
+  title: "How It Works — Go Price Finder",
   description:
-    "See how Price Finder is designed to help you find deals, track prices, and earn rewards as we grow our retailer coverage.",
+    "See how Go Price Finder is designed to help you find deals, track prices, and earn rewards as we grow our retailer coverage.",
 };
 
 const DISPLAY_TIERS = TIERS.filter((t) => t.id !== "member");
@@ -24,7 +24,7 @@ export default function HowItWorksPage() {
             How It Works
           </span>
           <h1 className="mt-2 text-balance font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
-            Everything Price Finder does for you, step by step
+            Everything Go Price Finder does for you, step by step
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
               </h2>
               <p className="mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
                 Type a product name into the search bar, or browse by
-                category from the homepage. Price Finder is designed to
+                category from the homepage. Go Price Finder is designed to
                 search across the retailers we track and lay out matching
                 listings side by side, so you can compare in one place
                 instead of checking each store one by one.
@@ -99,7 +99,7 @@ export default function HowItWorksPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
               Points accrue automatically on every purchase made through
-              Price Finder — no separate sign-up. As your point total
+              Go Price Finder — no separate sign-up. As your point total
               crosses each tier&apos;s threshold, you&apos;re upgraded
               instantly and unlock that tier&apos;s perks on top of everything
               below it.
@@ -141,7 +141,7 @@ export default function HowItWorksPage() {
                 sorted cheapest first, with a &quot;Best Price&quot; badge
                 marking the lowest of those. Comparing multiple stores
                 instead of buying from the first one you find is where real
-                savings tend to come from — Price Finder is built to make
+                savings tend to come from — Go Price Finder is built to make
                 that comparison easy.
               </p>
             </div>

@@ -46,7 +46,7 @@ export default function HowItWorks() {
             Simple &amp; fast
           </span>
           <h2 className="mt-2 font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
-            How Price Finder works
+            How Go Price Finder works
           </h2>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
         </div>

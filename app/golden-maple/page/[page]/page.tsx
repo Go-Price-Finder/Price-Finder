@@ -35,9 +35,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { page } = await params;
   const result = resolvePage(page);
-  if (!result) return { title: "Not found — Price Finder" };
+  if (!result) return { title: "Not found — Go Price Finder" };
   return {
-    title: `Golden Maple — Page ${result.currentPage} — Price Finder`,
+    title: `Golden Maple — Page ${result.currentPage} — Go Price Finder`,
     description:
       "Shop Golden Maple's art brushes, model-making tools, and craft supplies — real products, real prices, straight from the maker.",
   };
@@ -89,8 +89,8 @@ export default async function GoldenMaplePagedPage({
 
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {products.map((product) => (
-              <RealProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <RealProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
           <Pagination basePath="/golden-maple" currentPage={currentPage} totalPages={totalPages} />

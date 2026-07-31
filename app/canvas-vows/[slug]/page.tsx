@@ -22,12 +22,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = getRealProduct("canvas-vows", slug);
-  if (!product) return { title: "Not found — Price Finder" };
+  if (!product) return { title: "Not found — Go Price Finder" };
   return {
     // Suffix disambiguates same-named SKUs — see the SEO audit's
     // duplicate-metadata finding and getProductTitleSuffix's own comment
     // for why price alone isn't always enough.
-    title: `${product.name} — ${getProductTitleSuffix(product)} — Canvas Vows — Price Finder`,
+    title: `${product.name} — ${getProductTitleSuffix(product)} — Canvas Vows — Go Price Finder`,
     description: product.description.slice(0, 155),
   };
 }

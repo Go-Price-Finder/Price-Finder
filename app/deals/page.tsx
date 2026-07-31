@@ -7,7 +7,7 @@ import { ChevronRightIcon } from "@/components/icons";
 import { getFeaturedDeals } from "@/lib/partners";
 
 export const metadata: Metadata = {
-  title: "Deals — Price Finder",
+  title: "Deals — Go Price Finder",
   description:
     "Every real product currently marked down across our partners, all in one place.",
 };
@@ -70,8 +70,8 @@ export default function DealsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {deals.map((product) => (
-                <RealProductCard key={product.id} product={product} />
+              {deals.map((product, index) => (
+                <RealProductCard key={product.id} product={product} priority={index < 4} />
               ))}
             </div>
           )}

@@ -1,7 +1,7 @@
 import { TagIcon, BellIcon, StarIcon, StoreIcon } from "./icons";
 
 // The first three used to show a made-up figure ($47, 100+, 6,200+) — with
-// no real usage or retailer data behind Price Finder yet, those numbers
+// no real usage or retailer data behind Go Price Finder yet, those numbers
 // said plainly "data collection in progress" instead. "4 tiers" is left
 // alone: it's not a usage statistic, it's just how many loyalty tiers the
 // program actually has (see lib/loyalty.ts).
@@ -29,7 +29,7 @@ const VALUE_PROPS = [
 ];
 
 /**
- * "Why Price Finder" — value-prop cards rather than fabricated customer
+ * "Why Go Price Finder" — value-prop cards rather than fabricated customer
  * quotes. Keeps the same social-proof role a testimonials section would
  * play, without inventing fake reviewer names/photos on top of the
  * already-sanitized product catalog (see lib/data.ts).
@@ -43,7 +43,7 @@ export default function WhyPriceFinder() {
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="mb-10 text-center">
           <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
-            Why Price Finder
+            Why Go Price Finder
           </span>
           <h2 className="mt-2 font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
             Built to help you shop smarter

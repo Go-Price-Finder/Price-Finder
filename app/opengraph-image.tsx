@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Price Finder — Compare Prices, Shop Smarter";
+export const alt = "Go Price Finder — Compare Prices, Shop Smarter";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -77,7 +77,7 @@ export default async function OpengraphImage() {
             letterSpacing: "-0.02em",
           }}
         >
-          Price Finder
+          Go Price Finder
         </div>
 
         <div

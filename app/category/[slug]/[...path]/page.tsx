@@ -38,9 +38,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, path } = await params;
   const result = resolvePath(slug, path);
-  if (!result) return { title: "Not found — Price Finder" };
+  if (!result) return { title: "Not found — Go Price Finder" };
   return {
-    title: `${result.productType} — Price Finder`,
+    title: `${result.productType} — Go Price Finder`,
     description: `Every real ${result.productType.toLowerCase()} product we're tracking, from all our partners.`,
   };
 }
@@ -113,8 +113,8 @@ export default async function CategoryLeafPage({
 
         <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {result.products.map((product) => (
-              <RealProductCard key={product.id} product={product} />
+            {result.products.map((product, index) => (
+              <RealProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
         </section>

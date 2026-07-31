@@ -33,8 +33,18 @@ import PriceHistorySparkline from "./PriceHistorySparkline";
  */
 export default function RealProductCard({
   product,
+  priority = false,
 }: {
   product: RealProduct;
+  /** Set for roughly the first row of a grid (see call sites) — the LCP
+   * candidate on every listing page is whichever card lands top-left, and
+   * without this next/image applies loading="lazy" + no preload link to
+   * it like every other card, which is exactly what was inflating LCP
+   * (confirmed via real DOM inspection on production, not assumed).
+   * Deliberately NOT the default for every card: that would just move the
+   * network congestion from "nothing prioritized" to "everything
+   * prioritized," the same problem in a different shape. */
+  priority?: boolean;
 }) {
   const hasDiscount =
     typeof product.originalPrice === "number" &&
@@ -51,6 +61,7 @@ export default function RealProductCard({
           src={product.image}
           alt={product.name}
           fill
+          priority={priority}
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
         />

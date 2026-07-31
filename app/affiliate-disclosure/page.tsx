@@ -7,9 +7,9 @@ import { ChevronRightIcon } from "@/components/icons";
 const CONTACT_EMAIL = "gopricefinder@gmail.com";
 
 export const metadata: Metadata = {
-  title: "Affiliate Disclosure — Price Finder",
+  title: "Affiliate Disclosure — Go Price Finder",
   description:
-    "Price Finder participates in affiliate programs, including AWIN, and may earn a commission on qualifying purchases.",
+    "Go Price Finder participates in affiliate programs, including AWIN, and may earn a commission on qualifying purchases.",
 };
 
 export default function AffiliateDisclosurePage() {
@@ -40,16 +40,16 @@ export default function AffiliateDisclosurePage() {
         <section className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
           <div className="flex flex-col gap-5 text-sm leading-relaxed text-ivory-300 sm:text-base">
             <p>
-              Price Finder is a participant in affiliate marketing programs,
+              Go Price Finder is a participant in affiliate marketing programs,
               including the AWIN affiliate network. This means that when you
               click a link to a retailer on this site and make a purchase,
-              Price Finder may earn a commission — at no additional cost to
+              Go Price Finder may earn a commission — at no additional cost to
               you. The price you pay is the same whether you use our link or
               go directly to the retailer.
             </p>
             <p>
               Every &ldquo;View on [Retailer]&rdquo; button and outbound
-              product link on Price Finder is an affiliate link. We don&rsquo;t
+              product link on Go Price Finder is an affiliate link. We don&rsquo;t
               use any other kind of outbound link to a partner store.
             </p>
             <p>
@@ -66,7 +66,7 @@ export default function AffiliateDisclosurePage() {
               endorsements.
             </p>
             <p>
-              Questions about this disclosure or how Price Finder works?
+              Questions about this disclosure or how Go Price Finder works?
               Email us at{" "}
               <a
                 href={`mailto:${CONTACT_EMAIL}`}

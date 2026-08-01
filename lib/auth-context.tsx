@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { User } from "@supabase/supabase-js";
-import { createClient } from "./supabase/client";
+import { getCreateClient } from "./supabase/lazy-client";
 
 type AuthContextValue = {
   user: User | null;
@@ -30,27 +30,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
+    // The Supabase client (and the ~256KB of auth+realtime SDK code behind
+    // it) is loaded lazily here rather than imported statically — see
+    // lib/supabase/lazy-client.ts for why. Guarded with `cancelled` since
+    // the dynamic import resolves after this effect may have already been
+    // torn down (e.g. fast navigation/unmount in dev/StrictMode).
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
 
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-      setLoading(false);
+    getCreateClient().then((createClient) => {
+      if (cancelled) return;
+      const supabase = createClient();
+
+      supabase.auth.getUser().then(({ data }) => {
+        if (cancelled) return;
+        setUser(data.user);
+        setLoading(false);
+      });
+
+      // Keeps auth state in sync across tabs, token refreshes, and sign-out
+      // — this is what makes "stay logged in across refreshes" actually
+      // work on the client, on top of the cookie-based session Supabase
+      // persists.
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (cancelled) return;
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
+
+      unsubscribe = () => subscription.unsubscribe();
     });
 
-    // Keeps auth state in sync across tabs, token refreshes, and sign-out —
-    // this is what makes "stay logged in across refreshes" actually work
-    // on the client, on top of the cookie-based session Supabase persists.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   const signOutLocally = useCallback(async () => {
+    const createClient = await getCreateClient();
     const supabase = createClient();
     await supabase.auth.signOut();
     setUser(null);

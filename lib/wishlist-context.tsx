@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { useAuth } from "./auth-context";
-import { createClient } from "./supabase/client";
+import { getCreateClient } from "./supabase/lazy-client";
 import {
   addToWishlist,
   getWishlistByUser,
@@ -74,6 +74,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(true);
     try {
+      const createClient = await getCreateClient();
       const supabase = createClient();
       const rows = await getWishlistByUser(supabase, user.id);
       setItems(
@@ -112,6 +113,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const toggle = useCallback(
     async (product: SavableProduct) => {
       if (!user) return;
+      const createClient = await getCreateClient();
       const supabase = createClient();
       const alreadySaved = items.some((item) => item.productId === product.id);
 
@@ -149,6 +151,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     async (product: { id: string; retailer: WishlistRetailerId }) => {
       if (!user) return;
       setItems((prev) => prev.filter((item) => item.productId !== product.id));
+      const createClient = await getCreateClient();
       const supabase = createClient();
       try {
         await removeFromWishlist(supabase, {
@@ -177,6 +180,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
             : item
         )
       );
+      const createClient = await getCreateClient();
       const supabase = createClient();
       try {
         await setWishlistTargetPrice(supabase, {
@@ -194,6 +198,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const clear = useCallback(async () => {
     if (!user) return;
+    const createClient = await getCreateClient();
     const supabase = createClient();
     const toRemove = items;
     setItems([]);

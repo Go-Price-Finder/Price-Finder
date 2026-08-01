@@ -29,8 +29,7 @@ export default function FutureOfWebsite() {
           smarter search that gets better at understanding what you&rsquo;re
           actually looking for. We&rsquo;re also building toward real price
           history, so you can see whether now is genuinely a good time to
-          buy — and a loyalty program that rewards you automatically for
-          shopping through us, no extra sign-up required.
+          buy.
         </p>
         <p>
           None of that changes what this site is for: helping you find a

@@ -1,10 +1,11 @@
-import { TagIcon, BellIcon, StarIcon, StoreIcon } from "./icons";
+import { TagIcon, BellIcon, StoreIcon } from "./icons";
 
-// The first three used to show a made-up figure ($47, 100+, 6,200+) — with
-// no real usage or retailer data behind Go Price Finder yet, those numbers
-// said plainly "data collection in progress" instead. "4 tiers" is left
-// alone: it's not a usage statistic, it's just how many loyalty tiers the
-// program actually has (see lib/loyalty.ts).
+// These used to show a made-up figure ($47, 100+, 6,200+) — with no real
+// usage or retailer data behind Go Price Finder yet, they say plainly
+// "data collection in progress" instead. A fourth card ("4 tiers... of
+// loyalty rewards") was removed along with the retired loyalty/points
+// program (see lib/loyalty.ts) — it described a feature that no longer
+// exists, not a usage statistic that could go stale on its own.
 const VALUE_PROPS = [
   {
     icon: TagIcon,
@@ -20,11 +21,6 @@ const VALUE_PROPS = [
     icon: StoreIcon,
     stat: "Data collection in progress",
     label: "Stores compared side by side on every search",
-  },
-  {
-    icon: StarIcon,
-    stat: "4 tiers",
-    label: "Of loyalty rewards, earned automatically on every purchase",
   },
 ];
 
@@ -51,7 +47,7 @@ export default function WhyPriceFinder() {
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           {VALUE_PROPS.map(({ icon: Icon, stat, label }) => (
             <div
               key={label}

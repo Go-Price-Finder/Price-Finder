@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon, BellIcon, StarIcon, TrendingUpIcon } from "./icons";
+import { SearchIcon, BellIcon, TrendingUpIcon } from "./icons";
 
 const STEPS = [
   {
@@ -14,12 +14,6 @@ const STEPS = [
     title: "Track prices & get alerts",
     description:
       "Price history and drop alerts are in development. Save an item to your wishlist and set a target price now, so you're ready the moment tracking goes live.",
-  },
-  {
-    icon: StarIcon,
-    title: "Earn points, climb tiers",
-    description:
-      "Loyalty points are coming soon. Climb from Bronze to Diamond to unlock priority alerts, price-history reports, and a deals concierge once purchases go live.",
   },
   {
     icon: TrendingUpIcon,
@@ -51,7 +45,7 @@ export default function HowItWorks() {
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
         </div>
 
-        <div className="relative grid gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <div className="relative grid gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           <div
             className="pointer-events-none absolute left-0 right-0 top-9 hidden h-px bg-gradient-to-r from-transparent via-noir-700 to-transparent lg:block"
             aria-hidden

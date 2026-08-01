@@ -3,20 +3,30 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import SearchBar from "./SearchBar";
 import LogoMark from "./LogoMark";
-import { getAllRealProducts, PARTNERS } from "@/lib/partners";
 import { useSectionScrollProgress } from "@/lib/useThreeScene";
 
-// Real numbers from the live catalog (lib/partners.ts), computed once at
-// module scope rather than invented — replaces the old "Data collection in
-// progress" placeholders, which undercut trust once the site actually had
-// real data behind it.
-const STATS = [
-  { value: String(getAllRealProducts().length), label: "Products tracked" },
-  { value: String(PARTNERS.length), label: "Partner stores" },
-  { value: "Weekly", label: "Price checks" },
-];
+type HeroStats = {
+  /** getAllRealProducts().length, computed by the caller (a Server
+   * Component) — Hero itself must not import lib/partners.ts. That module
+   * pulls in ~1.5MB of raw partner data plus category-mapper/compliance
+   * helpers; importing it here (a "use client" component) would bundle
+   * that entire graph into client-side JS just to compute this number. */
+  products: number;
+  /** PARTNERS.length, same reasoning. */
+  partners: number;
+};
 
-export default function Hero() {
+export default function Hero({ stats }: { stats: HeroStats }) {
+  // Real numbers from the live catalog (lib/partners.ts), passed down from
+  // app/page.tsx (a Server Component) rather than computed here — replaces
+  // the old "Data collection in progress" placeholders, which undercut
+  // trust once the site actually had real data behind it.
+  const STATS = [
+    { value: String(stats.products), label: "Products tracked" },
+    { value: String(stats.partners), label: "Partner stores" },
+    { value: "Weekly", label: "Price checks" },
+  ];
+
   // scrollProgress is unused now that HeroScene's background is gone, but
   // sectionRef is kept wired up for whatever scroll-linked effect replaces
   // it — see the removal note below.
@@ -30,6 +40,26 @@ export default function Hero() {
   // only targets CSS animations/transitions, not JS-driven ones like this).
   const fadeUp: Variants = {
     hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 18 },
+    visible: (delay: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: prefersReducedMotion
+        ? { duration: 0 }
+        : { duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] },
+    }),
+  };
+
+  // Same fade-up timing, but for the two elements most likely to be the
+  // page's LCP candidate (the logo emblem and the H1 headline — the
+  // largest above-the-fold content). Framer Motion applies `initial` as
+  // inline styles even during SSR to avoid a flash of unanimated content,
+  // which means a variant with `opacity: 0` server-renders those elements
+  // invisible and holds up LCP until JS hydrates and runs the animation.
+  // Keeping opacity at 1 throughout — and only animating the `y` slide —
+  // preserves the visual effect while letting the real content paint
+  // immediately.
+  const fadeUpVisible: Variants = {
+    hidden: { opacity: 1, y: prefersReducedMotion ? 0 : 18 },
     visible: (delay: number) => ({
       opacity: 1,
       y: 0,
@@ -61,7 +91,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           custom={0}
-          variants={fadeUp}
+          variants={fadeUpVisible}
           className="mx-auto mb-6 flex justify-center"
         >
           {/* Same flat vector mark as the nav (LogoMark), just larger — one
@@ -78,7 +108,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           custom={0.14}
-          variants={fadeUp}
+          variants={fadeUpVisible}
           className="text-balance font-display text-4xl font-medium leading-[1.1] tracking-tight text-ivory-50 sm:text-6xl md:text-[68px]"
         >
           Find better deals.

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SearchIcon } from "./icons";
-import { searchRealProducts } from "@/lib/search";
+import type { searchRealProducts as SearchRealProducts } from "@/lib/search";
 
 type SearchBarProps = {
   size?: "md" | "lg";
@@ -33,10 +33,30 @@ export default function SearchBar({
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [debounced, setDebounced] = useState("");
+  const [searchReady, setSearchReady] = useState(false);
   const router = useRouter();
   const wrapRef = useRef<HTMLDivElement>(null);
+  // Fuse.js + the full product catalog (lib/search.ts, ~1.5MB via
+  // lib/partners.ts) is loaded lazily on first interaction rather than
+  // imported statically — a static import would ship that whole graph in
+  // the initial bundle for every page that renders a SearchBar (the
+  // homepage Hero and every page's Header), even for users who never
+  // search. The resolved function is cached here so subsequent
+  // keystrokes/searches don't re-import.
+  const searchFnRef = useRef<typeof SearchRealProducts | null>(null);
 
   const isLarge = size === "lg";
+
+  // Kicks off the dynamic import the first time the user shows intent to
+  // search (focusing the input, or typing directly into it). Idempotent —
+  // safe to call from multiple handlers.
+  const loadSearch = useCallback(() => {
+    if (disableSearchNav || searchFnRef.current) return;
+    import("@/lib/search").then((mod) => {
+      searchFnRef.current = mod.searchRealProducts;
+      setSearchReady(true);
+    });
+  }, [disableSearchNav]);
 
   // Debounce so every keystroke doesn't re-run the fuzzy search — 150ms is
   // short enough to still feel instant, long enough to skip intermediate
@@ -58,10 +78,13 @@ export default function SearchBar({
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
-  const results = useMemo(
-    () => (disableSearchNav || !debounced ? [] : searchRealProducts(debounced)),
-    [debounced, disableSearchNav]
-  );
+  const results = useMemo(() => {
+    // searchReady is only in the deps array to force a recompute once the
+    // dynamic import resolves — the ref itself isn't reactive on its own.
+    if (disableSearchNav || !debounced || !searchFnRef.current) return [];
+    return searchFnRef.current(debounced);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounced, disableSearchNav, searchReady]);
 
   const grouped = useMemo(() => {
     const byCategory = new Map<string, typeof results>();
@@ -110,8 +133,14 @@ export default function SearchBar({
         <input
           type="text"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onFocus={() => setFocused(true)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            loadSearch();
+          }}
+          onFocus={() => {
+            setFocused(true);
+            loadSearch();
+          }}
           placeholder={placeholder}
           role={disableSearchNav ? undefined : "combobox"}
           aria-expanded={showDropdown}

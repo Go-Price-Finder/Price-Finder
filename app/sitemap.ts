@@ -13,10 +13,10 @@ const SITE_URL = "https://gopricefinder.com";
  * Auto-generated from the same real-data functions every page already
  * uses (lib/partners.ts) — a partner or product added via
  * scripts/import-partner.mjs is picked up here with no separate update,
- * same as every other consumer of that file. Legacy mock-system routes
- * (/dashboard, /wishlist, /purchases, /products/[slug], /auth/*, /search)
- * are intentionally excluded — see robots.ts, which disallows the same
- * set for the same reason: no unique indexable content.
+ * same as every other consumer of that file. Account/auth routes
+ * (/wishlist, /auth/*, /search) are intentionally excluded — see
+ * robots.ts, which disallows the same set for the same reason: no unique
+ * indexable content for search engines.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [

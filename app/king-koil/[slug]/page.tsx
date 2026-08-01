@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
+import WishlistButton from "@/components/WishlistButton";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { KING_KOIL_PRODUCTS } from "@/lib/king-koil-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
@@ -116,6 +117,12 @@ export default async function KingKoilProductPage({
                     {product.badge}
                   </span>
                 )}
+                <WishlistButton
+                  productId={product.id}
+                  retailer="king-koil"
+                  currentPrice={product.price}
+                  className="static ml-auto"
+                />
               </div>
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

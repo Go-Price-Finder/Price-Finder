@@ -31,23 +31,10 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Touching auth.getUser() is what actually triggers the refresh.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Belt-and-suspenders alongside the auth checks already in
-  // app/dashboard/page.tsx and app/purchases/page.tsx: bounce signed-out
-  // visitors before the page even renders, and send them back after login.
-  const protectedPaths = ["/dashboard", "/purchases"];
-  if (
-    !user &&
-    protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
-  ) {
-    const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("redirectedFrom", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  // Touching auth.getUser() is what actually triggers the refresh. No
+  // routes are hard-gated here — /wishlist (the only account page left)
+  // handles the signed-out case itself with an in-page sign-in prompt.
+  await supabase.auth.getUser();
 
   return supabaseResponse;
 }

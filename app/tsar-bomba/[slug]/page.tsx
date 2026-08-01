@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
+import WishlistButton from "@/components/WishlistButton";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { TSAR_BOMBA_PRODUCTS } from "@/lib/tsar-bomba-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
@@ -116,6 +117,12 @@ export default async function TsarBombaProductPage({
                     {product.badge}
                   </span>
                 )}
+                <WishlistButton
+                  productId={product.id}
+                  retailer="tsar-bomba"
+                  currentPrice={product.price}
+                  className="static ml-auto"
+                />
               </div>
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

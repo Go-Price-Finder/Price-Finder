@@ -63,6 +63,20 @@ const nextConfig: NextConfig = {
         destination: "/category/arts-crafts",
         permanent: true,
       },
+      // Purchase-tracking and loyalty tiers were retired (no real checkout
+      // ever fed them — recordPurchaseAction was already disabled/unused),
+      // and /dashboard's remaining content (profile card) folded into
+      // /wishlist, so both old routes now redirect there.
+      {
+        source: "/dashboard",
+        destination: "/wishlist",
+        permanent: true,
+      },
+      {
+        source: "/purchases",
+        destination: "/wishlist",
+        permanent: true,
+      },
     ];
   },
 };

@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { RealProduct } from "@/lib/partners";
 import { StarIcon } from "./icons";
 import PriceHistorySparkline from "./PriceHistorySparkline";
+import WishlistButton from "./WishlistButton";
+import type { WishlistRetailerId } from "@/lib/types";
 
 /**
  * Card for any real, live product (lib/partners.ts's normalized
@@ -52,26 +54,35 @@ export default function RealProductCard({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft-xl">
-      <Link
-        href={product.href}
-        aria-label={product.name}
-        className="relative block aspect-square w-full overflow-hidden bg-noir-700 ring-1 ring-inset ring-gilt-500/25"
-      >
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          priority={priority}
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-        />
+      {/* The image itself is the only thing inside the link — the badge and
+          wishlist button are absolutely-positioned siblings, not
+          descendants, since nesting a <button> inside an <a> is invalid
+          HTML and would break their independent click handling. */}
+      <div className="relative aspect-square w-full overflow-hidden bg-noir-700 ring-1 ring-inset ring-gilt-500/25">
+        <Link href={product.href} aria-label={product.name} className="absolute inset-0 block">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            priority={priority}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        </Link>
 
         {product.badge && (
           <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-gilt-500 px-2.5 py-1 text-[11px] font-semibold text-noir-950 shadow-soft">
             {product.badge}
           </span>
         )}
-      </Link>
+
+        <WishlistButton
+          productId={product.id}
+          retailer={product.partnerId as WishlistRetailerId}
+          currentPrice={product.price}
+          className="absolute bottom-3 right-3"
+        />
+      </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">

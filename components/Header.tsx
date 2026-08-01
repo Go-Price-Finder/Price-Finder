@@ -119,13 +119,13 @@ export default function Header() {
           ) : user ? (
             <div className="flex items-center gap-2">
               <Link
-                href="/dashboard"
+                href="/wishlist"
                 className="flex items-center gap-2 rounded-full border border-ivory-100/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-ivory-50 transition-all duration-200 hover:border-gilt-400/40 hover:bg-gilt-500/10"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gilt-500/15 text-xs font-semibold text-gilt-400">
                   {user.email?.charAt(0).toUpperCase() ?? "?"}
                 </span>
-                Dashboard
+                Wishlist
               </Link>
               <button
                 onClick={handleSignOut}
@@ -197,11 +197,11 @@ export default function Header() {
           ) : user ? (
             <>
               <Link
-                href="/dashboard"
+                href="/wishlist"
                 onClick={() => setMenuOpen(false)}
                 className="mt-2 rounded-full bg-gilt-500/10 px-5 py-3 text-center text-sm font-medium text-gilt-400 transition-colors hover:bg-gilt-500/15"
               >
-                Dashboard
+                Wishlist
               </Link>
               <button
                 onClick={() => {

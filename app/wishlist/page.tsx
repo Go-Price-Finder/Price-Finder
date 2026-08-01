@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TargetPriceCell from "@/components/TargetPriceCell";
@@ -8,7 +9,7 @@ import ProductImagePlaceholder from "@/components/ProductImagePlaceholder";
 import { HeartIcon, ChevronRightIcon } from "@/components/icons";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useAuth } from "@/lib/auth-context";
-import { formatPrice, formatShortDate, getRetailer } from "@/lib/data";
+import { formatPrice, formatShortDate, formatLongDate, getRetailer } from "@/lib/data";
 
 export default function WishlistPage() {
   const { items, loading: wishlistLoading, remove, clear } = useWishlist();
@@ -21,14 +22,33 @@ export default function WishlistPage() {
       <Header />
       <main className="flex-1">
         <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+          {!loading && user && (
+            <div className="mb-10 flex flex-col items-start gap-5 rounded-3xl border border-gilt-500/20 bg-noir-800 p-6 shadow-soft sm:flex-row sm:items-center sm:p-8">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gilt-500/15 font-display text-2xl font-medium text-gilt-400">
+                {user.email?.charAt(0).toUpperCase() ?? "?"}
+              </div>
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
+                  Your account
+                </span>
+                <h1 className="mt-1 font-display text-2xl font-medium text-ivory-50 sm:text-3xl">
+                  {user.email}
+                </h1>
+                <p className="mt-1 text-sm text-ivory-300">
+                  Member since {formatLongDate(user.created_at)}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>
               <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
                 Your picks
               </span>
-              <h1 className="mt-2 font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
+              <h2 className="mt-2 font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
                 Wishlist
-              </h1>
+              </h2>
               <p className="mt-2 text-sm text-ivory-300">
                 {loading
                   ? "Loading your saved items…"
@@ -122,7 +142,17 @@ export default function WishlistPage() {
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
                               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-                                <ProductImagePlaceholder compact />
+                                {item.product?.image_url ? (
+                                  <Image
+                                    src={item.product.image_url}
+                                    alt={name}
+                                    fill
+                                    sizes="56px"
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <ProductImagePlaceholder compact />
+                                )}
                               </div>
                               <div>
                                 <p className="line-clamp-2 max-w-[220px] font-display text-sm font-medium text-ivory-50">

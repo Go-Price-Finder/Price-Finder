@@ -16,13 +16,13 @@ import {
   removeFromWishlist,
   setWishlistTargetPrice,
 } from "./supabase/queries";
-import type { RetailerId } from "./types";
+import type { WishlistRetailerId } from "./types";
 
 export type WishlistItem = {
   /** wishlists.id (the row id, not the product id) */
   id: string;
   productId: string;
-  retailer: RetailerId;
+  retailer: WishlistRetailerId;
   priceSaved: number;
   /** Price the user asked to be notified at or below. Null = no alert set. */
   targetPrice: number | null;
@@ -40,7 +40,7 @@ export type WishlistItem = {
 
 type SavableProduct = {
   id: string;
-  retailer: RetailerId;
+  retailer: WishlistRetailerId;
   currentPrice: number;
 };
 
@@ -50,10 +50,10 @@ type WishlistContextValue = {
   loading: boolean;
   isSaved: (productId: string) => boolean;
   toggle: (product: SavableProduct) => Promise<void>;
-  remove: (product: { id: string; retailer: RetailerId }) => Promise<void>;
+  remove: (product: { id: string; retailer: WishlistRetailerId }) => Promise<void>;
   clear: () => Promise<void>;
   setTargetPrice: (
-    product: { id: string; retailer: RetailerId },
+    product: { id: string; retailer: WishlistRetailerId },
     targetPrice: number | null
   ) => Promise<void>;
   count: number;
@@ -146,7 +146,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   );
 
   const remove = useCallback(
-    async (product: { id: string; retailer: RetailerId }) => {
+    async (product: { id: string; retailer: WishlistRetailerId }) => {
       if (!user) return;
       setItems((prev) => prev.filter((item) => item.productId !== product.id));
       const supabase = createClient();
@@ -164,7 +164,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   );
 
   const setTargetPrice = useCallback(
-    async (product: { id: string; retailer: RetailerId }, targetPrice: number | null) => {
+    async (product: { id: string; retailer: WishlistRetailerId }, targetPrice: number | null) => {
       if (!user) return;
       // Optimistic update — the input shouldn't wait on a round trip to
       // reflect what was just typed. alert_sent/alert_sent_at reset

@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/email/resend";
 import { renderPriceDropAlertEmail } from "@/lib/email/templates/priceDropAlert";
-import { trendingProducts, getRetailer, getAffiliateUrl } from "@/lib/data";
+import { getAllRealProducts } from "@/lib/partners";
 import { evaluateAlertState } from "./evaluateAlertState";
 
 export type CheckPriceDropsResult = {
@@ -25,11 +25,12 @@ export type CheckPriceDropsResult = {
  * Runs with the service-role client (lib/supabase/admin.ts) since it has
  * to read and update every user's rows, not just one signed-in caller's.
  *
- * There's no live affiliate price feed yet (see supabase/README.md's
- * "What this doesn't include yet"), so "the product's current price" reads
- * the same mock catalog the rest of the app already renders from
- * (lib/data.ts's trendingProducts). Swap getCurrentPrice's lookup for a
- * real feed call later and this function doesn't need to change.
+ * "Current price" reads the real partner catalog (lib/partners.ts) — each
+ * partner's own price field, refreshed whenever that partner's feed is
+ * re-imported. A wishlist row whose product isn't found there (e.g. it
+ * pre-dates the real-partner wishlist rollout, or referenced a delisted
+ * product) is skipped, same as any other "no price data for this product"
+ * case.
  */
 export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
   const supabase = createAdminClient();
@@ -41,18 +42,18 @@ export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
 
   if (error) throw error;
 
+  const products = getAllRealProducts();
   const result: CheckPriceDropsResult = { checked: 0, sent: 0, reset: 0, errors: [] };
 
   for (const row of rows ?? []) {
     result.checked += 1;
 
-    // Mock "current price" lookup — see the doc comment above.
-    const mockProduct = trendingProducts.find((p) => p.id === row.product_id);
-    if (!mockProduct) continue; // no price data for this product (yet)
+    const product = products.find((p) => p.id === row.product_id);
+    if (!product) continue; // no price data for this product (yet)
 
     const decision = evaluateAlertState({
       targetPrice: row.target_price,
-      currentPrice: mockProduct.currentPrice,
+      currentPrice: product.price,
       alertSent: row.alert_sent,
     });
 
@@ -62,12 +63,12 @@ export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
         if (!email) continue; // shouldn't happen — every wishlist row has a user
 
         const { subject, html } = renderPriceDropAlertEmail({
-          productName: mockProduct.name,
-          productImageUrl: mockProduct.image,
+          productName: product.name,
+          productImageUrl: product.image,
           oldPrice: row.price_saved,
-          newPrice: mockProduct.currentPrice,
-          retailerName: getRetailer(mockProduct.retailer).name,
-          dealUrl: getAffiliateUrl(mockProduct),
+          newPrice: product.price,
+          retailerName: product.partnerName,
+          dealUrl: product.deepLink,
         });
 
         const { error: sendError } = await resend.emails.send({

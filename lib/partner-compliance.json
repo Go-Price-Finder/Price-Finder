@@ -80,15 +80,22 @@
       "comparisonEngineConfirmed": false,
       "comparisonEngineNote": "Not explicitly confirmed in reviewed terms — verify before going live"
     },
-    "beautyologie-caire-beauty": {
+    "caire-beauty": {
       "network": "AWIN",
       "status": "reviewed-not-applied",
-      "commissionRate": "15%",
-      "noDiscountLanguageNearBrand": true,
-      "noDiscountLanguageNote": "Cannot pair brand name with 'best prices/discount/% off' language",
-      "noIncentivizedTraffic": true,
-      "writtenConsentForContent": true,
-      "comparisonEngineConfirmed": true
+      "cookieDays": 90,
+      "commissionRate": "not disclosed until accepted",
+      "noMarketplaceResale": true,
+      "noMarketplaceResaleNote": "Terms prohibit reselling on marketplaces like Amazon/eBay — doesn't restrict GoPriceFinder's referral/comparison model.",
+      "noBrandedPaidSearch": true,
+      "noBrandedPaidSearchNote": "Affiliates cannot outbid Caire Beauty on branded keywords in paid search (Google/Bing/Yahoo).",
+      "noScrapingWithoutConsent": true,
+      "noScrapingWithoutConsentNote": "Terms explicitly prohibit scraping the site/app for content (images, logos, text) without Caire Beauty's express written consent.",
+      "usAvailabilityOnly": true,
+      "imageUsagePermission": "assessed-low-risk",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/93563) — Branding tab explicitly states 'This advertiser is yet to define program terms under Branding.' General tab grants a non-exclusive, limited license to use Caire Beauty's logo/trademarks 'solely in the form and manner available from... the Platform' (AWIN-provided assets), but doesn't explicitly address product-photo display rights the way some other partners' terms do. Genuine silence on the Branding tab specifically — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Golden Maple/King Koil/Canvas Vows.",
+      "comparisonEngineConfirmed": false,
+      "comparisonEngineNote": "Publishers, PPC, Transactions, and De-Duplication tabs are all entirely unanswered on AWIN — no explicit confirmation or denial of comparison-shopping-service eligibility. Not explicitly confirmed in reviewed terms — verify before going live."
     },
     "canvas-vows": {
       "network": "AWIN",

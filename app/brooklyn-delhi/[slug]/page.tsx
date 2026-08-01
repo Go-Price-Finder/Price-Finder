@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
+import WishlistButton from "@/components/WishlistButton";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { BROOKLYN_DELHI_PRODUCTS } from "@/lib/brooklyn-delhi-data";
 import { getAllRealProducts, getRealProduct } from "@/lib/partners";
@@ -113,6 +114,12 @@ export default async function BrooklynDelhiProductPage({
                     {product.badge}
                   </span>
                 )}
+                <WishlistButton
+                  productId={product.id}
+                  retailer="brooklyn-delhi"
+                  currentPrice={product.price}
+                  className="static ml-auto"
+                />
               </div>
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

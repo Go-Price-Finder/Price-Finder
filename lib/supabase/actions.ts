@@ -3,8 +3,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 import { getUsernameError, isPasswordValid } from "@/lib/validation";
-import { recordPurchase } from "./queries";
-import type { Retailer } from "./database.types";
 
 export type AuthActionResult = { error: string } | void;
 
@@ -52,7 +50,7 @@ export async function signUpAction(
   if (data.session) {
     // Email confirmation is disabled on this project, so signUp already
     // returned an active session — the user is signed in immediately.
-    redirect("/dashboard");
+    redirect("/wishlist");
   }
 
   // Email confirmation is required (the default for new Supabase
@@ -83,51 +81,11 @@ export async function signInAction(
   const isSafeRedirect =
     redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//");
 
-  redirect(isSafeRedirect ? redirectTo : "/dashboard");
+  redirect(isSafeRedirect ? redirectTo : "/wishlist");
 }
 
 export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
-}
-
-export type RecordPurchaseResult = { error: string } | { success: true };
-
-/**
- * Logs a purchase when a signed-in user clicks a "View Deal" affiliate
- * link. Runs server-side (rather than trusting a client-supplied user id)
- * so amount_spent and user_id always come from something we've verified —
- * exactly the tightening the security note in
- * supabase/migrations/0001_initial_schema.sql calls out for once a real
- * checkout-adjacent flow exists.
- */
-export async function recordPurchaseAction(
-  productId: string,
-  retailer: Retailer,
-  amountSpent: number
-): Promise<RecordPurchaseResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: "You must be signed in to record a purchase." };
-  }
-  if (!productId || !retailer || !Number.isFinite(amountSpent) || amountSpent < 0) {
-    return { error: "Invalid purchase details." };
-  }
-
-  try {
-    await recordPurchase(supabase, {
-      userId: user.id,
-      productId,
-      retailer,
-      amountSpent,
-    });
-    return { success: true };
-  } catch {
-    return { error: "Couldn't record that purchase. Please try again." };
-  }
 }

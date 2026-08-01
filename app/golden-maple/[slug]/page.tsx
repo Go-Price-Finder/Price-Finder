@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
+import WishlistButton from "@/components/WishlistButton";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { GOLDEN_MAPLE_PRODUCTS } from "@/lib/golden-maple-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
@@ -119,6 +120,12 @@ export default async function GoldenMapleProductPage({
                     {product.badge}
                   </span>
                 )}
+                <WishlistButton
+                  productId={product.id}
+                  retailer="golden-maple"
+                  currentPrice={product.price}
+                  className="static ml-auto"
+                />
               </div>
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

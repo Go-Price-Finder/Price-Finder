@@ -12,58 +12,6 @@ type TypedClient = SupabaseClient<Database>;
  */
 
 // ---------------------------------------------------------------------------
-// Purchases
-// ---------------------------------------------------------------------------
-
-/** All purchases by a user, most recent first, with product details joined in. */
-export async function getPurchasesByUser(supabase: TypedClient, userId: string) {
-  const { data, error } = await supabase
-    .from("purchases")
-    .select("id, retailer, amount_spent, purchased_at, products(id, name, image_url)")
-    .eq("user_id", userId)
-    .order("purchased_at", { ascending: false });
-
-  if (error) throw error;
-  return data;
-}
-
-/** Total spend, purchase count, and first/last purchase date for a user. */
-export async function getUserSpendingSummary(supabase: TypedClient, userId: string) {
-  const { data, error } = await supabase
-    .from("user_spending_summary")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function recordPurchase(
-  supabase: TypedClient,
-  purchase: {
-    userId: string;
-    productId: string;
-    retailer: Retailer;
-    amountSpent: number;
-  }
-) {
-  const { data, error } = await supabase
-    .from("purchases")
-    .insert({
-      user_id: purchase.userId,
-      product_id: purchase.productId,
-      retailer: purchase.retailer,
-      amount_spent: purchase.amountSpent,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-// ---------------------------------------------------------------------------
 // Wishlists
 // ---------------------------------------------------------------------------
 

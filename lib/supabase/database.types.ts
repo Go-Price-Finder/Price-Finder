@@ -12,7 +12,18 @@
 // each table needing a `Relationships` array (used to type embedded
 // resource queries like `.select("*, products(*)")`).
 
-export type Retailer = "amazon" | "walmart" | "etsy" | "target" | "ebay";
+export type Retailer =
+  | "amazon"
+  | "walmart"
+  | "etsy"
+  | "target"
+  | "ebay"
+  | "brooklyn-delhi"
+  | "evdance"
+  | "golden-maple"
+  | "canvas-vows"
+  | "king-koil"
+  | "tsar-bomba";
 
 export type Database = {
   public: {

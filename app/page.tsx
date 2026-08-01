@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FutureOfWebsite from "@/components/FutureOfWebsite";
 import OurPartners from "@/components/OurPartners";
-import LoyaltySection from "@/components/LoyaltySection";
 import WhyTrustPrices from "@/components/WhyTrustPrices";
 import WhyPriceFinder from "@/components/WhyPriceFinder";
 import HowItWorks from "@/components/HowItWorks";
@@ -16,8 +15,13 @@ export default function Home() {
       <Header />
       <JsonLd data={buildOrganizationJsonLd()} />
       {/* Section order: Hero (search + stats) → Future of Website (new
-          vision statement) → Our Partners → Loyalty → Why Trust Prices →
+          vision statement) → Our Partners → Why Trust Prices →
           Why Price Finder → How It Works.
+
+          Loyalty section was removed — the points/tiers program depended
+          on purchase-tracking, which was retired (no live checkout flow
+          exists to derive real spend from), so the copy no longer matched
+          reality.
 
           Under Construction and Savings Dashboard were removed — the
           former was stale copy (referenced "first three" partners; we're
@@ -36,7 +40,6 @@ export default function Home() {
         <Hero />
         <FutureOfWebsite />
         <OurPartners />
-        <LoyaltySection />
         <WhyTrustPrices />
         <WhyPriceFinder />
         <HowItWorks />

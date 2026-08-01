@@ -2,17 +2,13 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HowItWorks from "@/components/HowItWorks";
-import LoyaltySection from "@/components/LoyaltySection";
 import { SearchIcon, BellIcon, TrendingUpIcon } from "@/components/icons";
-import { TIERS, TIER_PERKS } from "@/lib/loyalty";
 
 export const metadata: Metadata = {
   title: "How It Works — Go Price Finder",
   description:
-    "See how Go Price Finder is designed to help you find deals, track prices, and earn rewards as we grow our retailer coverage.",
+    "See how Go Price Finder is designed to help you find and compare deals as we grow our retailer coverage.",
 };
-
-const DISPLAY_TIERS = TIERS.filter((t) => t.id !== "member");
 
 export default function HowItWorksPage() {
   return (
@@ -28,7 +24,7 @@ export default function HowItWorksPage() {
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
-            From finding the right deal to earning rewards on every purchase —
+            From finding the right deal to comparing prices across retailers —
             here&apos;s exactly how the whole process works, start to finish.
           </p>
         </section>
@@ -87,43 +83,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        {/* Deep dive 3 — loyalty tiers, reusing the interactive homepage
-            loyalty section rather than duplicating its markup. */}
-        <div className="relative">
-          <div className="mx-auto max-w-5xl px-5 pt-14 text-center sm:px-8 sm:pt-20">
-            <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
-              Loyalty points
-            </span>
-            <h2 className="mt-1 font-display text-2xl font-medium text-ivory-50 sm:text-3xl">
-              Earn 1 point for every $10 you spend
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
-              Points accrue automatically on every purchase made through
-              Go Price Finder — no separate sign-up. As your point total
-              crosses each tier&apos;s threshold, you&apos;re upgraded
-              instantly and unlock that tier&apos;s perks on top of everything
-              below it.
-            </p>
-          </div>
-          <LoyaltySection />
-          <div className="mx-auto -mt-10 max-w-5xl px-5 pb-6 sm:px-8">
-            <div className="grid gap-3 sm:grid-cols-2">
-              {DISPLAY_TIERS.map((tier) => (
-                <div
-                  key={tier.id}
-                  className="rounded-2xl border border-gilt-500/15 bg-noir-800/50 p-4 text-sm"
-                >
-                  <p className="font-display font-medium text-ivory-50">
-                    {tier.name} · {tier.threshold.toLocaleString()}+ points
-                  </p>
-                  <p className="mt-1 text-ivory-300">{TIER_PERKS[tier.id]}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Deep dive 4 — how users save money */}
+        {/* Deep dive 3 — how users save money */}
         <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="grid items-center gap-10 lg:grid-cols-[auto_1fr]">
             <div className="mx-auto flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gilt-500/10 text-gilt-400 shadow-soft lg:mx-0">

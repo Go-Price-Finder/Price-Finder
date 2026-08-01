@@ -1,7 +1,21 @@
 export type RetailerId = "amazon" | "walmart" | "etsy" | "target" | "ebay";
 
+/** The 6 real AWIN partner ids (lib/partners.ts) — wishlists can reference
+ * either a legacy mock RetailerId or a real partner id, matching the
+ * broadened `retailer` Postgres enum (see
+ * supabase/migrations/0004_add_real_partner_retailers.sql). */
+export type RealPartnerRetailerId =
+  | "brooklyn-delhi"
+  | "evdance"
+  | "golden-maple"
+  | "canvas-vows"
+  | "king-koil"
+  | "tsar-bomba";
+
+export type WishlistRetailerId = RetailerId | RealPartnerRetailerId;
+
 export type Retailer = {
-  id: RetailerId;
+  id: WishlistRetailerId;
   name: string;
   /** Tailwind classes for the small retailer tag shown on product cards */
   badgeClass: string;
@@ -13,62 +27,4 @@ export type PricePoint = {
   /** ISO date string, e.g. "2026-02-01" */
   date: string;
   price: number;
-};
-
-/** One retailer's current listing for a product, shown in RetailerModal. */
-export type RetailerListing = {
-  name: RetailerId;
-  price: number;
-  url: string;
-};
-
-/** One customer review, shown on the product detail page. */
-export type Review = {
-  id: string;
-  author: string;
-  rating: number;
-  title: string;
-  text: string;
-  /** ISO date string, e.g. "2026-06-02" */
-  date: string;
-  helpfulCount: number;
-};
-
-export type Product = {
-  id: string;
-  name: string;
-  category: string;
-  /** Short marketing blurb shown on the product detail page. Sanitized
-   * mock catalog — every product currently carries the same placeholder
-   * string ("Product Description") until real copy is written. */
-  description: string;
-  image: string;
-  /** All product images (product detail page carousel) — `image` above is
-   * always `images[0]`, kept as its own field so every existing card/rail
-   * usage that only needs one image doesn't have to reach into the array. */
-  images: string[];
-  store: string;
-  storeLogo?: string;
-  retailer: RetailerId;
-  currentPrice: number;
-  originalPrice?: number;
-  rating: number;
-  reviewCount: number;
-  isBestPrice?: boolean;
-  /** e.g. "In Stock", "Only 3 left", "Pre-order" — shown on the product
-   * detail page's info section. */
-  availability: string;
-  /** Every retailer currently listing this product — powers the "at Amazon
-   * X stores" click-through in ProductCard and the RetailerModal it opens,
-   * and the full pricing table on the product detail page. */
-  retailers: RetailerListing[];
-  reviews: Review[];
-  priceHistory: PricePoint[];
-};
-
-export type Category = {
-  id: string;
-  name: string;
-  image: string;
-  itemCount: string;
 };

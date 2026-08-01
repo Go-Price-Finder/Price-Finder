@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useAuth } from "@/lib/auth-context";
 import { HeartIcon } from "./icons";
-import type { RetailerId } from "@/lib/types";
+import type { WishlistRetailerId } from "@/lib/types";
 
 export default function WishlistButton({
   productId,
@@ -13,7 +13,7 @@ export default function WishlistButton({
   className = "",
 }: {
   productId: string;
-  retailer: RetailerId;
+  retailer: WishlistRetailerId;
   currentPrice: number;
   className?: string;
 }) {

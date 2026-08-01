@@ -1,7 +1,16 @@
 import type { RealProduct } from "./partners";
+import { getPartnerPolicy } from "./partner-policies";
 
 export const SITE_URL = "https://gopricefinder.com";
 export const SITE_NAME = "Go Price Finder";
+
+/** Maps partner-policies.ts's `fees` union to schema.org's
+ * ReturnFeesEnumeration values. */
+const RETURN_FEES_SCHEMA_VALUE: Record<string, string> = {
+  FreeReturn: "https://schema.org/FreeReturn",
+  ReturnShippingFees: "https://schema.org/ReturnShippingFees",
+  RestockingFees: "https://schema.org/RestockingFees",
+};
 
 /**
  * schema.org/Product JSON-LD for a real product detail page. Every field
@@ -21,6 +30,65 @@ export const SITE_NAME = "Go Price Finder";
  * the product is listed at all.
  */
 export function buildProductJsonLd(product: RealProduct) {
+  const offers: Record<string, unknown> = {
+    "@type": "Offer",
+    url: product.deepLink,
+    priceCurrency: "USD",
+    price: product.price,
+    availability: "https://schema.org/InStock",
+    seller: {
+      "@type": "Organization",
+      name: product.partnerName,
+    },
+  };
+
+  // Real, partner-sourced shipping/return terms — see
+  // lib/partner-policies.ts for citations. Only added when a policy
+  // entry actually exists for this partner (every currently-active
+  // partner has one; this guard just avoids ever emitting an invented
+  // value for a future partner whose policy hasn't been researched yet).
+  const policy = getPartnerPolicy(product.partnerId);
+  if (policy) {
+    offers.shippingDetails = {
+      "@type": "OfferShippingDetails",
+      shippingRate: {
+        "@type": "MonetaryAmount",
+        value: policy.shipping.ratePriceUSD,
+        currency: "USD",
+      },
+      shippingDestination: policy.shipping.countries.map((countryCode) => ({
+        "@type": "DefinedRegion",
+        addressCountry: countryCode,
+      })),
+      deliveryTime: {
+        "@type": "ShippingDeliveryTime",
+        handlingTime: {
+          "@type": "QuantitativeValue",
+          minValue: policy.shipping.handlingMinDays,
+          maxValue: policy.shipping.handlingMaxDays,
+          unitCode: "DAY",
+        },
+        transitTime: {
+          "@type": "QuantitativeValue",
+          minValue: policy.shipping.transitMinDays,
+          maxValue: policy.shipping.transitMaxDays,
+          unitCode: "DAY",
+        },
+      },
+    };
+
+    offers.hasMerchantReturnPolicy = {
+      "@type": "MerchantReturnPolicy",
+      returnPolicyCategory: `https://schema.org/${policy.returns.category}`,
+      ...(policy.returns.category === "MerchantReturnFiniteReturnWindow"
+        ? { merchantReturnDays: policy.returns.days }
+        : {}),
+      returnFees: RETURN_FEES_SCHEMA_VALUE[policy.returns.fees],
+      returnMethod: "https://schema.org/ReturnByMail",
+      applicableCountry: policy.shipping.countries,
+    };
+  }
+
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -32,17 +100,7 @@ export function buildProductJsonLd(product: RealProduct) {
       "@type": "Brand",
       name: product.partnerName,
     },
-    offers: {
-      "@type": "Offer",
-      url: product.deepLink,
-      priceCurrency: "USD",
-      price: product.price,
-      availability: "https://schema.org/InStock",
-      seller: {
-        "@type": "Organization",
-        name: product.partnerName,
-      },
-    },
+    offers,
   };
   if (product.rating) {
     data.aggregateRating = {

@@ -190,6 +190,21 @@ export type PartnerRefreshResult = {
    * time"). */
   duplicateKeyCollisions: number;
   errors: string[];
+  /** TEMPORARY DIAGNOSTIC (added 2026-08-02, safe to remove once
+   * matchedByName settles near 0 for every partner): for up to 3 feed rows
+   * that fell back to name-matching, records which of the deep-link column
+   * names this file checks (aw_deep_link / merchant_deep_link / deep_link)
+   * were actually present and non-empty on that row, plus the id this file
+   * extracted from each (or null). Exists to answer "is the column name
+   * wrong, or is the id itself just different from the static catalog's,"
+   * without ever needing to look at the feed CSV directly. No secrets or
+   * full URLs beyond the deep link itself (which is not sensitive — it's
+   * the same link type shown publicly on product pages). */
+  nameFallbackDiagnostics: {
+    productName: string;
+    columnsPresent: Record<string, string>;
+    extractedIds: Record<string, string | null>;
+  }[];
 };
 
 export type RefreshPricesResult = {
@@ -231,6 +246,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         matchedByName: 0,
         duplicateKeyCollisions: 0,
         errors: [],
+        nameFallbackDiagnostics: [],
       });
       continue;
     }
@@ -252,6 +268,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         matchedByName: 0,
         duplicateKeyCollisions: 0,
         errors: [],
+        nameFallbackDiagnostics: [],
       });
       continue;
     }
@@ -268,6 +285,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       matchedByName: 0,
       duplicateKeyCollisions: 0,
       errors: [],
+      nameFallbackDiagnostics: [],
     };
 
     const candidates = feedList.filter(
@@ -327,10 +345,38 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       }
     >();
 
+    // Candidate deep-link column names, in priority order — a union of
+    // what scripts/awin-status-report.ts checks (aw_deep_link,
+    // merchant_deep_link) and what scripts/import-partner.mjs's own
+    // default mapping checks when a partner's static catalog was first
+    // built (deep_link, merchant_deep_link, affiliate_url, product_url,
+    // url) — the two scripts were written independently and didn't agree
+    // on one name, so a partner imported via one of the mjs-only
+    // candidates (e.g. plain "deep_link") would silently fail every
+    // id-match here without this union.
+    const DEEP_LINK_COLUMNS = [
+      "aw_deep_link",
+      "deep_link",
+      "merchant_deep_link",
+      "affiliate_url",
+      "product_url",
+      "url",
+    ];
+
     for (const row of rows) {
       const feedName = row["product_name"] || "";
-      const feedDeepLink = row["aw_deep_link"] || row["merchant_deep_link"] || "";
-      const feedProductId = feedDeepLink ? extractAwinProductId(feedDeepLink) : null;
+
+      let feedProductId: string | null = null;
+      for (const col of DEEP_LINK_COLUMNS) {
+        const value = row[col];
+        if (value) {
+          const id = extractAwinProductId(value);
+          if (id) {
+            feedProductId = id;
+            break;
+          }
+        }
+      }
 
       let staticProduct = feedProductId ? byId.get(feedProductId) : undefined;
       let matchedVia: "id" | "name" | null = staticProduct ? "id" : null;
@@ -338,6 +384,19 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       if (!staticProduct) {
         staticProduct = byName.get(normalizeName(feedName));
         if (staticProduct) matchedVia = "name";
+      }
+
+      if (matchedVia === "name" && result.nameFallbackDiagnostics.length < 3) {
+        const columnsPresent: Record<string, string> = {};
+        const extractedIds: Record<string, string | null> = {};
+        for (const col of DEEP_LINK_COLUMNS) {
+          const value = row[col];
+          if (value) {
+            columnsPresent[col] = value;
+            extractedIds[col] = extractAwinProductId(value);
+          }
+        }
+        result.nameFallbackDiagnostics.push({ productName: feedName, columnsPresent, extractedIds });
       }
 
       if (!staticProduct) {

@@ -16,12 +16,15 @@ import type { WishlistRetailerId } from "@/lib/types";
  * WHAT THIS ACTUALLY DOES: for each active real partner below, download
  * that partner's live AWIN datafeed (same feed/format
  * scripts/awin-status-report.ts already reads read-only), match each feed
- * row to an existing static product by normalized name, and upsert any
- * price that's changed into public.current_prices. It never touches the
- * static lib/<partner>-data.ts files, never adds or removes products —
- * only price/originalPrice can move, and only for products that already
- * exist in the static catalog. A feed row that can't be matched to an
- * existing product is skipped and counted, not guessed at.
+ * row to an existing static product primarily by the AWIN merchant
+ * product id embedded in its deep link (extractAwinProductId below),
+ * falling back to normalized product name only when an id isn't
+ * available, and upsert any price that's changed into
+ * public.current_prices. It never touches the static
+ * lib/<partner>-data.ts files, never adds or removes products — only
+ * price/originalPrice can move, and only for products that already exist
+ * in the static catalog. A feed row that can't be matched to an existing
+ * product is skipped and counted, not guessed at.
  *
  * REQUIRES (Vercel env vars, same names scripts/awin-status-report.ts
  * already uses locally): AWIN_API_TOKEN is NOT required here (only the
@@ -31,17 +34,34 @@ import type { WishlistRetailerId } from "@/lib/types";
  * message rather than silently doing nothing, so a misconfigured cron
  * shows up as a loud failure in Vercel's logs, not silent staleness.
  *
- * VERIFIED LIVE (2026-08-02): manually triggered once in production
- * against real AWIN feeds after the required env vars were set. Results:
- * canvas-vows matched 204/204 feed rows and king-koil matched 29/29 —
- * both fully correct name matches (both initially wrote zero prices due
- * to a duplicate-name upsert bug, now fixed; see duplicateNameCollisions
- * above). tsar-bomba matched only 26/189 (86% unmatched) — its feed's
- * product names apparently don't line up well against the static
- * catalog's names for most SKUs; that partner's coverage is real but
- * incomplete, not broken, and is worth investigating further (a better
- * match key than raw product name, e.g. a SKU/model-number field, would
- * likely help) before relying on its prices being comprehensive.
+ * CORRECTNESS HISTORY (important — read before trusting old data):
+ * the first live run (2026-08-02) matched purely by normalized product
+ * name. That looked successful (canvas-vows 204/204, king-koil 29/29
+ * "matched") but was actually a serious data-correctness bug: many
+ * genuinely distinct SKUs (different color/size variants, different
+ * real prices) share an identical product name — e.g. king-koil's 29
+ * real products collapse to only ~6 distinct names. Name-based matching
+ * silently collapsed all of them onto one arbitrary price per name.
+ * King Koil ended up with only 1 of 29 products getting any price at
+ * all (and it was an arbitrary one, not necessarily even the right
+ * product's price); canvas-vows wrote correct-looking-but-wrong prices
+ * for the large majority of its catalog (only 42 of 204 upserted
+ * correctly by chance). The bad rows already written to production were
+ * deleted (`delete from current_prices where retailer in
+ * ('canvas-vows','king-koil')`) before this fix shipped. tsar-bomba was
+ * unaffected by this specific bug (zero name collisions there) but had
+ * its own separate problem — only 26/189 rows matched at all, worth
+ * revisiting now that id-based matching is in place.
+ *
+ * THE FIX: match by the AWIN merchant product id (the `p=` parameter in
+ * the standard `pclick.php?p=<id>&a=<affid>&m=<merchantId>` deep-link
+ * format) instead of name wherever possible — that id is unique per SKU.
+ * Name matching remains only as a fallback for products/rows where an id
+ * can't be extracted. See matchedById / matchedByName /
+ * duplicateKeyCollisions on PartnerRefreshResult to see, per partner, how
+ * much of its match set is reliable (id) vs. degraded (name) — and
+ * re-verify live after any change to this file before trusting the next
+ * scheduled run's output.
  *
  * The advertiser-name mapping below is only independently confirmed for
  * the three partners scripts/awin-status-report.ts already audited
@@ -111,6 +131,25 @@ function normalizeName(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+/** Every static product's deepLink (checked across canvas-vows, king-koil,
+ * and tsar-bomba's data files) is an AWIN "pclick" tracking URL shaped
+ * like `https://www.awin1.com/pclick.php?p=<merchantProductId>&a=<affid>
+ * &m=<merchantId>` — and that `p=` value is unique per SKU even when many
+ * SKUs share an identical product name (color/size variants, etc. — see
+ * king-koil's 29 real products that collapse to just ~6 distinct names).
+ * The live AWIN feed's own deep-link column is generated from the same
+ * underlying product data, so it carries the same `p=` id for the same
+ * SKU — making it a far more reliable match key than product name. Falls
+ * back to null (caller falls back to name-matching) if the URL doesn't
+ * match this shape, so a partner whose links use a different AWIN link
+ * type (e.g. `cread.php`, seen in scripts/import-partner.mjs's own
+ * wrapping logic for partners whose source CSV gave a bare merchant URL)
+ * degrades gracefully instead of every product silently going unmatched. */
+function extractAwinProductId(deepLink: string): string | null {
+  const match = deepLink.match(/[?&]p=(\d+)/);
+  return match ? match[1] : null;
+}
+
 function parseFeedPrice(raw: string | undefined): number | null {
   if (!raw) return null;
   const value = Number(raw);
@@ -126,23 +165,30 @@ export type PartnerRefreshResult = {
   unmatchedExamples: string[];
   priceChanges: number;
   /** Distinct static products with a matched feed row, after collapsing
-   * duplicate-name collisions (see duplicateNameCollisions below) — this
-   * is the number of rows actually sent to Supabase, which can be lower
-   * than `matched` when multiple feed rows normalize to the same product
-   * name. */
+   * duplicate-key collisions (see duplicateKeyCollisions below) — this is
+   * the number of rows actually sent to Supabase, which can be lower than
+   * `matched` if two feed rows still land on the same match key. */
   upserted: number;
-  /** Count of feed rows that matched a product name already claimed by an
-   * earlier row in this same run (e.g. two SKU variants sharing an
-   * identical product_name after normalization). These rows are real
-   * `matched` hits — they're just not distinguishable by name alone, so
-   * only the last one wins the upsert; the rest are dropped rather than
-   * sent to Supabase (which would otherwise fail the whole batch with
+  /** How many matched rows were matched by the AWIN merchant product ID
+   * extracted from the deep link (reliable — unique per SKU) vs. by
+   * normalized product name (unreliable — collapses color/size variants
+   * that share a name). A partner with a high matchedByName share relative
+   * to matchedById means its deep links aren't in the expected pclick.php
+   * format and its data is less trustworthy than the match count alone
+   * suggests. */
+  matchedById: number;
+  matchedByName: number;
+  /** Count of feed rows that matched a key (id or name) already claimed by
+   * an earlier row in this same run. With id-based matching this should
+   * normally be 0 — every SKU has a distinct id. A nonzero count here
+   * means either a genuine duplicate row in the feed, or (for rows that
+   * fell back to name-matching) two different SKUs sharing one name, same
+   * failure mode this replaced name-only matching to fix. Only the last
+   * colliding row wins the upsert; the rest are dropped rather than sent
+   * to Supabase (which would otherwise fail the whole batch with
    * Postgres's "ON CONFLICT DO UPDATE command cannot affect row a second
-   * time"). A nonzero count here means this partner's name-matching
-   * heuristic needs a better disambiguator (e.g. SKU/variant field) before
-   * its prices can be trusted for every matched product, not just most of
-   * them. */
-  duplicateNameCollisions: number;
+   * time"). */
+  duplicateKeyCollisions: number;
   errors: string[];
 };
 
@@ -181,7 +227,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatchedExamples: [],
         priceChanges: 0,
         upserted: 0,
-        duplicateNameCollisions: 0,
+        matchedById: 0,
+        matchedByName: 0,
+        duplicateKeyCollisions: 0,
         errors: [],
       });
       continue;
@@ -200,7 +248,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatchedExamples: [],
         priceChanges: 0,
         upserted: 0,
-        duplicateNameCollisions: 0,
+        matchedById: 0,
+        matchedByName: 0,
+        duplicateKeyCollisions: 0,
         errors: [],
       });
       continue;
@@ -214,7 +264,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       unmatchedExamples: [],
       priceChanges: 0,
       upserted: 0,
-      duplicateNameCollisions: 0,
+      matchedById: 0,
+      matchedByName: 0,
+      duplicateKeyCollisions: 0,
       errors: [],
     };
 
@@ -247,6 +299,22 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     result.feedRows = rows.length;
 
     const partnerProducts = activeStaticProducts.filter((p) => p.partnerId === mapping.partnerId);
+
+    // Primary match key: the AWIN merchant product id embedded in each
+    // static product's deepLink (see extractAwinProductId above) — unique
+    // per SKU. Products whose deepLink doesn't carry a `p=` id (unexpected
+    // link format) are simply absent from byId and fall back to name
+    // matching below for that one product.
+    const byId = new Map<string, (typeof partnerProducts)[number]>();
+    for (const p of partnerProducts) {
+      const id = extractAwinProductId(p.deepLink);
+      if (id) byId.set(id, p);
+    }
+    // Fallback match key: normalized product name — kept only for products
+    // that couldn't be keyed by id, or feed rows that don't carry a usable
+    // deep-link column. Unreliable when multiple SKUs share a name (see
+    // file header), so matches via this path are counted separately
+    // (matchedByName) rather than silently mixed in with id matches.
     const byName = new Map(partnerProducts.map((p) => [normalizeName(p.name), p]));
 
     const upsertByProductId = new Map<
@@ -261,13 +329,25 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
 
     for (const row of rows) {
       const feedName = row["product_name"] || "";
-      const staticProduct = byName.get(normalizeName(feedName));
+      const feedDeepLink = row["aw_deep_link"] || row["merchant_deep_link"] || "";
+      const feedProductId = feedDeepLink ? extractAwinProductId(feedDeepLink) : null;
+
+      let staticProduct = feedProductId ? byId.get(feedProductId) : undefined;
+      let matchedVia: "id" | "name" | null = staticProduct ? "id" : null;
+
+      if (!staticProduct) {
+        staticProduct = byName.get(normalizeName(feedName));
+        if (staticProduct) matchedVia = "name";
+      }
+
       if (!staticProduct) {
         result.unmatched++;
         if (result.unmatchedExamples.length < 5) result.unmatchedExamples.push(feedName || "(no name)");
         continue;
       }
       result.matched++;
+      if (matchedVia === "id") result.matchedById++;
+      else result.matchedByName++;
 
       const price = parseFeedPrice(row["search_price"]);
       if (price == null) {
@@ -280,21 +360,19 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       if (price !== staticProduct.price) result.priceChanges++;
 
       // Keyed by product_id (retailer is constant within this partner's
-      // batch) so that if a second feed row normalizes to the same static
-      // product — e.g. two SKU variants sharing an identical product_name
-      // — it overwrites the first entry in this Map instead of becoming a
+      // batch) so that if a second feed row lands on the same static
+      // product — a genuine duplicate feed row, or (only possible via the
+      // name-matching fallback) two different SKUs sharing one name — it
+      // overwrites the first entry in this Map instead of becoming a
       // second row with the same (product_id, retailer) key in the
       // upsert payload. Supabase/Postgres rejects a single upsert
       // statement that would affect the same conflict-target row twice
       // ("ON CONFLICT DO UPDATE command cannot affect row a second time"),
-      // so without this dedup step, one duplicated name anywhere in the
-      // feed fails the ENTIRE partner's upsert — which is exactly what
-      // happened the first time this ran against real AWIN feeds
-      // (canvas-vows and king-koil both matched every row but wrote zero
-      // prices because of this). "Last row wins" is an arbitrary
-      // tiebreak, not a correctness guarantee — see
-      // duplicateNameCollisions on the result.
-      if (upsertByProductId.has(staticProduct.id)) result.duplicateNameCollisions++;
+      // so without this dedup step, one collision anywhere in the feed
+      // fails the ENTIRE partner's upsert. "Last row wins" is an
+      // arbitrary tiebreak, not a correctness guarantee — see
+      // duplicateKeyCollisions on the result.
+      if (upsertByProductId.has(staticProduct.id)) result.duplicateKeyCollisions++;
       upsertByProductId.set(staticProduct.id, {
         product_id: staticProduct.id,
         retailer: mapping.partnerId as WishlistRetailerId,

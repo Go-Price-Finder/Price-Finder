@@ -47,7 +47,7 @@ export default function Pagination({
               aria-current={isCurrent ? "page" : undefined}
               className={
                 isCurrent
-                  ? "flex h-9 w-9 items-center justify-center rounded-full bg-gilt-500 text-sm font-semibold text-noir-950"
+                  ? "flex h-9 w-9 items-center justify-center rounded-full bg-gilt-500 text-sm font-semibold text-accent-ink"
                   : "flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium text-ivory-300 transition-colors hover:bg-noir-800 hover:text-gilt-400"
               }
             >

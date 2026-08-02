@@ -56,7 +56,7 @@ export default function HowItWorks() {
               key={step.title}
               className="group relative flex h-full flex-col items-center rounded-3xl border border-transparent px-6 py-8 text-center transition-all duration-300 hover:border-gilt-500/25 hover:bg-noir-800 hover:shadow-soft-lg"
             >
-              <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-gilt-500/10 text-gilt-400 shadow-soft transition-all duration-300 group-hover:scale-105 group-hover:bg-gilt-500 group-hover:text-noir-950">
+              <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-gilt-500/10 text-gilt-400 shadow-soft transition-all duration-300 group-hover:scale-105 group-hover:bg-gilt-500 group-hover:text-accent-ink">
                 <step.icon className="h-7 w-7" />
                 <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-noir-950 text-[11px] font-semibold text-gilt-400">
                   {index + 1}

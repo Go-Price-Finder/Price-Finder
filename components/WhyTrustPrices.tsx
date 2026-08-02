@@ -47,7 +47,7 @@ export default function WhyTrustPrices() {
         <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
           {TRUST_POINTS.map(({ title, body }) => (
             <div key={title} className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gilt-500 text-noir-950">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gilt-500 text-accent-ink">
                 <CheckIcon className="h-3 w-3" />
               </span>
               <p className="text-sm leading-relaxed text-ivory-200">

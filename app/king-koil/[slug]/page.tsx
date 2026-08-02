@@ -113,7 +113,7 @@ export default async function KingKoilProductPage({
                   </span>
                 )}
                 {product.badge && (
-                  <span className="rounded-full bg-gilt-500 px-2.5 py-1 text-[11px] font-semibold text-noir-950">
+                  <span className="rounded-full bg-gilt-500 px-2.5 py-1 text-[11px] font-semibold text-accent-ink">
                     {product.badge}
                   </span>
                 )}
@@ -130,7 +130,7 @@ export default async function KingKoilProductPage({
                   href={product.deepLink}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-6 py-3 text-sm font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-6 py-3 text-sm font-semibold text-accent-ink transition-colors hover:bg-gilt-400"
                 >
                   View on King Koil
                   <ExternalLinkIcon className="h-3.5 w-3.5" />

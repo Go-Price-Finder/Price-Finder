@@ -176,7 +176,7 @@ export default function AuthForm({
         <button
           type="submit"
           disabled={isPending || !canSubmit}
-          className="mt-2 flex items-center justify-center rounded-full bg-gilt-500 px-5 py-3 text-sm font-medium text-ivory-50 transition-all duration-200 hover:bg-gilt-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 flex items-center justify-center rounded-full bg-gilt-500 px-5 py-3 text-sm font-medium text-accent-ink transition-all duration-200 hover:bg-gilt-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending
             ? isSignup

@@ -101,7 +101,7 @@ export default function Header() {
           >
             <HeartIcon className="h-5 w-5" filled={count > 0} />
             {count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gilt-500 px-1 text-[10px] font-semibold text-noir-950">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gilt-500 px-1 text-[10px] font-semibold text-accent-ink">
                 {count}
               </span>
             )}
@@ -153,7 +153,7 @@ export default function Header() {
           >
             <HeartIcon className="h-5 w-5" filled={count > 0} />
             {count > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gilt-500 px-1 text-[10px] font-semibold text-noir-950">
+              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gilt-500 px-1 text-[10px] font-semibold text-accent-ink">
                 {count}
               </span>
             )}
@@ -209,7 +209,7 @@ export default function Header() {
                   handleSignOut();
                 }}
                 disabled={signingOut}
-                className="rounded-full bg-gilt-500 px-5 py-3 text-sm font-medium text-ivory-50 transition-colors hover:bg-gilt-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-gilt-500 px-5 py-3 text-sm font-medium text-accent-ink transition-colors hover:bg-gilt-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {signingOut ? "Logging out…" : "Log out"}
               </button>
@@ -218,7 +218,7 @@ export default function Header() {
             <Link
               href="/auth/login"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 rounded-full bg-gilt-500 px-5 py-3 text-center text-sm font-medium text-ivory-50 transition-colors hover:bg-gilt-400"
+              className="mt-2 rounded-full bg-gilt-500 px-5 py-3 text-center text-sm font-medium text-accent-ink transition-colors hover:bg-gilt-400"
             >
               Sign In
             </Link>

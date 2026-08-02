@@ -71,7 +71,7 @@ export default function RealProductCard({
         </Link>
 
         {product.badge && (
-          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-gilt-500 px-2.5 py-1 text-[11px] font-semibold text-noir-950 shadow-soft">
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-gilt-500 px-2.5 py-1 text-[11px] font-semibold text-accent-ink shadow-soft">
             {product.badge}
           </span>
         )}
@@ -148,7 +148,7 @@ export default function RealProductCard({
         <div className="mt-auto pt-1">
           <Link
             href={product.href}
-            className="block w-full rounded-full bg-gilt-500 px-3 py-2 text-center text-xs font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
+            className="block w-full rounded-full bg-gilt-500 px-3 py-2 text-center text-xs font-semibold text-accent-ink transition-colors hover:bg-gilt-400"
           >
             View
           </Link>

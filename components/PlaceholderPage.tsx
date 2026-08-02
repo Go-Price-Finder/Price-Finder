@@ -37,7 +37,7 @@ export default function PlaceholderPage({
           </p>
           <Link
             href={ctaHref}
-            className="group mt-8 inline-flex items-center gap-1 rounded-full bg-gilt-500 px-6 py-3 text-sm font-medium text-ivory-50 transition-colors hover:bg-gilt-400"
+            className="group mt-8 inline-flex items-center gap-1 rounded-full bg-gilt-500 px-6 py-3 text-sm font-medium text-accent-ink transition-colors hover:bg-gilt-400"
           >
             {ctaLabel}
             <ChevronRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />

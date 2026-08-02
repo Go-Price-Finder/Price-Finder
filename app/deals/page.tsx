@@ -63,7 +63,7 @@ export default function DealsPage() {
               </p>
               <Link
                 href="/trending"
-                className="mt-2 rounded-full bg-gilt-500 px-4 py-2 text-xs font-semibold text-noir-950 transition-colors hover:bg-gilt-400"
+                className="mt-2 rounded-full bg-gilt-500 px-4 py-2 text-xs font-semibold text-accent-ink transition-colors hover:bg-gilt-400"
               >
                 Browse trending products
               </Link>

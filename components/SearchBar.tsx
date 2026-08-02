@@ -151,7 +151,7 @@ export default function SearchBar({
         />
         <button
           type="submit"
-          className={`shrink-0 rounded-full bg-gilt-500 font-medium text-noir-950 transition-all duration-300 hover:bg-gilt-400 active:scale-95 ${
+          className={`shrink-0 rounded-full bg-gilt-500 font-medium text-accent-ink transition-all duration-300 hover:bg-gilt-400 active:scale-95 ${
             isLarge
               ? "px-5 py-2.5 text-sm sm:px-6 sm:text-base"
               : "px-4 py-1.5 text-xs"

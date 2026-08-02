@@ -8,20 +8,24 @@ import {
 } from "@/lib/validation";
 import { CheckIcon, CloseIcon } from "@/components/icons";
 
+// Good/Strong use green rather than the gilt token here on purpose: gilt
+// is now Price.com's brand red (see globals.css), and a red "Strong"
+// label right next to a red "Weak" label would read as two different
+// warnings instead of a weak-to-strong gradient.
 const SEGMENT_COLORS = [
   "bg-noir-600", // empty
   "bg-red-400", // 1
   "bg-red-400", // 2
   "bg-amber-400", // 3
-  "bg-gilt-400", // 4
-  "bg-gilt-300", // 5
+  "bg-green-400", // 4
+  "bg-green-500", // 5
 ];
 
 const LABEL_COLORS: Record<string, string> = {
   Weak: "text-red-500",
   Fair: "text-amber-500",
-  Good: "text-gilt-400",
-  Strong: "text-gilt-300",
+  Good: "text-green-500",
+  Strong: "text-green-600",
 };
 
 export default function PasswordStrengthMeter({ password }: { password: string }) {
@@ -54,7 +58,7 @@ export default function PasswordStrengthMeter({ password }: { password: string }
           <li
             key={requirement.id}
             className={`flex items-center gap-1.5 text-xs transition-colors duration-200 ${
-              requirement.met ? "text-gilt-400" : "text-ivory-300"
+              requirement.met ? "text-green-500" : "text-ivory-300"
             }`}
           >
             {requirement.met ? (

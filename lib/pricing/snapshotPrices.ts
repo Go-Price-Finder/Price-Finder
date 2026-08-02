@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getAllRealProducts } from "@/lib/partners";
+import { getAllRealProductsWithLivePrices } from "@/lib/pricing/getEffectivePrice";
 import type { WishlistRetailerId } from "@/lib/types";
 
 export type SnapshotPricesResult = {
@@ -20,16 +20,16 @@ export type SnapshotPricesResult = {
  * piece per the project's strategic-growth-plan doc (Section 6.1).
  *
  * SCOPE — read this before assuming this "fixes" price freshness: this job
- * snapshots whatever price is CURRENTLY DEPLOYED in the static partner
- * catalog (lib/partners.ts). It does not fetch a fresh price from any
- * partner or AWIN feed — that catalog still only changes when
- * scripts/import-partner.mjs is re-run by hand against a new CSV. So a
- * product's snapshotted price will read the same for weeks if nobody
- * re-imports that partner's feed in the meantime. That's still a real
- * improvement (Price History starts accumulating true data immediately,
- * and the day a re-import does happen, the change shows up here
- * automatically) — but automating live feed *ingestion* itself is
- * separate, larger follow-up work, not yet built.
+ * snapshots whatever price getAllRealProductsWithLivePrices() resolves —
+ * the static partner catalog (lib/partners.ts), overridden by any row in
+ * public.current_prices for that product (see
+ * lib/pricing/getEffectivePrice.ts and
+ * supabase/migrations/0006_add_current_prices.sql). As of 2026-08-02,
+ * current_prices is empty (nothing populates it yet — that's the
+ * still-to-be-built AWIN feed-ingestion cron), so in practice this job's
+ * behavior is unchanged from before: it snapshots the static price. But
+ * the moment that ingestion job starts writing real overrides, this job
+ * picks them up automatically, with no further change needed here.
  *
  * Upserts on (product_id, retailer, recorded_date) so re-running the job
  * the same day — e.g. a manual retry after a partial failure — updates
@@ -40,7 +40,7 @@ export type SnapshotPricesResult = {
  */
 export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   const supabase = createAdminClient();
-  const products = getAllRealProducts();
+  const products = await getAllRealProductsWithLivePrices();
 
   const result: SnapshotPricesResult = {
     attempted: products.length,

@@ -124,6 +124,41 @@ export type Database = {
           },
         ];
       };
+      current_prices: {
+        Row: {
+          product_id: string;
+          retailer: Retailer;
+          price: number;
+          original_price: number | null;
+          source: string;
+          updated_at: string;
+        };
+        Insert: {
+          product_id: string;
+          retailer: Retailer;
+          price: number;
+          original_price?: number | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Update: {
+          product_id?: string;
+          retailer?: Retailer;
+          price?: number;
+          original_price?: number | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "current_prices_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       price_history: {
         Row: {
           id: string;

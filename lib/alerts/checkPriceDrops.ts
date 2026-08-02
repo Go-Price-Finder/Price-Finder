@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/email/resend";
 import { renderPriceDropAlertEmail } from "@/lib/email/templates/priceDropAlert";
-import { getAllRealProducts } from "@/lib/partners";
+import { getAllRealProductsWithLivePrices } from "@/lib/pricing/getEffectivePrice";
 import { evaluateAlertState } from "./evaluateAlertState";
 
 export type CheckPriceDropsResult = {
@@ -25,12 +25,16 @@ export type CheckPriceDropsResult = {
  * Runs with the service-role client (lib/supabase/admin.ts) since it has
  * to read and update every user's rows, not just one signed-in caller's.
  *
- * "Current price" reads the real partner catalog (lib/partners.ts) — each
- * partner's own price field, refreshed whenever that partner's feed is
- * re-imported. A wishlist row whose product isn't found there (e.g. it
- * pre-dates the real-partner wishlist rollout, or referenced a delisted
- * product) is skipped, same as any other "no price data for this product"
- * case.
+ * "Current price" reads the real partner catalog (lib/partners.ts),
+ * overridden by any live row in public.current_prices via
+ * getAllRealProductsWithLivePrices() (see lib/pricing/getEffectivePrice.ts)
+ * — so once the AWIN feed-ingestion cron exists and starts writing to that
+ * table, alerts fire against genuinely fresh prices with no further change
+ * needed here. Until then it's equivalent to the static catalog price,
+ * refreshed whenever that partner's feed is re-imported by hand. A
+ * wishlist row whose product isn't found there (e.g. it pre-dates the
+ * real-partner wishlist rollout, or referenced a delisted product) is
+ * skipped, same as any other "no price data for this product" case.
  */
 export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
   const supabase = createAdminClient();
@@ -42,7 +46,7 @@ export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
 
   if (error) throw error;
 
-  const products = getAllRealProducts();
+  const products = await getAllRealProductsWithLivePrices();
   const result: CheckPriceDropsResult = { checked: 0, sent: 0, reset: 0, errors: [] };
 
   for (const row of rows ?? []) {

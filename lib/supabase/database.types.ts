@@ -25,6 +25,12 @@ export type Retailer =
   | "king-koil"
   | "tsar-bomba";
 
+// Dormant as of 2026-08-02 — see supabase/migrations/0007_add_cashback_ledger.sql.
+// No app code reads/writes cashback_claims or cashback_ledger_entries yet;
+// these types exist so Phase 2 doesn't start from zero.
+export type CashbackVertical = "products" | "gift_cards" | "hotels";
+export type CashbackStatus = "pending" | "available" | "redeemed" | "reversed";
+
 export type Database = {
   public: {
     Tables: {
@@ -190,6 +196,102 @@ export type Database = {
             columns: ["product_id"];
             isOneToOne: false;
             referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cashback_claims: {
+        Row: {
+          id: string;
+          user_id: string;
+          vertical: CashbackVertical;
+          retailer: Retailer;
+          product_id: string | null;
+          purchase_id: string | null;
+          order_amount: number;
+          cashback_amount: number;
+          click_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          vertical: CashbackVertical;
+          retailer: Retailer;
+          product_id?: string | null;
+          purchase_id?: string | null;
+          order_amount: number;
+          cashback_amount: number;
+          click_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          vertical?: CashbackVertical;
+          retailer?: Retailer;
+          product_id?: string | null;
+          purchase_id?: string | null;
+          order_amount?: number;
+          cashback_amount?: number;
+          click_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cashback_claims_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cashback_claims_purchase_id_fkey";
+            columns: ["purchase_id"];
+            isOneToOne: false;
+            referencedRelation: "purchases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cashback_claims_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cashback_ledger_entries: {
+        Row: {
+          id: string;
+          claim_id: string;
+          status: CashbackStatus;
+          amount: number;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          claim_id: string;
+          status: CashbackStatus;
+          amount: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          claim_id?: string;
+          status?: CashbackStatus;
+          amount?: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cashback_ledger_entries_claim_id_fkey";
+            columns: ["claim_id"];
+            isOneToOne: false;
+            referencedRelation: "cashback_claims";
             referencedColumns: ["id"];
           },
         ];

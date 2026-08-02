@@ -47,98 +47,92 @@
   /* ---- LIGHT THEME (default) -------------------------------------- */
 
   /* noir = background/surface scale. 900 = page background, 800 = card
-     surface, 700/600 = borders and dividers. Matched to Price.com's own
-     light theme (sourced 2026-08-02 from their live stylesheet,
-     dz7smbqkw02oe.cloudfront.net/global/css/style.0632fa4c.css — a plain
-     white page with near-white card surfaces and light-gray dividers,
-     not the previous cream/parchment palette). Dark theme below is
-     intentionally untouched: same noir/gilt/ivory *token names*,
-     completely different values, per the "don't recolor dark mode"
-     instruction. */
+     surface, 700/600 = borders and dividers. A plain white page with
+     near-white card surfaces and light-gray dividers — a clean, modern,
+     high-trust look for a price-comparison site (replacing the earlier
+     cream/parchment palette, which read more "boutique catalog" than
+     "trustworthy price tool"). This near-white surface scale is
+     deliberately generic/neutral rather than brand-specific — it's the
+     baseline most comparison-shopping sites converge on for the same
+     legibility reasons. Dark theme below is intentionally untouched: same
+     noir/gilt/ivory *token names*, completely different values, per the
+     "don't recolor dark mode" instruction. */
   --color-noir-950: #17130f;
   --color-noir-900: #ffffff;
   --color-noir-800: #f7f7f7;
   --color-noir-700: #e8e8e8;
   --color-noir-600: #dcdcdc;
 
-  /* gilt = the brand accent. Light theme's accent is Price.com's own red
-     (#c50200, used 76x across their live site for every primary CTA,
-     active filter state, and the hero search-focus border — confirmed by
-     literal-hex frequency in their stylesheet, not a guess). 400 is their
-     secondary bright red-orange (#ff312f — also literally theirs, used
-     for notification badges and sale-price numerals), 300 a soft tint of
-     the primary red for the lightest hover state, 600 a deeper shade for
+  /* gilt = the brand accent. Light theme's accent is a deep brick/terracotta
+     red (#b8391f) — warmer and less saturated than a pure fire-engine red,
+     chosen for a CTA color that reads as confident and premium rather than
+     alarm-red or neon. 400 is a brighter coral-orange tint for secondary
+     accents (notification badges, sale-price numerals), 300 a soft tint of
+     the primary color for the lightest hover state, 600 a deeper shade for
      contrast/pressed states. */
-  --color-gilt-300: #f0726f;
-  --color-gilt-400: #ff312f;
-  --color-gilt-500: #c50200;
-  --color-gilt-600: #8f0200;
+  --color-gilt-300: #e8998a;
+  --color-gilt-400: #f2703f;
+  --color-gilt-500: #b8391f;
+  --color-gilt-600: #7a2814;
 
   /* Text/icon color for content that sits ON TOP of a gilt-500 fill
      (badges, primary buttons — see components using `bg-gilt-500
-     text-accent-ink`). Needed as its own token because gilt-500 changed
-     from a mid-brightness sage green (dark text worked) to a dark
-     saturated red (dark text does not — white is what Price.com itself
-     uses on its red buttons). Dark theme's gilt-500 is still a
-     mid-brightness gold, so its accent-ink stays noir-950 (dark),
-     matching the "don't recolor dark mode" instruction. */
+     text-accent-ink`). Needed as its own token because gilt-500 is a dark,
+     saturated color (dark text doesn't hold contrast on it) — white is
+     what actually reads clearly on a brick-red button. Dark theme's
+     gilt-500 is still a mid-brightness gold, so its accent-ink stays
+     noir-950 (dark), matching the "don't recolor dark mode" instruction. */
   --color-accent-ink: #ffffff;
 
-  /* ivory = text scale. In light theme this is Price.com's own text
-     colors: 50 is their heading/nav-link navy (#001d5e, used 79x across
-     the live site), 200 their body-copy gray (#565656, also sourced
-     directly). 100/300/400 are interpolated between those two sourced
-     anchors — Price.com's CSS didn't expose distinct hex values for
-     every intermediate weight, but darkest-to-lightest ordering matches
-     how the token is used everywhere else in this file (50 = most
-     prominent, 400 = faintest). */
-  --color-ivory-50: #001d5e;
-  --color-ivory-100: #1e2a4a;
-  --color-ivory-200: #565656;
-  --color-ivory-300: #838383;
-  --color-ivory-400: #a8a8a8;
+  /* ivory = text scale. 50 is a deep slate-navy for headings/nav links —
+     desaturated enough to feel calm and premium rather than a vivid,
+     branded blue. 200 is a cool slate-gray for body copy, chosen to pair
+     with the slate-navy heading color rather than a pure neutral gray.
+     100/300/400 are interpolated between those two anchors, darkest-to-
+     lightest matching how the token is used everywhere else in this file
+     (50 = most prominent, 400 = faintest). */
+  --color-ivory-50: #22304f;
+  --color-ivory-100: #34405c;
+  --color-ivory-200: #5b6270;
+  --color-ivory-300: #838a96;
+  --color-ivory-400: #a7acb5;
 
   /* Price-direction indicators — green for a drop, red for an increase.
-     price-down uses Price.com's own dark verified/cashback green
-     (#007b60, sourced) since it needs to hold small-text contrast on
-     white; price-up stays the site's existing red rather than reusing
-     gilt-500 exactly, so "price went up" (a warning) doesn't read as
-     visually identical to a primary CTA button. */
-  --color-price-down: #007b60;
-  --color-price-up: #d1373c;
+     price-down uses a forest green (rather than a teal-leaning green) to
+     hold small-text contrast on white; price-up stays a rose-red distinct
+     from gilt-500's brick tone, so "price went up" (a warning) doesn't
+     read as visually identical to a primary CTA button. */
+  --color-price-down: #1f7a52;
+  --color-price-up: #c2384a;
 
   /* The actual price NUMERAL color (current price on cards, detail pages,
      retailer comparisons, purchase history, etc.) — deliberately its own
-     token, not reused from `gilt`, though it happens to land on the same
-     value as gilt-400 here because that IS the color Price.com's own
-     product-tile pricing data uses (confirmed directly in their
-     stylesheet: `.pricing-data div span{color:#ff312f}`). Every price
-     now renders in exactly one color per theme, chosen specifically for
-     legibility rather than as a brand accent. */
-  --color-price-text: #ff312f;
+     token, not reused from `gilt`, so a price can read as prominent
+     without visually competing with a CTA button on the same card. Uses a
+     deep amber, distinct from both the gilt accent and the price-down/up
+     indicators. */
+  --color-price-text: #d9720e;
 
   /* Footer accent — a soft cool-gray band (was golden-cream), distinct
      from the page's plain white so the footer still reads as a
-     deliberate closing band, now tinted toward the navy brand instead of
-     gold since the accent family changed. */
-  --color-espresso-900: #e4e8f0;
-  --color-espresso-800: #eef1f7;
-  --color-espresso-700: #f5f7fa;
+     deliberate closing band, tinted toward the slate-navy heading color. */
+  --color-espresso-900: #e6e9ef;
+  --color-espresso-800: #eef0f5;
+  --color-espresso-700: #f4f6f9;
 
   /* Secondary warm accent (wishlist heart, star ratings, low-stock
-     pills) — kept intentionally distinct in hue from gilt (orange vs.
-     deep red) so a saved-heart icon doesn't visually read as "same color
-     as the buttons". Uses Price.com's own sourced --brand-orange
-     (#ff6f00) for the solid state. */
-  --color-clay-400: #ffab6b;
-  --color-clay-500: #ff6f00;
+     pills) — kept intentionally distinct in hue from gilt (amber-orange
+     vs. brick-red) so a saved-heart icon doesn't visually read as "same
+     color as the buttons". */
+  --color-clay-400: #f0a868;
+  --color-clay-500: #e07b1f;
 
-  /* Soft, cool-neutral shadow with a faint red-tinted highlight ring —
+  /* Soft, cool-neutral shadow with a faint accent-tinted highlight ring —
      the light-theme equivalent of the dark theme's black+gold shadow.
-     Ring tint follows the new gilt-500 (197,2,0), not the old sage one. */
-  --shadow-soft: 0 1px 3px rgba(23, 19, 15, 0.07), 0 0 0 1px rgba(197, 2, 0, 0.05);
-  --shadow-soft-lg: 0 6px 20px rgba(23, 19, 15, 0.10), 0 0 0 1px rgba(197, 2, 0, 0.07);
-  --shadow-soft-xl: 0 12px 36px rgba(23, 19, 15, 0.14), 0 0 32px rgba(197, 2, 0, 0.09);
+     Ring tint follows the new gilt-500 (184, 57, 31). */
+  --shadow-soft: 0 1px 3px rgba(23, 19, 15, 0.07), 0 0 0 1px rgba(184, 57, 31, 0.05);
+  --shadow-soft-lg: 0 6px 20px rgba(23, 19, 15, 0.10), 0 0 0 1px rgba(184, 57, 31, 0.07);
+  --shadow-soft-xl: 0 12px 36px rgba(23, 19, 15, 0.14), 0 0 32px rgba(184, 57, 31, 0.09);
 
   --animate-marquee: marquee 32s linear infinite;
   --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;

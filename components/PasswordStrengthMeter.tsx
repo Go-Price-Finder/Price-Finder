@@ -9,9 +9,9 @@ import {
 import { CheckIcon, CloseIcon } from "@/components/icons";
 
 // Good/Strong use green rather than the gilt token here on purpose: gilt
-// is now Price.com's brand red (see globals.css), and a red "Strong"
-// label right next to a red "Weak" label would read as two different
-// warnings instead of a weak-to-strong gradient.
+// is a brick-red brand accent (see globals.css), and a red "Strong" label
+// right next to a red "Weak" label would read as two different warnings
+// instead of a weak-to-strong gradient.
 const SEGMENT_COLORS = [
   "bg-noir-600", // empty
   "bg-red-400", // 1

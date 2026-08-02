@@ -31,21 +31,31 @@ import type { WishlistRetailerId } from "@/lib/types";
  * message rather than silently doing nothing, so a misconfigured cron
  * shows up as a loud failure in Vercel's logs, not silent staleness.
  *
- * HONESTLY UNVERIFIED (2026-08-02): this has never been run against a
- * real AWIN feed — this sandbox has no AWIN credentials, and even if it
- * did, per scripts/import-partner.mjs's own note, arbitrary vendor CDN/
- * feed URLs aren't reachable from this cloud sandbox. The advertiser-name
- * mapping below is only independently confirmed for the three partners
- * scripts/awin-status-report.ts already audited (canvas-vows, king-koil,
- * tsar-bomba); the other three are the partner's own display name as a
- * best guess, marked verified: false, and are SKIPPED by default until
- * someone confirms the real AWIN "Advertiser Name" for each (check the
- * AWIN publisher dashboard, or run scripts/awin-status-report.ts with
- * those three added to its FEED_AUDIT_TARGETS) — better to cover half the
- * partners correctly than silently mis-map a feed to the wrong partner
- * and write wrong prices. Before trusting this to run unattended daily,
- * call it once manually (see app/api/cron/refresh-prices/route.ts) and
- * read the per-partner matched/unmatched counts in the response.
+ * VERIFIED LIVE (2026-08-02): manually triggered once in production
+ * against real AWIN feeds after the required env vars were set. Results:
+ * canvas-vows matched 204/204 feed rows and king-koil matched 29/29 —
+ * both fully correct name matches (both initially wrote zero prices due
+ * to a duplicate-name upsert bug, now fixed; see duplicateNameCollisions
+ * above). tsar-bomba matched only 26/189 (86% unmatched) — its feed's
+ * product names apparently don't line up well against the static
+ * catalog's names for most SKUs; that partner's coverage is real but
+ * incomplete, not broken, and is worth investigating further (a better
+ * match key than raw product name, e.g. a SKU/model-number field, would
+ * likely help) before relying on its prices being comprehensive.
+ *
+ * The advertiser-name mapping below is only independently confirmed for
+ * the three partners scripts/awin-status-report.ts already audited
+ * (canvas-vows, king-koil, tsar-bomba); the other three are the
+ * partner's own display name as a best guess, marked verified: false,
+ * and are SKIPPED by default until someone confirms the real AWIN
+ * "Advertiser Name" for each (check the AWIN publisher dashboard, or run
+ * scripts/awin-status-report.ts with those three added to its
+ * FEED_AUDIT_TARGETS) — better to cover half the partners correctly than
+ * silently mis-map a feed to the wrong partner and write wrong prices.
+ * After any future change to this file, call it once manually (see
+ * app/api/cron/refresh-prices/route.ts) and read the per-partner
+ * matched/unmatched counts in the response before trusting the next
+ * scheduled run.
  */
 
 type PartnerAwinMapping = {
@@ -115,7 +125,24 @@ export type PartnerRefreshResult = {
   unmatched: number;
   unmatchedExamples: string[];
   priceChanges: number;
+  /** Distinct static products with a matched feed row, after collapsing
+   * duplicate-name collisions (see duplicateNameCollisions below) — this
+   * is the number of rows actually sent to Supabase, which can be lower
+   * than `matched` when multiple feed rows normalize to the same product
+   * name. */
   upserted: number;
+  /** Count of feed rows that matched a product name already claimed by an
+   * earlier row in this same run (e.g. two SKU variants sharing an
+   * identical product_name after normalization). These rows are real
+   * `matched` hits — they're just not distinguishable by name alone, so
+   * only the last one wins the upsert; the rest are dropped rather than
+   * sent to Supabase (which would otherwise fail the whole batch with
+   * Postgres's "ON CONFLICT DO UPDATE command cannot affect row a second
+   * time"). A nonzero count here means this partner's name-matching
+   * heuristic needs a better disambiguator (e.g. SKU/variant field) before
+   * its prices can be trusted for every matched product, not just most of
+   * them. */
+  duplicateNameCollisions: number;
   errors: string[];
 };
 
@@ -154,6 +181,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatchedExamples: [],
         priceChanges: 0,
         upserted: 0,
+        duplicateNameCollisions: 0,
         errors: [],
       });
       continue;
@@ -172,6 +200,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatchedExamples: [],
         priceChanges: 0,
         upserted: 0,
+        duplicateNameCollisions: 0,
         errors: [],
       });
       continue;
@@ -185,6 +214,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       unmatchedExamples: [],
       priceChanges: 0,
       upserted: 0,
+      duplicateNameCollisions: 0,
       errors: [],
     };
 
@@ -219,12 +249,15 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     const partnerProducts = activeStaticProducts.filter((p) => p.partnerId === mapping.partnerId);
     const byName = new Map(partnerProducts.map((p) => [normalizeName(p.name), p]));
 
-    const upsertBatch: {
-      product_id: string;
-      retailer: WishlistRetailerId;
-      price: number;
-      original_price: number | null;
-    }[] = [];
+    const upsertByProductId = new Map<
+      string,
+      {
+        product_id: string;
+        retailer: WishlistRetailerId;
+        price: number;
+        original_price: number | null;
+      }
+    >();
 
     for (const row of rows) {
       const feedName = row["product_name"] || "";
@@ -246,7 +279,23 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
 
       if (price !== staticProduct.price) result.priceChanges++;
 
-      upsertBatch.push({
+      // Keyed by product_id (retailer is constant within this partner's
+      // batch) so that if a second feed row normalizes to the same static
+      // product — e.g. two SKU variants sharing an identical product_name
+      // — it overwrites the first entry in this Map instead of becoming a
+      // second row with the same (product_id, retailer) key in the
+      // upsert payload. Supabase/Postgres rejects a single upsert
+      // statement that would affect the same conflict-target row twice
+      // ("ON CONFLICT DO UPDATE command cannot affect row a second time"),
+      // so without this dedup step, one duplicated name anywhere in the
+      // feed fails the ENTIRE partner's upsert — which is exactly what
+      // happened the first time this ran against real AWIN feeds
+      // (canvas-vows and king-koil both matched every row but wrote zero
+      // prices because of this). "Last row wins" is an arbitrary
+      // tiebreak, not a correctness guarantee — see
+      // duplicateNameCollisions on the result.
+      if (upsertByProductId.has(staticProduct.id)) result.duplicateNameCollisions++;
+      upsertByProductId.set(staticProduct.id, {
         product_id: staticProduct.id,
         retailer: mapping.partnerId as WishlistRetailerId,
         price,
@@ -254,6 +303,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       });
     }
 
+    const upsertBatch = [...upsertByProductId.values()];
     if (upsertBatch.length > 0) {
       const { error } = await supabase
         .from("current_prices")

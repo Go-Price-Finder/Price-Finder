@@ -205,6 +205,15 @@ export type PartnerRefreshResult = {
     columnsPresent: Record<string, string>;
     extractedIds: Record<string, string | null>;
   }[];
+  /** Up to 5 examples of feed rows that carried a real, successfully
+   * extracted merchant product id that simply isn't in this partner's
+   * static catalog — meaning the live feed has a SKU (new, or renumbered
+   * upstream) that our one-time import doesn't know about. These are
+   * intentionally left unmatched rather than guessed at via name-matching
+   * (see the comment at the matching loop). A nonzero count here most
+   * likely means it's time to re-run scripts/import-partner.mjs for this
+   * partner to refresh the static catalog — not a bug in this file. */
+  idNotInCatalogExamples: string[];
 };
 
 export type RefreshPricesResult = {
@@ -247,6 +256,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         duplicateKeyCollisions: 0,
         errors: [],
         nameFallbackDiagnostics: [],
+        idNotInCatalogExamples: [],
       });
       continue;
     }
@@ -269,6 +279,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         duplicateKeyCollisions: 0,
         errors: [],
         nameFallbackDiagnostics: [],
+        idNotInCatalogExamples: [],
       });
       continue;
     }
@@ -286,6 +297,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       duplicateKeyCollisions: 0,
       errors: [],
       nameFallbackDiagnostics: [],
+      idNotInCatalogExamples: [],
     };
 
     const candidates = feedList.filter(
@@ -381,12 +393,26 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       let staticProduct = feedProductId ? byId.get(feedProductId) : undefined;
       let matchedVia: "id" | "name" | null = staticProduct ? "id" : null;
 
-      if (!staticProduct) {
+      // IMPORTANT: only fall back to name-matching when the feed row itself
+      // carried no usable id at all (feedProductId === null — a genuine
+      // feed-format problem). If an id WAS extracted but simply isn't in
+      // byId, that does NOT mean "try the name instead" — it means this
+      // feed row refers to a SKU that doesn't exist in our static catalog
+      // (new since the one-time import, or since renumbered upstream).
+      // Falling back to name-matching in that case reintroduces the exact
+      // bug this file was rewritten to fix: silently attaching this row's
+      // price to a DIFFERENT, unrelated product that happens to share a
+      // name. Live verification against king-koil confirmed this is a
+      // real, current scenario (not hypothetical) — several feed rows had
+      // a perfectly valid, successfully-extracted aw_deep_link id that
+      // simply wasn't present in the catalog snapshot. Those rows are
+      // correctly left unmatched below, not guessed at.
+      if (!staticProduct && feedProductId === null) {
         staticProduct = byName.get(normalizeName(feedName));
         if (staticProduct) matchedVia = "name";
       }
 
-      if (matchedVia === "name" && result.nameFallbackDiagnostics.length < 3) {
+      if (feedProductId === null && result.nameFallbackDiagnostics.length < 3) {
         const columnsPresent: Record<string, string> = {};
         const extractedIds: Record<string, string | null> = {};
         for (const col of DEEP_LINK_COLUMNS) {
@@ -397,6 +423,10 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
           }
         }
         result.nameFallbackDiagnostics.push({ productName: feedName, columnsPresent, extractedIds });
+      }
+
+      if (feedProductId !== null && !staticProduct && result.idNotInCatalogExamples.length < 5) {
+        result.idNotInCatalogExamples.push(`"${feedName}" (feed id ${feedProductId})`);
       }
 
       if (!staticProduct) {

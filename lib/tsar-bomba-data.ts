@@ -1,7 +1,7 @@
 /**
  * Tsar Bomba is a real vendor catalog, imported via
- * scripts/import-partner.mjs from _tsarbomba-merged-feed.csv on
- * 2026-07-29. 272 products across
+ * scripts/import-partner.mjs from _tsarbomba-merged-feed-fresh.csv on
+ * 2026-08-02. 272 products across
  * 2 categories.
  *
  * Follows the same lightweight per-partner model as every other partner
@@ -28,9 +28,6 @@ export type TsarBombaProduct = {
   image: string;
   images: string[];
   category: TsarBombaProductCategory;
-  /** Distinguishes SKUs that share both name and price — see
-   * lib/partners.ts's getProductTitleSuffix. */
-  variantLabel?: string;
 };
 
 export const TSAR_BOMBA_CATEGORIES: TsarBombaProductCategory[] = [
@@ -265,8 +262,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Unveil the art of modern horology with the TSAR BOMBA TB-8218, a flagship model from the prestigious W-Series. This Automatic Mechanical Watch is a masterpiece of transparency and technical prowess, designed for the individual who demands a bold, futuristic aesthetic.  The TB-8218 is defined by its iconic Tonneau Watch silhouette, a hallmark of elite luxury sport watches. Its standout feature is the intricate Skeleton Watch dial, which offers an unobstructed view of the high-precision self-winding mechanical movement in action. Without the need for batteries or quartz crystals, this watch captures the raw energy of your wrist's motion to keep time.  Crafted with premium materials, the watch features a high-clarity case and a scratch-resistant Sapphire Crystal surface, ensuring the skeletonized inner workings remain visible and protected for years. The minimalist design focuses on pure timekeeping, intentionally omitting calendar or chronograph complications to maintain a clean, high-impact visual experience.  Engineered for durability and comfort, the TB-8218 includes a high-grade, skin-friendly FKM rubber strap and offers reliable water resistance for daily wear. Whether you are a collector or a trendsetter, this men's automatic watch represents the pinnacle of Luxury Mechanical design.  Key Features & Keywords:  Movement: Reliable Automatic Winding (Self-Winding) Mechanical Movement.  Design: Iconic Tonneau Case with a fully Skeletonized dial.  Material: Ultra-clear construction with scratch-resistant Sapphire Crystal.  Style: High-end Transparent Watch for a futuristic Luxury Sport look.  Function: Pure mechanical timekeeping (No batteries required).  Invest in a timepiece that stands at the intersection of transparency and power|the TSAR BOMBA TB-8218 Automatic Skeleton Watch.",
     price: 830.99,
     deepLink: "https://www.awin1.com/pclick.php?p=43890232988&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-skeleton-watch-interchangeable-luxury-design-green-at.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-skeleton-watch-interchangeable-luxury-design-green-at.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -1755,8 +1752,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "The Tsar Bomba Atomic Full Ceramic Edition TB8222C men's automatic watch blends premium craftsmanship and cutting-edge design. Featuring a 45mm full ceramic case and bezel with sapphire crystal glass, this luxury mechanical timepiece showcases a skeleton dial with multi-function subdials for day, month, and power reserve. Powered by the reliable Miyota 9100 automatic movement, it offers precise timekeeping and durability. With 5 ATM water resistance, luminous hands, and a modern aesthetic for both formal and casual wear, this ceramic automatic watch combines elegance with everyday performance.",
     price: 2000,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233141&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-gray-45mm-miyota-9100-movement-men-s-lu.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-gray-45mm-miyota-9100-movement-men-s-lu.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -1775,8 +1772,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "The Tsar Bomba Atomic Full Ceramic Edition TB8222C men's automatic watch blends premium craftsmanship and cutting-edge design. Featuring a 45mm full ceramic case and bezel with sapphire crystal glass, this luxury mechanical timepiece showcases a skeleton dial with multi-function subdials for day, month, and power reserve. Powered by the reliable Miyota 9100 automatic movement, it offers precise timekeeping and durability. With 5 ATM water resistance, luminous hands, and a modern aesthetic for both formal and casual wear, this ceramic automatic watch combines elegance with everyday performance.",
     price: 2000,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233143&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-white-45mm-miyota-9100-movement-men-s-l.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-white-45mm-miyota-9100-movement-men-s-l.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -1785,8 +1782,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "The Tsar Bomba Atomic Full Ceramic Edition TB8222C men's automatic watch blends premium craftsmanship and cutting-edge design. Featuring a 45mm full ceramic case and bezel with sapphire crystal glass, this luxury mechanical timepiece showcases a skeleton dial with multi-function subdials for day, month, and power reserve. Powered by the reliable Miyota 9100 automatic movement, it offers precise timekeeping and durability. With 5 ATM water resistance, luminous hands, and a modern aesthetic for both formal and casual wear, this ceramic automatic watch combines elegance with everyday performance.",
     price: 2000,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233144&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-yellow-45mm-miyota-9100-movement-men-s.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-yellow-45mm-miyota-9100-movement-men-s.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -1805,8 +1802,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Discover the Tsar Bomba Nucleus Femme TB8220L, a premium women's automatic watch crafted for elegance and performance. With a 35mm full ceramic case and bezel, scratch-resistant sapphire crystal glass, and reliable Swiss 763 automatic movement, this women's timepiece offers precise timekeeping and refined style. Engineered with luminous hands and 5 ATM water resistance for everyday wear, it combines luxury watch design with durable materials. Available in multiple dial colors and backed by a 2-year international warranty.",
     price: 1200,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233146&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-women-s-quartz-watch-blue-35mm-sapphire-crystal-swiss-movement-5atm-w.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-women-s-quartz-watch-blue-35mm-sapphire-crystal-swiss-movement-5atm-w.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Women's Watches",
   },
   {
@@ -1855,8 +1852,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Discover the Tsar Bomba TB8226C Atomic Full Ceramic Automatic Watch, a premium men's mechanical timepiece designed for style and performance. Featuring a 45mm full ceramic case and bezel, scratch-resistant sapphire crystal glass, and a reliable Miyota 9132 automatic movement with power reserve and calendar functions, this luxury watch delivers precision and sophistication. With 5 ATM water resistance, Grade A luminous hands, and a comfortable fluoroelastomer strap, it’s ideal for both everyday wear and refined occasions. Backed by a 2-year international warranty.",
     price: 2000,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233151&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-blue-45mm-sapphire-crystal-miyota-movem.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-ceramic-automatic-watch-blue-45mm-sapphire-crystal-miyota-movem.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -1965,8 +1962,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Experience the pinnacle of bold design and engineering. The TSAR BOMBA TB8211Q-II is part of the upgraded Elemental Series, featuring a striking tonneau-shaped case that merges ergonomic comfort with a high-octane mechanical aesthetic. Inspired by luxury racing and industrial design, this timepiece is built for the man who demands a presence on his wrist.  Key Features:  Precision Timing: Equipped with a premium Japanese Seiko TMI YM92 quartz movement, ensuring split-second accuracy for all your timing needs.  Iconic Tonneau Design: Crafted from 316L surgical-grade stainless steel, the ergonomic case provides a comfortable fit while maintaining a rugged, high-end look.  Unmatched Durability: Features a colorless anti-reflective coated Sapphire Crystal—the hardest material next to diamonds—offering superior scratch resistance and clarity.  Premium FKM Strap: The high-performance Fluorine Rubber (FKM) strap is sweat-resistant, skin-friendly, and more durable than standard silicone, perfect for both sports and formal wear.  Luminous & Waterproof: A-Level Super-LumiNova allows for effortless reading in low-light conditions, while 5ATM (50m) water resistance protects against rain and daily splashes.",
     price: 300,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233162&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-quartz-chronograph-watch-black-stainless-steel-bezel-case-tonne.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-quartz-chronograph-watch-black-stainless-steel-bezel-case-tonne.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -2025,8 +2022,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Discover the perfect balance of industrial aesthetics and precision engineering with the TSAR BOMBA TB8228CF. Crafted from premium 316L surgical-grade stainless steel, this luxury men's watch features the iconic tonneau-shaped case and a sophisticated skeleton dial that reveals a high-performance Japanese automatic movement. The ergonomic curved design ensures a comfortable fit, while the scratch-resistant sapphire crystal protects your timepiece from daily wear. Equipped with A-level Super-Luminova for clear night reading and 5ATM (50M) water resistance, the TB8228CF is built for both the boardroom and the weekend. Featuring a durable, sweat-resistant fluororubber strap, it is the ultimate statement of style and durability for the modern man.",
     price: 500,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233168&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-elegant-white-stainless-steel-case-carbon-fiber.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-elegant-white-stainless-steel-case-carbon-fiber.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -2278,7 +2275,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja.webp"],
     category: "Men's Watches",
-    variantLabel: "Gold",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2",
@@ -2289,7 +2285,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-2.webp"],
     category: "Men's Watches",
-    variantLabel: "Black",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3",
@@ -2300,7 +2295,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-3.webp"],
     category: "Men's Watches",
-    variantLabel: "Green",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4",
@@ -2311,7 +2305,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4.webp",
     images: ["/images/tsar-bomba/tsar-bomba-men-s-automatic-watch-gold-stainless-steel-case-carbon-fiber-bezel-ja-4.webp"],
     category: "Men's Watches",
-    variantLabel: "Red",
   },
   {
     slug: "tsar-bomba-men-s-automatic-watch-lake-blue-stainless-steel-case-ceramic-bezel-ja",
@@ -2379,8 +2372,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "The TSAR BOMBA Electron Series TB8230 is a masterpiece of modern engineering, blending aerospace-grade materials with haute horlogerie. Crafted from ultra-lightweight carbon fiber and powered by a precision Japanese Miyota movement, this timepiece is designed for those who demand bold aesthetics and unmatched durability.  Key Features:  Full Carbon Fiber Construction: The case and dial are meticulously crafted from high-performance carbon fiber. Known for its distinct marbled texture, it offers an incredible strength-to-weight ratio, ensuring the watch is both virtually indestructible and exceptionally light on the wrist.  Ultra-Durable Sapphire Crystal: Protected by a synthetic sapphire glass with a Mohs hardness of 9, providing superior scratch resistance and crystal-clear visibility under any conditions.  10ATM Professional Waterproofing: Engineered for adventure, this watch is water-resistant up to 100 meters (10ATM), making it suitable for swimming, snorkeling, and high-intensity water sports.  Ergonomic Sport Design: The integrated carbon fiber bracelet and double-click butterfly clasp provide a secure, seamless fit that conforms to the wrist for all-day comfort.",
     price: 750,
     deepLink: "https://www.awin1.com/pclick.php?p=45221769252&a=3002879&m=109230",
-    image: "/images/tsar-bomba/tsar-bomba-men-s-carbon-fiber-automatic-watch-carbon-fiber-dial-gold-black-elect.webp",
-    images: ["/images/tsar-bomba/tsar-bomba-men-s-carbon-fiber-automatic-watch-carbon-fiber-dial-gold-black-elect.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {
@@ -2472,7 +2465,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses.webp"],
     category: "Men's Watches",
-    variantLabel: "White",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2",
@@ -2483,7 +2475,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-2.webp"],
     category: "Men's Watches",
-    variantLabel: "Black Silver",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3",
@@ -2494,7 +2485,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-3.webp"],
     category: "Men's Watches",
-    variantLabel: "Lonized Blue",
   },
   {
     slug: "tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4",
@@ -2505,7 +2495,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     image: "/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4.webp",
     images: ["/images/tsar-bomba/tsar-bomba-skunk-works-collection-a-men-s-automatic-mechanical-watch-that-fuses-4.webp"],
     category: "Men's Watches",
-    variantLabel: "Black",
   },
   {
     slug: "atomic-interchangeable-ceramic-edition-black",
@@ -2753,8 +2742,8 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     description: "Stylish barrel-shaped interchangeable automatic watch with Japanese 82S0 movement, zirconia diamond bezel, stainless steel case, sapphire crystal, 100m water resistance, A-grade lume, and fluoro rubber strap.",
     price: 980.99,
     deepLink: "https://www.awin1.com/pclick.php?p=41882884026&a=3002879&m=109230",
-    image: "/images/tsar-bomba/atomic-interchangeable-automatic-watch-zirconia-diamond-venus.webp",
-    images: ["/images/tsar-bomba/atomic-interchangeable-automatic-watch-zirconia-diamond-venus.webp"],
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Men's Watches",
   },
   {

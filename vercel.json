@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/snapshot-prices",
+      "schedule": "0 12 * * *"
+    },
+    {
       "path": "/api/cron/check-price-alerts",
       "schedule": "0 13 * * *"
     }

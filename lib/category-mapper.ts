@@ -129,6 +129,36 @@ function haystackWordSet(haystack: string): Set<string> {
   return set;
 }
 
+/** Per-haystack normalize()+haystackWordSet() result, cached across a
+ * single mapProductToCategory() call. Real bug found 2026-08-01: for the
+ * ~375 products with no PARTNER_OVERRIDES entry, matchScore() was called
+ * up to 5 times per taxonomy leaf across the full 388-leaf LEAF_NODES
+ * loop (~1,940 calls per product), and every one of those calls
+ * recomputed normalize()+haystackWordSet() from scratch — even though
+ * only 4 distinct haystacks (title, description, partnerCategory,
+ * combined) are ever actually scored per product; only `leaf` changes
+ * across the loop, not the haystack. That's what turned lib/search.ts's
+ * dynamic import (deferred by the 2026-08-01 LCP fix so it's no longer on
+ * the homepage's critical path) into a real 13-16 real-second main-thread
+ * freeze the instant a visitor interacts with search — this module runs
+ * at the top of lib/partners.ts for every unoverridden product the first
+ * time that chunk loads. Caching each haystack's normalize()/word-set
+ * result the first time it's seen (keyed by the exact string, scoped to
+ * one mapProductToCategory() call so this never grows unbounded across
+ * different products) cuts the real work from O(leaves x haystacks) down
+ * to O(haystacks) — same scores, same matching behavior, just computed
+ * once instead of ~485 times per haystack. */
+type HaystackInfo = { normalized: string; wordSet: Set<string> };
+
+function getHaystackInfo(haystack: string, cache: Map<string, HaystackInfo>): HaystackInfo {
+  let info = cache.get(haystack);
+  if (!info) {
+    info = { normalized: normalize(haystack), wordSet: haystackWordSet(haystack) };
+    cache.set(haystack, info);
+  }
+  return info;
+}
+
 /** Scores a haystack against a taxonomy phrase using `weight`, returning a
  * number instead of a flat exact/partial/none level. Partial credit is
  * proportional to how much of the phrase actually matched (hits / total
@@ -141,8 +171,16 @@ function haystackWordSet(haystack: string): Set<string> {
  * types ("Model Scribers & Panel Line Tools", "Hobby Clamps & Vises", etc.)
  * from ever winning against their older, more generic siblings even when
  * they were the better match. */
-function matchScore(haystack: string, phrase: string, weight: MatchWeight, minDistinctiveLength = 5): number {
-  const h = normalize(haystack);
+function matchScore(
+  haystack: string,
+  phrase: string,
+  weight: MatchWeight,
+  minDistinctiveLength = 5,
+  cache?: Map<string, HaystackInfo>
+): number {
+  const { normalized: h, wordSet: hWords } = cache
+    ? getHaystackInfo(haystack, cache)
+    : { normalized: normalize(haystack), wordSet: haystackWordSet(haystack) };
   const p = normalize(phrase);
   if (!p || !h) return 0;
   // Word-boundary substring match, not raw substring — raw `h.includes(p)`
@@ -153,7 +191,6 @@ function matchScore(haystack: string, phrase: string, weight: MatchWeight, minDi
   // substring containment into word-boundary containment cheaply, since
   // normalize() already collapsed everything to single-spaced a-z0-9 words.
   if (` ${h} `.includes(` ${p} `)) return weight.exact;
-  const hWords = haystackWordSet(haystack);
   const pWords = p.split(" ").filter((w) => w.length > 2);
   if (pWords.length === 0) return 0;
   const hits = pWords.filter((w) => wordStems(w).some((form) => hWords.has(form)));
@@ -499,13 +536,20 @@ export function mapProductToCategory(product: ProductInput): CategoryMapping {
   const partnerCat = product.partnerCategory ?? "";
   const combined = `${product.title} ${product.description} ${partnerCat}`;
 
+  // Scoped to this single mapProductToCategory() call — see the comment on
+  // getHaystackInfo() above for why this exists. Only 4 distinct haystacks
+  // (title, description, partnerCat, combined) are ever scored per
+  // product, no matter how many of the 388 taxonomy leaves get checked
+  // against them.
+  const haystackCache = new Map<string, HaystackInfo>();
+
   let best: { leaf: LeafNode; score: number } | null = null;
 
   for (const leaf of LEAF_NODES) {
     let score = 0;
 
-    score += matchScore(product.title, leaf.productType, TITLE_WEIGHT);
-    score += matchScore(product.description, leaf.productType, DESCRIPTION_WEIGHT);
+    score += matchScore(product.title, leaf.productType, TITLE_WEIGHT, 5, haystackCache);
+    score += matchScore(product.description, leaf.productType, DESCRIPTION_WEIGHT, 5, haystackCache);
     if (partnerCat) {
       // Stricter distinctiveness bar (6 vs the default 5) than title/
       // description matching — raw partner categories are short, generic,
@@ -513,10 +557,10 @@ export function mapProductToCategory(product: ProductInput): CategoryMapping {
       // word match there is riskier than the same word inside a full product
       // title. This is what caught Golden Maple's "Art Tools" wrongly
       // matching "Diagnostic Tools" (Automotive) via the shared word "tools".
-      score += matchScore(partnerCat, leaf.productType, PARTNER_CAT_WEIGHT, 6);
+      score += matchScore(partnerCat, leaf.productType, PARTNER_CAT_WEIGHT, 6, haystackCache);
     }
-    score += matchScore(combined, leaf.productTypeGroup, PTG_WEIGHT);
-    score += matchScore(combined, leaf.category, CATEGORY_WEIGHT);
+    score += matchScore(combined, leaf.productTypeGroup, PTG_WEIGHT, 5, haystackCache);
+    score += matchScore(combined, leaf.category, CATEGORY_WEIGHT, 5, haystackCache);
 
     score += brandBonus(product.brand, leaf);
     score += priceBonus(product.price, leaf);

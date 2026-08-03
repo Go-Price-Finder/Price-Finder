@@ -191,9 +191,18 @@ function extractAwinProductId(deepLink: string): string | null {
   return match ? match[1] : null;
 }
 
+/** Root cause found live 2026-08-03 via priceDiagnostics: PRICE_COLUMNS was
+ * never wrong - both evdance's and golden-maple's feeds use the plain
+ * "price" column (already the 3rd candidate). The real bug is that these
+ * feeds' price values aren't bare numbers, they're currency-suffixed
+ * strings like "199.95 USD" - and Number("199.95 USD") is NaN, so every
+ * row silently failed here regardless of which column name was tried.
+ * scripts/import-partner.mjs's own parsePrice() already strips everything
+ * but digits and ".", the same fix applied here for parity. */
 function parseFeedPrice(raw: string | undefined): number | null {
   if (!raw) return null;
-  const value = Number(raw);
+  const cleaned = raw.replace(/[^0-9.]/g, "");
+  const value = parseFloat(cleaned);
   return Number.isFinite(value) && value > 0 ? value : null;
 }
 

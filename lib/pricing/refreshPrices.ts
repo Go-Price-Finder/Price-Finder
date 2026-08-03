@@ -92,6 +92,15 @@ type PartnerAwinMapping = {
    * that list. Set this whenever a live audit finds more than one
    * qualifying feed for the same advertiser. */
   pinnedFeedId?: string;
+  /** Overrides the generic "name is unverified" skip message below when
+   * verified: false for a reason OTHER than an unconfirmed name (e.g. the
+   * name is confirmed correct but AWIN has no feed for this advertiser
+   * yet — see brooklyn-delhi). Without this, a partner that's actually
+   * name-confirmed-but-feed-blocked would misleadingly print "name is
+   * unverified," which live-tested 2026-08-03 as a real, confusing
+   * mismatch against this file's own header comment / PARTNER_AWIN_NAMES
+   * documentation for that same partner. */
+  skipReason?: string;
 };
 
 const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
@@ -107,7 +116,16 @@ const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
   // feed rows — if flipped, but flip it once a feed appears) rather than
   // true, so a future reader doesn't assume "verified: false" here still
   // means "name unconfirmed."
-  { partnerId: "brooklyn-delhi", advertiserName: "Brooklyn Delhi", verified: false },
+  {
+    partnerId: "brooklyn-delhi",
+    advertiserName: "Brooklyn Delhi",
+    verified: false,
+    skipReason:
+      `AWIN advertiser name "Brooklyn Delhi" is confirmed correct (verified live 2026-08-03) ` +
+      `and membership is Active — this partner is skipped because AWIN currently has no ` +
+      `datafeed for it at all (0 of 21 active feeds), not because of a naming problem. ` +
+      `Re-run scripts/awin-status-report.ts periodically; flip verified: true once a feed appears.`,
+  },
   // Name confirmed live 2026-08-03. Two active English feeds exist for
   // this advertiser (F1320, 81 products, freshest; and the older 108581,
   // 1 product, stale since 2026-05-15) — both would otherwise tie under
@@ -288,9 +306,10 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       partnerResults.push({
         partnerId: mapping.partnerId,
         skipped:
+          mapping.skipReason ??
           `AWIN advertiser name "${mapping.advertiserName}" is unverified — confirm the exact name ` +
-          `in the AWIN publisher dashboard and set verified: true in lib/pricing/refreshPrices.ts ` +
-          `before this partner is included.`,
+            `in the AWIN publisher dashboard and set verified: true in lib/pricing/refreshPrices.ts ` +
+            `before this partner is included.`,
         feedRows: 0,
         matched: 0,
         unmatched: 0,
@@ -415,8 +434,33 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       "url",
     ];
 
+    // Same class of bug as DEEP_LINK_COLUMNS above, found live 2026-08-03:
+    // this file hardcoded row["product_name"] as the only name column,
+    // but scripts/import-partner.mjs (which built every static catalog,
+    // including evdance's and golden-maple's) has always resolved the
+    // name column from a candidate list — "product_name", "name",
+    // "title", or "product name" — because different AWIN feed templates
+    // use different headers for the same field. evdance and golden-maple
+    // both ship deep links in the cread.php?...&ued=<url> shape (no
+    // embedded merchant product id at all, unlike canvas-vows/king-koil/
+    // tsar-bomba's pclick.php?p=<id> shape), so every one of their rows
+    // was ALWAYS going to depend on the name-matching fallback — and that
+    // fallback was silently reading an empty string for every row because
+    // their real feed's name column isn't literally "product_name". Live
+    // verification showed 0/81 and 0/352 matched with feedName === "" for
+    // every row before this fix. Widened to the same candidate list
+    // import-partner.mjs uses, first non-empty column wins.
+    const NAME_COLUMNS = ["product_name", "name", "title", "product name"];
+
     for (const row of rows) {
-      const feedName = row["product_name"] || "";
+      let feedName = "";
+      for (const col of NAME_COLUMNS) {
+        const value = row[col];
+        if (value) {
+          feedName = value;
+          break;
+        }
+      }
 
       let feedProductId: string | null = null;
       for (const col of DEEP_LINK_COLUMNS) {

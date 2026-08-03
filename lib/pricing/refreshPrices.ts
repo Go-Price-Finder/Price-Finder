@@ -255,6 +255,14 @@ export type PartnerRefreshResult = {
    * likely means it's time to re-run scripts/import-partner.mjs for this
    * partner to refresh the static catalog — not a bug in this file. */
   idNotInCatalogExamples: string[];
+  /** TEMPORARY DIAGNOSTIC (added 2026-08-03): for up to 3 matched rows that
+   * failed price extraction even after widening PRICE_COLUMNS to
+   * import-partner.mjs's full candidate list, this dumps every column name
+   * and value actually present on that raw feed row — so the real price
+   * column's literal header name can be read directly from the live
+   * response instead of guessing at more candidates blind. Remove once
+   * evdance/golden-maple upsert successfully. */
+  priceDiagnostics: { productName: string; row: Record<string, string> }[];
 };
 
 export type RefreshPricesResult = {
@@ -298,6 +306,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         errors: [],
         nameFallbackDiagnostics: [],
         idNotInCatalogExamples: [],
+        priceDiagnostics: [],
       });
       continue;
     }
@@ -322,6 +331,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         errors: [],
         nameFallbackDiagnostics: [],
         idNotInCatalogExamples: [],
+        priceDiagnostics: [],
       });
       continue;
     }
@@ -340,6 +350,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       errors: [],
       nameFallbackDiagnostics: [],
       idNotInCatalogExamples: [],
+      priceDiagnostics: [],
     };
 
     const candidates = feedList.filter(
@@ -553,6 +564,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       const price = parseFeedPrice(firstNonEmpty(row, PRICE_COLUMNS));
       if (price == null) {
         result.errors.push(`"${feedName}": feed price missing/invalid, skipped`);
+        if (result.priceDiagnostics.length < 3) {
+          result.priceDiagnostics.push({ productName: feedName, row });
+        }
         continue;
       }
       const rrp = parseFeedPrice(firstNonEmpty(row, RRP_COLUMNS));

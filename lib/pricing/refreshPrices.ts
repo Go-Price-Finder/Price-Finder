@@ -452,6 +452,34 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     // import-partner.mjs uses, first non-empty column wins.
     const NAME_COLUMNS = ["product_name", "name", "title", "product name"];
 
+    // Same bug class again, found live 2026-08-03 immediately after the
+    // NAME_COLUMNS fix: with matching now working (64/81 evdance,
+    // 346/352 golden-maple via name), every matched row failed at the
+    // price step with "feed price missing/invalid, skipped". This file
+    // hardcoded row["search_price"] as the only price column, but
+    // scripts/import-partner.mjs resolves price from a candidate list —
+    // "search_price", "sale_price", "price", "current_price" — for the
+    // same reason as NAME_COLUMNS: different AWIN feed templates use
+    // different headers. evdance/golden-maple's feeds evidently don't use
+    // literally "search_price". Widened to the same candidate list,
+    // first non-empty column wins. rrp/original-price gets the same
+    // treatment since scripts/import-partner.mjs also treats it as a
+    // fallback-style field ("rrp_price" then "rrp").
+    // Full parity fix (local Claude Code review, 2026-08-03): the first
+    // pass of this fix only ported 2 of import-partner.mjs's 5 rrp/
+    // original-price candidates. Widened to match its originalPrice:
+    // list exactly, not just a subset.
+    const PRICE_COLUMNS = ["search_price", "sale_price", "price", "current_price"];
+    const RRP_COLUMNS = ["rrp_price", "rrp", "list_price", "original_price", "was_price"];
+
+    function firstNonEmpty(row: Record<string, string>, columns: string[]): string | undefined {
+      for (const col of columns) {
+        const value = row[col];
+        if (value) return value;
+      }
+      return undefined;
+    }
+
     for (const row of rows) {
       let feedName = "";
       for (const col of NAME_COLUMNS) {
@@ -522,12 +550,12 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       if (matchedVia === "id") result.matchedById++;
       else result.matchedByName++;
 
-      const price = parseFeedPrice(row["search_price"]);
+      const price = parseFeedPrice(firstNonEmpty(row, PRICE_COLUMNS));
       if (price == null) {
         result.errors.push(`"${feedName}": feed price missing/invalid, skipped`);
         continue;
       }
-      const rrp = parseFeedPrice(row["rrp_price"]);
+      const rrp = parseFeedPrice(firstNonEmpty(row, RRP_COLUMNS));
       const originalPrice = rrp != null && rrp > price ? rrp : null;
 
       if (price !== staticProduct.price) result.priceChanges++;

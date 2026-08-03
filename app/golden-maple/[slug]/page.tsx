@@ -7,6 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import WishlistButton from "@/components/WishlistButton";
+import PriceHistoryChart from "@/components/PriceHistoryChart";
+import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { GOLDEN_MAPLE_PRODUCTS } from "@/lib/golden-maple-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
@@ -149,6 +151,19 @@ export default async function GoldenMapleProductPage({
               <p className="text-xs text-ivory-400">
                 &ldquo;View on Golden Maple&rdquo; takes you to Golden Maple&rsquo;s own store to complete your purchase.
               </p>
+
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start">
+                <PriceHistoryChart
+                  productId={product.id}
+                  retailer="golden-maple"
+                  currentPrice={product.price}
+                />
+                <PriceAlertCTA
+                  productId={product.id}
+                  retailer="golden-maple"
+                  currentPrice={product.price}
+                />
+              </div>
 
               <div id="details" className="mt-4 scroll-mt-24 border-t border-gilt-500/20 pt-6">
                 <h2 className="font-display text-lg font-semibold text-ivory-50">

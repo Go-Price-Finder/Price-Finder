@@ -7,6 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import ProductGallery from "@/components/ProductGallery";
 import RealProductCard from "@/components/RealProductCard";
 import WishlistButton from "@/components/WishlistButton";
+import PriceHistoryChart from "@/components/PriceHistoryChart";
+import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { KING_KOIL_PRODUCTS } from "@/lib/king-koil-data";
 import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
@@ -146,6 +148,19 @@ export default async function KingKoilProductPage({
               <p className="text-xs text-ivory-400">
                 &ldquo;View on King Koil&rdquo; takes you to King Koil&rsquo;s own store to complete your purchase.
               </p>
+
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start">
+                <PriceHistoryChart
+                  productId={product.id}
+                  retailer="king-koil"
+                  currentPrice={product.price}
+                />
+                <PriceAlertCTA
+                  productId={product.id}
+                  retailer="king-koil"
+                  currentPrice={product.price}
+                />
+              </div>
 
               <div id="details" className="mt-4 scroll-mt-24 border-t border-gilt-500/20 pt-6">
                 <h2 className="font-display text-lg font-semibold text-ivory-50">

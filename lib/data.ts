@@ -38,19 +38,17 @@ export function getRetailer(id: WishlistRetailerId): Retailer {
   return retailers[0];
 }
 
-const PRICE_FORMATTER = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-
 /**
  * The single choke point every price display in the app renders through —
  * real wishlist/target-price data (Supabase) needs an actual dollar figure,
- * not a placeholder.
+ * not a placeholder. Re-exported from lib/format-price.ts (rather than
+ * defined here) so client components that only need price formatting
+ * (e.g. PriceHistoryChart.tsx, PriceAlertCTA.tsx) can import it without
+ * dragging in this file's getPartner()/lib/partners.ts dependency — see
+ * lib/format-price.ts's header comment for the bundle-size incident that
+ * prompted the split.
  */
-export function formatPrice(value: number) {
-  return PRICE_FORMATTER.format(value);
-}
+export { formatPrice } from "./format-price";
 
 export function formatShortDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {

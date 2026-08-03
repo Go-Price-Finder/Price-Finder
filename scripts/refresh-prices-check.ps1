@@ -5,7 +5,7 @@
 .DESCRIPTION
   Replaces the manual multi-command PowerShell sequence used throughout
   this session (find CRON_SECRET -> build header -> curl -> eyeball JSON)
-  with a single script. Never prints CRON_SECRET's value anywhere — only
+  with a single script. Never prints CRON_SECRET's value anywhere - only
   whether it was found and in which file, consistent with this session's
   standing rule of not transmitting credential values through Claude.
 
@@ -15,7 +15,7 @@
        matching Next.js's own env-file precedence for production-like
        values). Strips surrounding quotes and whitespace.
     2. If nothing found in any file, prints exactly which files exist and
-       which don't, and stops — no request is sent with an empty/blank
+       which don't, and stops - no request is sent with an empty/blank
        secret (that's what produced the confusing "Unauthorized" earlier;
        this refuses to repeat that failure mode silently).
     3. Calls the refresh-prices endpoint with the Bearer header built from
@@ -127,7 +127,7 @@ $parsed = $null
 try {
     $parsed = $bodyText | ConvertFrom-Json
 } catch {
-    Write-Host "Response was not valid JSON — printing raw body:" -ForegroundColor Yellow
+    Write-Host "Response was not valid JSON - printing raw body:" -ForegroundColor Yellow
     Write-Host $bodyText
     exit 1
 }
@@ -159,7 +159,7 @@ if ($parsed.partners) {
         }
     }
 } else {
-    Write-Host "(no partners field found in response — printing full JSON below)"
+    Write-Host "(no partners field found in response - printing full JSON below)"
 }
 
 Write-Host ""

@@ -63,16 +63,17 @@ import type { WishlistRetailerId } from "@/lib/types";
  * re-verify live after any change to this file before trusting the next
  * scheduled run's output.
  *
- * The advertiser-name mapping below is only independently confirmed for
- * the three partners scripts/awin-status-report.ts already audited
- * (canvas-vows, king-koil, tsar-bomba); the other three are the
- * partner's own display name as a best guess, marked verified: false,
- * and are SKIPPED by default until someone confirms the real AWIN
- * "Advertiser Name" for each (check the AWIN publisher dashboard, or run
- * scripts/awin-status-report.ts with those three added to its
- * FEED_AUDIT_TARGETS) — better to cover half the partners correctly than
- * silently mis-map a feed to the wrong partner and write wrong prices.
- * After any future change to this file, call it once manually (see
+ * ADVERTISER-NAME VERIFICATION HISTORY (2026-08-03): all six partners'
+ * AWIN "Advertiser Name" guesses have now been independently confirmed
+ * live via scripts/awin-status-report.ts's JOINED PROGRAMMES + DATAFEED
+ * LIST output (run from the user's own shell — that script authenticates
+ * with AWIN_API_TOKEN, a credential this session never touches directly).
+ * canvas-vows/king-koil/tsar-bomba were confirmed 2026-08-02;
+ * evdance/golden-maple/brooklyn-delhi were confirmed 2026-08-03. All six
+ * names below are exact matches to AWIN's own "Advertiser Name" field —
+ * see the per-partner notes on each entry for feed-availability caveats
+ * that are independent of the name being correct. After any future
+ * change to this file, call it once manually (see
  * app/api/cron/refresh-prices/route.ts) and read the per-partner
  * matched/unmatched counts in the response before trusting the next
  * scheduled run.
@@ -82,6 +83,15 @@ type PartnerAwinMapping = {
   partnerId: string;
   advertiserName: string;
   verified: boolean;
+  /** Optional explicit AWIN "Feed ID" to prefer when an advertiser has
+   * more than one feed that would otherwise tie under the
+   * English/no-Vertical selection rule below (see chooseFeed). Without
+   * this, a tie is broken by feed-list row order, which is incidental
+   * CSV ordering from AWIN's API, not something this code actually
+   * controls — safe today, but silently fragile if AWIN ever reorders
+   * that list. Set this whenever a live audit finds more than one
+   * qualifying feed for the same advertiser. */
+  pinnedFeedId?: string;
 };
 
 const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
@@ -89,11 +99,24 @@ const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
   { partnerId: "canvas-vows", advertiserName: "Canvas Vows", verified: true },
   { partnerId: "king-koil", advertiserName: "King Koil", verified: true },
   { partnerId: "tsar-bomba", advertiserName: "Tsarbomba", verified: true },
-  // NOT independently confirmed — best guess from the partner's own display
-  // name. Skipped until verified: true. See file header comment.
+  // Name confirmed live 2026-08-03 (scripts/awin-status-report.ts JOINED
+  // PROGRAMMES). Membership is Active and AWIN has no datafeed for this
+  // advertiser at all today (0 of 21 active feeds in the DATAFEED LIST
+  // belong to it) — this is an AWIN account-side gap, not a naming
+  // problem. Left as verified: false (would be a harmless no-op — zero
+  // feed rows — if flipped, but flip it once a feed appears) rather than
+  // true, so a future reader doesn't assume "verified: false" here still
+  // means "name unconfirmed."
   { partnerId: "brooklyn-delhi", advertiserName: "Brooklyn Delhi", verified: false },
-  { partnerId: "evdance", advertiserName: "EVDANCE", verified: false },
-  { partnerId: "golden-maple", advertiserName: "Golden Maple", verified: false },
+  // Name confirmed live 2026-08-03. Two active English feeds exist for
+  // this advertiser (F1320, 81 products, freshest; and the older 108581,
+  // 1 product, stale since 2026-05-15) — both would otherwise tie under
+  // the English/no-Vertical rule, so pinnedFeedId removes the ambiguity
+  // explicitly instead of relying on incidental feed-list row order.
+  { partnerId: "evdance", advertiserName: "EVDANCE", verified: true, pinnedFeedId: "F1320" },
+  // Name confirmed live 2026-08-03. Exactly one active feed (F2615, 352
+  // products) — no ambiguity.
+  { partnerId: "golden-maple", advertiserName: "Golden Maple", verified: true },
 ];
 
 type FeedListRow = {
@@ -305,7 +328,16 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         r["Advertiser Name"] === mapping.advertiserName &&
         r["Membership Status"] === "active"
     );
+    // A pinned feed id takes priority whenever set (see PartnerAwinMapping's
+    // pinnedFeedId comment) — falls through to the English/no-Vertical
+    // heuristic if the pin doesn't match anything currently in the feed
+    // list (e.g. AWIN retired/renamed that feed id), so a stale pin
+    // degrades to the old best-effort behavior instead of hard-failing.
+    const pinned = mapping.pinnedFeedId
+      ? candidates.find((c) => c["Feed ID"] === mapping.pinnedFeedId)
+      : undefined;
     const chosen =
+      pinned ??
       candidates.find((c) => c["Language"] === "English" && !c["Vertical"]) ??
       candidates.find((c) => c["Language"] === "English") ??
       candidates[0];
@@ -316,6 +348,14 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       );
       partnerResults.push(result);
       continue;
+    }
+
+    if (mapping.pinnedFeedId && !pinned) {
+      result.errors.push(
+        `Pinned feed id "${mapping.pinnedFeedId}" for "${mapping.advertiserName}" not found in ` +
+          `today's feed list — fell back to "${chosen["Feed ID"]}" (${chosen["Language"]}). ` +
+          `Re-verify with scripts/awin-status-report.ts and update pinnedFeedId.`
+      );
     }
 
     let rows: Record<string, string>[];

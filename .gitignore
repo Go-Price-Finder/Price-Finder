@@ -42,3 +42,7 @@ next-env.d.ts
 
 # Leftover superseded files awaiting manual cleanup — never commit these
 _to_delete/
+
+# Local-only output from scripts/refresh-prices-check.ps1 and similar —
+# per-partner data snapshots, never intended to be committed
+scratch/

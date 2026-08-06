@@ -24,7 +24,7 @@
     "golden-maple": {
       "network": "AWIN",
       "status": "active",
-      "commissionBase": { "includesVAT": false, "includesDelivery": false, "includesCCFees": false, "includesGiftWrap": false },
+      "commissionBase": { "includesVAT": true, "includesDelivery": true, "includesCCFees": true, "includesGiftWrap": true },
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/124092) — Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is governing law/terms-modification/notification only, no mention of images; Publishers/PPC/Transactions/De-Duplication questionnaires unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Canvas Vows/King Koil.",
       "comparisonEngineConfirmed": true

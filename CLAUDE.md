@@ -70,3 +70,51 @@ otherwise), not just Cowork/Claude Team chat sessions:
   Treat this as the source of truth for the live codebase — planning,
   research, and documentation live in the team's Claude Project, but actual
   code changes happen through this repo via GitHub.
+
+# Development workflow (Superpowers)
+
+Layered on top of the Working Rules above, not a replacement for them — these
+govern *how* a change gets designed and debugged, before the fix → verify →
+review → push cycle above governs how it ships.
+
+- **Brainstorm before building.** Before starting any new feature or fix,
+  nail down requirements and intent through a real back-and-forth (what's
+  the actual goal, what are the constraints, what does "done" mean) rather
+  than jumping straight to code — including changes that feel too small to
+  need this. The Superpowers plugin's `brainstorming` skill is one concrete
+  way to run this; the point is the discipline, not the specific tool.
+- **Test-driven development where it fits this codebase.** Write a failing
+  test first, then implement — especially for anything touching
+  `lib/pricing/refreshPrices.ts` or other pricing/matching logic. That file
+  has already caused a real production bug once (silent SKU collisions from
+  name-based matching, see the Appendix of
+  `claude/post-import-verification-runbook.md`) — TDD there isn't
+  theoretical, it's directly aimed at the failure mode that already
+  happened. Not every change in this repo needs a test-first approach
+  (config tweaks, copy changes); use judgment, but default to TDD for
+  anything with real logic, especially money- or matching-adjacent code.
+- **Root cause first for any bug investigation — not guess-and-check.**
+  Don't propose a fix before understanding why the bug happens. This is the
+  same standard the homepage LCP investigation and the search-freeze/TBT
+  investigation
+  (`claude/homepage-lcp-investigation-2026-08-01.md`) were already held to
+  — real interaction, real measurement, real code traced to its actual
+  cause, verified twice — just named explicitly here so it's the default,
+  not something that only happens when a bug is dramatic enough to justify
+  it.
+- **Superpowers plugin (optional tooling, not the source of truth):**
+  `github.com/obra/superpowers-marketplace`'s `superpowers` plugin packages
+  skills for the three practices above (`brainstorming`,
+  `test-driven-development`, `systematic-debugging`), installable in Claude
+  Code with:
+  ```
+  claude plugin marketplace add obra/superpowers-marketplace
+  claude plugin install superpowers
+  ```
+  This is a per-machine, user-scoped Claude Code CLI setting — it does not
+  travel with this repo automatically, so install it wherever Claude Code is
+  actually run against this codebase (a teammate's machine, a fresh
+  sandbox). This CLAUDE.md section is what makes the workflow itself durable
+  regardless of whether the plugin happens to be installed on a given
+  machine at a given time — the plugin is a convenience, this file is the
+  actual contract.

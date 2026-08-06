@@ -58,7 +58,7 @@
      noir/gilt/ivory *token names*, completely different values, per the
      "don't recolor dark mode" instruction. */
   --color-noir-950: #17130f;
-  --color-noir-900: #ffffff;
+  --color-noir-900: #f5deb3;
   --color-noir-800: #f7f7f7;
   --color-noir-700: #e8e8e8;
   --color-noir-600: #dcdcdc;
@@ -165,7 +165,7 @@
 
 /* ---- DARK THEME (opt-in via data-theme="dark" on <html>) ----------- */
 :root[data-theme="dark"] {
-  --color-noir-900: #0a0a0a;
+  --color-noir-900: #000000;
   --color-noir-800: #252525;
   --color-noir-700: #2f2b26;
   --color-noir-600: #3a352e;

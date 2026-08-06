@@ -71,6 +71,11 @@ otherwise), not just Cowork/Claude Team chat sessions:
   research, and documentation live in the team's Claude Project, but actual
   code changes happen through this repo via GitHub.
 
+# Stack
+
+Next.js 15, TypeScript, Tailwind CSS, Supabase.
+Target domain: gopricefinder.com
+
 # Development workflow (Superpowers)
 
 Layered on top of the Working Rules above, not a replacement for them — these

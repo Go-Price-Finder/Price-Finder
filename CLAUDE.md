@@ -67,9 +67,14 @@ otherwise), not just Cowork/Claude Team chat sessions:
   environment, stop and ask the team directly instead of guessing or
   fabricating one.
 - **Canonical repo:** `https://github.com/Go-Price-Finder/Price-Finder.git`.
-  Treat this as the source of truth for the live codebase — planning,
-  research, and documentation live in the team's Claude Project, but actual
-  code changes happen through this repo via GitHub.
+  Treat this as the source of truth for the live codebase — actual code
+  changes happen through this repo via GitHub. Planning, research, and
+  documentation are maintained in the team's Claude Project as the
+  live/canonical source. A point-in-time snapshot is also mirrored locally
+  in claude/*.md (added 2026-08-06) so Claude Code can reference them
+  offline without a Drive/Project connection — if these ever diverge, the
+  Claude Project is authoritative, and this local copy should be
+  periodically refreshed by re-exporting.
 
 # Stack
 

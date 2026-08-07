@@ -76,6 +76,12 @@ otherwise), not just Cowork/Claude Team chat sessions:
 Next.js 15, TypeScript, Tailwind CSS, Supabase.
 Target domain: gopricefinder.com
 
+# Current Progress
+
+Project planning docs (strategic plan, build guide, competitor research, etc.)
+are available locally in claude/*.md — read these for full project context
+before starting new work.
+
 # Development workflow (Superpowers)
 
 Layered on top of the Working Rules above, not a replacement for them — these

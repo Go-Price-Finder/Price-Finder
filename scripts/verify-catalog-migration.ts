@@ -7,11 +7,17 @@
  *
  * Requires real Supabase credentials in the environment
  * (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) — this script
- * does not read or fabricate them; run it wherever .env.local already has
- * them (the local machine, or a session with the Supabase MCP connector
- * enabled and env vars configured). It only reads, never writes.
+ * does not read or fabricate them. It only reads the DB, never writes.
  *
- * Run with: npx tsx scripts/verify-catalog-migration.ts
+ * Run with: npx tsx --env-file=.env.local scripts/verify-catalog-migration.ts
+ *
+ * The --env-file flag is required (Node 20.6+). Plain
+ * `npx tsx scripts/verify-catalog-migration.ts` does NOT work on any
+ * machine: tsx does not load .env.local, and Next.js only loads it for
+ * `next dev/build/start` — never for a standalone script. Without the
+ * flag this crashes in createPublicClient() before running a single
+ * comparison. If your credentials are already exported in the shell,
+ * drop the flag.
  */
 import * as fromStatic from "../lib/partners";
 import * as fromCatalog from "../lib/catalog";
@@ -28,10 +34,10 @@ function sortedIds(products: { id: string }[]): string[] {
 }
 
 async function main() {
-  console.log("Backfill is documented as ~60% complete as of 2026-08-05 —");
-  console.log("this script will legitimately report count MISMATCHES for");
-  console.log("any partner not yet fully backfilled. Read failures in that");
-  console.log("light, not as an automatic module bug.\n");
+  console.log("Backfill completed 2026-08-09 — catalog_products holds all");
+  console.log("954 products (Golden Maple 348, Tsar Bomba 272). Partial-");
+  console.log("backfill count mismatches are no longer expected, so treat");
+  console.log("any FAIL below as a real problem, not an in-progress import.\n");
 
   // 1. Total product count + id-set comparison.
   const staticAll = fromStatic.getAllRealProducts();

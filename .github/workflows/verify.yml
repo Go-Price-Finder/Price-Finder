@@ -1,0 +1,55 @@
+name: Verify
+
+# Enforces CLAUDE.md's "fix → verify → review → push" rule in CI: the same
+# three checks (tsc --noEmit, eslint, next build) that the working rules
+# require before any push, run automatically on every push to main and on
+# every pull request.
+#
+# No secrets are wired in deliberately. `next build` was verified to
+# complete with NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY /
+# SUPABASE_SERVICE_ROLE_KEY all blank: all 1043 static pages prerender from
+# lib/partners.ts, and no app/ or components/ file imports lib/catalog.ts.
+# The Supabase clients read env lazily at request time, not at build time.
+# If a future page prerenders from Supabase, this job will start failing and
+# will need those values added as repo secrets — that failure is the signal,
+# not a reason to pre-emptively grant CI database access it doesn't need.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer push to the same branch makes an in-flight run obsolete.
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Matches local dev and Vercel's project setting (nodeVersion 24.x),
+      # pinned explicitly via package.json "engines" so all three agree.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      # Downloads Schibsted Grotesk and Fraunces from Google Fonts at build
+      # time via next/font/google. In a production build Next re-throws on a
+      # failed font fetch (it only falls back to a local font in dev), so a
+      # blocked or rate-limited fonts.gstatic.com fails the whole job. That
+      # is why this cannot run in a network-restricted sandbox.
+      - name: Build
+        run: npm run build

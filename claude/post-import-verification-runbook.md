@@ -198,7 +198,46 @@ granted) it's driven the same way as before.
      naming collides with an existing one and the tile ends up showing
      products from two unrelated partners together.
 
-8. **Report status.** Once every check above passes AND the push is
+8. **Assert the `public.products` re-sync actually worked.** Step 7 of
+   the import workflow at the top of this doc tells you to re-sync
+   `public.products`; this is the check that proves it landed. Doing the
+   re-sync and confirming it worked are two different things, and until
+   2026-08-09 only the first had a written procedure.
+   `current_prices.product_id` references `products.id`, so any catalog
+   ID with no matching `products` row makes refresh-prices fail at the
+   database level for that product — the exact bug chain in the Appendix
+   below (2026-08-02), where king-koil's IDs changed, the new IDs were
+   absent from `products`, and every price write was rejected.
+   tsar-bomba escaped only by luck.
+   - If step 7's re-sync used `scripts/sync-products-to-supabase.ts`,
+     **check the script's partner filter** — as written it only emits SQL
+     for the partners hardcoded in its `remaining` filter (currently
+     `golden-maple` and `tsar-bomba`). Importing any other partner
+     without widening that list silently produces no SQL for it, and the
+     assertion below is what catches that.
+   - Assert coverage:
+
+   ```sql
+   SELECT COUNT(*) FROM catalog_products cp
+   WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.id = cp.id);
+   -- must be 0; non-zero means refresh-prices will hit FK violations
+   -- writing current_prices for those IDs
+   ```
+
+   **Comparing raw row counts between the two tables is NOT this check,
+   and must not be substituted for it.** The relationship is
+   one-directional: `current_prices`, `price_history`, `wishlists`,
+   `purchases`, and `cashback_claims` all reference `products`, and
+   nothing references `products` *from* `catalog_products`. So extra rows
+   in `products` are inert — stale leftovers that cannot break a write.
+   Only a catalog row with no `products` row can reject one. A count
+   comparison conflates those two directions and false-alarms on the
+   harmless one: on 2026-08-09 it reported 974-vs-954 as drift, when all
+   20 extras were orphaned king-koil variants plus a seed row and nothing
+   was actually at risk. Assert the anti-join above; do not compare
+   counts.
+
+9. **Report status.** Once every check above passes AND the push is
    confirmed on `origin/main` *and* confirmed as the actually-deployed
    commit via Vercel, explicitly confirm: "Import of [partner(s)] is live
    on gopricefinder.com — N products verified across search, images, deep

@@ -39,9 +39,10 @@ coupon-spam site.
 # Things to never do
 
 - No purple gradients
-- No Inter font — **note:** the codebase currently loads Inter as the body
-  font via `next/font` (see `app/layout.tsx`); this needs to be swapped for
-  an approved typeface as part of design work, not left as-is
+- No Inter font — the codebase loads Schibsted Grotesk (body) and Fraunces
+  (display) via `next/font/google` (see `app/layout.tsx`), exposed as the
+  `--font-schibsted` and `--font-fraunces` CSS variables. Keep it that way;
+  don't reintroduce Inter or add a third family without discussing it first.
 - No generic "AI-generated" look (no default purple/blue gradient hero blobs,
   no generic rounded-everything SaaS aesthetic)
 - No default shadcn styling without customization — every shadcn/ui component

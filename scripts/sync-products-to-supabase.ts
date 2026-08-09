@@ -7,6 +7,10 @@
  * itself (no Supabase credentials needed here; the SQL is applied
  * separately via the Supabase MCP / dashboard SQL editor).
  *
+ * After applying the generated SQL, assert coverage per step 8 of
+ * claude/post-import-verification-runbook.md — generating and applying the
+ * files is not the same as confirming every catalog row landed.
+ *
  * Run with: npx tsx scripts/sync-products-to-supabase.ts
  */
 import { writeFileSync } from "fs";
@@ -17,9 +21,16 @@ function sqlEscape(value: string): string {
 }
 
 const CHUNK_SIZE = 80;
-const remaining = PARTNERS.filter((p) => ["golden-maple", "tsar-bomba"].includes(p.id));
 
-for (const partner of remaining) {
+// Every partner, always — deliberately not a subset. This used to filter to
+// ["golden-maple", "tsar-bomba"], the two partners left to backfill at the
+// time it was written. That made it silently emit nothing for any other
+// partner, so a later import would appear to run fine while producing no SQL
+// at all — and the missing public.products rows only surface later as
+// foreign-key failures when refresh-prices writes current_prices. Re-scoping
+// this to a subset is how that failure mode comes back; filter at the point
+// of use (skip the files you don't need) rather than here.
+for (const partner of PARTNERS) {
   for (let i = 0; i < partner.products.length; i += CHUNK_SIZE) {
     const chunk = partner.products.slice(i, i + CHUNK_SIZE);
     const values = chunk

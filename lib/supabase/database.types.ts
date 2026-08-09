@@ -338,6 +338,116 @@ export type Database = {
           },
         ];
       };
+      partners: {
+        // Matches supabase/migrations/0008_add_catalog_products.sql —
+        // mirrors lib/partners.ts's Partner type minus `products` (that
+        // relationship is catalog_products.partner_id instead of a nested
+        // array). See lib/catalog.ts (Step 12 of the catalog/search/
+        // onboarding migration).
+        Row: {
+          id: string;
+          name: string;
+          tagline: string;
+          href: string;
+          logo_url: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          tagline: string;
+          href: string;
+          logo_url?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          tagline?: string;
+          href?: string;
+          logo_url?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      catalog_products: {
+        // Matches supabase/migrations/0008_add_catalog_products.sql.
+        // `price`/`original_price`/`rating_stars` are Postgres `numeric`
+        // columns — PostgREST returns these as strings, not JS numbers, to
+        // avoid float-precision loss; every reader in lib/catalog.ts must
+        // explicitly Number()-convert them, never assume the wire type
+        // matches the RealProduct.price: number contract.
+        Row: {
+          id: string;
+          partner_id: string;
+          slug: string;
+          name: string;
+          description: string;
+          price: string;
+          original_price: string | null;
+          image: string;
+          images: string[];
+          category: string;
+          parent_category: string;
+          badge: string | null;
+          rating_stars: string | null;
+          rating_count: number | null;
+          deep_link: string;
+          variant_label: string | null;
+          search_vector: unknown;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          partner_id: string;
+          slug: string;
+          name: string;
+          description: string;
+          price: number;
+          original_price?: number | null;
+          image: string;
+          images?: string[];
+          category: string;
+          parent_category: string;
+          badge?: string | null;
+          rating_stars?: number | null;
+          rating_count?: number | null;
+          deep_link: string;
+          variant_label?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          partner_id?: string;
+          slug?: string;
+          name?: string;
+          description?: string;
+          price?: number;
+          original_price?: number | null;
+          image?: string;
+          images?: string[];
+          category?: string;
+          parent_category?: string;
+          badge?: string | null;
+          rating_stars?: number | null;
+          rating_count?: number | null;
+          deep_link?: string;
+          variant_label?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "catalog_products_partner_id_fkey";
+            columns: ["partner_id"];
+            isOneToOne: false;
+            referencedRelation: "partners";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       user_spending_summary: {

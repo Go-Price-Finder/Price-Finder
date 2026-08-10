@@ -208,16 +208,20 @@ Move the four type definitions verbatim from `lib/partners.ts`. Header:
 
 - [ ] **Step 3: Re-export from `lib/partners.ts` so nothing breaks**
 
-Replace the four definitions with:
+A bare `export type { … } from "./catalog-types"` will **not** compile here. `lib/partners.ts` uses all four types internally (`RealProduct` ~28 times, `ALL_WIRED_PARTNERS: Partner[]`, `getRealCategories(): RealCategory[]`, `getProductsByCategoryPath(): CategoryPathResult | undefined`), and a re-export does not bring names into local scope. You need both:
 
 ```typescript
-export type {
+import type {
   RealProduct,
   Partner,
   RealCategory,
   CategoryPathResult,
 } from "./catalog-types";
+
+export type { RealProduct, Partner, RealCategory, CategoryPathResult };
 ```
+
+Also update any doc comment that cross-references a symbol staying behind in `partners.ts` — e.g. `RealProduct.variantLabel`'s `/** See RawPartnerProduct.variantLabel. */` should become `/** See RawPartnerProduct.variantLabel in lib/partners.ts. */`, since `RawPartnerProduct` does not move.
 
 - [ ] **Step 4: Point `lib/catalog.ts` at the new module**
 
@@ -234,10 +238,12 @@ import type {
 
 - [ ] **Step 5: Verify no runtime dependency remains**
 
+Match **import/export statements only** — a plain substring grep gives a false positive on the pre-existing comment at `lib/catalog.ts:57` ("Deliberately NOT `import { slugifyRealCategory } from "./partners"`"), which Task 2 Step 1 deliberately keeps:
+
 ```bash
-grep -nE "from \"\./partners\"" lib/catalog.ts
+grep -nE "^\s*(import|export)[^/]*from ['\"]\./partners['\"]" lib/catalog.ts
 ```
-Expected: **no output.** If anything prints, `lib/catalog.ts` still depends on `lib/partners.ts` and Batch 7 stays blocked.
+Expected: **no output.** If anything prints, `lib/catalog.ts` still depends on `lib/partners.ts` and Batch 7 stays blocked. Use this same tightened pattern as the Batch 7 deletion gate — the loose version can never return empty.
 
 - [ ] **Step 6: Verify**
 

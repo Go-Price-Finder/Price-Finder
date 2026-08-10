@@ -41,6 +41,12 @@
  */
 
 import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
+import type {
+  RealProduct,
+  Partner,
+  RealCategory,
+  CategoryPathResult,
+} from "./catalog-types";
 import {
   IMAGE_PENDING_PLACEHOLDER,
   canShowRealImages,
@@ -92,54 +98,13 @@ type RawPartnerProduct = {
   variantLabel?: string;
 };
 
-/** The shape every partner's products get normalized to, so homepage
- * sections and search can treat every real retailer identically instead
- * of special-casing each one's original data shape. */
-export type RealProduct = {
-  /** Globally unique across all partners: `${partnerId}:${slug}`. */
-  id: string;
-  slug: string;
-  partnerId: string;
-  partnerName: string;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  images: string[];
-  /** Specific subcategory as the partner's own data names it (e.g.
-   * "Brushes", "Extension Cords & Cables") — shown on product cards and
-   * partner pages. */
-  category: string;
-  /** Walmart-taxonomy department (e.g. "Toys & Games") auto-derived via
-   * lib/category-mapper.ts — this is what /category pages group by, so a
-   * handful of partners with a dozen-plus raw subcategories between them
-   * still produce a small, useful set of category pages instead of one
-   * page per subcategory. Department, not the mapper's full 4-level
-   * depth, per the Stage 3 recommendation: most populated categories are
-   * 1:1 with their department anyway, and going deeper would mean several
-   * single-digit-product pages. */
-  parentCategory: string;
-  badge?: string;
-  rating?: { stars: number; count: number };
-  deepLink: string;
-  /** Path to this product's own detail page on Price Finder. */
-  href: string;
-  /** See RawPartnerProduct.variantLabel. */
-  variantLabel?: string;
-};
-
-export type Partner = {
-  id: string;
-  name: string;
-  tagline: string;
-  /** No real logo asset exists for this partner yet — cards render a
-   * wordmark instead of an <img>. Swap in a real `logo` image path here
-   * once one is supplied. */
-  logo?: string;
-  href: string;
-  products: RealProduct[];
-};
+/** RealProduct, Partner, RealCategory and CategoryPathResult now live in
+ * lib/catalog-types.ts — a neutral, runtime-free module — so that
+ * lib/catalog.ts (the Supabase-backed replacement for this file) no
+ * longer has to import its own types from the module it replaces. They
+ * are re-exported here unchanged so every existing
+ * `from "@/lib/partners"` type import keeps working. */
+export type { RealProduct, Partner, RealCategory, CategoryPathResult };
 
 /** The one normalizer every partner's products go through. Partner data
  * files intentionally all share `RawPartnerProduct`'s shape so this never
@@ -331,13 +296,6 @@ export function getProductTitleSuffix(product: RealProduct): string {
   return `${priceLabel} — ${index} of ${colliding.length}`;
 }
 
-export type RealCategory = {
-  slug: string;
-  name: string;
-  image: string;
-  itemCount: number;
-};
-
 export function slugifyRealCategory(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -447,14 +405,6 @@ export function getPopulatedCategoryPaths(): {
   }
   return [...seen.values()];
 }
-
-export type CategoryPathResult = {
-  department: string;
-  category: string;
-  productTypeGroup: string;
-  productType: string;
-  products: RealProduct[];
-};
 
 /** A single product-type leaf by its full taxonomy path (the department's
  * slug plus category/productTypeGroup/productType slugs), plus only the

@@ -52,7 +52,7 @@ import type {
   Partner,
   RealCategory,
   CategoryPathResult,
-} from "./partners";
+} from "./catalog-types";
 
 // Deliberately NOT `import { slugifyRealCategory } from "./partners"` —
 // even a single named value import from lib/partners.ts executes that

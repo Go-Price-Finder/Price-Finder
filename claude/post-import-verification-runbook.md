@@ -65,6 +65,45 @@ Kawsar's other personal repos). Any older reference to
 automatically per GitHub's transfer behavior, but new work, local clones,
 and remotes should point at the `Go-Price-Finder` org URL going forward.
 
+## Division of labour: which session touches the repo
+
+**Rule, adopted 2026-08-09 after a real incident (the worked example in "Why
+this can't be fully automatic", the section immediately below): a Cowork session
+does not run git operations in `E:\Price Finder`. Ever. Not even
+read-only-looking ones.**
+
+- **Cowork** owns docs and database work: reading and writing Project
+  docs, querying Supabase, checking Vercel deployments and build logs,
+  and reading files. It is uniquely good at cross-system verification
+  because it can see the live database, the live deployment, every remote
+  branch, and the local folder at once.
+- **Claude Code** (a local session, real terminal) owns anything touching
+  the repo: branches, staging, commits, merges, pushes, and production
+  builds.
+
+Two reasons this is a hard line, not a preference:
+
+1. **The device mount cannot unlink files.** Git assumes it can clean up
+   after itself — `.git/index.lock`, `.git/HEAD.lock`, and
+   `.git/objects/**/tmp_obj_*` are all created and then deleted during
+   normal operation. On this mount the deletes fail silently-ish
+   (`warning: unable to unlink ...`), so **every git write leaves a stale
+   lock behind, and a stale `index.lock` blocks the next `git add` or
+   `git commit` for whoever is working there next**, with
+   `Unable to create '.git/index.lock': File exists`. The ~600
+   `tmp_obj_*` files already sitting in `.git/objects/` are the same
+   limitation accumulated over time.
+2. **`git status` is not read-only.** It opportunistically refreshes the
+   index, which takes `index.lock` — so even the "just looking" commands
+   leave debris. There is no safe subset.
+
+**A Cowork session that needs repo state should read it from a fresh
+cloud clone**, which has real network access and no such restrictions:
+`git clone https://github.com/Go-Price-Finder/Price-Finder.git`, then
+inspect freely. That clone sees `origin/*` truthfully, which is what
+matters for verification; it just cannot see uncommitted local work, and
+should not pretend to.
+
 ## Why this can't be fully automatic
 
 The Cowork device sandbox that has `E:\Price Finder` mounted has no
@@ -80,13 +119,47 @@ clone fails with `fatal: could not read Username for 'https://github.com':
 terminal prompts disabled` (no stored credential helper there). The
 device sandbox has the user's real git credentials but no network, so its
 `git push` fails the opposite way, with `403 from proxy after CONNECT`,
-every time. Net effect: **do the actual code work in a fresh clone in the
-cloud container** (real `npm`/`tsc`/`eslint`/`next build`/Playwright, all
-verified against the real GitHub source), then sync just the changed
-files to the device (`SendUserFile` → `device_commit_files`) and commit
-there so the commit exists locally with the device's git identity — then
-either the user runs `git push` themselves from `E:\Price Finder`, or (if
-granted) it's driven the same way as before.
+every time. **~~Net effect: do the actual code work in a fresh clone in the cloud
+container, then sync just the changed files to the device
+(`SendUserFile` → `device_commit_files`) and commit there so the commit exists
+locally with the device's git identity — then the user runs `git push` from
+`E:\Price Finder`.~~ — REVERSED 2026-08-09. Do not commit on the device.** That
+flow is what generated the stale-lock incident below. The commit-on-device step
+bought nothing — the commit still could not be pushed from there — and cost a
+blocked working tree.
+
+**Corrected flow — commit in the cloud clone, move only the file:**
+
+1. Do the work in a fresh cloud clone and commit there. The commit is real,
+   reviewable, and carries a proper message; `git show`/`git diff` against it is
+   the reviewable artifact.
+2. Verify what the cloud can verify: `tsc --noEmit` and `eslint` both run there
+   and are trustworthy. `next build` does **not** — see the note below.
+3. Move **only the changed file(s)** to the device — `SendUserFile` →
+   `device_commit_files` — or just send the file and let the user place it. This
+   writes file content and takes no git locks.
+4. **The user commits and pushes from a real terminal**, or a local Claude Code
+   session does. That session picks the branch, sees uncommitted local work, and
+   cleans up its own locks.
+
+The ordering matters: **file transfer is safe, git-on-device is not**, so the git
+step belongs on the side of the boundary that can actually clean up after itself.
+
+**Always run `git branch` before assuming which branch you are on.** Matching
+`HEAD` to a known SHA is not the same as knowing the branch — several branches
+can point at the same commit, and a branch that has not diverged yet is
+indistinguishable from `main` by `git log` alone.
+
+> **Worked example (2026-08-09).** A Cowork session ran `git log` in the device
+> repo, saw `dc7a41a` — the same SHA as `origin/main` — and concluded it was on
+> `main`. It was on `scratch/step13-measure`, an active local working branch that
+> happened not to have diverged yet. Commit `0960196` landed on the wrong branch,
+> in a tree where a local session had uncommitted changes to
+> `app/category/[slug]/page.tsx`, and left `.git/index.lock` and `.git/HEAD.lock`
+> behind that the bridge could not remove. Nothing was lost — the same commit
+> existed cleanly in the cloud clone — but the local tree needed a manual `del`
+> of two lock files before git would write again. `git branch -vv` up front would
+> have caught it in one line.
 
 - **Downloading vendor images**: still can't be done from either sandbox
   directly reaching vendor CDNs in bulk — same as before. Generate a

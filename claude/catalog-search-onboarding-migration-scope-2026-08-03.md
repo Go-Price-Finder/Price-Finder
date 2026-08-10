@@ -122,6 +122,18 @@ payload and ~7× on latency.** This is not a detail to rediscover from a code
 comment after the fact — it is a condition attached to the rendering strategy
 itself, which is why it sits here in the decision record.
 
+**A live instance already exists — this is not a hypothetical.** Three routes are
+already `ƒ` (Dynamic) today, `/search` among them. For those the static-rendering
+premise never held, so they must **never** be migrated to read from the snapshot:
+doing so would put a 1610 KB catalog fetch on a request-time path, and for
+`/search` that is *per user search* — the worst case of the three. The Step 14
+plan (`docs/superpowers/plans/2026-08-09-step-14-call-site-cutover.md`) excludes
+all three from migration at Batch 6 for exactly this reason. So read the
+condition above as a rule that already has an exception set, not as a future
+risk: the question "does this route render at request time?" has to be asked of
+every call site *before* it is cut over, not only when someone later proposes
+flipping one to ISR.
+
 **On the code comment:** the original comment on `getRealProduct()` explaining
 why it issues a targeted single-row query **was correct for the world it was
 written in** and should be *rewritten, not deleted*. The new comment should state

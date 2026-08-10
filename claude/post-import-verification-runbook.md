@@ -198,13 +198,27 @@ granted) it's driven the same way as before.
    - Note: `getRealCategories()`/`getCategoryBySlug()` in `lib/partners.ts`
      intentionally group by category *name* across every partner (not
      partner-scoped) — a category tile aggregates real products from any
-     partner using that exact category name. As of this update there's no
-     actual name collision across Brooklyn Delhi/EVDANCE/Golden Maple's 22
-     categories, so this doesn't currently produce any visibly wrong
-     result, but it's worth knowing this is by design (matches
-     `getCategoryBySlug`'s own doc comment) if a future partner's category
-     naming collides with an existing one and the tile ends up showing
-     products from two unrelated partners together.
+     partner using that exact category name. **Re-verified 2026-08-09
+     across all six partners: 26 distinct category names, 0 shared by more
+     than one partner** (Brooklyn Delhi 5, EVDANCE 6, Golden Maple 11,
+     Canvas Vows 1, King Koil 1, Tsar Bomba 2 — which sum to 26, so the
+     per-partner counts independently confirm the zero). So this doesn't
+     currently produce any visibly wrong result, but it's by design
+     (matches `getCategoryBySlug`'s own doc comment), and a future
+     partner's category naming *can* collide with an existing one and make
+     a tile show products from two unrelated partners together. **Don't
+     trust the count above on faith — it went stale once already** (it read
+     "22 across Brooklyn Delhi/EVDANCE/Golden Maple", correct when written
+     at three partners). Re-derive it in one query per import:
+
+     ```sql
+     SELECT count(DISTINCT category) AS distinct_categories,
+            (SELECT count(*) FROM (
+               SELECT category FROM catalog_products
+               GROUP BY category HAVING count(DISTINCT partner_id) > 1
+             ) x) AS colliding_names
+     FROM catalog_products;   -- colliding_names must be 0
+     ```
 
 8. **Assert the `public.products` re-sync actually worked.** Step 7 of
    the import workflow at the top of this doc tells you to re-sync

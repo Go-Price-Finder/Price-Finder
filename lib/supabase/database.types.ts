@@ -344,12 +344,19 @@ export type Database = {
         // relationship is catalog_products.partner_id instead of a nested
         // array). See lib/catalog.ts (Step 12 of the catalog/search/
         // onboarding migration).
+        //
+        // `display_order` added by 0009_add_partner_display_order.sql — the
+        // curated partner ordering that lib/partners.ts's PARTNERS array
+        // encoded implicitly. NOT NULL with no default, so it is required on
+        // Insert (not optional): a new partner must be given an explicit
+        // slot rather than defaulting into one.
         Row: {
           id: string;
           name: string;
           tagline: string;
           href: string;
           logo_url: string | null;
+          display_order: number;
           created_at: string;
         };
         Insert: {
@@ -358,6 +365,7 @@ export type Database = {
           tagline: string;
           href: string;
           logo_url?: string | null;
+          display_order: number;
           created_at?: string;
         };
         Update: {
@@ -366,6 +374,7 @@ export type Database = {
           tagline?: string;
           href?: string;
           logo_url?: string | null;
+          display_order?: number;
           created_at?: string;
         };
         Relationships: [];

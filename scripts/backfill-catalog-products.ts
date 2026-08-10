@@ -44,19 +44,27 @@ mkdirSync("scratch", { recursive: true });
 // public.partners — one row per partner, id/name/tagline/href match
 // lib/partners.ts's Partner type exactly (minus `products`, which is
 // expressed via catalog_products.partner_id instead of a nested array).
+// display_order is the PARTNERS array index (1-based). partners.display_order
+// is NOT NULL with no default (migration 0009), so it must be written
+// explicitly — a fresh insert into an empty table fails without it. The
+// static array stays the source of order until it is deleted, at which point
+// the column already is. Conflict target is `id` (the primary key), not
+// display_order: 0009's unique constraint is DEFERRABLE and therefore cannot
+// serve as an ON CONFLICT arbiter.
 const partnerRows = PARTNERS.map(
-  (p) =>
-    `(${sqlString(p.id)}, ${sqlString(p.name)}, ${sqlString(p.tagline)}, ${sqlString(p.href)}, ${sqlString(p.logo ?? null)})`
+  (p, i) =>
+    `(${sqlString(p.id)}, ${sqlString(p.name)}, ${sqlString(p.tagline)}, ${sqlString(p.href)}, ${sqlString(p.logo ?? null)}, ${i + 1})`
 ).join(",\n");
 
-const partnersSql = `insert into public.partners (id, name, tagline, href, logo_url)
+const partnersSql = `insert into public.partners (id, name, tagline, href, logo_url, display_order)
 values
 ${partnerRows}
 on conflict (id) do update set
   name = excluded.name,
   tagline = excluded.tagline,
   href = excluded.href,
-  logo_url = excluded.logo_url;
+  logo_url = excluded.logo_url,
+  display_order = excluded.display_order;
 `;
 
 writeFileSync("scratch/backfill-partners.sql", partnersSql, "utf-8");

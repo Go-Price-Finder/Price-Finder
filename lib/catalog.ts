@@ -72,6 +72,7 @@ type PartnerMeta = {
   tagline: string;
   href: string;
   logo?: string;
+  displayOrder: number;
 };
 
 /**
@@ -154,7 +155,10 @@ async function fetchCatalog(): Promise<{
       .select(
         "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
       ),
-    supabase.from("partners").select("id, name, tagline, href, logo_url"),
+    supabase
+      .from("partners")
+      .select("id, name, tagline, href, logo_url, display_order")
+      .order("display_order"),
   ]);
 
   if (productsRes.error) throw productsRes.error;
@@ -167,6 +171,7 @@ async function fetchCatalog(): Promise<{
       tagline: p.tagline,
       href: p.href,
       logo: p.logo_url ?? undefined,
+      displayOrder: p.display_order,
     });
   }
 
@@ -194,6 +199,35 @@ export async function getPartner(id: string): Promise<Partner | undefined> {
     logo: meta.logo,
     products: products.filter((p) => p.partnerId === id),
   };
+}
+
+/**
+ * Every live partner, in curated display order — the replacement for
+ * lib/partners.ts's `PARTNERS` constant.
+ *
+ * Ordered by partners.display_order (migration 0009), NOT by id and NOT by
+ * whatever order Postgres returns rows in. The static PARTNERS array's order
+ * is curated and matches neither: measured 2026-08-09, row order was
+ * brooklyn-delhi, tsar-bomba, king-koil, evdance, golden-maple, canvas-vows
+ * and alphabetical was brooklyn-delhi, canvas-vows, evdance, golden-maple,
+ * king-koil, tsar-bomba — the curated order is neither. Dropping the sort
+ * silently reorders "Our Partners" on the homepage and sitemap.xml.
+ *
+ * The sort is explicit here as well as in fetchCatalog's query, so this does
+ * not depend on Map insertion order surviving a future refactor.
+ */
+export async function getPartners(): Promise<Partner[]> {
+  const { products, partnersById } = await fetchCatalog();
+  return [...partnersById.entries()]
+    .sort(([, a], [, b]) => a.displayOrder - b.displayOrder)
+    .map(([id, meta]) => ({
+      id,
+      name: meta.name,
+      tagline: meta.tagline,
+      href: meta.href,
+      logo: meta.logo,
+      products: products.filter((p) => p.partnerId === id),
+    }));
 }
 
 export async function getRealProduct(

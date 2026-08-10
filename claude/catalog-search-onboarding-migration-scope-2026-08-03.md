@@ -80,9 +80,152 @@ Recommend an incremental, reversible sequence rather than a big-bang cutover —
 
 **Step 2 — Build a Supabase-backed replacement module with the same nine function signatures.** Write `lib/catalog.ts` (or similar) exporting `getAllRealProducts`, `getPartner`, `getRealProduct`, etc. — same names, same shapes, now `async` and backed by Supabase queries instead of the in-memory array. Because 30 call sites already funnel through these nine functions, most call sites become a mechanical `const x = getAllRealProducts()` → `const x = await getAllRealProducts()` change. The one non-mechanical part: every `generateStaticParams` call site (11 of them, per the audit) is today synchronous over an in-memory array; Next.js supports `async function generateStaticParams()`, but each one becomes a real DB round trip at build time instead of an array read, which is a genuine behavior and performance change worth load-testing before cutover, not just a type change.
 
-**Step 3 — Decide and implement the rendering strategy.** Two real options, not mutually exclusive across route groups:
-  - **Keep SSG, source `generateStaticParams` from Supabase.** Lowest-risk, smallest behavior change — pages are still pre-rendered at build time, just reading from Supabase instead of an array during the build. Downside: catalog changes still require a redeploy to appear, same as today, so this doesn't by itself solve "advertisers' price/stock changes show up without a deploy."
-  - **Move to ISR** (`export const revalidate = <seconds>` alongside `generateStaticParams`) — keeps pre-rendering but adds periodic background revalidation, so a catalog change (new product, price update, partner going inactive) appears within the revalidation window without a redeploy. This is the better long-term fit given `current_prices`/cron jobs already write Supabase-side data that today's static pages can't see until redeploy, and given `getPopulatedCategoryPaths()`'s already-documented near-timeout cost under the current in-memory array at scale — recommend this as the target, but it's more work than the first option and can be adopted per-route-group rather than everywhere at once (start with product detail pages, the highest-value case for freshness, before category/listing pages).
+### Step 3 — Rendering strategy — **DECIDED AND COMPLETE 2026-08-09**
+
+**Decision: keep pages fully static (SSG), with `unstable_cache` wrapping the
+catalog fetch. No ISR.**
+
+**~~Recommendation: move to ISR (`export const revalidate`), adopted
+per-route-group, starting with product detail pages.~~ — SUPERSEDED by
+measurement.** Recorded rather than deleted: the reasoning was sound given what
+was known; the *premise* was wrong, not the logic.
+
+---
+
+#### ⚠ Condition on this decision — read before flipping any route to ISR or dynamic
+
+**This decision and `getRealProduct()`'s query shape are coupled. Changing one
+without the other causes a severe regression.**
+
+As part of Step 4, `getRealProduct()` changes from issuing its own queries to
+reading from the cached `fetchCatalog()` snapshot. That is the right call **only
+because the static-rendering decision makes every `getRealProduct` call happen at
+build time**, where one shared snapshot serves all 954 products.
+
+**The original single-row query is CORRECT for request-time rendering, and was
+never a mistake.** Measured, per product page:
+
+| | Payload | Latency |
+|---|---|---|
+| Single-row query | **1.6 KB** | **71 ms** |
+| Full catalog snapshot | 1610 KB | 499 ms |
+
+At request time, fetching the whole catalog to render one product is a **993×
+payload regression**. The single-row query only looks wasteful under the
+static-rendering decision, because static generation turns "one small query per
+request" into "1392 small queries per build" — and the snapshot amortises across
+all of them.
+
+**Therefore: if any product route is ever switched to ISR or dynamic rendering,
+the single-row query must be restored for that route, or it regresses 993× on
+payload and ~7× on latency.** This is not a detail to rediscover from a code
+comment after the fact — it is a condition attached to the rendering strategy
+itself, which is why it sits here in the decision record.
+
+**On the code comment:** the original comment on `getRealProduct()` explaining
+why it issues a targeted single-row query **was correct for the world it was
+written in** and should be *rewritten, not deleted*. The new comment should state
+the condition — that reading from the snapshot is correct *because* this route is
+statically generated, and that request-time rendering requires the single-row
+query back. Deleting it would erase the reasoning and invite someone to "fix" the
+snapshot read into a request-time path.
+
+---
+
+#### Measured evidence
+
+Instrumented round-trip counts on `/golden-maple/[slug]` — 348 pages, with both
+`generateStaticParams` and the page body converted to the Supabase path:
+
+| Variant | Catalog round trips | Build time |
+|---|---|---|
+| No cache | 349 | 38.6s |
+| **`unstable_cache`** | **1** | **38.6s** |
+| `"use cache"` | 17 | 39.0s |
+
+`"use cache"` caches per worker process, and the build fans out across 12
+workers — hence 17 rather than 1. Not broken, just a worse fit here.
+
+These counts are **catalog fetches only**, not the build's total query count.
+
+#### Correction 1 — the build-speed premise was wrong
+
+**The earlier ~99s build-regression projection was wrong, and the error is worth
+naming precisely: it assumed sequential execution.** Next.js fans page generation
+out across 12 worker processes, so 349 round trips cost approximately **zero**
+wall-clock time. Build time is identical — 38.6s — with and without the cache.
+
+**So: caching here is a database-load and snapshot-consistency win, NOT a
+build-speed win.** Stated explicitly because the wrong premise invites the wrong
+fix: someone will eventually benchmark the cache wrapper, see no build-time
+difference, and remove it as dead weight. It is not dead weight. What it buys:
+
+- **Database load:** see the query-count table below.
+- **Snapshot consistency:** every page in a build renders from *one* read of the
+  catalog, so a daily `refresh-prices` run landing mid-build cannot produce a
+  deployment with pre-refresh prices on some pages and post-refresh on others.
+
+If anyone proposes removing the cache on build-speed grounds, the answer is that
+build speed was never the argument.
+
+#### Correction 2 — `getRealProduct()`, measured and resolved
+
+`getRealProduct()` does not call `fetchCatalog`. **Measured: it issues two
+queries per call** — one against `catalog_products`, then one against `partners`
+for the partner name — **and is called twice per page** (`generateMetadata` and
+the page body). For Golden Maple: **348 × 2 × 2 = 1392 queries**, entirely
+uncached in all three variants above, dominating the build's query count. It was
+missing from the original analysis altogether.
+
+**The earlier "696, possibly halvable with React `cache()`" open question is
+resolved and moot.** The count was 1392, not 696 — and `React.cache()` is not the
+answer, because **Step 4 removes these queries rather than deduplicating them**.
+Deduping two calls into one still leaves a per-page query; reading from the
+snapshot leaves none.
+
+#### Build query totals — state the shipped number, not the interim one
+
+| State | Queries per build | Ships? |
+|---|---|---|
+| No caching | ~1741 (349 + 1392) | no |
+| `fetchCatalog` wrapped only | **1394** (2 + 1392) | **no — interim** |
+| `fetchCatalog` wrapped **+ `getRealProduct` reading the snapshot** | **2** | **yes** |
+
+**Only the last row is the shipped state.** Step 4 folds both changes in
+together, so "`fetchCatalog` wrapped only" is a state this codebase passes
+through during development and never deploys. Quote the **2**, and mention 1394
+only to explain why the intermediate benchmark looked underwhelming.
+
+**~~"~697 queries per build with `unstable_cache`."~~ — SUPERSEDED.** That figure
+was derived from the earlier estimate of 696 `getRealProduct` queries. The
+measurement in Correction 2 replaced 696 with 1392, so the same correction moves
+this total to **1394**. Recorded because ~697 appeared in earlier versions of
+this doc and the build guide, and someone comparing notes will otherwise think
+two measurements disagree — they don't; one is superseded.
+
+**Folding `getRealProduct` in also fixes a latent correctness bug.** Today
+`generateMetadata` and the page body issue *independent* queries for the same
+product. If a catalog write lands between them, a page can ship with metadata
+describing one version of a product and a body rendering another — the same class
+of mid-build inconsistency the snapshot cache prevents at catalog level, but
+per-page and currently unguarded. Reading both from one snapshot closes it.
+
+#### Implementation note — `unstable_cache` requires JSON-serializable returns
+
+`fetchCatalog` returns a `Map`, which does not survive `unstable_cache`'s
+serialization. Split it: **cache the array fetch, rebuild the `Map` outside the
+cached function.** The cache boundary sits at the plain data, with the derived
+structure reconstructed on the near side. Small change, but it will look
+arbitrary to a future reader without this note.
+
+#### Accepted tradeoff
+
+Fully static means catalog changes still require a redeploy — the limitation ISR
+was meant to solve. Accepted deliberately: the daily `refresh-prices` cron
+already writes to Supabase, and a daily deploy is a tolerable cadence for a
+catalog changing at that frequency. Revisit only if freshness requirements
+tighten (e.g. real-time stock), not on general principle — and if you do, read
+the condition at the top of this section first.
 
 **Step 4 — Cut over call sites in small batches, verify, then remove the old path.** Swap `lib/partners.ts` imports for the new `lib/catalog.ts` module a few files at a time (e.g. one partner's product pages first, verify in production, then the rest), rather than all 30 files in one commit — this matches the incremental-fix-verify-bundle-review-push workflow already established for the pricing pipeline work. Once every call site is migrated and verified, `lib/partners.ts` and the six static data files can be deleted (or kept read-only as a historical fallback for one release cycle before deletion — recommend keeping them one cycle, given how much of the site's rendering depends on this data being correct).
 

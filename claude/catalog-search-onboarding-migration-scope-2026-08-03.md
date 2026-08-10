@@ -239,6 +239,13 @@ catalog changing at that frequency. Revisit only if freshness requirements
 tighten (e.g. real-time stock), not on general principle — and if you do, read
 the condition at the top of this section first.
 
+*One loose end from the superseded reasoning, so it isn't mistaken for an
+unaddressed cost: the ISR argument cited `getPopulatedCategoryPaths()`'s
+near-timeout cost. That cost is real and `unstable_cache` on `fetchCatalog` does
+**not** fix it — the category mapping runs after the fetch — but it is handled by
+explicit memoization in Task 3 of the Step 14 plan, not left outstanding by this
+decision.*
+
 **Step 4 — Cut over call sites in small batches, verify, then remove the old path.** Swap `lib/partners.ts` imports for the new `lib/catalog.ts` module a few files at a time (e.g. one partner's product pages first, verify in production, then the rest), rather than all 30 files in one commit — this matches the incremental-fix-verify-bundle-review-push workflow already established for the pricing pipeline work. Once every call site is migrated and verified, `lib/partners.ts` and the six static data files can be deleted (or kept read-only as a historical fallback for one release cycle before deletion — recommend keeping them one cycle, given how much of the site's rendering depends on this data being correct).
 
 **Step 5 — Rebuild search on Postgres full-text.** Once `catalog_products.search_vector` exists and is populated (from step 1's backfill onward, since it's a generated column), replace `lib/search.ts`'s Fuse index with a query against `search_vector` using `websearch_to_tsquery` and `ts_rank`, exposed via a Supabase RPC or a Next.js route handler. This step depends on step 1 (data has to exist in the table) but not on steps 2-4 (search can be rebuilt against the new table while product/category pages still read the old static array, since they're independent read paths) — meaning search can actually be tackled in parallel with steps 2-4 rather than strictly after them, which shortens the critical path if useful.

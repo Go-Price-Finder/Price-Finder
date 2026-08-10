@@ -163,11 +163,19 @@ granted) it's driven the same way as before.
      categories and confirm name/price/description render.
    - Fetch `gopricefinder.com` itself and confirm the new partner shows
      up in "Our Partners" / Popular Categories / search-driven sections.
-     Note the homepage is statically prerendered (ISR, 300s stale time)
-     — a fresh deployment can take a few minutes to actually reflect on
-     first hit, but query-string cache-busting doesn't force a refresh
-     for a static route; if it's been several stale-time windows and
-     still wrong, suspect the code, not the cache.
+     Note the homepage is fully **static**, not ISR: `next build` reports
+     it as `○ (Static)` in the route table, and `app/page.tsx` exports
+     neither `revalidate` nor `dynamic`. Its HTML is baked at build time
+     and changes only when a new deployment goes live — there is no
+     revalidation window to wait out. (Earlier versions of this runbook
+     said "ISR, 300s stale time"; that was wrong, and it led to waiting
+     out stale-time windows that never existed.) Practical consequence:
+     if the new partner is missing, don't wait and re-check. Confirm via
+     `mcp__Vercel__get_deployment` that the commit you expect is the one
+     actually deployed — if it is, the HTML was baked without the partner
+     and it's a code problem (check `PARTNERS` registration first).
+     Query-string cache-busting won't force a refresh for a static route
+     either.
 
 5. **Verify images display correctly:**
    - Fetch a sample image URL directly (`gopricefinder.com/images/<partner>/<slug>.jpg`)
@@ -209,12 +217,12 @@ granted) it's driven the same way as before.
    below (2026-08-02), where king-koil's IDs changed, the new IDs were
    absent from `products`, and every price write was rejected.
    tsar-bomba escaped only by luck.
-   - If step 7's re-sync used `scripts/sync-products-to-supabase.ts`,
-     **check the script's partner filter** — as written it only emits SQL
-     for the partners hardcoded in its `remaining` filter (currently
-     `golden-maple` and `tsar-bomba`). Importing any other partner
-     without widening that list silently produces no SQL for it, and the
-     assertion below is what catches that.
+   - `scripts/sync-products-to-supabase.ts` emits SQL for every partner in
+     `PARTNERS` (as of 2026-08-09 — it previously filtered to a hardcoded
+     `golden-maple`/`tsar-bomba` pair and silently emitted nothing for
+     anyone else, which is the failure mode this assertion was written to
+     catch). Confirm the file count and per-partner totals it prints match
+     the partners you actually imported.
    - Assert coverage:
 
    ```sql

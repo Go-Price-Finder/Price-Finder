@@ -266,6 +266,32 @@ Because steps 1-3 are additive (new tables, new module, no deletions), rollback 
 
   *Measured 2026-08-09, and the answer was not the expected one.* Converting a partner's product route to read from the catalog produced **349 build round trips** and a clean build of **38.6s** — statistically identical to the 38.7s baseline, because Next fans prerendering out across 12 worker processes and the per-call latency overlaps. **Build time is not the risk this bullet anticipated.** The real costs are DB load and snapshot consistency: without caching, `generateMetadata` and the page body issue independent queries for the same product and can disagree if a catalog write lands mid-build. `unstable_cache` collapses it to **1 round trip** build-wide; `"use cache"` only reaches 17 (it caches per worker, not across them). Separately, `getPopulatedCategoryPaths()` is genuinely expensive — ~960 ms *per call* in `lib/catalog.ts` versus 897 ms cold / 0.73 ms warm in `lib/partners.ts`, which memoizes it — and **`unstable_cache` on the fetch does not fix that**, because the category mapping runs after the fetch returns. It needs its own module-level memo.
 
+**Implicit ordering in the static arrays — found twice, and the verification was blind to it (2026-08-09).**
+
+The `lib/<partner>-data.ts` arrays and the `PARTNERS` array both carry a *curated order* that the schema did not store. Postgres returns rows in whatever order it likes, so migrating a collection out of an array silently loses that ordering. Two instances:
+
+1. **`partners`** — the `PARTNERS` array order (brooklyn-delhi, evdance, golden-maple, canvas-vows, king-koil, tsar-bomba) matched neither id-alphabetical nor row order. Fixed by `0009_add_partner_display_order.sql`.
+2. **`catalog_products`** — per-partner product order. Fixed by `0010_add_catalog_product_sort_order.sql`.
+
+Measured per-partner sequence, catalog rows vs static arrays, before 0010:
+
+| Partner | Products | Order | Set |
+|---|---|---|---|
+| brooklyn-delhi | 29 | MATCH | MATCH |
+| evdance | 72 | MATCH | MATCH |
+| golden-maple | 348 | **DIFFERS** (from index 9) | MATCH |
+| canvas-vows | 204 | **DIFFERS** (from index 0) | MATCH |
+| king-koil | 29 | MATCH | MATCH |
+| tsar-bomba | 272 | **DIFFERS** (from index 0) | MATCH |
+
+Every set matched; only sequence differed. **The three that diverged are exactly the three backfilled across multiple chunked SQL files** (golden-maple p1–p5, canvas-vows p1–p3, tsar-bomba p1–p4), two of which had chunks re-run during the 2026-08-09 backfill completion. Row order reflected insertion history, not the catalog — so "current row order" was never a thing worth preserving, which is why 0010 backfills from the static array index rather than pinning what was there.
+
+**It was already producing wrong output.** Related-product strips (`.filter(...).slice(0, 4)`) on canvas-vows and tsar-bomba product pages — 476 pages — selected different products depending on which module was read. `getFeaturedDeals` (n=1) and `getBestSellers` (n=3) happened to match at this size, by luck: `getBestSellers`' badged path does no sorting at all, and both comparators are non-total, so ties break by input order.
+
+**The verification could not have caught it.** `scripts/verify-catalog-migration.ts` routed every comparison through a `sortedIds()` helper that sorts both sides first, making the whole suite order-insensitive by construction. It passed 25/25 with the divergence live. Fixed the same day: `orderedIds()` was added alongside it, plus a flat sequence assertion and a per-partner sequence assertion (25 checks → 32).
+
+**Generalisation for future collection migrations:** an array literal's order is data. If a collection is moving from a hand-maintained array into a table, add an explicit order column in the same migration, backfill it from the array index, and assert *sequence* equality in verification — set equality passes with the order completely scrambled.
+
 **Compliance gate has no DB representation.** Explicitly deferred in this plan (Section 2) rather than solved — flagging again here so it isn't silently forgotten if a future revision of this plan decides to move compliance into the database too.
 
 **Catalog size/product-count discrepancy.** The audit found two different in-repo comments disagreeing on current product count (449 vs 956) — worth reconciling with a fresh count before backfill, mostly as a sanity check that the backfill script's row count matches expectations.

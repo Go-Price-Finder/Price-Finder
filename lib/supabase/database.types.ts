@@ -380,7 +380,11 @@ export type Database = {
         Relationships: [];
       };
       catalog_products: {
-        // Matches supabase/migrations/0008_add_catalog_products.sql.
+        // Matches supabase/migrations/0008_add_catalog_products.sql, plus
+        // `sort_order` from 0010_add_catalog_product_sort_order.sql — the
+        // curated per-partner product order the static lib/<partner>-data.ts
+        // arrays carried implicitly. NOT NULL with no default, so required on
+        // Insert and optional on Update, same shape as partners.display_order.
         // `price`/`original_price`/`rating_stars` are Postgres `numeric`
         // columns — PostgREST returns these as strings, not JS numbers, to
         // avoid float-precision loss; every reader in lib/catalog.ts must
@@ -403,6 +407,7 @@ export type Database = {
           rating_count: number | null;
           deep_link: string;
           variant_label: string | null;
+          sort_order: number;
           search_vector: unknown;
           created_at: string;
           updated_at: string;
@@ -424,6 +429,7 @@ export type Database = {
           rating_count?: number | null;
           deep_link: string;
           variant_label?: string | null;
+          sort_order: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -444,6 +450,7 @@ export type Database = {
           rating_count?: number | null;
           deep_link?: string;
           variant_label?: string | null;
+          sort_order?: number;
           created_at?: string;
           updated_at?: string;
         };

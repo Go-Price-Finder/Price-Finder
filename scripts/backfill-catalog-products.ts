@@ -81,7 +81,12 @@ for (const partner of PARTNERS) {
     const chunk = partner.products.slice(i, i + CHUNK_SIZE);
 
     const values = chunk
-      .map((p) => {
+      // sort_order is the product's 1-based index in its partner's static
+      // array — `i` is the chunk offset, so it stays correct across chunks.
+      // catalog_products.sort_order is NOT NULL with no default (migration
+      // 0010), so it must be written explicitly: a fresh insert into an empty
+      // table fails without it, while the on-conflict path would mask that.
+      .map((p, idx) => {
         return `(
   ${sqlString(p.id)},
   ${sqlString(p.partnerId)},
@@ -98,7 +103,8 @@ for (const partner of PARTNERS) {
   ${sqlNumber(p.rating?.stars ?? null)},
   ${sqlNumber(p.rating?.count ?? null)},
   ${sqlString(p.deepLink)},
-  ${sqlString(p.variantLabel ?? null)}
+  ${sqlString(p.variantLabel ?? null)},
+  ${i + idx + 1}
 )`;
       })
       .join(",\n");
@@ -106,7 +112,7 @@ for (const partner of PARTNERS) {
     const sql = `insert into public.catalog_products (
   id, partner_id, slug, name, description, price, original_price,
   image, images, category, parent_category, badge,
-  rating_stars, rating_count, deep_link, variant_label
+  rating_stars, rating_count, deep_link, variant_label, sort_order
 )
 values
 ${values}
@@ -126,6 +132,7 @@ on conflict (id) do update set
   rating_count = excluded.rating_count,
   deep_link = excluded.deep_link,
   variant_label = excluded.variant_label,
+  sort_order = excluded.sort_order,
   updated_at = now();
 `;
 

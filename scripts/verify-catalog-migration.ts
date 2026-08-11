@@ -33,6 +33,20 @@ function sortedIds(products: { id: string }[]): string[] {
   return products.map((p) => p.id).sort();
 }
 
+/** Ids in their ACTUAL order — deliberately not sorted.
+ *
+ * sortedIds() above sorts both sides before comparing, so every check routing
+ * through it is order-insensitive by construction. That blind spot let this
+ * script pass 25/25 on 2026-08-09 while catalog row order had already diverged
+ * from the static arrays for three of six partners, silently changing
+ * related-product selection on 476 pages (fixed by migration 0010's
+ * sort_order). Set equality is necessary but not sufficient: anything doing
+ * .filter().slice(n), or sorting with a non-total comparator, inherits read
+ * order. Assert sequence too. */
+function orderedIds(products: { id: string }[]): string[] {
+  return products.map((p) => p.id);
+}
+
 async function main() {
   console.log("Backfill completed 2026-08-09 — catalog_products holds all");
   console.log("954 products (Golden Maple 348, Tsar Bomba 272). Partial-");
@@ -57,6 +71,25 @@ async function main() {
     `missing=${missingFromCatalog.length} extra=${extraInCatalog.length}` +
       (missingFromCatalog.length ? ` e.g. ${missingFromCatalog.slice(0, 3).join(", ")}` : "")
   );
+
+  // 1b. ORDER, not just membership — see orderedIds()'s comment.
+  report(
+    "getAllRealProducts() sequence",
+    JSON.stringify(orderedIds(staticAll)) === JSON.stringify(orderedIds(catalogAll)),
+    "flat read order must match lib/partners.ts, not just contain the same ids"
+  );
+  for (const partner of fromStatic.PARTNERS) {
+    const s2 = orderedIds(partner.products);
+    const c2 = orderedIds(catalogAll.filter((p) => p.partnerId === partner.id));
+    const firstDiff = s2.findIndex((id, k) => id !== c2[k]);
+    report(
+      `product sequence — ${partner.id}`,
+      JSON.stringify(s2) === JSON.stringify(c2),
+      firstDiff === -1
+        ? `${s2.length} products in order`
+        : `diverges at index ${firstDiff}: static=${s2[firstDiff]} catalog=${c2[firstDiff] ?? "(missing)"}`
+    );
+  }
 
   // 2. getPartner() per partner — count + tagline/href.
   for (const partner of fromStatic.PARTNERS) {

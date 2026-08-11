@@ -113,6 +113,21 @@ otherwise), not just Cowork/Claude Team chat sessions:
   and `tsc` rejects every field access on it. That's the good outcome; it
   cannot reach production. Precedent: migration 0009 (`partners.display_order`)
   broke `tsc` immediately until the type was added.
+- **A hand-maintained array carries an ordering the schema does not. Any
+  collection migrated out of one needs an explicit order column, and the
+  verification must assert sequence, not just set membership.** The order in a
+  TypeScript array literal is real, curated, and rendered — but it survives
+  nowhere once the rows are in Postgres, which returns them in whatever order
+  it likes. Nothing fails; the pages just quietly render in a different order,
+  and only where something reads position (`.filter().slice(n)`, a non-total
+  sort comparator, a "first N" list). Two collections in this project turned
+  out to carry one: `partners` (fixed by 0009's `display_order`) and
+  `catalog_products` (fixed by 0010's `sort_order`). Assume the next one does
+  too until checked. **Set-equality checks cannot detect this** — comparing
+  sorted ids passes with the order completely scrambled, which is exactly how
+  the second instance stayed invisible through 25 green checks while 476 pages
+  rendered the wrong related products. Full evidence in
+  `claude/catalog-search-onboarding-migration-scope-2026-08-03.md`, Section 5.
 - **Real data only.** Never invent placeholder numbers, fake products, or
   made-up statistics in anything that ships.
 - **Never read, type, or transmit a real credential** (API keys, database

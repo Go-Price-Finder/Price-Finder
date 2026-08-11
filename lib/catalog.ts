@@ -154,7 +154,16 @@ async function fetchCatalog(): Promise<{
       .from("catalog_products")
       .select(
         "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
-      ),
+      )
+      // Ordered by (partner_id, sort_order) — migration 0010. Without this the
+      // read order is whatever Postgres returns, which had ALREADY diverged
+      // from the static arrays for golden-maple, canvas-vows and tsar-bomba
+      // (measured 2026-08-09) and was silently changing related-product
+      // selection on 476 pages. Anything that does .filter().slice(n) or has a
+      // non-total sort comparator inherits this order — getBestSellers'
+      // badged path does no sorting at all.
+      .order("partner_id")
+      .order("sort_order"),
     supabase
       .from("partners")
       .select("id, name, tagline, href, logo_url, display_order")
@@ -175,9 +184,22 @@ async function fetchCatalog(): Promise<{
     });
   }
 
-  const products = (productsRes.data ?? []).map((row) =>
-    toRealProduct(row, partnersById.get(row.partner_id)?.name ?? row.partner_id)
-  );
+  // Rows arrive ordered by (partner_id, sort_order) — correct WITHIN each
+  // partner, but partner blocks come back alphabetically by id, whereas the
+  // static PARTNERS array interleaves them in curated display order. Re-sort
+  // the blocks by the partner's display_order (0009). Array.prototype.sort is
+  // stable per spec, so intra-partner sort_order (0010) is preserved.
+  //
+  // This matters because getFeaturedDeals, getBestSellers and every
+  // .filter().slice(n) read the flat list: without it, getAllRealProducts()
+  // returns the same products in a different sequence than lib/partners.ts.
+  const products = (productsRes.data ?? [])
+    .map((row) => toRealProduct(row, partnersById.get(row.partner_id)?.name ?? row.partner_id))
+    .sort(
+      (a, b) =>
+        (partnersById.get(a.partnerId)?.displayOrder ?? 0) -
+        (partnersById.get(b.partnerId)?.displayOrder ?? 0)
+    );
 
   return { products, partnersById };
 }

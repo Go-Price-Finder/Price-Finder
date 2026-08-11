@@ -54,6 +54,63 @@ Migrating any of the three puts a 1610 KB catalog fetch on a request-time path. 
 
 ---
 
+## ✅ Checkpoint — 2026-08-11 (read this before resuming)
+
+State of the world as of `19958e8`. Everything below is committed and pushed; `main` is clean and in sync.
+
+### Done and verified
+
+| Item | Commit | Notes |
+|---|---|---|
+| **Task 1** — extract shared types | `85da16f` | `lib/catalog-types.ts` created; `lib/catalog.ts` no longer imports `lib/partners.ts` at all. Unblocks the Batch 7 deletion gate. |
+| **Task 2** — missing exports | `d84ef06` | `getProductTitleSuffix` (async), `getPartnerCategories`, `slugifyRealCategory` exported. `getPartners()` landed earlier in `cee0c17`. |
+| **Migration 0009** — `partners.display_order` | `cee0c17` | Applied. Curated partner order stored; `NOT NULL` no default; unique `DEFERRABLE INITIALLY DEFERRED`. |
+| **Migration 0010** — `catalog_products.sort_order` | `19958e8` | Applied. Per-partner product order; unique `(partner_id, sort_order)` deferrable. |
+| Plan corrections | `8f92f8c`, `61b2b16`, `6aa63f6` | Three defects found *during* execution, fixed in the plan itself. |
+
+All gates green at `19958e8`: `tsc --noEmit` 0, `eslint` 0, `next build` 0 with **1043 pages**, client First Load JS unchanged at 103 kB.
+
+### The ordering discovery — the biggest thing that happened since this plan was written
+
+Both `PARTNERS` and the per-partner product arrays carried a **curated order the schema never stored**. Postgres returned rows in its own order, and for products that order had *already* diverged:
+
+| Partner | Products | Order before 0010 |
+|---|---|---|
+| brooklyn-delhi | 29 | MATCH |
+| evdance | 72 | MATCH |
+| golden-maple | 348 | **DIFFERS** (index 9) |
+| canvas-vows | 204 | **DIFFERS** (index 0) |
+| king-koil | 29 | MATCH |
+| tsar-bomba | 272 | **DIFFERS** (index 0) |
+
+Sets matched everywhere; only sequence differed. The three divergent partners are exactly the three backfilled across multiple chunked files. **It was already wrong in output** — related-product strips on canvas-vows and tsar-bomba (476 pages) selected different products depending on which module was read.
+
+Equivalence now proved against `lib/partners.ts` as baseline, all six partners: per-partner sequence, flat `getAllRealProducts()` sequence, related-product selection, `getFeaturedDeals`, `getBestSellers` (global + per partner), and `getPartnerCategories` vs all three curated lists — **all MATCH**.
+
+### Verification expanded: 25 → 32 checks
+
+`scripts/verify-catalog-migration.ts` passed **25/25 with that divergence live**, because every check routed through a `sortedIds()` helper that sorts both sides first — order-insensitive by construction. Added `orderedIds()` alongside it (kept `sortedIds` for the set comparisons where it is correct), plus a flat sequence assertion and one per partner. Third time that blind spot hid a real difference.
+
+### Pattern to carry forward
+
+A hand-maintained array carries ordering the schema does not. Any collection migrated out of one needs an explicit order column *and* sequence assertions in verification — set equality passes with the order completely scrambled. Recorded as a standing rule in CLAUDE.md; full evidence in `claude/catalog-search-onboarding-migration-scope-2026-08-03.md` §5.
+
+### Two mid-flight decisions — do not undo these
+
+**1. 0010's backfill is a permutation + md5 fingerprint, not a `VALUES` list.** It is smaller (3.4 KB vs 73 KB, which matters given the rule against pushing bulk SQL through a session's context), but the reason to keep it is that it is **safer**: each block asserts an md5 of that partner's slug set and `RAISE`s on mismatch, so re-running it against a changed catalog fails loudly instead of silently misassigning orders. A literal `VALUES` list would just no-op on rows it did not match, and the `NOT NULL` guard would only catch it if *every* row for a partner missed. Correctness rests on `collate "C"` matching the generator's JS byte-order sort — verified: all 954 slugs are pure ASCII with no intra-partner duplicates.
+
+**2. `.order("partner_id").order("sort_order")` alone is NOT sufficient — the JS re-sort in `fetchCatalog` is load-bearing.** The DB returns partner *blocks* alphabetically by `partner_id`, but the static array interleaves them in curated `display_order`. Without the JS re-sort, flat `getAllRealProducts()` still returns the right products in the wrong sequence, which `getFeaturedDeals`, `getBestSellers`, and every `.filter().slice(n)` inherit. `Array.prototype.sort` is stable per spec, so intra-partner `sort_order` survives the re-sort. **Do not "simplify" this to the DB ordering alone.**
+
+### Open, waiting on the user
+
+- **Two repo secrets** — `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must be added to GitHub Actions before the first call-site batch, or CI's build step fails once a route reads from the DB. Verified safe: RLS is SELECT-only for `anon`, and both are already inlined into the client bundle. **Claude must not handle these values.**
+
+### Next
+
+Task 3, then Tasks 4–5, then Batch 1. Batch 1 remains gated on the Step 13 decision record, which now exists (`812befc`).
+
+---
+
 ## Call-site inventory (verified against current HEAD `4a5b56f`)
 
 ### Group A — Product detail routes (6 files, 954 pages, 93% of all generated pages)
@@ -388,6 +445,15 @@ git commit -m "feat(catalog): add getPartners, getPartnerCategories, getProductT
 ---
 
 ## Task 3: Memoize the category mapping
+
+> **Premise changed since this task was written (2026-08-11).** When drafted, the
+> product order this memo caches over was unstable and — for three of six
+> partners — wrong. Migrations 0009/0010 fixed that: `fetchCatalog` now returns
+> products in a stable, curated order matching `lib/partners.ts` exactly. So the
+> memo now caches a *correct* ordering rather than freezing an arbitrary one,
+> which is a meaningfully better position than the task originally assumed.
+> Nothing in the steps below changes; the risk they carried is gone.
+
 
 **Files:**
 - Modify: `lib/catalog.ts` (the `mapAllCatalogProductsToCategory` region)

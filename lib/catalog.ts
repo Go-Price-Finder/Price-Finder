@@ -38,11 +38,13 @@
  * path fixed in the homepage LCP investigation). As of Step 14 Task 3 it
  * is also memoized per process, mirroring lib/partners.ts's
  * mappedProductsCache — see mapAllCatalogProductsToCategory below. That
- * covers a whole build (one process per worker); cross-request caching of
- * the underlying fetch is a separate concern handled by the planned
- * `unstable_cache` wrapper on fetchCatalog.
+ * covers a whole build (one process per worker); caching of the underlying
+ * fetch across worker processes is a separate concern, handled by the
+ * `unstable_cache` wrapper added in Step 14 Task 4 — see
+ * fetchCatalogCached below.
  */
 
+import { unstable_cache } from "next/cache";
 import { createPublicClient } from "./supabase/public";
 import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
 import { requiresPerSkuFeatureCheck } from "./partner-compliance";
@@ -143,9 +145,9 @@ function toRealProduct(
  * revisit if profiling ever shows the extra round trip matters at this
  * table size.
  */
-async function fetchCatalog(): Promise<{
+async function fetchCatalogRaw(): Promise<{
   products: RealProduct[];
-  partnersById: Map<string, PartnerMeta>;
+  partnerEntries: [string, PartnerMeta][];
 }> {
   const supabase = createPublicClient();
   const [productsRes, partnersRes] = await Promise.all([
@@ -192,6 +194,12 @@ async function fetchCatalog(): Promise<{
   // This matters because getFeaturedDeals, getBestSellers and every
   // .filter().slice(n) read the flat list: without it, getAllRealProducts()
   // returns the same products in a different sequence than lib/partners.ts.
+  //
+  // The re-sort lives INSIDE the cached function deliberately: the ordering is
+  // then baked into the cached snapshot itself, so no caller can observe an
+  // unsorted array and no future refactor of the thin wrapper below can drop
+  // it. Do not "simplify" this away to the DB ordering alone — see the
+  // 2026-08-11 checkpoint in the Step 14 plan.
   const products = (productsRes.data ?? [])
     .map((row) => toRealProduct(row, partnersById.get(row.partner_id)?.name ?? row.partner_id))
     .sort(
@@ -200,7 +208,58 @@ async function fetchCatalog(): Promise<{
         (partnersById.get(b.partnerId)?.displayOrder ?? 0)
     );
 
-  return { products, partnersById };
+  return { products, partnerEntries: [...partnersById.entries()] };
+}
+
+/**
+ * The whole catalog, fetched once and reused for the rest of the build.
+ *
+ * Measured 2026-08-09 on a 348-page partner: 349 catalog round trips
+ * uncached vs **1** with this wrapper. Build time is identical either way
+ * (~38.6s) because Next fans page generation across 12 workers — so this is
+ * a database-load and snapshot-consistency win, NOT a build-speed win. Do
+ * not remove it after benchmarking build times and finding no difference;
+ * build speed was never the argument. What it buys is that every page in a
+ * build renders from ONE read of the catalog, so a `refresh-prices` cron run
+ * landing mid-build cannot ship pre-refresh prices on some pages and
+ * post-refresh on others.
+ *
+ * `"use cache"` was measured and rejected: it caches per worker process, so
+ * the same build made 17 round trips across 12 workers instead of 1.
+ *
+ * `unstable_cache` serializes its return value as JSON, and a `Map` does not
+ * survive that — hence the array-of-entries return shape here, with the
+ * `Map` rebuilt on the near side of the cache boundary in fetchCatalog().
+ *
+ * ⚠ The cache key must be bumped ("catalog-v1" -> "catalog-v2", ...) whenever
+ * fetchCatalogRaw's RETURN SHAPE changes. A persisted entry written by an
+ * older shape is replayed verbatim into the new code under the same key, and
+ * the mismatch surfaces as undefined fields at render time rather than as a
+ * cache miss.
+ *
+ * ⚠ Only usable inside a Next.js render/request context. `unstable_cache`
+ * throws "Invariant: incrementalCache missing" when called from a plain
+ * `tsx`/node script, so standalone scripts that import this module (e.g.
+ * scripts/verify-catalog-migration.ts) need an incremental-cache stub
+ * installed on `globalThis.__incrementalCache` before importing it.
+ */
+const fetchCatalogCached = unstable_cache(fetchCatalogRaw, ["catalog-v1"], {
+  revalidate: false,
+  tags: ["catalog"],
+});
+
+/**
+ * Thin wrapper that restores the `Map` the rest of this module expects.
+ * Deliberately holds no logic beyond the `Map` rebuild — everything that
+ * shapes the data (including the load-bearing display-order re-sort) lives
+ * inside the cached function so it is captured by the snapshot.
+ */
+async function fetchCatalog(): Promise<{
+  products: RealProduct[];
+  partnersById: Map<string, PartnerMeta>;
+}> {
+  const { products, partnerEntries } = await fetchCatalogCached();
+  return { products, partnersById: new Map(partnerEntries) };
 }
 
 export async function getAllRealProducts(): Promise<RealProduct[]> {
@@ -265,34 +324,53 @@ export async function getPartnerCategories(partnerId: string): Promise<string[]>
   return seen;
 }
 
+/**
+ * ⚠ CONDITIONAL ON THE RENDERING STRATEGY — read before changing any product
+ * route to ISR or dynamic.
+ *
+ * This reads the product out of the cached full-catalog snapshot instead of
+ * issuing its own query. That is correct ONLY BECAUSE the Step 13 decision
+ * (`claude/catalog-search-onboarding-migration-scope-2026-08-03.md`, "Step 3
+ * — Rendering strategy") keeps every product route fully static: every call
+ * therefore happens at BUILD time, where the whole catalog has already been
+ * fetched once into memory by fetchCatalogCached and the lookup is free. It
+ * removes 1392 queries per build (2 queries × 2 calls per page — metadata and
+ * body — × 348 pages on the largest partner), taking the build from 1394
+ * catalog round trips to 2.
+ *
+ * The previous implementation — a targeted single-row query against
+ * catalog_products plus one for the partner name — was NOT a mistake, and it
+ * is still the right shape for REQUEST-time rendering. Measured 2026-08-09,
+ * per product page:
+ *
+ *     single-row query        1.6 KB    71 ms
+ *     full catalog snapshot   1610 KB   499 ms
+ *
+ * At request time, pulling the whole catalog to render one product is a 993×
+ * payload regression and ~7× on latency. The single-row query only looks
+ * wasteful under static rendering, because static generation turns "one small
+ * query per request" into "1392 small queries per build" and the snapshot
+ * amortises across all of them.
+ *
+ * THEREFORE: if any product route is ever switched to ISR (`export const
+ * revalidate`) or dynamic rendering, the single-row query MUST be restored
+ * for that route. This is not hypothetical — three routes are already `ƒ`
+ * (Dynamic) today, `/search` among them, which is exactly why the Step 14
+ * plan excludes `lib/search.ts` and the two cron paths from migrating to this
+ * module at all. Ask "does this route render at request time?" of every call
+ * site before pointing it here.
+ *
+ * (Folding both reads into one snapshot also closes a latent correctness bug:
+ * generateMetadata and the page body previously issued independent queries
+ * for the same product, so a catalog write landing between them could ship a
+ * page whose metadata and body described different versions of it.)
+ */
 export async function getRealProduct(
   partnerId: string,
   slug: string
 ): Promise<RealProduct | undefined> {
-  // A single filtered query, not getPartner()+find() — this is the
-  // highest-traffic read (every product detail page) and the one most
-  // worth not paying for a full-catalog fetch just to find one row.
-  const supabase = createPublicClient();
-  const { data, error } = await supabase
-    .from("catalog_products")
-    .select(
-      "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
-    )
-    .eq("partner_id", partnerId)
-    .eq("slug", slug)
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) return undefined;
-
-  const { data: partnerRow, error: partnerError } = await supabase
-    .from("partners")
-    .select("name")
-    .eq("id", partnerId)
-    .maybeSingle();
-  if (partnerError) throw partnerError;
-
-  return toRealProduct(data, partnerRow?.name ?? partnerId);
+  const { products } = await fetchCatalog();
+  return products.find((p) => p.partnerId === partnerId && p.slug === slug);
 }
 
 /**

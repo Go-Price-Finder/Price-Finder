@@ -35,13 +35,12 @@
  * recomputes it from each row via lib/category-mapper.ts, same as
  * lib/partners.ts's mapAllRealProductsToCategory does today. That's
  * functionally correct (same inputs, same already-memoized matchScore()
- * path fixed in the homepage LCP investigation) but has no cross-request
- * cache — lib/partners.ts's version is cheap to memoize because it's a
- * module-level singleton computed once per process; this module has no
- * equivalent yet because Step 13 (rendering strategy) hasn't decided how
- * reads are cached. Do not treat this module as done for those two
- * functions until Step 13 picks a caching approach (e.g. `React.cache()`
- * or `unstable_cache`) and it's applied here.
+ * path fixed in the homepage LCP investigation). As of Step 14 Task 3 it
+ * is also memoized per process, mirroring lib/partners.ts's
+ * mappedProductsCache — see mapAllCatalogProductsToCategory below. That
+ * covers a whole build (one process per worker); cross-request caching of
+ * the underlying fetch is a separate concern handled by the planned
+ * `unstable_cache` wrapper on fetchCatalog.
  */
 
 import { createPublicClient } from "./supabase/public";
@@ -348,27 +347,55 @@ export async function getCategoryBySlug(
   };
 }
 
-// See the file-level comment's "Known gap" note — this recomputes the
-// full 4-level taxonomy per call, same computation lib/partners.ts does
-// once at module load. Correct; not yet cached across requests.
-async function mapAllCatalogProductsToCategory(): Promise<
+// Memoized per process, same as lib/partners.ts's mappedProductsCache.
+// mapProductToCategory() scores all 954 products against every taxonomy
+// leaf — measured ~960ms, paid on EVERY call to getPopulatedCategoryPaths()
+// or getProductsByCategoryPath() before this cache existed. An
+// unstable_cache wrapper on fetchCatalog does not cover it: the mapping
+// runs after the fetch returns.
+//
+// The promise is cached, not just the resolved array, because this function
+// is async: two callers that enter before the first one finishes would both
+// re-check a still-null value-cache and both recompute. The build does
+// exactly that — generateStaticParams and the page component run
+// concurrently per route. A rejected fetch clears the slot so a transient
+// Supabase failure is not memoized for the life of the process.
+//
+// Safe for the same reason lib/partners.ts's version is: the product data
+// is fixed for the lifetime of a process, and a content change requires a
+// rebuild. The order it caches over is the curated one (partners.
+// display_order from migration 0009, catalog_products.sort_order from 0010,
+// plus fetchCatalog's stable JS re-sort), so the frozen sequence is the
+// correct sequence, not an arbitrary one.
+let mappedCatalogCache:
+  | Promise<{ product: RealProduct; mapping: CategoryMapping }[]>
+  | null = null;
+
+function mapAllCatalogProductsToCategory(): Promise<
   { product: RealProduct; mapping: CategoryMapping }[]
 > {
-  const products = await getAllRealProducts();
-  return products
-    .map((product) => ({
-      product,
-      mapping: mapProductToCategory({
-        title: product.name,
-        description: product.description,
-        brand: product.partnerName,
-        partnerCategory: product.category,
-        price: product.price,
-        url: product.deepLink,
-        partnerId: product.partnerId,
-      }),
-    }))
-    .filter(({ mapping }) => mapping.department !== "Unclassified");
+  if (mappedCatalogCache) return mappedCatalogCache;
+  mappedCatalogCache = (async () => {
+    const products = await getAllRealProducts();
+    return products
+      .map((product) => ({
+        product,
+        mapping: mapProductToCategory({
+          title: product.name,
+          description: product.description,
+          brand: product.partnerName,
+          partnerCategory: product.category,
+          price: product.price,
+          url: product.deepLink,
+          partnerId: product.partnerId,
+        }),
+      }))
+      .filter(({ mapping }) => mapping.department !== "Unclassified");
+  })();
+  mappedCatalogCache.catch(() => {
+    mappedCatalogCache = null;
+  });
+  return mappedCatalogCache;
 }
 
 export async function getPopulatedCategoryPaths(): Promise<

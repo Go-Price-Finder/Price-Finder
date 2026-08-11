@@ -19,6 +19,13 @@
  * comparison. If your credentials are already exported in the shell,
  * drop the flag.
  */
+// MUST be first: installs a stub Next incremental cache so lib/catalog.ts's
+// unstable_cache wrapper (Step 14 Task 4) works outside a Next render context.
+// Without it this script throws "Invariant: incrementalCache missing" before
+// running a single comparison. See the file's own header for why the shim
+// lives here rather than as a fallback inside lib/catalog.ts.
+import "./_next-cache-shim";
+
 import * as fromStatic from "../lib/partners";
 import * as fromCatalog from "../lib/catalog";
 

@@ -149,6 +149,10 @@ async function fetchCatalogRaw(): Promise<{
   products: RealProduct[];
   partnerEntries: [string, PartnerMeta][];
 }> {
+  // Trace marker for scripts/check-build-queries.mjs. Gated on CATALOG_TRACE
+  // so a normal build never logs it; a traced build emits one line per real
+  // round trip, which is what the guard counts.
+  if (process.env.CATALOG_TRACE) console.log("__FETCH_CATALOG_HIT__");
   const supabase = createPublicClient();
   const [productsRes, partnersRes] = await Promise.all([
     supabase

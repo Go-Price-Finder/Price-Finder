@@ -5,14 +5,17 @@ name: Verify
 # require before any push, run automatically on every push to main and on
 # every pull request.
 #
-# No secrets are wired in deliberately. `next build` was verified to
-# complete with NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY /
-# SUPABASE_SERVICE_ROLE_KEY all blank: all 1043 static pages prerender from
-# lib/partners.ts, and no app/ or components/ file imports lib/catalog.ts.
-# The Supabase clients read env lazily at request time, not at build time.
-# If a future page prerenders from Supabase, this job will start failing and
-# will need those values added as repo secrets — that failure is the signal,
-# not a reason to pre-emptively grant CI database access it doesn't need.
+# Exactly two secrets are wired in, on the Build step only: the anon
+# Supabase URL and key (see the comment on that step for why that is safe).
+# Nothing else is, and nothing else should be — in particular the checkout,
+# install, type-check and lint steps need no credentials at all.
+#
+# This job previously ran with no secrets because all 1043 static pages
+# prerendered from lib/partners.ts and no app/ or components/ file imported
+# lib/catalog.ts. The Step 14 call-site cutover changes that: routes move to
+# reading the catalog from Supabase at build time, so `next build` needs the
+# anon credentials. They are added ahead of the first batch so the cutover
+# does not land on a red build.
 
 on:
   push:
@@ -51,5 +54,15 @@ jobs:
       # failed font fetch (it only falls back to a local font in dev), so a
       # blocked or rate-limited fonts.gstatic.com fails the whole job. That
       # is why this cannot run in a network-restricted sandbox.
+      #
+      # anon key only. Verified 2026-08-09: RLS is enabled on catalog_products
+      # and partners with SELECT-only policies (USING true, role public);
+      # UPDATE/DELETE as anon affect 0 rows and INSERT raises an RLS error.
+      # Both vars are NEXT_PUBLIC_* and are already inlined into the client
+      # bundle, so CI gains nothing a browser visitor does not already have.
+      # NEVER add SUPABASE_SERVICE_ROLE_KEY here — it bypasses RLS entirely.
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

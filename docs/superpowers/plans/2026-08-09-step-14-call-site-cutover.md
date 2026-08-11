@@ -309,39 +309,34 @@ so they become `${await getProductTitleSuffix(product)}` — no call site needs
 restructuring. The extra `fetchCatalog()` await costs nothing once Task 4's
 `unstable_cache` lands.
 
-- [ ] **Step 3: Add `getPartners()` as the `PARTNERS` replacement**
+- [x] **Step 3: Add `getPartners()` as the `PARTNERS` replacement — DONE, landed early in `cee0c17`**
 
-```typescript
-/** Every live partner, ordered by id for stable output. The static
- * PARTNERS const this replaces was ordered by its ALL_WIRED_PARTNERS
- * declaration; sort explicitly so page output does not depend on the
- * order Postgres happens to return rows in. */
-export async function getPartners(): Promise<Partner[]> {
-  const { products, partnersById } = await fetchCatalog();
-  return [...partnersById.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([id, meta]) => ({
-      id,
-      name: meta.name,
-      tagline: meta.tagline,
-      href: meta.href,
-      logo: meta.logo,
-      products: products.filter((p) => p.partnerId === id),
-    }));
-}
+**The alphabetical-sort snippet this step originally carried was wrong and has
+been removed rather than left to be re-applied.** Step 4's check proved that
+sorting by id does not reproduce the static `PARTNERS` order — that order is
+*curated*, and matches neither id-alphabetical nor Postgres row order. Migration
+`0009_add_partner_display_order.sql` added `partners.display_order` (backfilled
+1-6 from the static array, `NOT NULL` with no default, unique constraint
+`DEFERRABLE INITIALLY DEFERRED` so two partners can swap slots without a temp
+value). The shipped `getPartners()` in `lib/catalog.ts` sorts by
+`meta.displayOrder`, and `fetchCatalog`'s partners query carries a matching
+`.order("display_order")`.
+
+Do not re-add a sort by id. If you are reading this while writing a new
+migration, note CLAUDE.md's rule that every migration needs a matching hand-edit
+to `lib/supabase/database.types.ts` — 0009 broke `tsc` until `display_order` was
+added to `Row`/`Insert`/`Update`.
+
+- [x] **Step 4: Confirm the `PARTNERS` ordering actually matches — DONE, PASS**
+
+```
+static  : brooklyn-delhi, evdance, golden-maple, canvas-vows, king-koil, tsar-bomba
+catalog : brooklyn-delhi, evdance, golden-maple, canvas-vows, king-koil, tsar-bomba
+ORDER: MATCH   FIELDS: MATCH (id/name/tagline/href/logo + per-partner product counts)
 ```
 
-- [ ] **Step 4: Confirm the `PARTNERS` ordering actually matches**
-
-```bash
-npx tsx --env-file=.env.local -e "
-import('@/lib/partners').then(async (s) => {
-  const c = await import('@/lib/catalog');
-  console.log('static :', s.PARTNERS.map(p => p.id).join(','));
-  console.log('catalog:', (await c.getPartners()).map(p => p.id).join(','));
-});"
-```
-If the two lines differ, the homepage and OurPartners will reorder. Either sort `getPartners()` to match the static order explicitly, or **stop and confirm the reorder is acceptable** — do not ship a silent change to partner display order.
+Compared field-by-field, not just by id sequence — the right ordering with wrong
+contents would otherwise pass.
 
 - [ ] **Step 5: Add `getPartnerCategories()` for the `*_CATEGORIES` gap**
 

@@ -1,5 +1,47 @@
 @AGENTS.md
 
+# Context and continuity
+
+**The conversation is disposable. The repo is the memory.** Anything a future
+session would need has to be in a committed file — a plan, a `claude/*.md` doc,
+a code comment, a commit message. If it only exists in chat, treat it as already
+lost, because from the next session's point of view it is.
+
+- **Checkpoint at ~75–80% context, before taking on anything new.** Don't wait
+  for auto-compaction to force it. By the time compaction runs, the specifics
+  worth preserving — exact numbers, the thing that was tried and failed, the
+  half-finished state — are precisely what gets summarized away.
+
+- **Checkpoint format:** update the active plan file under
+  `docs/superpowers/plans/` with:
+  1. **Done and verified**, with commit SHAs.
+  2. **In flight**, and its exact state — which branch, what's uncommitted,
+     which checks have run and which haven't.
+  3. **Open decisions waiting on the user**, stated so they can be answered
+     without rereading the conversation.
+  4. **Anything measured this session that isn't written down anywhere else.**
+  Then commit it. An uncommitted checkpoint is not a checkpoint.
+
+- **Write findings down when they're established, not at session end.**
+  Measurements, corrections to earlier claims, and "we tried X and it didn't
+  work" go into the docs immediately. This is not a tidiness preference — several
+  findings this project now depends on came within one context window of dying in
+  a chat log, including the `unstable_cache` vs `"use cache"` round-trip counts
+  and the payload numbers behind the ISR coupling condition in
+  `claude/catalog-search-onboarding-migration-scope-2026-08-03.md`.
+
+- **Starting a fresh session: read before acting.** Read this file, the active
+  plan under `docs/superpowers/plans/`, and the relevant `claude/*.md` docs.
+  Then **verify current state against the repo and the database rather than
+  trusting the last summary** — including a summary written by a previous
+  Claude session, and including this one. Run `git log`, `git status`, and
+  `git branch` (branch, not just SHA — matching HEAD to a known commit is not
+  the same as knowing which branch you're on). Query Supabase for real counts.
+  In this project, reported state and actual state have diverged repeatedly:
+  referenced files that never existed, dangling doc references, a workflow that
+  had never run, and a commit that landed on the wrong branch. Checking costs a
+  minute; not checking has cost hours.
+
 # Project purpose
 
 Price Finder is a price comparison, affiliate, and loyalty website. Users search

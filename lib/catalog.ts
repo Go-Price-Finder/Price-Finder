@@ -63,7 +63,7 @@ import type {
 // point of this migration is to stop needing that module at all. The
 // function itself is two lines of pure string logic; duplicating it here
 // is cheaper and safer than importing it.
-function slugifyRealCategory(name: string): string {
+export function slugifyRealCategory(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
@@ -230,6 +230,20 @@ export async function getPartners(): Promise<Partner[]> {
     }));
 }
 
+/** The per-partner category list that lib/<partner>-data.ts exports as
+ * <PARTNER>_CATEGORIES. Those are hand-ordered; catalog_products stores
+ * no ordering, so this returns first-appearance order from the catalog.
+ * Task 2 Step 6 verifies that matches the curated order per partner —
+ * if it ever does not, the landing page's category order changes. */
+export async function getPartnerCategories(partnerId: string): Promise<string[]> {
+  const { products } = await fetchCatalog();
+  const seen: string[] = [];
+  for (const p of products) {
+    if (p.partnerId === partnerId && !seen.includes(p.category)) seen.push(p.category);
+  }
+  return seen;
+}
+
 export async function getRealProduct(
   partnerId: string,
   slug: string
@@ -258,6 +272,27 @@ export async function getRealProduct(
   if (partnerError) throw partnerError;
 
   return toRealProduct(data, partnerRow?.name ?? partnerId);
+}
+
+/**
+ * The `<title>` disambiguation suffix for a product detail page — the
+ * replacement for lib/partners.ts's synchronous getProductTitleSuffix.
+ *
+ * Async here, unlike the original: it needs the partner's sibling products
+ * to detect duplicate name+price collisions, and this module's getPartner
+ * is async. All four call sites are already inside `generateMetadata`, so
+ * they only need an added `await`.
+ */
+export async function getProductTitleSuffix(product: RealProduct): Promise<string> {
+  const priceLabel = `$${product.price.toLocaleString()}`;
+  const siblings = (await getPartner(product.partnerId))?.products ?? [];
+  const colliding = siblings.filter(
+    (p) => p.name === product.name && p.price === product.price
+  );
+  if (colliding.length <= 1) return priceLabel;
+  if (product.variantLabel) return `${priceLabel} — ${product.variantLabel}`;
+  const index = colliding.findIndex((p) => p.slug === product.slug) + 1;
+  return `${priceLabel} — ${index} of ${colliding.length}`;
 }
 
 export async function getRealCategories(): Promise<RealCategory[]> {

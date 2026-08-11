@@ -99,6 +99,20 @@ otherwise), not just Cowork/Claude Team chat sessions:
 - **Workflow for any code change:** fix → verify (`tsc --noEmit`, `eslint`,
   `next build`) → independent review → push. Don't consider something done
   until it's been checked — every time, no exceptions for "small" changes.
+- **Every database migration needs a matching hand-edit to
+  `lib/supabase/database.types.ts`, in the same commit.** That file is
+  *hand-maintained* — it carries explanatory comments tying each table back to
+  the migration that created it and warning about wire-type traps (e.g. that
+  Postgres `numeric` columns arrive as strings, not numbers). **Do not
+  regenerate it**; `supabase gen types` would overwrite those comments with a
+  machine dump and silently delete the reasoning. Add the new column by hand
+  to `Row`, `Insert`, and `Update`, matching the column's nullability and
+  default: a `NOT NULL` column with no default is required on `Insert` and
+  optional on `Update`. Skipping this fails at **compile time**, not runtime —
+  the typed PostgREST client resolves the whole `select` to `SelectQueryError`
+  and `tsc` rejects every field access on it. That's the good outcome; it
+  cannot reach production. Precedent: migration 0009 (`partners.display_order`)
+  broke `tsc` immediately until the type was added.
 - **Real data only.** Never invent placeholder numbers, fake products, or
   made-up statistics in anything that ships.
 - **Never read, type, or transmit a real credential** (API keys, database

@@ -268,19 +268,46 @@ git commit -m "refactor(catalog): extract shared types so catalog.ts no longer i
 
 **Interfaces:**
 - Consumes: `lib/catalog-types.ts` from Task 1.
-- Produces: `getPartners(): Promise<Partner[]>`, `getProductTitleSuffix(product: RealProduct): string`, `slugifyRealCategory(name: string): string` (now exported), `getPartnerCategories(partnerId: string): Promise<string[]>`.
+- Produces: `getPartners(): Promise<Partner[]>`, `getProductTitleSuffix(product: RealProduct): Promise<string>` (**async — see Step 2**), `slugifyRealCategory(name: string): string` (now exported), `getPartnerCategories(partnerId: string): Promise<string[]>`.
 
 - [ ] **Step 1: Export the existing private `slugifyRealCategory`**
 
 In `lib/catalog.ts`, change `function slugifyRealCategory` to `export function slugifyRealCategory`. Keep the existing comment explaining why it is duplicated rather than imported.
 
-- [ ] **Step 2: Port `getProductTitleSuffix` verbatim**
+- [ ] **Step 2: Port `getProductTitleSuffix` — as `async`, NOT verbatim**
 
 ```bash
 sed -n '/^export function getProductTitleSuffix/,/^}/p' lib/partners.ts
 ```
 
-Copy the body into `lib/catalog.ts` unchanged. It is pure (takes a `RealProduct`, returns a string) — no async, no DB.
+**Correction (2026-08-09): an earlier version of this plan claimed this function
+was pure — "takes a `RealProduct`, returns a string, no async, no DB". That was
+wrong, asserted without reading the body.** It calls
+`getPartner(product.partnerId)` to find sibling products for
+duplicate-name disambiguation. That call is synchronous in `lib/partners.ts`
+but **`async` in `lib/catalog.ts`**, so a verbatim copy does not compile —
+verified: `Property 'products' does not exist on type 'Promise<Partner | undefined>'`.
+
+Port it as async, awaiting the sibling lookup:
+
+```typescript
+export async function getProductTitleSuffix(product: RealProduct): Promise<string> {
+  const priceLabel = `$${product.price.toLocaleString()}`;
+  const siblings = (await getPartner(product.partnerId))?.products ?? [];
+  const colliding = siblings.filter(
+    (p) => p.name === product.name && p.price === product.price
+  );
+  if (colliding.length <= 1) return priceLabel;
+  if (product.variantLabel) return `${priceLabel} — ${product.variantLabel}`;
+  const index = colliding.findIndex((p) => p.slug === product.slug) + 1;
+  return `${priceLabel} — ${index} of ${colliding.length}`;
+}
+```
+
+All four call sites are already inside `export async function generateMetadata`,
+so they become `${await getProductTitleSuffix(product)}` — no call site needs
+restructuring. The extra `fetchCatalog()` await costs nothing once Task 4's
+`unstable_cache` lands.
 
 - [ ] **Step 3: Add `getPartners()` as the `PARTNERS` replacement**
 
@@ -742,7 +769,7 @@ import { getAllRealProducts, getPartner, getRealProduct } from "@/lib/catalog";
 import { getProductTitleSuffix } from "@/lib/catalog";
 ```
 
-(`getProductTitleSuffix` only applies to `king-koil`; `evdance` does not import it.) Then, in each file:
+(`getProductTitleSuffix` only applies to `king-koil`; `evdance` does not import it.) **It is async** — its call site inside `generateMetadata` becomes `${await getProductTitleSuffix(product)}`. Then, in each file:
 
 ```typescript
 export async function generateStaticParams() {

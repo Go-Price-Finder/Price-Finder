@@ -133,6 +133,58 @@ async function main() {
     );
   }
 
+  // 3b. FULL field equality, every product, every field.
+  //
+  // Check 3 above spot-checks one product per partner across 8 fields. That
+  // left two blind spots that were both found the hard way: `description` was
+  // never compared at all, which is how 29 king-koil rows sat in the database
+  // with U+00A0 normalized to U+0020 while the suite reported all-green; and
+  // only 6 of 954 products were examined.
+  //
+  // This compares EVERY field of RealProduct for EVERY product. Coverage is
+  // now a stated decision rather than an accident: the field list below is
+  // derived from the RealProduct type, and anything added to that type should
+  // be added here too. `images` and `rating` are compared by JSON value since
+  // they are an array and an object.
+  const catalogById = new Map(catalogAll.map((p) => [p.id, p]));
+  for (const partner of fromStatic.PARTNERS) {
+    const fieldDiffs = new Map<string, number>();
+    let missing = 0;
+    for (const sp of partner.products) {
+      const cp = catalogById.get(sp.id);
+      if (!cp) { missing++; continue; }
+      const compare: [string, unknown, unknown][] = [
+        ["slug", sp.slug, cp.slug],
+        ["partnerId", sp.partnerId, cp.partnerId],
+        ["partnerName", sp.partnerName, cp.partnerName],
+        ["name", sp.name, cp.name],
+        ["description", sp.description, cp.description],
+        ["price", sp.price, cp.price],
+        ["originalPrice", sp.originalPrice, cp.originalPrice],
+        ["image", sp.image, cp.image],
+        ["images", JSON.stringify(sp.images), JSON.stringify(cp.images)],
+        ["category", sp.category, cp.category],
+        ["parentCategory", sp.parentCategory, cp.parentCategory],
+        ["badge", sp.badge, cp.badge],
+        ["rating", JSON.stringify(sp.rating ?? null), JSON.stringify(cp.rating ?? null)],
+        ["deepLink", sp.deepLink, cp.deepLink],
+        ["href", sp.href, cp.href],
+        ["variantLabel", sp.variantLabel, cp.variantLabel],
+      ];
+      for (const [field, a, b] of compare) {
+        if (a !== b) fieldDiffs.set(field, (fieldDiffs.get(field) ?? 0) + 1);
+      }
+    }
+    const summary = [...fieldDiffs.entries()].map(([f, n]) => `${f}×${n}`).join(", ");
+    report(
+      `full field equality — ${partner.id}`,
+      fieldDiffs.size === 0 && missing === 0,
+      fieldDiffs.size === 0 && missing === 0
+        ? `${partner.products.length} products × 16 fields`
+        : `${summary}${missing ? `, ${missing} missing from catalog` : ""}`
+    );
+  }
+
   // 4. getRealCategories() — name/count comparison.
   const staticCats = fromStatic.getRealCategories().sort((a, b) => a.name.localeCompare(b.name));
   const catalogCats = (await fromCatalog.getRealCategories()).sort((a, b) =>

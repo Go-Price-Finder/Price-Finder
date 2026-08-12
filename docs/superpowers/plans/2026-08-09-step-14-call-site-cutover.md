@@ -56,58 +56,68 @@ Migrating any of the three puts a 1610 KB catalog fetch on a request-time path. 
 
 ## ✅ Checkpoint — 2026-08-11 (read this before resuming)
 
-State of the world as of `19958e8`. Everything below is committed and pushed; `main` is clean and in sync.
+**Foundation complete. Tasks 1–5 all done; Batch 1 is unblocked.** State as of `7445ada`; `main` clean and in sync, CI green.
 
 ### Done and verified
 
 | Item | Commit | Notes |
 |---|---|---|
-| **Task 1** — extract shared types | `85da16f` | `lib/catalog-types.ts` created; `lib/catalog.ts` no longer imports `lib/partners.ts` at all. Unblocks the Batch 7 deletion gate. |
-| **Task 2** — missing exports | `d84ef06` | `getProductTitleSuffix` (async), `getPartnerCategories`, `slugifyRealCategory` exported. `getPartners()` landed earlier in `cee0c17`. |
-| **Migration 0009** — `partners.display_order` | `cee0c17` | Applied. Curated partner order stored; `NOT NULL` no default; unique `DEFERRABLE INITIALLY DEFERRED`. |
-| **Migration 0010** — `catalog_products.sort_order` | `19958e8` | Applied. Per-partner product order; unique `(partner_id, sort_order)` deferrable. |
-| Plan corrections | `8f92f8c`, `61b2b16`, `6aa63f6` | Three defects found *during* execution, fixed in the plan itself. |
+| **Task 1** — extract shared types | `85da16f` | `lib/catalog-types.ts`; `lib/catalog.ts` no longer imports `lib/partners.ts` at all. Unblocks the Batch 7 deletion gate. |
+| **Task 2** — missing exports | `d84ef06` | `getProductTitleSuffix` (async — it was never pure), `getPartnerCategories`, `slugifyRealCategory`. `getPartners()` landed earlier in `cee0c17`. |
+| **Task 3** — memoize category mapping | `940b69a` | ~960 ms → 0.8 ms on calls 2+. Caches the **promise**, not the array — the function is async, so an array cache would let concurrent callers both recompute, which is exactly what the build does. |
+| **Task 4** — `unstable_cache` + snapshot fold | `55e906f` | **1394 build queries → 2**, measured at the HTTP layer. `getRealProduct` reads the snapshot; its comment carries the 993× ISR condition. |
+| **Task 5** — query guard + CI credentials | `42bbe53` | `scripts/check-build-queries.mjs`; anon Supabase creds on the Build step only. **CI green.** |
+| **Migration 0009** — `partners.display_order` | `cee0c17` | Applied. |
+| **Migration 0010** — `catalog_products.sort_order` | `19958e8` | Applied. |
+| Verify-script repair after Task 4 | `ae154b4` | `unstable_cache` broke the script outside a Next context; `scripts/_next-cache-shim.ts` restores it. |
+| Full 16-field comparison | `dc2d762` | Caught the NBSP divergence. |
+| NBSP data fix + paste rule | `7445ada` | See below. |
 
-All gates green at `19958e8`: `tsc --noEmit` 0, `eslint` 0, `next build` 0 with **1043 pages**, client First Load JS unchanged at 103 kB.
+### The catalog now matches the static arrays byte-for-byte
 
-### The ordering discovery — the biggest thing that happened since this plan was written
+**38 PASS / 0 FAIL** — all six partners, **954 products × 16 fields**, plus sequence and set assertions.
 
-Both `PARTNERS` and the per-partner product arrays carried a **curated order the schema never stored**. Postgres returned rows in its own order, and for products that order had *already* diverged:
+**Batch 1 is the first batch where "no behaviour change" can be proven rather than assumed.** Every earlier point in this migration had at least one unmeasured difference sitting underneath it.
 
-| Partner | Products | Order before 0010 |
-|---|---|---|
-| brooklyn-delhi | 29 | MATCH |
-| evdance | 72 | MATCH |
-| golden-maple | 348 | **DIFFERS** (index 9) |
-| canvas-vows | 204 | **DIFFERS** (index 0) |
-| king-koil | 29 | MATCH |
-| tsar-bomba | 272 | **DIFFERS** (index 0) |
+### Three verification blind spots, each found the hard way
 
-Sets matched everywhere; only sequence differed. The three divergent partners are exactly the three backfilled across multiple chunked files. **It was already wrong in output** — related-product strips on canvas-vows and tsar-bomba (476 pages) selected different products depending on which module was read.
+Each was discovered *by the bug it failed to catch*, not by review. The pattern is worth more than the individual fixes:
 
-Equivalence now proved against `lib/partners.ts` as baseline, all six partners: per-partner sequence, flat `getAllRealProducts()` sequence, related-product selection, `getFeaturedDeals`, `getBestSellers` (global + per partner), and `getPartnerCategories` vs all three curated lists — **all MATCH**.
+1. **Ordering not stored.** The static arrays carried a curated order the schema didn't. Products diverged for 3 of 6 partners, already changing related-product selection on 476 pages. Fixed by 0009/0010.
+2. **Sequence not asserted.** Every check routed through a `sortedIds()` helper that sorted both sides first, so the suite was order-insensitive *by construction* and passed 25/25 with that divergence live. Fixed by adding `orderedIds()` plus flat and per-partner sequence checks.
+3. **Field coverage accidental.** Check 3 compared 8 fields of 6 products; `description` was not among them. That hid the NBSP divergence. Fixed by full 16-field comparison of every product — 25 → 32 → 38 checks.
 
-### Verification expanded: 25 → 32 checks
+Common thread: **a check that compares a normalized or sampled view of the data cannot see differences the normalization or sampling removes.** Assert the thing you actually ship.
 
-`scripts/verify-catalog-migration.ts` passed **25/25 with that divergence live**, because every check routed through a `sortedIds()` helper that sorts both sides first — order-insensitive by construction. Added `orderedIds()` alongside it (kept `sortedIds` for the set comparisons where it is correct), plus a flat sequence assertion and one per partner. Third time that blind spot hid a real difference.
+### The NBSP episode (2026-08-11)
 
-### Pattern to carry forward
+29 king-koil descriptions held U+0020 where the source had U+00A0. Traced rather than guessed:
 
-A hand-maintained array carries ordering the schema does not. Any collection migrated out of one needs an explicit order column *and* sequence assertions in verification — set equality passes with the order completely scrambled. Recorded as a standing rule in CLAUDE.md; full evidence in `claude/catalog-search-onboarding-migration-scope-2026-08-03.md` §5.
+```
+AWIN source feed (_king-koil-feed-fresh.csv)   116 × U+00A0   (bytes c2 a0)
+lib/king-koil-data.ts                          116 × U+00A0
+scratch/backfill-catalog-products-*.sql        116 × U+00A0
+public.catalog_products                          0 × U+00A0
+```
 
-### Two mid-flight decisions — do not undo these
+Every stage faithful except the last — **the browser SQL Editor normalizes NBSP to a space on paste**. Not an encoding failure: em-dashes, en-dashes, CJK brackets, emoji and `™` in the same rows survived, which is why it was invisible.
 
-**1. 0010's backfill is a permutation + md5 fingerprint, not a `VALUES` list.** It is smaller (3.4 KB vs 73 KB, which matters given the rule against pushing bulk SQL through a session's context), but the reason to keep it is that it is **safer**: each block asserts an md5 of that partner's slug set and `RAISE`s on mismatch, so re-running it against a changed catalog fails loudly instead of silently misassigning orders. A literal `VALUES` list would just no-op on rows it did not match, and the `NOT NULL` guard would only catch it if *every* row for a partner missed. Correctness rests on `collate "C"` matching the generator's JS byte-order sort — verified: all 954 slugs are pure ASCII with no intra-partner duplicates.
+**Resolution:** the DB was wrong and was fixed (one guarded `overlay()` via MCP, md5-gated, 29 rows). The static file was left alone — it matches the feed, and it is frozen until Batch 7. **Rule now in CLAUDE.md and the runbook: apply generated SQL via MCP or a runner script, never by pasting, when byte fidelity matters.** Any paste-applied backfill is suspect, including the 295-row completion run; king-koil was the only casualty because it was the only partner whose feed had NBSP at all.
 
-**2. `.order("partner_id").order("sort_order")` alone is NOT sufficient — the JS re-sort in `fetchCatalog` is load-bearing.** The DB returns partner *blocks* alphabetically by `partner_id`, but the static array interleaves them in curated `display_order`. Without the JS re-sort, flat `getAllRealProducts()` still returns the right products in the wrong sequence, which `getFeaturedDeals`, `getBestSellers`, and every `.filter().slice(n)` inherit. `Array.prototype.sort` is stable per spec, so intra-partner `sort_order` survives the re-sort. **Do not "simplify" this to the DB ordering alone.**
+### Decisions that must not be undone
 
-### Open, waiting on the user
+1. **0010's backfill is a permutation + md5 fingerprint, not a `VALUES` list.** Safer, not just smaller: it `RAISE`s on a slug-set mismatch instead of silently misassigning.
+2. **The JS re-sort by `displayOrder` in `fetchCatalog` is load-bearing.** The DB returns partner blocks alphabetically; the static array interleaves them in curated order. It lives inside the cached function so the ordering is baked into the snapshot.
+3. **`getRealProduct` reads the snapshot only because rendering is static.** Flip any product route to ISR/dynamic and the single-row query must come back — 1.6 KB vs 1610 KB, 993×.
+4. **The `unstable_cache` fallback was deliberately NOT added to `lib/catalog.ts`.** A library-level fallback would mean a real build silently doing 1394 queries if the cache went missing. Production fails loudly; scripts opt into `scripts/_next-cache-shim.ts`.
 
-- **Two repo secrets** — `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must be added to GitHub Actions before the first call-site batch, or CI's build step fails once a route reads from the DB. Verified safe: RLS is SELECT-only for `anon`, and both are already inlined into the client bundle. **Claude must not handle these values.**
+### Known residual risk
+
+`mappedCatalogCache` (Task 3) sits **above** `unstable_cache` (Task 4), so once memoized a process never re-consults the cache. Demonstrated: after the stored snapshot changes, `getAllRealProducts()` sees it while `getPopulatedCategoryPaths()` does not. Unreachable today — `revalidate: false`, zero `revalidateTag`/`revalidatePath` call sites, every catalog route static so each build gets fresh processes. **Becomes live the moment a route is flipped to ISR** — third item on the ISR checklist.
 
 ### Next
 
-Task 3, then Tasks 4–5, then Batch 1. Batch 1 remains gated on the Step 13 decision record, which now exists (`812befc`).
+Batch 1 (brooklyn-delhi, 29 pages). Per-batch protocol below applies in full; the suite is now 38 checks, not 25.
 
 ---
 

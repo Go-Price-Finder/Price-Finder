@@ -4,8 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner, slugifyRealCategory } from "@/lib/partners";
-import { BROOKLYN_DELHI_CATEGORIES } from "@/lib/brooklyn-delhi-data";
+import { getPartner, getPartnerCategories, slugifyRealCategory } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Brooklyn Delhi — Go Price Finder",
@@ -13,9 +12,10 @@ export const metadata: Metadata = {
     "Shop Brooklyn Delhi's Indian-inspired condiments, cookbooks, and merch — real products, real prices, straight from the maker.",
 };
 
-export default function BrooklynDelhiPage() {
-  const partner = getPartner("brooklyn-delhi");
+export default async function BrooklynDelhiPage() {
+  const partner = await getPartner("brooklyn-delhi");
   const products = partner?.products ?? [];
+  const categories = await getPartnerCategories("brooklyn-delhi");
 
   return (
     <>
@@ -52,7 +52,7 @@ export default function BrooklynDelhiPage() {
           <div className="flex flex-col gap-14">
             {(() => {
               let priorityIndex = 0;
-              return BROOKLYN_DELHI_CATEGORIES.map((category) => {
+              return categories.map((category) => {
                 const items = products.filter((p) => p.category === category);
                 if (items.length === 0) return null;
 

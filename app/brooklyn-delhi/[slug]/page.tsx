@@ -10,12 +10,12 @@ import WishlistButton from "@/components/WishlistButton";
 import PriceHistoryChart from "@/components/PriceHistoryChart";
 import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
-import { BROOKLYN_DELHI_PRODUCTS } from "@/lib/brooklyn-delhi-data";
-import { getAllRealProducts, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getPartner, getRealProduct } from "@/lib/catalog";
 import { buildProductJsonLd } from "@/lib/structured-data";
 
-export function generateStaticParams() {
-  return BROOKLYN_DELHI_PRODUCTS.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const partner = await getPartner("brooklyn-delhi");
+  return (partner?.products ?? []).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getRealProduct("brooklyn-delhi", slug);
+  const product = await getRealProduct("brooklyn-delhi", slug);
   if (!product) return { title: "Not found — Go Price Finder" };
   return {
     title: `${product.name} — Brooklyn Delhi — Go Price Finder`,
@@ -38,13 +38,13 @@ export default async function BrooklynDelhiProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getRealProduct("brooklyn-delhi", slug);
+  const product = await getRealProduct("brooklyn-delhi", slug);
   if (!product) notFound();
 
   const hasDiscount =
     typeof product.originalPrice === "number" && product.originalPrice > product.price;
 
-  const related = getAllRealProducts()
+  const related = (await getAllRealProducts())
     .filter((p) => p.partnerId === "brooklyn-delhi" && p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
 

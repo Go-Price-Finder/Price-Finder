@@ -113,6 +113,21 @@ otherwise), not just Cowork/Claude Team chat sessions:
   and `tsc` rejects every field access on it. That's the good outcome; it
   cannot reach production. Precedent: migration 0009 (`partners.display_order`)
   broke `tsc` immediately until the type was added.
+- **Apply generated SQL via the Supabase MCP tools or a runner script — never
+  by pasting it into the browser SQL Editor — whenever byte fidelity matters.**
+  The browser silently normalizes U+00A0 (non-breaking space) to a plain
+  U+0020 on paste. Measured 2026-08-11: 116 NBSP characters present in the
+  AWIN source feed, in `lib/king-koil-data.ts`, and in the generated backfill
+  SQL arrived in Postgres as ordinary spaces — every stage of the pipeline was
+  faithful except the paste. Nothing errored; 29 rows just quietly differed
+  from their source. **Treat any backfill that was applied by pasting as
+  suspect for character-level fidelity**, including the 295-row completion run
+  done that way. Only king-koil was hit because it is the only partner whose
+  source feed contained NBSP at all — that is luck, not safety. Note the shape
+  of the corruption: em-dashes, en-dashes, CJK brackets, emoji and `™` in the
+  same rows all survived intact, so this is **not** a general encoding failure
+  — it is specific to NBSP and plausibly other whitespace-class characters,
+  which is exactly why it is invisible on screen and slips past review.
 - **A hand-maintained array carries an ordering the schema does not. Any
   collection migrated out of one needs an explicit order column, and the
   verification must assert sequence, not just set membership.** The order in a

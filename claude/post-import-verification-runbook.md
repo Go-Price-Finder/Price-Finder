@@ -310,6 +310,17 @@ indistinguishable from `main` by `git log` alone.
      anyone else, which is the failure mode this assertion was written to
      catch). Confirm the file count and per-partner totals it prints match
      the partners you actually imported.
+   - **Apply the generated SQL via the Supabase MCP tools or a runner script,
+     never by pasting it into the browser SQL Editor.** The browser normalizes
+     U+00A0 to a plain space on paste. Measured 2026-08-11: 116 NBSP characters
+     survived the AWIN feed, `lib/<partner>-data.ts`, and the generated SQL, and
+     were lost only at the paste step — 29 king-koil rows silently differed from
+     their source with nothing erroring. Em-dashes, emoji, CJK brackets and `™`
+     in the same rows came through fine, so this is not an encoding failure you
+     would notice; it is whitespace-class only, and invisible on screen. The
+     step-8 assertion below counts rows, not characters, so it will not catch
+     this — the full-field comparison in
+     `scripts/verify-catalog-migration.ts` is what does.
    - Assert coverage:
 
    ```sql

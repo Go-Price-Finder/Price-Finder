@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/check-price-alerts",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/sync-cashback",
+      "schedule": "0 14 * * *"
     }
   ]
 }

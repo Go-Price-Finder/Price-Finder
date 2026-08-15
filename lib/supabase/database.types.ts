@@ -25,9 +25,11 @@ export type Retailer =
   | "king-koil"
   | "tsar-bomba";
 
-// Dormant as of 2026-08-02 — see supabase/migrations/0007_add_cashback_ledger.sql.
-// No app code reads/writes cashback_claims or cashback_ledger_entries yet;
-// these types exist so Phase 2 doesn't start from zero.
+// No longer dormant as of 2026-08-15 — lib/cashback/syncAwinTransactions.ts
+// (the sync-cashback cron) now reads AWIN's Transactions API and writes both
+// tables. See supabase/migrations/0007_add_cashback_ledger.sql for the
+// original schema and 0012_add_cashback_claims_awin_transaction_id.sql for
+// the dedupe key that job depends on.
 export type CashbackVertical = "products" | "gift_cards" | "hotels";
 export type CashbackStatus = "pending" | "available" | "redeemed" | "reversed";
 
@@ -211,6 +213,12 @@ export type Database = {
           order_amount: number;
           cashback_amount: number;
           click_id: string | null;
+          // Migration 0012 — AWIN transaction id, the dedupe key
+          // syncAwinTransactions.ts uses so re-polling an overlapping date
+          // range (needed to catch pending -> approved/declined transitions)
+          // never double-records the same transaction. Nullable: existing
+          // test claims predate this column.
+          awin_transaction_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -223,6 +231,7 @@ export type Database = {
           order_amount: number;
           cashback_amount: number;
           click_id?: string | null;
+          awin_transaction_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -235,6 +244,7 @@ export type Database = {
           order_amount?: number;
           cashback_amount?: number;
           click_id?: string | null;
+          awin_transaction_id?: string | null;
           created_at?: string;
         };
         Relationships: [
@@ -292,6 +302,53 @@ export type Database = {
             columns: ["claim_id"];
             isOneToOne: false;
             referencedRelation: "cashback_claims";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      // Migration 0011 — mobile app's affiliate-link click log (see
+      // Go-Price-Finder/Price-Finder-App). One row per signed-in tap on
+      // "View on partner site"; click_id is the AWIN clickref subid this
+      // repo's syncAwinTransactions.ts matches transactions back against.
+      // user_id NOT NULL — anonymous browsing taps aren't logged at all.
+      affiliate_clicks: {
+        Row: {
+          id: string;
+          user_id: string;
+          product_id: string;
+          retailer: Retailer;
+          click_id: string;
+          clicked_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          product_id: string;
+          retailer: Retailer;
+          click_id?: string;
+          clicked_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          product_id?: string;
+          retailer?: Retailer;
+          click_id?: string;
+          clicked_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "affiliate_clicks_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
             referencedColumns: ["id"];
           },
         ];

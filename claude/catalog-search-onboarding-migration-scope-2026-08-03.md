@@ -158,6 +158,21 @@ Instrumented round-trip counts on `/golden-maple/[slug]` — 348 pages, with bot
 `"use cache"` caches per worker process, and the build fans out across 12
 workers — hence 17 rather than 1. Not broken, just a worse fit here.
 
+**Scope correction (2026-08-16).** The measurement above is real but narrower
+than it was stated to be. It was taken with exactly ONE route migrated, so it
+could only observe the static-generation phase — where `unstable_cache` genuinely
+does serve every page render from one snapshot. It could not have observed the
+**collect** phase. Measured again at Batch 2 with three routes migrated: 3 round
+trips, all during `Collecting page data`, and 0 across all 1043 renders. Next
+runs each route module's `generateStaticParams` in its own worker before the
+shared cache is populated, so each migrated route pays exactly one fetch there.
+So `unstable_cache` is cross-process during generation but **not** during
+collect, and "1 round trip build-wide" is really "1 per collect-phase route
+module, plus 0 for the whole render phase". The decision is unaffected —
+`"use cache"` was 17 in the render phase alone — but the number does not stay
+at 1, and the build-query guard was rewritten to assert the two phases
+separately rather than a single total.
+
 These counts are **catalog fetches only**, not the build's total query count.
 
 #### Correction 1 — the build-speed premise was wrong

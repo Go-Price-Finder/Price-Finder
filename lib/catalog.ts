@@ -231,6 +231,17 @@ async function fetchCatalogRaw(): Promise<{
  * `"use cache"` was measured and rejected: it caches per worker process, so
  * the same build made 17 round trips across 12 workers instead of 1.
  *
+ * Scope correction (2026-08-16): that 1-vs-17 comparison is real but was
+ * measured with a single route migrated, so it only covers the RENDER phase —
+ * where this wrapper does serve all ~1043 pages from one snapshot (measured
+ * again at Batch 2: 0 fetches across the whole generation phase). It does NOT
+ * dedupe across the COLLECT phase: Next runs each route module's
+ * generateStaticParams in its own worker before the shared cache is
+ * populated, so every migrated route module costs exactly one fetch there
+ * (3 routes -> 3 fetches). The rejection of `"use cache"` stands; "1 round
+ * trip build-wide" was too strong. scripts/check-build-queries.mjs now
+ * asserts the two phases separately for this reason.
+ *
  * `unstable_cache` serializes its return value as JSON, and a `Map` does not
  * survive that — hence the array-of-entries return shape here, with the
  * `Map` rebuilt on the near side of the cache boundary in fetchCatalog().

@@ -91,6 +91,12 @@ Common thread: **a check that compares a normalized or sampled view of the data 
 
 4. **Guard with no floor.** `check-build-queries.mjs` asserted a maximum only. On an incremental build Next reuses cached output and never re-runs data fetching, so the log has zero markers — and 0 passes a max of 2. Found on Batch 1: the first run reported 0, which reads as *the cache is working perfectly*. Fixed by asserting `1 <= hits <= max`, and by requiring `rm -rf .next` in the protocol.
 
+5. **Guard measuring the wrong quantity.** The build-query guard capped catalog round trips at 2. At Batch 2 the real count was 3 — one per migrated route module, because Next runs each `generateStaticParams` in its own worker during "Collecting page data", before the shared cache is populated. All 1043 page renders made **zero** fetches, so the cache was working perfectly and the guard was about to fail every remaining batch. Fixed by splitting the assertion: render phase must be exactly 0, collect phase must equal the derived count of migrated param routes.
+
+### The framing that covers all five
+
+The first four instances **passed for the wrong reason**; the fifth would have **failed for the wrong reason**. Neither "too loose" nor "too strict" describes the family. What does: **the check was not measuring what its name claimed.** `sortedIds()` claimed to compare products but compared a normalized view; the field check claimed to compare products but compared 6 of 954; the query guard claimed to measure cache health but measured route-module count. Once stated that way the remedy is the same in every case — make the check's name and its measurement describe the same thing — and it applies whichever direction the check happens to be failing in.
+
 ### Two lessons from the fourth instance, both worth more than the fix
 
 **Identifying a blind spot does not tell you which direction to tighten.** This is the first of the four where the diagnosis was right and the proposed fix would still have failed. Having seen the guard pass vacuously, the instinct was to tighten the *ceiling* — but **0 passes a max of 1 just as happily as a max of 2**, so the failure mode would have survived a fix aimed squarely at it. The gap was not that the bound was too loose; it was that the bound was on the wrong end. Before tightening a check that failed to fail, work out which direction the bad value actually escaped through — the answer is not always the one you were already looking at.
@@ -101,7 +107,9 @@ Common thread: **a check that compares a normalized or sampled view of the data 
 
 The tell was **structural, not empirical** — visible from the shape of the setup before running anything. No amount of care in executing that test would have surfaced it, because the flaw was in what the test was wired to, not how it was run. When designing a check, ask where each side of the comparison comes from: **if both sides trace back to the same source, the check is a tautology**, however elaborate the machinery in between. Same family as the query guard's missing floor and the `sortedIds()` normalization — a check that cannot distinguish the failure it exists to catch.
 
-Note how it was caught: **by re-running it, not by any check.** Nothing in the suite covers the correctness of an ad-hoc measurement, and nothing can. The only defence is treating a surprising measurement as suspect until the measurement itself has been checked — the tool, the format, and the assumption connecting them — before concluding anything about the system.
+Note how it was caught: **by re-running it, not by any check.**
+
+**Generalizing an unverified claim raises its apparent confidence without adding any support.** After the NBSP work I described numeric-over-the-wire as "a PostgREST property, not a column quirk" — upgrading a single reported observation into a general principle. I had never tested it. Measured later: PostgREST returns `numeric` as a JS **number** here, fractional values included, so the claim was false in both its specific and its general form. The generalization made it *sound* better established while the evidence behind it stayed at zero, and it was already propagating — into a code comment, a commit message, and the plan — before anyone checked. Promoting an observation to a rule is itself a claim, and it needs its own evidence rather than inheriting confidence from the instance that suggested it. Nothing in the suite covers the correctness of an ad-hoc measurement, and nothing can. The only defence is treating a surprising measurement as suspect until the measurement itself has been checked — the tool, the format, and the assumption connecting them — before concluding anything about the system.
 
 ### The NBSP episode (2026-08-11)
 

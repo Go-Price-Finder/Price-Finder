@@ -77,14 +77,29 @@ type PartnerMeta = {
 };
 
 /**
- * price/original_price/rating_stars are Postgres `numeric` columns —
- * PostgREST returns these as strings over the wire (avoiding
- * float-precision loss for arbitrary-precision decimals), not JS numbers.
- * Every numeric field from catalog_products must go through this before
- * being treated as a number; assuming the wire type already matches
- * RealProduct's `number` fields is exactly the kind of "field is
- * populated" shortcut the post-import verification runbook warns against
- * taking without checking the actual value/type.
+ * Defensive normalization for Postgres `numeric` columns
+ * (price, original_price, rating_stars). Passes numbers through untouched
+ * and coerces anything else, so callers get a `number` regardless of wire
+ * type.
+ *
+ * This is deliberately NOT justified by a claim about how PostgREST encodes
+ * numeric. An earlier version of this comment asserted it returns strings;
+ * that was never measured here and is contradicted by the one measurement
+ * that has been taken.
+ *
+ * What was actually measured (2026-08-16): reading catalog_products,
+ * current_prices and price_history through `@supabase/supabase-js` with the
+ * anon key against this project, `price`, `original_price` and
+ * `rating_stars` arrived as JS numbers — including fractional values
+ * (99.95 stayed 99.95, and `0 + price` added rather than concatenated).
+ * 647 of 954 catalog rows have fractional prices.
+ *
+ * That falsifies "numeric comes back as a string". It does NOT establish
+ * "numeric always comes back as a number" — one project, one client, one
+ * set of columns, one day. PostgREST version, column precision, and values
+ * outside float range are all untested here. So this function stays: it
+ * costs nothing when the value is already a number, and it does not depend
+ * on the untested half being true either way.
  */
 function toNumber(value: string | number | null): number | undefined {
   if (value === null) return undefined;

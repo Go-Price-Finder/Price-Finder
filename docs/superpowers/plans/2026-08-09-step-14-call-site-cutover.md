@@ -89,6 +89,16 @@ Each was discovered *by the bug it failed to catch*, not by review. The pattern 
 
 Common thread: **a check that compares a normalized or sampled view of the data cannot see differences the normalization or sampling removes.** Assert the thing you actually ship.
 
+4. **Guard with no floor.** `check-build-queries.mjs` asserted a maximum only. On an incremental build Next reuses cached output and never re-runs data fetching, so the log has zero markers — and 0 passes a max of 2. Found on Batch 1: the first run reported 0, which reads as *the cache is working perfectly*. Fixed by asserting `1 <= hits <= max`, and by requiring `rm -rf .next` in the protocol.
+
+### Two lessons from the fourth instance, both worth more than the fix
+
+**Identifying a blind spot does not tell you which direction to tighten.** This is the first of the four where the diagnosis was right and the proposed fix would still have failed. Having seen the guard pass vacuously, the instinct was to tighten the *ceiling* — but **0 passes a max of 1 just as happily as a max of 2**, so the failure mode would have survived a fix aimed squarely at it. The gap was not that the bound was too loose; it was that the bound was on the wrong end. Before tightening a check that failed to fail, work out which direction the bad value actually escaped through — the answer is not always the one you were already looking at.
+
+**A measurement can be defeated by the format of the thing measured, independently of whether the system under test is correct.** Counting products on the deployed landing page with `grep -c` returned **1**. The page was fine, the migration was fine, the count was wrong: `-c` counts matching *lines*, and minified HTML puts the whole document on one. The number was wrong in a way that looked plausible — a small integer where a small integer belonged — which is exactly the kind of wrong that gets believed and reported. `grep -o | sort -u | wc -l` gave the true 29.
+
+Note how it was caught: **by re-running it, not by any check.** Nothing in the suite covers the correctness of an ad-hoc measurement, and nothing can. The only defence is treating a surprising measurement as suspect until the measurement itself has been checked — the tool, the format, and the assumption connecting them — before concluding anything about the system.
+
 ### The NBSP episode (2026-08-11)
 
 29 king-koil descriptions held U+0020 where the source had U+00A0. Traced rather than guessed:

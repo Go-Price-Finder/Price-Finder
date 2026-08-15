@@ -311,6 +311,44 @@ export type Database = {
       // "View on partner site"; click_id is the AWIN clickref subid this
       // repo's syncAwinTransactions.ts matches transactions back against.
       // user_id NOT NULL — anonymous browsing taps aren't logged at all.
+      spin_results: {
+        // Matches supabase/migrations/0013_add_spin_results.sql. Verified
+        // against the live schema 2026-08-16 rather than transcribed from the
+        // migration file, since 0013 documents a schema that was applied
+        // directly via MCP rather than having produced it.
+        //
+        // `amount` is a Postgres `numeric` — PostgREST returns numeric as a
+        // STRING over the wire, not a JS number, same trap as
+        // catalog_products.price. Convert explicitly at every read; do not
+        // assume the wire type matches this declaration.
+        Row: {
+          id: string;
+          user_id: string;
+          amount: number;
+          spun_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          amount?: number;
+          spun_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          amount?: number;
+          spun_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "spin_results_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       affiliate_clicks: {
         Row: {
           id: string;
@@ -534,7 +572,20 @@ export type Database = {
         Relationships: [];
       };
     };
-    Functions: Record<string, never>;
+    Functions: {
+      // supabase/migrations/0013_add_spin_results.sql. SECURITY DEFINER, no
+      // arguments, returns a whole spin_results row. Confirmed against the
+      // live catalog 2026-08-16: pg_get_function_result -> "spin_results",
+      // pg_get_function_arguments -> "" (none).
+      //
+      // Not called by any app code yet. Typed now so the first caller gets a
+      // checked signature instead of `any` — and because CLAUDE.md's Database
+      // rules require types to track every migration.
+      spin_daily_reward: {
+        Args: Record<string, never>;
+        Returns: Database["public"]["Tables"]["spin_results"]["Row"];
+      };
+    };
     Enums: {
       retailer: Retailer;
     };

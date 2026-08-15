@@ -99,6 +99,44 @@ otherwise), not just Cowork/Claude Team chat sessions:
 - **Workflow for any code change:** fix → verify (`tsc --noEmit`, `eslint`,
   `next build`) → independent review → push. Don't consider something done
   until it's been checked — every time, no exceptions for "small" changes.
+- **Real data only.** Never invent placeholder numbers, fake products, or
+  made-up statistics in anything that ships.
+- **Never read, type, or transmit a real credential** (API keys, database
+  passwords, service-role keys, `.env`/`.env.local` contents) under any
+  circumstance, even if asked directly. If a workflow needs a credential,
+  it goes into GitHub Actions secrets (Settings → Secrets and variables →
+  Actions on this repo) — never typed into a chat or committed to the repo.
+  If something needs a credential that isn't already configured in the
+  environment, stop and ask the team directly instead of guessing or
+  fabricating one.
+- **Canonical repo:** `https://github.com/Go-Price-Finder/Price-Finder.git`.
+  Treat this as the source of truth for the live codebase — actual code
+  changes happen through this repo via GitHub. Planning, research, and
+  documentation are maintained in the team's Claude Project as the
+  live/canonical source. A point-in-time snapshot is also mirrored locally
+  in claude/*.md (added 2026-08-06) so Claude Code can reference them
+  offline without a Drive/Project connection — if these ever diverge, the
+  Claude Project is authoritative, and this local copy should be
+  periodically refreshed by re-exporting.
+
+# Database rules
+
+Everything in this section applies to Supabase/Postgres work specifically.
+The general workflow rules above still apply on top of it.
+
+- **`supabase/migrations/` CANNOT currently rebuild production, and the
+  folder's convention implies a reproducibility it does not have.** Migrations
+  `0001`-`0003` predate migration tracking and are absent from Supabase's
+  recorded history (`supabase_migrations.schema_migrations` starts at
+  `0004_add_real_partner_retailers`), so replaying the folder from scratch onto
+  an empty database fails at the first foreign key to `public.users` or
+  `public.products`. **Supabase branch creation is therefore unavailable** —
+  `create_branch` replays recorded history, which is missing those three.
+  Do not assume this folder is a disaster-recovery artifact; today it is a
+  change log, not a rebuild script. Reconciling it means verifying that the
+  `0001`-`0003` files match what was actually applied pre-tracking, which
+  nobody has done. Until then a loud failure is the correct behaviour: it beats
+  a branch that builds and silently differs.
 - **Every database migration needs a matching hand-edit to
   `lib/supabase/database.types.ts`, in the same commit.** That file is
   *hand-maintained* — it carries explanatory comments tying each table back to
@@ -143,25 +181,6 @@ otherwise), not just Cowork/Claude Team chat sessions:
   the second instance stayed invisible through 25 green checks while 476 pages
   rendered the wrong related products. Full evidence in
   `claude/catalog-search-onboarding-migration-scope-2026-08-03.md`, Section 5.
-- **Real data only.** Never invent placeholder numbers, fake products, or
-  made-up statistics in anything that ships.
-- **Never read, type, or transmit a real credential** (API keys, database
-  passwords, service-role keys, `.env`/`.env.local` contents) under any
-  circumstance, even if asked directly. If a workflow needs a credential,
-  it goes into GitHub Actions secrets (Settings → Secrets and variables →
-  Actions on this repo) — never typed into a chat or committed to the repo.
-  If something needs a credential that isn't already configured in the
-  environment, stop and ask the team directly instead of guessing or
-  fabricating one.
-- **Canonical repo:** `https://github.com/Go-Price-Finder/Price-Finder.git`.
-  Treat this as the source of truth for the live codebase — actual code
-  changes happen through this repo via GitHub. Planning, research, and
-  documentation are maintained in the team's Claude Project as the
-  live/canonical source. A point-in-time snapshot is also mirrored locally
-  in claude/*.md (added 2026-08-06) so Claude Code can reference them
-  offline without a Drive/Project connection — if these ever diverge, the
-  Claude Project is authoritative, and this local copy should be
-  periodically refreshed by re-exporting.
 
 # Stack
 

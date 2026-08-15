@@ -4,8 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner, slugifyRealCategory } from "@/lib/partners";
-import { KING_KOIL_CATEGORIES } from "@/lib/king-koil-data";
+import { getPartner, getPartnerCategories, slugifyRealCategory } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "King Koil — Go Price Finder",
@@ -13,9 +12,10 @@ export const metadata: Metadata = {
     "Shop King Koil's air mattresses and inflatable bedding — real products, real prices, straight from the maker.",
 };
 
-export default function KingKoilPage() {
-  const partner = getPartner("king-koil");
+export default async function KingKoilPage() {
+  const partner = await getPartner("king-koil");
   const products = partner?.products ?? [];
+  const categories = await getPartnerCategories("king-koil");
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function KingKoilPage() {
           <div className="flex flex-col gap-14">
             {(() => {
               let priorityIndex = 0;
-              return KING_KOIL_CATEGORIES.map((category) => {
+              return categories.map((category) => {
                 const items = products.filter((p) => p.category === category);
                 if (items.length === 0) return null;
 

@@ -4,8 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner, slugifyRealCategory } from "@/lib/partners";
-import { EVDANCE_CATEGORIES } from "@/lib/evdance-data";
+import { getPartner, getPartnerCategories, slugifyRealCategory } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "EVDANCE — Go Price Finder",
@@ -13,9 +12,10 @@ export const metadata: Metadata = {
     "Shop EVDANCE's EV charging cables, adapters, and portable chargers — real products, real prices, straight from the maker.",
 };
 
-export default function EvdancePage() {
-  const partner = getPartner("evdance");
+export default async function EvdancePage() {
+  const partner = await getPartner("evdance");
   const products = partner?.products ?? [];
+  const categories = await getPartnerCategories("evdance");
 
   return (
     <>
@@ -52,7 +52,7 @@ export default function EvdancePage() {
           <div className="flex flex-col gap-14">
             {(() => {
               let priorityIndex = 0;
-              return EVDANCE_CATEGORIES.map((category) => {
+              return categories.map((category) => {
                 const items = products.filter((p) => p.category === category);
                 if (items.length === 0) return null;
 

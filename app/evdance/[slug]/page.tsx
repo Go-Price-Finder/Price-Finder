@@ -10,12 +10,12 @@ import WishlistButton from "@/components/WishlistButton";
 import PriceHistoryChart from "@/components/PriceHistoryChart";
 import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
-import { EVDANCE_PRODUCTS } from "@/lib/evdance-data";
-import { getAllRealProducts, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getPartner, getRealProduct } from "@/lib/catalog";
 import { buildProductJsonLd } from "@/lib/structured-data";
 
-export function generateStaticParams() {
-  return EVDANCE_PRODUCTS.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const partner = await getPartner("evdance");
+  return (partner?.products ?? []).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getRealProduct("evdance", slug);
+  const product = await getRealProduct("evdance", slug);
   if (!product) return { title: "Not found — Go Price Finder" };
   return {
     title: `${product.name} — EVDANCE — Go Price Finder`,
@@ -38,13 +38,13 @@ export default async function EvdanceProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getRealProduct("evdance", slug);
+  const product = await getRealProduct("evdance", slug);
   if (!product) notFound();
 
   const hasDiscount =
     typeof product.originalPrice === "number" && product.originalPrice > product.price;
 
-  const related = getAllRealProducts()
+  const related = (await getAllRealProducts())
     .filter((p) => p.partnerId === "evdance" && p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
 

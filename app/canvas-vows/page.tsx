@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import Pagination from "@/components/Pagination";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner } from "@/lib/partners";
+import { getPartner } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
 
 export const metadata: Metadata = {
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
  * real, measured 1.5MB+ payload. Page 1 lives here; pages 2+ live at
  * /canvas-vows/page/[page].
  */
-export default function CanvasVowsPage() {
-  const partner = getPartner("canvas-vows");
+export default async function CanvasVowsPage() {
+  const partner = await getPartner("canvas-vows");
   const allProducts = partner?.products ?? [];
   const { items: products, totalPages } = paginate(allProducts, 1);
 

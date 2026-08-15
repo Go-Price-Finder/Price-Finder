@@ -206,7 +206,10 @@ Run **all** of these before starting the next batch. A batch is not done until e
 1. `npx tsc --noEmit` → exit 0
 2. `npm run lint` → exit 0
 3. `npm run build` → exit 0, and **`Generating static pages (1043/1043)`**
-4. `node scripts/check-build-queries.mjs <build.log>` → round trips ≤ 2
+4. **`rm -rf .next` first**, then `CATALOG_TRACE=1 npm run build > <log> 2>&1`, then `node scripts/check-build-queries.mjs <log> 2` → round trips ≤ 2.
+   The clean step is not optional: on an incremental build Next reuses cached
+   output and never re-runs data fetching, so the guard counts **zero** and
+   passes vacuously. Observed on Batch 1 — reported 0, real count 1.
 
 **Cross-module equivalence:**
 5. `npx tsx --env-file=.env.local scripts/verify-catalog-migration.ts` → 25/25 PASS

@@ -242,7 +242,10 @@ Run **all** of these before starting the next batch. A batch is not done until e
 
 **Production (after deploy reaches READY):**
 6. Confirm deployed SHA matches the pushed commit via `mcp__Vercel__get_deployment`.
-7. Fetch the migrated partner's landing page — product count matches the table above.
+7. Fetch the migrated partner's landing page — product count matches the table above **only for unpaginated partners**.
+
+   Measured at Batch 3: `PRODUCTS_PER_PAGE = 36` (`lib/pagination.ts`), so a paginated partner's landing page is page 1 and lists **36**, not its full catalog. canvas-vows: 36 + 36 + 36 + 36 + 36 + 24 = 204 across six pages, union verified as exactly 204. **Expect 36 on the landing page for canvas-vows, tsar-bomba and golden-maple** — treating that as a failure would be reading the wrong number, not finding a bug. brooklyn-delhi (29), evdance (72) and king-koil (29) are unpaginated and do list every product.
+   To check the full set for a paginated partner, take the union across the landing page and every `/page/N`.
 8. Fetch 3 product detail pages — name, price, description, and `<title>` render; compare against the same URLs captured pre-deploy.
 9. Fetch one image URL from a migrated page → HTTP 200, image content-type.
 10. For paginated partners: fetch `/page/2` **and** the last page — both render, no empty grid.

@@ -317,10 +317,15 @@ export type Database = {
         // migration file, since 0013 documents a schema that was applied
         // directly via MCP rather than having produced it.
         //
-        // `amount` is a Postgres `numeric` — PostgREST returns numeric as a
-        // STRING over the wire, not a JS number, same trap as
-        // catalog_products.price. Convert explicitly at every read; do not
-        // assume the wire type matches this declaration.
+        // `amount` is a Postgres `numeric`. An earlier version of this comment
+        // claimed PostgREST returns numeric as a STRING — that is wrong for
+        // this stack, measured 2026-08-16: catalog_products.price,
+        // current_prices.price, price_history.price and rating_stars all
+        // arrive as JS numbers, fractional values included (99.95 is 99.95,
+        // and `0 + price` adds rather than concatenates). `number` here is
+        // accurate. See lib/catalog.ts's toNumber(), whose defensive
+        // conversion is harmless but whose stated rationale is the same
+        // incorrect claim.
         Row: {
           id: string;
           user_id: string;

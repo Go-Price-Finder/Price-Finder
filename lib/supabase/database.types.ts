@@ -338,6 +338,132 @@ export type Database = {
           },
         ];
       };
+      partners: {
+        // Matches supabase/migrations/0008_add_catalog_products.sql —
+        // mirrors lib/partners.ts's Partner type minus `products` (that
+        // relationship is catalog_products.partner_id instead of a nested
+        // array). See lib/catalog.ts (Step 12 of the catalog/search/
+        // onboarding migration).
+        //
+        // `display_order` added by 0009_add_partner_display_order.sql — the
+        // curated partner ordering that lib/partners.ts's PARTNERS array
+        // encoded implicitly. NOT NULL with no default, so it is required on
+        // Insert (not optional): a new partner must be given an explicit
+        // slot rather than defaulting into one.
+        Row: {
+          id: string;
+          name: string;
+          tagline: string;
+          href: string;
+          logo_url: string | null;
+          display_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          tagline: string;
+          href: string;
+          logo_url?: string | null;
+          display_order: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          tagline?: string;
+          href?: string;
+          logo_url?: string | null;
+          display_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      catalog_products: {
+        // Matches supabase/migrations/0008_add_catalog_products.sql, plus
+        // `sort_order` from 0010_add_catalog_product_sort_order.sql — the
+        // curated per-partner product order the static lib/<partner>-data.ts
+        // arrays carried implicitly. NOT NULL with no default, so required on
+        // Insert and optional on Update, same shape as partners.display_order.
+        // `price`/`original_price`/`rating_stars` are Postgres `numeric`
+        // columns — PostgREST returns these as strings, not JS numbers, to
+        // avoid float-precision loss; every reader in lib/catalog.ts must
+        // explicitly Number()-convert them, never assume the wire type
+        // matches the RealProduct.price: number contract.
+        Row: {
+          id: string;
+          partner_id: string;
+          slug: string;
+          name: string;
+          description: string;
+          price: string;
+          original_price: string | null;
+          image: string;
+          images: string[];
+          category: string;
+          parent_category: string;
+          badge: string | null;
+          rating_stars: string | null;
+          rating_count: number | null;
+          deep_link: string;
+          variant_label: string | null;
+          sort_order: number;
+          search_vector: unknown;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          partner_id: string;
+          slug: string;
+          name: string;
+          description: string;
+          price: number;
+          original_price?: number | null;
+          image: string;
+          images?: string[];
+          category: string;
+          parent_category: string;
+          badge?: string | null;
+          rating_stars?: number | null;
+          rating_count?: number | null;
+          deep_link: string;
+          variant_label?: string | null;
+          sort_order: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          partner_id?: string;
+          slug?: string;
+          name?: string;
+          description?: string;
+          price?: number;
+          original_price?: number | null;
+          image?: string;
+          images?: string[];
+          category?: string;
+          parent_category?: string;
+          badge?: string | null;
+          rating_stars?: number | null;
+          rating_count?: number | null;
+          deep_link?: string;
+          variant_label?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "catalog_products_partner_id_fkey";
+            columns: ["partner_id"];
+            isOneToOne: false;
+            referencedRelation: "partners";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       user_spending_summary: {

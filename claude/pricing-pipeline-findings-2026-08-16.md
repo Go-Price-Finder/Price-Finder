@@ -468,6 +468,60 @@ the demonstrated candidate). Which one is right depends on the delta shape
 the full-catalog measurement returns — mostly-small-overstatements calls
 for a different answer than mostly-unobtainable-understatements.
 
+### Canvas Vows mojibake: the import succeeded, every check passed, the output was unreadable
+
+Found by the operator in the feed file (2026-08-16), confirmed live on
+production, then scoped in our data:
+
+- **203 of 204 canvas-vows descriptions carry double-encoded UTF-8** — 882
+  occurrences ("—" renders as "â€"", "'" as "â€™"). Names: zero. **All
+  five other partners: zero** — including tsar-bomba, whose feed comes off
+  the same `datafeeds.shareasale.com` bridge and is clean, so this is a
+  per-merchant-upload corruption, not a bridge-global one.
+- The DB counts match the operator's feed-side counts exactly (203 rows /
+  882 occurrences): **the import was byte-faithful; it imported garbage
+  correctly.** The 38/38 verify suite then confirmed the garbage was
+  preserved perfectly — it asserts fidelity, and fidelity held.
+- Render surface: three per product — meta description (first 155 chars),
+  page body, and JSON-LD `description` — across 203 live pages.
+- **The lesson, same family as the rest of this document, applied to
+  content rather than numbers:** the import succeeded, every check passed,
+  and the output was unreadable. Nothing anywhere in the pipeline was
+  measuring whether the text was *legible* — only whether it was
+  *faithful*.
+
+**Freshness constraint recorded:** the feed as our pipeline fetches it has
+NO last-updated column at all (the feed URL requests a fixed column list
+that omits it); the operator's fuller local export has the column, empty on
+all 204 rows. Either way: the merchant never populates it, so **AWIN's
+ingest timestamp is the only freshness signal that exists for Canvas Vows —
+and it is the signal that froze.** Any future freshness check for this
+partner has nothing else to key on.
+
+**Repair proposal — simulated read-only, NOT applied, not yet authorized:**
+
+- Recipe: encode as **WHATWG windows-1252 (with C1 passthrough), decode as
+  UTF-8**, applied per-string only where a strict round-trip proves it
+  (re-encoding the repaired text reproduces the stored bytes exactly);
+  anything that fails the round-trip is left untouched.
+- Two near-miss recipes, recorded because measurement eliminated them:
+  plain Latin-1 (the textbook fix) cannot encode € or ™, which the
+  corrupted text contains; strict CP1252 rejects the five bytes
+  (0x81/0x8D/0x8F/0x90/0x9D) the original corrupting decoder passed
+  through as C1 controls. Only the passthrough variant round-trips.
+- Measured result: **203 of 203 affected descriptions repair cleanly, 0
+  fail the round-trip, 1 description untouched (no artifacts).**
+- Class distinction (why this is proposable while the price edit was
+  declined): it is a **description-only** change — price is untouched, so
+  nothing is written into `price_history` and no Finding-C artifact is
+  manufactured.
+- **Constraint for whoever applies it:** `scripts/verify-catalog-migration.ts`
+  asserts catalog_products equals the static `lib/canvas-vows-data.ts`
+  byte-for-byte (38/38). Repairing the DB alone breaks the suite; the
+  repair must fix **both sides in the same change** — or explicitly retire
+  that assertion — and it must be applied via MCP or a runner script, never
+  by pasting (the NBSP rule; this is exactly a byte-fidelity change).
+
 ### Sequencing conflict: the coverage fix is also the contamination event
 
 Both horns, stated without resolution — this is an operator decision:
@@ -702,6 +756,15 @@ about — the table, the call graph — not from the narrative around it.
   ticket remains the real Canvas Vows fix.
 - Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
   products; we carry 204.
+- Canvas Vows mojibake: 203/204 descriptions double-encoded (882
+  occurrences), live on 203 pages × 3 surfaces (meta/body/JSON-LD); other
+  five partners clean. Repair simulated — windows-1252(C1-passthrough) →
+  UTF-8 round-trips 203/203 cleanly — NOT applied; requires fixing DB and
+  static file together or the 38/38 suite breaks. Description-only: writes
+  nothing to price_history.
+- Canvas Vows freshness: no last-updated data exists anywhere in the feed
+  pipeline for this partner — AWIN's ingest timestamp is the only signal,
+  and it's the frozen one.
 - MasterTag: production install declined for the general case (474 KB wire
   / 2.2 MB parsed vs a 103 kB budget; Convert-a-Link has nothing to convert
   here). Convert-a-Link-instead-of-pclick recorded as an option conditional

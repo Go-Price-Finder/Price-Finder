@@ -109,6 +109,14 @@ The tell was **structural, not empirical** — visible from the shape of the set
 
 Note how it was caught: **by re-running it, not by any check.**
 
+**Identifiers are the highest-risk output to trust unverified, and I trusted nine of them.** `claude/partner-facing-docs-2026-08-05.md` listed five Google Drive deliverables with URLs. Checked 2026-08-16: **every one of the nine IDs resolved to nothing** — two returned "Requested entity was not found", the rest matched no file by title, and four of the five documents existed under completely different IDs. A prior session had emitted plausible-looking Drive IDs, and they sat unexamined for eleven days.
+
+The compounding part is mine. I recommended committing that file to the repo **because** of those URLs — I described it as "the only record of five real Drive deliverables" and treated the links as its value — **without opening a single one**. Had the user not asked about repo visibility, nine fabricated identifiers would have been committed to a public repo as the newly-authoritative source, replacing a Project copy that at least nobody trusted.
+
+Identifiers are uniquely dangerous to accept unchecked because **they look retrieved rather than composed**. A wrong sentence reads as an opinion you might argue with; a wrong ID reads as a fact someone looked up. And the failure is silent — a well-formed URL, a plausible SHA, a table name that follows convention: nothing about the *shape* distinguishes real from invented. Prose gets scrutiny that identifiers do not, precisely because identifiers look like they came from somewhere.
+
+The rule: **resolve an identifier before citing it, and especially before citing it as the reason for a decision.** Opening one URL would have cost seconds and changed the recommendation entirely.
+
 **Generalizing an unverified claim raises its apparent confidence without adding any support.** After the NBSP work I described numeric-over-the-wire as "a PostgREST property, not a column quirk" — upgrading a single reported observation into a general principle. I had never tested it. Measured later: PostgREST returns `numeric` as a JS **number** here, fractional values included, so the claim was false in both its specific and its general form. The generalization made it *sound* better established while the evidence behind it stayed at zero, and it was already propagating — into a code comment, a commit message, and the plan — before anyone checked. Promoting an observation to a rule is itself a claim, and it needs its own evidence rather than inheriting confidence from the instance that suggested it. Nothing in the suite covers the correctness of an ad-hoc measurement, and nothing can. The only defence is treating a surprising measurement as suspect until the measurement itself has been checked — the tool, the format, and the assumption connecting them — before concluding anything about the system.
 
 ### The NBSP episode (2026-08-11)

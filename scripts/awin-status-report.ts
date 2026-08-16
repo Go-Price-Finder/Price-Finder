@@ -9,10 +9,16 @@
  * Run manually (not scheduled) with:
  *   npx tsx scripts/awin-status-report.ts
  *
- * Requires in .env (gitignored): AWIN_API_TOKEN, AWIN_PUBLISHER_ID,
- * AWIN_FEED_LIST_URL. tsx loads .env itself is NOT automatic — run with
- * `node --env-file=.env` in front, same as before:
- *   node --env-file=.env --import tsx scripts/awin-status-report.ts
+ * Requires in .env.local (gitignored): AWIN_API_TOKEN, AWIN_PUBLISHER_ID,
+ * AWIN_FEED_LIST_URL. tsx does NOT load env files automatically — run with
+ * `node --env-file=.env.local` in front:
+ *   node --env-file=.env.local --import tsx scripts/awin-status-report.ts
+ *
+ * (.env.local, not .env: the two coexisted with different AWIN_API_TOKEN
+ * values until 2026-08-16, and the stale copy in .env produced a 401 that
+ * read as a broken Publisher API. .env is retired; .env.local — the file
+ * Next.js prefers and every other script already uses — is the single
+ * source of truth. See claude/pricing-pipeline-findings-2026-08-16.md §4.)
  *
  * Endpoint reference (help.awin.com/apidocs, verified live 2026-07-28):
  *   GET https://api.awin.com/publishers/{publisherId}/programmes
@@ -43,8 +49,8 @@ const FEED_LIST_URL = process.env.AWIN_FEED_LIST_URL;
 
 if (!TOKEN || !PUBLISHER_ID) {
   console.error(
-    "Missing AWIN_API_TOKEN or AWIN_PUBLISHER_ID — set them in .env and run with " +
-      "`node --env-file=.env --import tsx scripts/awin-status-report.ts`."
+    "Missing AWIN_API_TOKEN or AWIN_PUBLISHER_ID — set them in .env.local and run with " +
+      "`node --env-file=.env.local --import tsx scripts/awin-status-report.ts`."
   );
   process.exit(1);
 }

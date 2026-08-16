@@ -6,7 +6,7 @@
  * Read-only — does not touch lib/partners.ts or any live data, per "Do
  * NOT import live yet."
  *
- * Run with: node --env-file=.env --import tsx scripts/test-new-partner-feeds.ts
+ * Run with: node --env-file=.env.local --import tsx scripts/test-new-partner-feeds.ts
  */
 import { gunzipSync } from "node:zlib";
 import Papa from "papaparse";
@@ -14,7 +14,7 @@ import { mapProductToCategory, type ProductInput } from "../lib/category-mapper.
 
 const FEED_LIST_URL = process.env.AWIN_FEED_LIST_URL;
 if (!FEED_LIST_URL) {
-  console.error("Missing AWIN_FEED_LIST_URL — run with node --env-file=.env --import tsx ...");
+  console.error("Missing AWIN_FEED_LIST_URL — run with node --env-file=.env.local --import tsx ...");
   process.exit(1);
 }
 

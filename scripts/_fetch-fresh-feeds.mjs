@@ -4,7 +4,7 @@
  * (all active English tsar-bomba feeds, matching the original 2026-07-29
  * import's Default+US merge) and saves the raw CSV text to scripts/_*.csv.
  *
- * Run this yourself: node --env-file=.env scripts/_fetch-fresh-feeds.mjs
+ * Run this yourself: node --env-file=.env.local scripts/_fetch-fresh-feeds.mjs
  */
 import { gunzipSync } from "node:zlib";
 import { writeFileSync } from "node:fs";
@@ -12,7 +12,7 @@ import Papa from "papaparse";
 
 const FEED_LIST_URL = process.env.AWIN_FEED_LIST_URL;
 if (!FEED_LIST_URL) {
-  console.error("Missing AWIN_FEED_LIST_URL — run with: node --env-file=.env scripts/_fetch-fresh-feeds.mjs");
+  console.error("Missing AWIN_FEED_LIST_URL — run with: node --env-file=.env.local scripts/_fetch-fresh-feeds.mjs");
   process.exit(1);
 }
 

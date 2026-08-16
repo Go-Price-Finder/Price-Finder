@@ -530,21 +530,51 @@ feeds download fine, which is exactly what makes the failure silent.
 
 ---
 
-## 4. Separate open item: AWIN Publisher API returns 401
+## 4. RESOLVED: the Publisher API 401 was a stale credential in the wrong env file — not a broken API
 
-During the read-only account audit (2026-08-16), every Publisher API call —
-joined/pending/suspended/rejected programmes, payment status — returned
-**HTTP 401** with the `AWIN_API_TOKEN` in the local `.env`. The datafeed
-list, which authenticates via the separate `AWIN_FEED_LIST_URL` credential,
-worked (951 feeds).
+During the read-only account audit (2026-08-16), every Publisher API call
+returned **HTTP 401** while the datafeed list (separate `AWIN_FEED_LIST_URL`
+credential) worked. Diagnosed same day, read-only:
 
-- This does **not** explain anything above: `refreshPrices.ts` explicitly
-  does not use `AWIN_API_TOKEN` (only the feed-list URL).
-- What it does break: advertiser-name verification via
-  `scripts/awin-status-report.ts` — the workflow that confirmed all six
-  partner names in early August is currently non-functional.
-- Needs its own look: token expired, revoked, or rotated. Credential
-  handling is operator-only per CLAUDE.md.
+- **The API, the header shape, and the account were never the problem.**
+  The script's `Authorization: Bearer <token>` matches AWIN's documented
+  OAuth2 auth exactly (confirmed against help.awin.com/apidocs and
+  empirically: a bare non-Bearer header draws a *different* 401). The
+  publisher id (3002879) is correct and confirmed as "Price Finder",
+  role userOwner.
+- **Root cause:** `.env` and `.env.local` both define `AWIN_API_TOKEN`,
+  **with different values.** The AWIN scripts run with `--env-file=.env`
+  (their own documented invocation); the operator verified the token in
+  `.env.local` against the AWIN UI. `.env`'s token → 401 `invalid_token`;
+  `.env.local`'s token → 200. The comparison was valid for the file it was
+  run on and irrelevant to the file that was failing.
+- **Sixth namespace instance of the day, and this one the operator
+  authored** (recorded at their instruction): the verify-against-the-UI
+  step named `.env.local` — named a file, and named the wrong one. Same
+  shape as the other five; the namespace was a *file* this time.
+- Resolution is operator-only: token being **rotated** (not copied across),
+  because the stale value leaked (below) and "already invalid" rests on one
+  endpoint's rejection — an inference. **Rotation blast radius includes the
+  Vercel project env:** `lib/cashback/syncAwinTransactions.ts` (sync-cashback
+  cron, daily 14:00 UTC) reads `AWIN_API_TOKEN` from Vercel env and swallows
+  a 401 into `result.errors` inside an HTTP 200 — the same silent-success
+  shape as refresh-prices — so a rotation that misses Vercel fails silently
+  every day.
+
+### Operational note: auth-endpoint error bodies can contain the credential
+
+AWIN's OAuth layer **echoes the presented token back in the 401
+`error_description`**. During diagnosis, raw 401 bodies were printed
+verbatim before this was known, which put the (stale) token value into a
+stored session transcript — the trigger for rotating rather than copying.
+The current token was never exposed; the probe that tested it redacted the
+response against the token value before printing anything.
+
+The rule, broader than AWIN: **never print a raw response body from an
+authentication endpoint.** Error responses routinely echo the presented
+credential. Redact token-shaped content — or split-and-mask against the
+known credential — before any response body reaches a log, a transcript, or
+a terminal.
 
 ---
 
@@ -616,7 +646,11 @@ about — the table, the call graph — not from the narrative around it.
   the coverage fix and a price-history contamination event (87877a2
   precedent: 5 fabricated king-koil movements, verified). Operator decides
   sequencing; not scheduled.
-- AWIN Publisher API: 401, separate open item.
+- AWIN Publisher API 401: RESOLVED — stale credential in `.env` while the
+  verified one lived in `.env.local`; API/header/account all correct. Token
+  rotation in progress (operator), must include the Vercel env var or
+  sync-cashback 401s silently. Env-file consolidation proposed, not
+  implemented.
 - `price_history`: nothing deleted; nothing may be deleted. Cutover-date
   filtering is the sanctioned mechanism once the pipeline works.
 - INCIDENT (2026-08-16): PriceHistoryChart rendered this table as market

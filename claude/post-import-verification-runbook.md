@@ -492,3 +492,67 @@ coverage now that its catalog is refreshed — its 26/272 in the final
 run above may still be undercounting now that IDs have changed again;
 worth a fresh check next time refresh-prices is run, but not
 investigated further tonight since nothing is unsafe in the meantime.
+
+---
+
+## OPEN — live-pricing data quality (measured 2026-08-16)
+
+Two separate open items. Neither is caused by the Step 14 catalog migration and
+neither is fixed by it — recording them here, in the runbook, rather than in the
+migration plan, because the plan gets retired when the migration finishes and
+these outlive it.
+
+Nothing on the site currently renders live prices at all (`getEffectivePrice`
+has zero callers in `app/` or `components/`), so neither item is user-visible
+today. Both become user-visible the moment live prices are wired into a page.
+
+### 1. `current_prices` coverage is partial, and one partner is at zero
+
+Measured 2026-08-16 — `catalog_products` joined to `current_prices`:
+
+| Partner | Products | With a price row | Missing | Covered |
+|---|---|---|---|---|
+| brooklyn-delhi | 29 | **0** | 29 | **0.0%** |
+| tsar-bomba | 272 | **26** | 246 | **9.6%** |
+| evdance | 72 | 64 | 8 | 88.9% |
+| golden-maple | 348 | 346 | 2 | 99.4% |
+| canvas-vows | 204 | 204 | 0 | 100% |
+| king-koil | 29 | 29 | 0 | 100% |
+
+brooklyn-delhi at 0 is expected and already documented: AWIN has no datafeed for
+that advertiser at all, an account-side gap rather than a code problem.
+tsar-bomba's 9.6% is the number the follow-up above asked for, and it has not
+moved since 2026-08-02.
+
+**Do not confuse this with the Step 14 suffix check.** Comparing
+`getProductTitleSuffix` across all 620 tsar-bomba and golden-maple products
+returned zero diffs, which cleared the *migration* gate — but that check is
+blind to this one. The suffix reads `catalog_products.price`, never
+`current_prices`, so a product with no price row renders identically on both
+paths and **an entirely empty `current_prices` would pass that comparison
+perfectly.** Two different questions that happened to share a sentence.
+
+### 2. `refresh-prices` has written nothing for ~13 days
+
+| Table | Rows | Newest |
+|---|---|---|
+| `current_prices` | 669 | **2026-08-03 03:14 UTC** |
+| `price_history` | 13,339 | 2026-08-15 12:01 UTC |
+
+Both crons are scheduled daily in `vercel.json` — `refresh-prices` at 11:00 UTC,
+`snapshot-prices` at 12:00. `snapshot-prices` is demonstrably running: 14
+distinct `recorded_date` values, newest yesterday. `refresh-prices` is not
+writing: its target table has not changed in 13 days.
+
+That pairing is the useful part — it rules out "cron infrastructure is broken",
+because the 12:00 job runs fine. Something specific to `refresh-prices` is
+failing, erroring, or finding nothing to write. `refreshPrices.ts` upserts with
+`updated_at = now()`, so even an unchanged price would bump the timestamp; no
+bump means no successful upsert at all.
+
+Consequence worth naming: `snapshot-prices` keeps appending daily rows to
+`price_history`, so the price chart is accumulating 13 days of **repeated stale
+values** presented as a daily series.
+
+Next step is to read the cron's actual invocation logs (Vercel runtime logs for
+`/api/cron/refresh-prices`) rather than infer further from table contents.

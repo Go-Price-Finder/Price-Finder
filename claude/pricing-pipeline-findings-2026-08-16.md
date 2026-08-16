@@ -35,7 +35,7 @@ runtime logs actually show: 7 hits on `/api/cron/refresh-prices` in the last
 errors project-wide. The 200 rules out the two loud failure modes
 (`AWIN_FEED_LIST_URL` unset → immediate throw; feed-list fetch non-OK →
 throw). The cron may be perfectly healthy and merely invisible — its output
-read by nothing (Section 3).
+read by nothing (Section 2).
 
 What remains unknown: whether the job's 200 bodies report real matches or
 per-partner errors — everything past the feed-list fetch is swallowed into
@@ -148,7 +148,7 @@ call sites, and only a call-site trace can support it.**
 ## 3. AWIN feed staleness: 476 products' prices cannot move, cron or no cron
 
 Found when the operator read the feed-audit table against its own summary
-sentence (see Section 5). Established with a read-only probe of AWIN's
+sentence (see Section 6). Established with a read-only probe of AWIN's
 feed-list CSV (2026-08-16):
 
 | Partner | Feed used by refreshPrices | Last Imported | Last Checked |
@@ -354,7 +354,7 @@ firing affiliate clicks on our own account — the operator can click a
 handful manually to settle it. Until then, treat tsar-bomba's deep links as
 attribution-suspect rather than product-dead. Note each classifier tier's
 failure in this measurement was a *naming-format* failure (pipes vs
-en-dashes vs sentence-names) — the same lesson as Section 5, applied to
+en-dashes vs sentence-names) — the same lesson as Section 6, applied to
 join keys.
 
 **Canvas Vows has the same exposure and it is unmeasurable feed-side** —
@@ -578,7 +578,67 @@ a terminal.
 
 ---
 
-## 5. Process finding: prose written from the conclusion, not from the table
+## 5. AWIN Publisher MasterTag: evaluated without installing, and declined for the general case
+
+Evaluated 2026-08-16, entirely read-only — nothing was added to any layout,
+nothing deployed, nothing activated on AWIN's side.
+
+**The tag doesn't exist yet.** `https://www.dwin2.com/pub.3002879.min.js`
+returns 404 (five URL variants tested). A control — another publisher's
+live tag, `pub.45628.min.js` — returns 200 while a second arbitrary id 404s
+like ours, so the URL pattern is right and the file is **provisioned
+per-publisher when MasterTag is activated in the dashboard**. Activation is
+the operator's step and is deliberately deferred (see below).
+
+**What the control tag reveals** (caveat: another publisher's plugin set;
+ours may provision differently):
+
+- **2,199,188 bytes parsed / ~474 KB brotli over the wire.** This site's
+  entire First Load JS budget is 103 kB compressed.
+- **It embeds a 20,424-domain merchant match table** — 16.5% of the file is
+  domain string literals. That is Convert-a-Link's advertiser list, shipped
+  to every visitor.
+- Runtime markers: 1 MutationObserver, click/mousedown/touchstart
+  listeners, 4 `sendBeacon` call sites, `zenaps.com` endpoints (Bounceless
+  Tracking), loads at least one further script — and **zero `.href =`
+  assignments**, consistent with click-time interception rather than DOM
+  rewriting (tentative until measured live).
+
+**Decision (operator, 2026-08-16): production install is a NO on the
+general case.** 474 KB over the wire against a 103 kB total budget, on a
+site with two prior incidents of exactly this shape (the 2026-08-01 LCP
+regression, the search-freeze TBT bug), for a plugin whose core function
+has nothing to do on our pages — product links are already server-rendered
+`awin1.com` pclick URLs, so Convert-a-Link has nothing to convert.
+
+**Architectural option on record — an option with a condition, NOT a
+recommendation:** the only way Convert-a-Link earns its weight here is if
+we deliberately replace pclick deep links with plain merchant URLs and let
+the tag convert at click time. That would make the stale-`p=`-id problem
+(Section 3's linkrot) structurally disappear — no ids in our HTML at all.
+It is 474 KB on every page view to avoid a periodic re-import — a bad
+trade **unless AWIN confirms historical ids are dead** (ticket question 4).
+Revisit only when that answer arrives.
+
+**Narrow measurement plan, gated on the operator saying so — not scheduled:**
+
+- Hypothesis: the tag is composed per-publisher from enabled plugins, and
+  the 20,424-domain table ships only with Convert-a-Link. A tag provisioned
+  with **Bounceless Tracking alone** should be a small fraction of 474 KB.
+- Refutation condition, stated in advance: if it comes back near 474 KB
+  regardless, the tag is monolithic and the whole idea is dead for this
+  site.
+- Protocol when authorized: operator activates Bounceless Tracking only
+  (not Convert-a-Link, not adMission) → the file provisions → preview-only
+  deploy behind an environment gate, never production → measure First Load
+  JS, LCP, TBT, long-tasks profile on a product page and the homepage
+  against production baseline, real browser and real interaction (the
+  2026-08-01 methodology) → characterize network behavior and the
+  crawler-vs-JS-user view of product links.
+- Deliberately not today: no activation sits on the account while the
+  ticket is asking AWIN attribution questions.
+
+## 6. Process finding: prose written from the conclusion, not from the table
 
 Four times in one day, a summary sentence and its own supporting data
 disagreed, and the data was right each time:
@@ -642,6 +702,12 @@ about — the table, the call graph — not from the narrative around it.
   ticket remains the real Canvas Vows fix.
 - Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
   products; we carry 204.
+- MasterTag: production install declined for the general case (474 KB wire
+  / 2.2 MB parsed vs a 103 kB budget; Convert-a-Link has nothing to convert
+  here). Convert-a-Link-instead-of-pclick recorded as an option conditional
+  on AWIN confirming historical ids are dead. Narrow Bounceless-only
+  measurement designed with its refutation condition stated; gated on the
+  operator, deliberately not while the attribution ticket is open.
 - Re-import sequencing: unresolved conflict on record — re-import is both
   the coverage fix and a price-history contamination event (87877a2
   precedent: 5 fabricated king-koil movements, verified). Operator decides

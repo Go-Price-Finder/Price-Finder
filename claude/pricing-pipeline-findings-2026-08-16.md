@@ -411,6 +411,46 @@ strictly-unobtainable tail of 10 pages at two price points. This is the
 "mostly small deviations" shape, not the "mostly unobtainable
 understatements" shape.
 
+A sampling-design failure worth keeping with the rest of the collection:
+**sampling across price bands is not sampling across products.** The
+10-product sample was deliberately spread across the $45–$399 band for
+representativeness, and that construction is exactly what skewed it — the
+merchant's repricing happened at specific tiers, so band-spread picks
+overrepresented repriced tiers by design and extrapolated to ~160 wrong
+pages where the census found 93. A stratification chosen to be fair along
+one axis silently became a bias along the axis that mattered.
+
+### Remedy decision (operator, 2026-08-16): no hotfix, no catalog edit, no suppression
+
+Decided with reasons, so the next person proposing a quick fix meets the
+reasoning and not just the verdict:
+
+1. **The shape is ordinary staleness.** 101 exact, 93 off by a median $6 in
+   both directions, and a tail of 10 explained by two merchant tier
+   repricings ($4 and $9). Every comparison site carries drift between
+   refreshes.
+2. **What's actually dishonest is not the drift — it's that the page
+   implies a currency it doesn't have.** NO price on this site, for ANY
+   partner, says when it was last verified. Canvas Vows just makes an
+   invisible problem visible.
+3. **The real fix is an as-of date on displayed prices, site-wide.**
+   Truthful at $6 of drift and truthful at three months of it, and it
+   converts a hidden error into one the customer can evaluate. Same move as
+   the chart suppression: make the label say what the data supports.
+   Scoped as a product change, not a hotfix — placement and wording are
+   operator decisions, and it interacts with the provenance work. **Not
+   built yet; do not build without the operator's placement/wording call.**
+4. **Explicitly NOT hand-fixing the 10 unobtainable pages.** Editing
+   catalog prices writes a fabricated price movement into `price_history` —
+   the exact mechanism behind the five king-koil artifacts (the `87877a2`
+   precedent), deliberately triggered, in a table that still has no
+   provenance. The remedy would manufacture the artifact the chart was
+   suppressed over. Recorded because this is the fix someone will propose
+   again.
+5. **The real fix for Canvas Vows specifically remains the AWIN ticket.**
+   The as-of label makes the staleness honest; only a working feed makes it
+   small.
+
 The generalization, recorded in the operator's words as the correction of
 their own repeated mistake: **the mechanism never predicts the consequence;
 the merchant's repricing behavior does.** False for tsar-bomba,
@@ -564,8 +604,12 @@ about — the table, the call graph — not from the narrative around it.
 - Merchant ground truth split: tsar-bomba 3/3 prices match live (blindness,
   not error); canvas-vows census: 101/194 exact, **93 pages match no
   current variant** (median |delta| $6, 51 understate / 42 overstate, 10
-  strictly unobtainable). Live present error; remedy is a product decision
-  (suppress / as-of label / non-feed source), not chosen here.
+  strictly unobtainable). Remedy DECIDED (operator, 2026-08-16): no hotfix,
+  no catalog edit, no suppression — site-wide as-of date on displayed
+  prices, scoped as a product change, not built pending placement/wording;
+  the 10 unobtainable pages deliberately NOT hand-fixed (a catalog price
+  edit manufactures the Finding-C artifact); working feed via the AWIN
+  ticket remains the real Canvas Vows fix.
 - Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
   products; we carry 204.
 - Re-import sequencing: unresolved conflict on record — re-import is both

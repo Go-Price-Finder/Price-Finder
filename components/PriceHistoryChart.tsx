@@ -44,7 +44,44 @@ type PriceHistoryRow = {
 const MIN_POINTS_FOR_CHART = 3;
 const LOOKBACK_DAYS = 90;
 
-export default function PriceHistoryChart({
+/**
+ * INCIDENT SUPPRESSION — 2026-08-16. Do not flip this back without reading
+ * claude/incident-2026-08-16-price-history-chart.md.
+ *
+ * The header comment below says this chart shows "real rows, not fabricated
+ * data." That is true of its INPUTS and false of its OUTPUT: price_history
+ * has never held an observed merchant price — the snapshot cron records our
+ * own static display price daily (the current_prices merge in
+ * lib/pricing/getEffectivePrice.ts has never hit; see
+ * claude/pricing-pipeline-findings-2026-08-16.md). Every chart therefore
+ * asserted a price history nobody measured, and five king-koil products
+ * rendered movement that was actually the 87877a2 catalog rewrite (worst:
+ * pump-7, "Lowest $79.95" against a current $179.95 — a 55.6% swing no
+ * customer could have transacted at). The 949 flat charts asserted 13 days
+ * of price stability we never observed, which is the same fabrication with
+ * a calmer face.
+ *
+ * RESTORE CONDITION: price_history rows carry provenance distinguishing
+ * observed merchant prices from display-price snapshots and catalog-rewrite
+ * artifacts, and the chart reads only observed rows. The merge fix alone is
+ * NOT sufficient — it changes what future rows mean, not what the table
+ * already contains.
+ */
+const PRICE_HISTORY_CHART_SUPPRESSED = true;
+
+export default function PriceHistoryChart(props: {
+  productId: string;
+  retailer: WishlistRetailerId;
+  currentPrice: number;
+}) {
+  // Gate lives in this hook-free wrapper so the suppressed path mounts
+  // nothing and fetches nothing (an early return inside the inner component
+  // would violate rules-of-hooks).
+  if (PRICE_HISTORY_CHART_SUPPRESSED) return null;
+  return <PriceHistoryChartInner {...props} />;
+}
+
+function PriceHistoryChartInner({
   productId,
   retailer,
   currentPrice,

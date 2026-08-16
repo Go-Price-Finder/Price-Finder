@@ -475,3 +475,7 @@ about — the table, the call graph — not from the narrative around it.
 - AWIN Publisher API: 401, separate open item.
 - `price_history`: nothing deleted; nothing may be deleted. Cutover-date
   filtering is the sanctioned mechanism once the pipeline works.
+- INCIDENT (2026-08-16): PriceHistoryChart rendered this table as market
+  history on all 954 product pages for 13 days; suppressed in `cfc8c03`,
+  verified gone in production. Full record and restore condition:
+  `claude/incident-2026-08-16-price-history-chart.md`.

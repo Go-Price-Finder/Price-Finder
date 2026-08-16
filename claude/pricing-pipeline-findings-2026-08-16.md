@@ -271,13 +271,96 @@ alternative feed under its advertiser ID — that one needs AWIN-side action
   two sets are **completely disjoint (zero overlap)**. A re-pin trades 26
   frozen-price products for 21 fresh-price products; the 26 keep their
   existing `current_prices` rows but stop being refreshable.
-- **The real signal is catalog drift:** 213 of 113495's 234 rows carry
-  valid ids that are simply not in the static catalog — the advertiser's
-  product line has moved on since the import. Per `refreshPrices.ts`'s own
-  `idNotInCatalogExamples` doc, that means "re-run
-  scripts/import-partner.mjs for this partner," not "pin and hope." A
-  re-pin alone leaves tsar-bomba's live-price coverage at 21/272; a
-  re-import is what actually recovers it.
+- **The zero overlap is expected by construction, not a mystery** —
+  correction to how this section first read. Commit `87877a2` (2026-08-02)
+  re-merged the tsar-bomba catalog as 246 US-feed (113495) + 26 Default-only
+  (105368) products, joined on `merchant_product_id` precisely because — per
+  that commit's own message — **AWIN assigns a distinct `aw_product_id` per
+  feed for the same physical product.** The two feeds' catalog slices are
+  disjoint by design.
+- **The dominant effect is id churn, not catalog drift** — a second
+  correction: an earlier draft read "213 of 234 rows not in catalog" as the
+  product line moving on. Measured properly (2026-08-16, tiered: exact id →
+  model token in feeds → model token on merchant → series phrase), the line
+  is alive; the *ids* died. Only 47 of 272 catalog products' deep-link ids
+  exist in any of the ten current feeds; 181 more are present at model level
+  in the feeds under new ids. Section "Deep-link linkrot" below quantifies
+  it. A re-pin alone still caps live-price coverage at 21/272; only a
+  re-import re-keys the catalog to current ids — but see the sequencing
+  conflict below before scheduling one.
+
+### Deep-link linkrot: the tsar-bomba id linkage is mostly dead — the products aren't
+
+Prompted by the disjoint-coverage finding: if 225 of 272 catalog ids appear
+in neither English feed, are those products discontinued — live pages and
+affiliate links for things nobody can buy?
+
+Measured 2026-08-16 against the union of ALL ten tsar-bomba feeds
+(advertiser 109230) and the merchant's live storefront
+(tsarbomba.com `products.json`, 146 live products — checked directly, NOT
+via awin1.com links, which would register self-clicks). Tiered
+classification of the 272 catalog products, each tier only counting what the
+previous tiers missed:
+
+| Tier | Evidence | Products |
+|---|---|---|
+| 1 | exact deep-link id in a current feed | **47** |
+| 2 | model token (TB####) in a current feed under a different id | 181 |
+| 3 | model token live on merchant, absent from all feeds | 14 |
+| 4 | series phrase live on merchant or in feeds | 20 |
+| 5 | no evidence at any tier | 10 |
+
+The tier-5 residual was then checked by hand: all ten are stainless-steel
+"Elemental Series" skeleton watches, and that line is present in both the GB
+feed (60 rows) and the merchant's live catalog (61 "Elemental" titles) —
+they fell through because their names use en-dashes where every classifier
+tier keyed on pipes or model tokens. **At series level, confirmed
+discontinuations: approximately zero.**
+
+So the exposure inverts: the catastrophic reading (hundreds of dead
+products) is wrong, but **225 of 272 products' affiliate deep links carry
+`p=` ids that exist in no current feed.** Whether those pclick links still
+redirect correctly at AWIN is untested and untestable from here without
+firing affiliate clicks on our own account — the operator can click a
+handful manually to settle it. Until then, treat tsar-bomba's deep links as
+attribution-suspect rather than product-dead. Note each classifier tier's
+failure in this measurement was a *naming-format* failure (pipes vs
+en-dashes vs sentence-names) — the same lesson as Section 5, applied to
+join keys.
+
+**Canvas Vows has the same exposure and it is unmeasurable feed-side** —
+its only feed is the frozen one, so "id present in a current feed" cannot
+be evaluated. Recorded as unmeasurable, not as absent. (A partial
+merchant-side check like tsar-bomba's would work if the Canvas Vows
+storefront exposes a public product list; not attempted — out of scope
+today.)
+
+### Sequencing conflict: the coverage fix is also the contamination event
+
+Both horns, stated without resolution — this is an operator decision:
+
+- **Horn A:** a tsar-bomba re-import is the correct fix for everything
+  above. Only 47/272 exact-SKU id linkages survive; a re-pin without
+  re-import caps live-price coverage at 21/272; the catalog's deep-link ids
+  are mostly dead in current feeds. `refreshPrices.ts`'s own
+  `idNotInCatalogExamples` doc says a nonzero count means re-import.
+- **Horn B:** a re-import is exactly the action that manufactures
+  price-history artifacts. Verified against the live table: commit
+  `87877a2` (2026-08-02, "Refresh King Koil and Tsar Bomba catalogs")
+  changed king-koil catalog prices, and the 2026-08-03 snapshot recorded
+  **5 king-koil price changes** — catalog-rewrite artifacts indistinguishable
+  in `price_history` from observed market movements, because the table has
+  no provenance column. A 272-product tsar-bomba re-import does the same
+  thing at roughly ten times the scale, into the same provenance-less
+  table, on whatever day it runs.
+
+The cutover-date rule (Section 2) mitigates for *future* consumers but does
+not mark which historical rows are rewrite artifacts. Do not schedule the
+re-import until the operator has chosen how to sequence it against
+`price_history` integrity — options exist (provenance column first;
+recording the re-import date alongside the cutover date; accepting the
+artifacts and documenting the date), but this document deliberately does
+not pick one.
 
 ### Standing risk: every numeric-ID feed still in use is one event from this
 
@@ -381,6 +464,14 @@ about — the table, the call graph — not from the narrative around it.
   generation the freeze hit; evdance and golden-maple are on the untouched
   F-scheme. Standing preference: move to F-scheme equivalents where AWIN
   offers them.
+- Tsar-bomba linkrot: 225/272 deep-link ids exist in no current feed, but
+  the products are alive (series-level discontinuations ≈ 0). Deep links
+  attribution-suspect; pclick redirect behavior untestable without firing
+  self-clicks. Canvas Vows: same exposure, unmeasurable feed-side.
+- Re-import sequencing: unresolved conflict on record — re-import is both
+  the coverage fix and a price-history contamination event (87877a2
+  precedent: 5 fabricated king-koil movements, verified). Operator decides
+  sequencing; not scheduled.
 - AWIN Publisher API: 401, separate open item.
 - `price_history`: nothing deleted; nothing may be deleted. Cutover-date
   filtering is the sanctioned mechanism once the pipeline works.

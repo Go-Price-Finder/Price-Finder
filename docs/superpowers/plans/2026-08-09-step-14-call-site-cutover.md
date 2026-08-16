@@ -1027,6 +1027,36 @@ After READY, fetch **both** `/canvas-vows/page/2` and `/canvas-vows/page/6` (the
 
 The bulk — 620 product pages, 73% of Group A. Runs last among partners because by now the pattern has been proven three times, including pagination.
 
+> ### ✅ SPLIT AND SHIPPED — 4a `00e4aae`, 4b `771c7db`
+>
+> **Batch 4 was executed as two commits, not one**, so a problem in one partner
+> does not force reverting both. The steps below still describe the work
+> accurately; only the commit boundary changed.
+>
+> | Sub-batch | Partner | Pages | Commit |
+> |---|---|---|---|
+> | **4a** | `tsar-bomba` | 272 detail + 7 paginated + landing | `00e4aae` |
+> | **4b** | `golden-maple` | 348 detail + 9 paginated + landing | `771c7db` |
+>
+> Per-batch rollback still holds, now at finer granularity: `git revert 00e4aae`
+> restores tsar-bomba's static imports without touching golden-maple, and vice
+> versa. Both were verified independently against the full protocol.
+>
+> **The closing `grep` gate below only becomes true after 4b lands — and its hit
+> after 4a is correct behaviour, not a failure.** Until golden-maple migrated,
+> `app/golden-maple/[slug]/page.tsx` still imported `GOLDEN_MAPLE_PRODUCTS` from
+> `@/lib/golden-maple-data`, so
+> `grep -rn "from \"@/lib/[a-z-]*-data\"" app/ | grep -v structured-data`
+> legitimately returned that one line between `00e4aae` and `771c7db`. The gate
+> asserts *"no `app/` file imports a partner data file"* — a property of the
+> whole batch, not of either half — so an incomplete batch **should** fail it.
+> A future reader hitting that intermediate state is looking at the gate
+> reporting an unfinished migration accurately, not at a bug in 4a. Splitting a
+> batch splits its code; it does not split a gate whose subject is the union of
+> both halves.
+>
+> Re-run after 4b: **no output.** Confirmed.
+
 **Files:** `app/tsar-bomba/[slug]/page.tsx`, `app/tsar-bomba/page.tsx`, `app/tsar-bomba/page/[page]/page.tsx`, `app/golden-maple/[slug]/page.tsx`, `app/golden-maple/page.tsx`, `app/golden-maple/page/[page]/page.tsx`
 
 - [ ] **Step 1: Migrate both detail routes**
@@ -1083,9 +1113,17 @@ Expected: 1043 pages; `/tsar-bomba/page/[page]` = 7, `/golden-maple/page/[page]`
 
 - [ ] **Step 5: Commit, push, verify in production**
 
+Executed as two commits, one per partner (see the SPLIT box above):
+
 ```bash
-git add "app/tsar-bomba/[slug]/page.tsx" app/tsar-bomba/page.tsx "app/tsar-bomba/page/[page]/page.tsx" "app/golden-maple/[slug]/page.tsx" app/golden-maple/page.tsx "app/golden-maple/page/[page]/page.tsx"
-git commit -m "refactor(tsar-bomba,golden-maple): read catalog from lib/catalog.ts (Step 14 batch 4)"
+# 4a — 00e4aae
+git add "app/tsar-bomba/[slug]/page.tsx" app/tsar-bomba/page.tsx "app/tsar-bomba/page/[page]/page.tsx"
+git commit -m "refactor(tsar-bomba): read catalog from lib/catalog.ts (Step 14 batch 4a)"
+
+# 4b — 771c7db
+git add "app/golden-maple/[slug]/page.tsx" app/golden-maple/page.tsx "app/golden-maple/page/[page]/page.tsx"
+git commit -m "refactor(golden-maple): read catalog from lib/catalog.ts (Step 14 batch 4b)"
+
 git push origin main
 ```
 
@@ -1096,7 +1134,9 @@ After READY: spot-check 3 product pages per partner, plus `/tsar-bomba/page/8` a
 ```bash
 grep -rn "from \"@/lib/[a-z-]*-data\"" app/ | grep -v structured-data
 ```
-Expected: **no output.**
+Expected: **no output.** This holds only **after 4b** — between 4a and 4b it
+correctly returns golden-maple's `GOLDEN_MAPLE_PRODUCTS` import. Run at `771c7db`:
+no output. All 954/954 product pages are migrated.
 
 ---
 

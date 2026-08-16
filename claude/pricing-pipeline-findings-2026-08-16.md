@@ -317,6 +317,35 @@ they fell through because their names use en-dashes where every classifier
 tier keyed on pipes or model tokens. **At series level, confirmed
 discontinuations: approximately zero.**
 
+**Update, same day: tier 5 died entirely.** One representative product per
+tier was then fetched directly from the merchant's storefront (variant-level
+Shopify JSON — never via awin1.com, which would register self-clicks). All
+five exist and are purchasable, including the final "no evidence anywhere"
+candidate: "Dark Matter 4 | Rafael Signed Limited Edition" is live at
+$4,999.99, 1/1 variants available — the merchant's own search finds it. The
+classifier called it absent because its series-phrase list enumerated
+reactor/nucleus/elemental and not "dark matter." **Confirmed
+discontinuations across all 272 products, after every tier and every
+correction: zero found.**
+
+### The namespace failure, named
+
+The recurring shape — this document's second transferable lesson, alongside
+"the check wasn't measuring what its name claimed": **"not found in the
+namespace I checked" is not "not there."** Instances accumulated today
+alone, each in a different namespace: advertiser *name* matching would have
+missed a re-registered Canvas Vows feed (caught by re-checking under the
+advertiser ID — still absent, but only the ID check makes that finding
+sound); `aw_product_id` absence was read as product absence when the ids
+are per-feed and churn (the products were alive under new ids); a
+pipe-keyed classifier read en-dash-named Elemental watches as
+discontinued; an enumerated series-phrase list read "Dark Matter 4" as
+gone while the merchant's search returned it. The operator independently
+logged the same failure three times in their own reasoning. Absence is a
+claim about a namespace and a matching method, never about the world —
+every absence finding needs its namespace named and a second, differently
+keyed namespace checked before it's reported.
+
 So the exposure inverts: the catastrophic reading (hundreds of dead
 products) is wrong, but **225 of 272 products' affiliate deep links carry
 `p=` ids that exist in no current feed.** Whether those pclick links still
@@ -334,6 +363,48 @@ be evaluated. Recorded as unmeasurable, not as absent. (A partial
 merchant-side check like tsar-bomba's would work if the Canvas Vows
 storefront exposes a public product list; not attempted — out of scope
 today.)
+
+### Merchant-side ground truth: the same frozen feed split into opposite outcomes
+
+Both frozen-feed partners were checked against their merchants' live
+storefronts directly (public Shopify product JSON, 2026-08-16) — the first
+measurement of what the frozen feeds actually *cost us*, as opposed to what
+the mechanism implied.
+
+**Tsar-bomba: no present error found.** Three of three price comparisons
+(the tier-1/2/5 representatives with unambiguous product mappings) match the
+merchant's live price exactly — $1500, $999.99, $4999.99. The frozen feed
+means we cannot *detect* a reprice; the merchant simply has not repriced the
+products checked. Future blindness, not present error.
+
+**Canvas Vows: present error, live today.** canvasvows.com lists 258
+products (we carry 204 — a catalog-coverage gap noted separately, not a
+pricing item). Sampled 10 of ours across the full $45–$399 band: 9 matched
+by exact title, 1 was retitled but still sold. Of the 9, **only 1 displayed
+price equals any current variant price at any size.** Eight sell at no
+current variant price — deltas $4–$20 in both directions, zero compare-at
+hits (so genuine repricing, not a sale event). Two are strictly
+unobtainable: our $75 and $100 sit below the merchant's cheapest current
+variant ($79, $109). Extrapolated, on the order of ~160 of 204 pages likely
+display a price no customer can transact at. (Full-catalog measurement to
+follow; the sample is deliberately spread across price bands.)
+
+The generalization, recorded in the operator's words as the correction of
+their own repeated mistake: **the mechanism never predicts the consequence;
+the merchant's repricing behavior does.** False for tsar-bomba,
+substantially true for canvas-vows, same frozen feed, one partner apart.
+Five instances today of asserting a consequence from a mechanism — the dead
+cron, the 669 displayed prices, the discontinued products, the
+three-month-old prices — and this is the first time measurement split the
+same mechanism into opposite outcomes.
+
+**Remedy space (product decision, deliberately not chosen here):** while
+feed 103552 is frozen there is NO correct-price source available through
+AWIN at all. Every remedy is therefore one of: suppression, an explicit
+as-of label, or a non-feed data source (the merchant's own storefront being
+the demonstrated candidate). Which one is right depends on the delta shape
+the full-catalog measurement returns — mostly-small-overstatements calls
+for a different answer than mostly-unobtainable-understatements.
 
 ### Sequencing conflict: the coverage fix is also the contamination event
 
@@ -465,9 +536,15 @@ about — the table, the call graph — not from the narrative around it.
   F-scheme. Standing preference: move to F-scheme equivalents where AWIN
   offers them.
 - Tsar-bomba linkrot: 225/272 deep-link ids exist in no current feed, but
-  the products are alive (series-level discontinuations ≈ 0). Deep links
-  attribution-suspect; pclick redirect behavior untestable without firing
-  self-clicks. Canvas Vows: same exposure, unmeasurable feed-side.
+  the products are alive (confirmed discontinuations: zero, all tiers).
+  Deep links attribution-suspect; pclick redirect validity referred to AWIN
+  (ticket question 4) rather than self-click-tested.
+- Merchant ground truth split: tsar-bomba 3/3 prices match live (blindness,
+  not error); canvas-vows 8/10 sampled prices match NO current variant —
+  live present error on the order of ~160 of 204 pages, remedy is a product
+  decision (suppress / as-of label / non-feed source), not chosen here.
+- Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
+  products; we carry 204.
 - Re-import sequencing: unresolved conflict on record — re-import is both
   the coverage fix and a price-history contamination event (87877a2
   precedent: 5 fabricated king-koil movements, verified). Operator decides

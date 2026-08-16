@@ -250,13 +250,67 @@ May prices.
 **Partial mitigation available for Tsarbomba only:** a fresh English feed
 exists (113495, "US Feed", 234 products, imported 2026-08-12) that
 `refreshPrices`' selection rule skips — it prefers `English && !Vertical`,
-and 113495 carries `vertical=Fashion`, so the frozen 105368 wins. Pinning
-113495 via `pinnedFeedId` is a candidate fix, **but only after verifying its
-deep-link id format matches the static catalog's** (the feed may use a
-different id space; the file's own header demands re-verification after any
-change). **Re-pinning is NOT authorized as of this writing.** Canvas Vows
-has no alternative feed under its advertiser ID — that one needs AWIN-side
-action (advertiser/account manager).
+and 113495 carries `vertical=Fashion`, so the frozen 105368 wins.
+**Re-pinning is NOT authorized as of this writing.** Canvas Vows has no
+alternative feed under its advertiser ID — that one needs AWIN-side action
+(advertiser/account manager).
+
+**Feed 113495's id format, verified before any pin (2026-08-16):**
+
+- **Format: compatible.** All 234 rows carry `pclick.php?p=<id>` deep links
+  with extractable ids — same shape as the static catalog's 272/272.
+- **Id space: shared, not feed-scoped.** Of the 21 feed ids that match a
+  catalog id, 20 have byte-identical normalized product names; the ids are
+  real per-SKU identifiers, not per-feed numbering. (The 21st,
+  id 45221769256, is a probable retitle — feed "The Tsar Bomba Women's
+  Luxury Watch Nucleus Femme 04-TB8231" vs catalog "Tsar Bomba Women's
+  Quartz Watch | White Gold | 35mm…" — same product family, needs a human
+  eye before trusting.)
+- **Coverage: a swap, not an upgrade.** 105368 matches 26 catalog products
+  (reproduces the documented baseline exactly); 113495 matches 21 — and the
+  two sets are **completely disjoint (zero overlap)**. A re-pin trades 26
+  frozen-price products for 21 fresh-price products; the 26 keep their
+  existing `current_prices` rows but stop being refreshable.
+- **The real signal is catalog drift:** 213 of 113495's 234 rows carry
+  valid ids that are simply not in the static catalog — the advertiser's
+  product line has moved on since the import. Per `refreshPrices.ts`'s own
+  `idNotInCatalogExamples` doc, that means "re-run
+  scripts/import-partner.mjs for this partner," not "pin and hope." A
+  re-pin alone leaves tsar-bomba's live-price coverage at 21/272; a
+  re-import is what actually recovers it.
+
+### Standing risk: every numeric-ID feed still in use is one event from this
+
+The 2026-05-15 freeze hit only numeric-ID feeds and left every F-prefixed
+feed untouched (0 of 345). Any partner still anchored to a numeric feed is
+therefore exposed to a repeat — **"it works now" is not evidence of safety;
+it is the same state the frozen 190 were in on 2026-05-14.** And the failure
+is silent: nothing errors, the feed keeps serving its final snapshot, and
+the symptom is prices that quietly stop moving — discovered months later,
+exactly as happened here.
+
+Where our five partners stand:
+
+| Partner | Feed | ID generation | State |
+|---|---|---|---|
+| canvas-vows | 103552 | numeric | **frozen 2026-05-15** |
+| tsar-bomba | 105368 (selected) | numeric | **frozen 2026-05-15** |
+| tsar-bomba | 113495 (candidate) | numeric | live — **still exposed** |
+| king-koil | 101819 | numeric | live — **exposed** |
+| evdance | F1320 (pinned) | F-scheme | live, safe from this event |
+| golden-maple | F2615 | F-scheme | live, safe from this event |
+
+Note that Tsarbomba's entire feed family — all ten feeds, including the
+fresh regional ones — is numeric, so even the candidate re-pin stays on the
+exposed generation.
+
+**Standing preference, recorded now rather than decided under pressure
+later:** if AWIN offers an F-scheme equivalent for any partner currently on
+a numeric feed (king-koil and tsar-bomba above all), prefer it — raise it in
+any AWIN conversation that happens anyway, including the Canvas Vows ticket.
+Additionally, any future freshness check on these partners should assert
+that `Last Imported` is recent, not that the download succeeds — the frozen
+feeds download fine, which is exactly what makes the failure silent.
 
 ---
 
@@ -318,9 +372,15 @@ about — the table, the call graph — not from the narrative around it.
 - Canvas Vows + Tsarbomba feeds: frozen at AWIN since 2026-05-15
   (platform event, 190 feeds, all numeric-ID; zero F-prefixed feeds
   affected); 476 products immovable on the feed side. Tsarbomba is
-  migration-shaped (9 live sibling feeds, fixable by re-pinning — not
-  authorized); Canvas Vows is abandonment-shaped by advertiser ID (needs an
-  AWIN conversation).
+  migration-shaped (9 live sibling feeds); 113495's id format verified
+  compatible but its coverage is a disjoint 21-product swap for the current
+  26 — a re-import, not just a re-pin, is what recovers coverage. Re-pinning
+  not authorized. Canvas Vows is abandonment-shaped by advertiser ID (needs
+  an AWIN conversation).
+- Numeric-ID exposure: king-koil and all ten tsar-bomba feeds remain on the
+  generation the freeze hit; evdance and golden-maple are on the untouched
+  F-scheme. Standing preference: move to F-scheme equivalents where AWIN
+  offers them.
 - AWIN Publisher API: 401, separate open item.
 - `price_history`: nothing deleted; nothing may be deleted. Cutover-date
   filtering is the sanctioned mechanism once the pipeline works.

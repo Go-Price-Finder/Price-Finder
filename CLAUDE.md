@@ -132,6 +132,16 @@ otherwise), not just Cowork/Claude Team chat sessions:
     time; none of that stopped the two copies drifting apart, which is the
     argument for having one authority rather than a convention about who
     remembers to sync.
+  - **There were TWO Cowork Projects**, with overlapping but non-identical
+    document sets — 14 unique docs across them, 8 shared (counts reported by
+    the operator during the 2026-08-16 reconciliation; not independently
+    verifiable from here, since a Claude Project cannot be read from a Claude
+    Code session). That is why `price-finder-build-guide-2026-08-05.md` looked
+    repo-only when checked against one Project: it was present in the other.
+    **The repo is now the union of both, and the single authority.** Two
+    partially-overlapping sources with no diff between them is the concrete
+    argument for the rule above — nobody was wrong about their own copy, and
+    the sets still disagreed.
   - Deliberately NOT in `claude/`, so nobody re-adds them "for completeness":
     `claude-team-cowork-and-code-setup-checklist-2026-08-06.md` (written
     mid-session before several things were known, superseded twice; stale setup

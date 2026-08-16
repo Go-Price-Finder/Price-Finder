@@ -10,12 +10,12 @@ import WishlistButton from "@/components/WishlistButton";
 import PriceHistoryChart from "@/components/PriceHistoryChart";
 import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
-import { GOLDEN_MAPLE_PRODUCTS } from "@/lib/golden-maple-data";
-import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getPartner, getProductTitleSuffix, getRealProduct } from "@/lib/catalog";
 import { buildProductJsonLd } from "@/lib/structured-data";
 
-export function generateStaticParams() {
-  return GOLDEN_MAPLE_PRODUCTS.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const partner = await getPartner("golden-maple");
+  return (partner?.products ?? []).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getRealProduct("golden-maple", slug);
+  const product = await getRealProduct("golden-maple", slug);
   if (!product) return { title: "Not found — Go Price Finder" };
   return {
     // Suffix disambiguates same-named SKUs — see the SEO audit's
@@ -33,7 +33,7 @@ export async function generateMetadata({
     // out to have zero real duplicates once verified — this was a false
     // positive in the original audit regex — but uses the same shared
     // helper for consistency.)
-    title: `${product.name} — ${getProductTitleSuffix(product)} — Golden Maple — Go Price Finder`,
+    title: `${product.name} — ${await getProductTitleSuffix(product)} — Golden Maple — Go Price Finder`,
     description: product.description.slice(0, 155),
   };
 }
@@ -44,13 +44,13 @@ export default async function GoldenMapleProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getRealProduct("golden-maple", slug);
+  const product = await getRealProduct("golden-maple", slug);
   if (!product) notFound();
 
   const hasDiscount =
     typeof product.originalPrice === "number" && product.originalPrice > product.price;
 
-  const related = getAllRealProducts()
+  const related = (await getAllRealProducts())
     .filter((p) => p.partnerId === "golden-maple" && p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
 

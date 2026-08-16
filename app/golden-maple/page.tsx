@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import Pagination from "@/components/Pagination";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner } from "@/lib/partners";
+import { getPartner } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
 
 export const metadata: Metadata = {
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
  * lib/pagination.ts for the shared slicing logic every large-catalog
  * partner page uses).
  */
-export default function GoldenMaplePage() {
-  const partner = getPartner("golden-maple");
+export default async function GoldenMaplePage() {
+  const partner = await getPartner("golden-maple");
   const allProducts = partner?.products ?? [];
   const { items: products, totalPages } = paginate(allProducts, 1);
 

@@ -6,11 +6,11 @@ import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import Pagination from "@/components/Pagination";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner } from "@/lib/partners";
+import { getPartner } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
 
-export function generateStaticParams() {
-  const partner = getPartner("golden-maple");
+export async function generateStaticParams() {
+  const partner = await getPartner("golden-maple");
   const { totalPages } = paginate(partner?.products ?? [], 1);
   // Page 1 lives at /golden-maple itself, not here — starts at 2.
   return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
@@ -18,10 +18,10 @@ export function generateStaticParams() {
   }));
 }
 
-function resolvePage(pageParam: string) {
+async function resolvePage(pageParam: string) {
   const page = Number(pageParam);
   if (!Number.isInteger(page) || page < 2) return undefined;
-  const partner = getPartner("golden-maple");
+  const partner = await getPartner("golden-maple");
   const allProducts = partner?.products ?? [];
   const result = paginate(allProducts, page);
   if (result.currentPage !== page) return undefined; // out of range
@@ -34,7 +34,7 @@ export async function generateMetadata({
   params: Promise<{ page: string }>;
 }): Promise<Metadata> {
   const { page } = await params;
-  const result = resolvePage(page);
+  const result = await resolvePage(page);
   if (!result) return { title: "Not found — Go Price Finder" };
   return {
     title: `Golden Maple — Page ${result.currentPage} — Go Price Finder`,
@@ -49,7 +49,7 @@ export default async function GoldenMaplePagedPage({
   params: Promise<{ page: string }>;
 }) {
   const { page } = await params;
-  const result = resolvePage(page);
+  const result = await resolvePage(page);
   if (!result) notFound();
   const { items: products, currentPage, totalPages, allProductsCount } = result;
 

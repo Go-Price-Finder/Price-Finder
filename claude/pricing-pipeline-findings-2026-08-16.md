@@ -385,9 +385,31 @@ price equals any current variant price at any size.** Eight sell at no
 current variant price — deltas $4–$20 in both directions, zero compare-at
 hits (so genuine repricing, not a sale event). Two are strictly
 unobtainable: our $75 and $100 sit below the merchant's cheapest current
-variant ($79, $109). Extrapolated, on the order of ~160 of 204 pages likely
-display a price no customer can transact at. (Full-catalog measurement to
-follow; the sample is deliberately spread across price bands.)
+variant ($79, $109).
+
+**Full-catalog census (same day, all 204):** the 10-product sample
+overstated the error rate — it extrapolated to ~160 wrong pages; the census
+found **93**. Sampling across price bands is not sampling across products,
+and the bands where repricing happened were overrepresented. The corrected
+numbers, measured not extrapolated:
+
+- 194 of 204 matched by exact title; the other 10 are retitled but still
+  sold (0 absent — the namespace lesson held).
+- Of the 194: **101 exact variant match (52%) — half the catalog is exactly
+  right. 93 (48%) match no current variant at any size.** 0 compare-at
+  hits: repricing, not sales.
+- Of the 93: **10 strictly unobtainable** (ours below their cheapest
+  variant — concentrated at two repriced tiers, $75→$79 and $100→$109,
+  plus one $49.95→$79 outlier), 6 above their max, 77 in-range but wrong
+  at every size.
+- Direction: 51 understate (customer pays more than shown) vs 42
+  overstate. Median |delta| **$6**; 72 of 93 within $10; max $100.
+
+Shape summary for the remedy decision: half right, and the wrong half is
+mostly small (median $6) and roughly bidirectional, with a thin
+strictly-unobtainable tail of 10 pages at two price points. This is the
+"mostly small deviations" shape, not the "mostly unobtainable
+understatements" shape.
 
 The generalization, recorded in the operator's words as the correction of
 their own repeated mistake: **the mechanism never predicts the consequence;
@@ -540,9 +562,10 @@ about — the table, the call graph — not from the narrative around it.
   Deep links attribution-suspect; pclick redirect validity referred to AWIN
   (ticket question 4) rather than self-click-tested.
 - Merchant ground truth split: tsar-bomba 3/3 prices match live (blindness,
-  not error); canvas-vows 8/10 sampled prices match NO current variant —
-  live present error on the order of ~160 of 204 pages, remedy is a product
-  decision (suppress / as-of label / non-feed source), not chosen here.
+  not error); canvas-vows census: 101/194 exact, **93 pages match no
+  current variant** (median |delta| $6, 51 understate / 42 overstate, 10
+  strictly unobtainable). Live present error; remedy is a product decision
+  (suppress / as-of label / non-feed source), not chosen here.
 - Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
   products; we carry 204.
 - Re-import sequencing: unresolved conflict on record — re-import is both

@@ -111,13 +111,34 @@ otherwise), not just Cowork/Claude Team chat sessions:
   fabricating one.
 - **Canonical repo:** `https://github.com/Go-Price-Finder/Price-Finder.git`.
   Treat this as the source of truth for the live codebase — actual code
-  changes happen through this repo via GitHub. Planning, research, and
-  documentation are maintained in the team's Claude Project as the
-  live/canonical source. A point-in-time snapshot is also mirrored locally
-  in claude/*.md (added 2026-08-06) so Claude Code can reference them
-  offline without a Drive/Project connection — if these ever diverge, the
-  Claude Project is authoritative, and this local copy should be
-  periodically refreshed by re-exporting.
+  changes happen through this repo via GitHub.
+- **`claude/` in this repo is the single source of truth for project docs.**
+  **This reverses the earlier rule** (2026-08-06 – 2026-08-16), which made the
+  Claude Project canonical and treated `claude/*.md` as a periodically
+  re-exported snapshot. It is the other way round now: a Claude Project
+  knowledge base holds *uploads*, and an upload is a copy taken at a moment in
+  time. It cannot pull, it does not know when the repo moves, and nothing
+  signals that it has fallen behind. The repo can be diffed, has history, and
+  every change arrives with a commit message explaining it.
+  - If a Project copy and the repo copy disagree, **the repo wins** — reconcile
+    by re-uploading from the repo, never by editing the repo to match an upload.
+  - Docs are edited here and committed, like code. Same fix → verify → review →
+    push rule.
+  - Reconciled 2026-08-16 before an account move. The repo was ahead of the
+    Project in five separate places in `post-import-verification-runbook.md`
+    alone — an added step 8 assertion, an ISR→Static correction, two whole
+    sections on the commit-on-device reversal, a category-collision recount and
+    a never-paste-SQL note. Each divergence was deliberate and recorded at the
+    time; none of that stopped the two copies drifting apart, which is the
+    argument for having one authority rather than a convention about who
+    remembers to sync.
+  - Deliberately NOT in `claude/`, so nobody re-adds them "for completeness":
+    `claude-team-cowork-and-code-setup-checklist-2026-08-06.md` (written
+    mid-session before several things were known, superseded twice; stale setup
+    instructions are worse than none). Conversely
+    `price-finder-build-guide-2026-08-05.md` exists here and NOT in the Project
+    — it defines the Step 10–16 numbering the migration plan depends on, so it
+    must not be deleted to make the two sets match.
 
 # Database rules
 

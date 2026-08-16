@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import Pagination from "@/components/Pagination";
 import { ChevronRightIcon } from "@/components/icons";
-import { getPartner } from "@/lib/partners";
+import { getPartner } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
 
 export const metadata: Metadata = {
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
  * lib/pagination.ts slicing). Page 1 lives here; pages 2+ live at
  * /tsar-bomba/page/[page].
  */
-export default function TsarBombaPage() {
-  const partner = getPartner("tsar-bomba");
+export default async function TsarBombaPage() {
+  const partner = await getPartner("tsar-bomba");
   const allProducts = partner?.products ?? [];
   const { items: products, totalPages } = paginate(allProducts, 1);
 

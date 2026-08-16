@@ -10,12 +10,12 @@ import WishlistButton from "@/components/WishlistButton";
 import PriceHistoryChart from "@/components/PriceHistoryChart";
 import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
-import { TSAR_BOMBA_PRODUCTS } from "@/lib/tsar-bomba-data";
-import { getAllRealProducts, getProductTitleSuffix, getRealProduct } from "@/lib/partners";
+import { getAllRealProducts, getPartner, getProductTitleSuffix, getRealProduct } from "@/lib/catalog";
 import { buildProductJsonLd } from "@/lib/structured-data";
 
-export function generateStaticParams() {
-  return TSAR_BOMBA_PRODUCTS.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const partner = await getPartner("tsar-bomba");
+  return (partner?.products ?? []).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -24,13 +24,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getRealProduct("tsar-bomba", slug);
+  const product = await getRealProduct("tsar-bomba", slug);
   if (!product) return { title: "Not found — Go Price Finder" };
   return {
     // Suffix disambiguates same-named SKUs — see the SEO audit's
     // duplicate-metadata finding and getProductTitleSuffix's own comment
     // for why price alone isn't always enough.
-    title: `${product.name} — ${getProductTitleSuffix(product)} — Tsar Bomba — Go Price Finder`,
+    title: `${product.name} — ${await getProductTitleSuffix(product)} — Tsar Bomba — Go Price Finder`,
     description: product.description.slice(0, 155),
   };
 }
@@ -41,13 +41,13 @@ export default async function TsarBombaProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getRealProduct("tsar-bomba", slug);
+  const product = await getRealProduct("tsar-bomba", slug);
   if (!product) notFound();
 
   const hasDiscount =
     typeof product.originalPrice === "number" && product.originalPrice > product.price;
 
-  const related = getAllRealProducts()
+  const related = (await getAllRealProducts())
     .filter((p) => p.partnerId === "tsar-bomba" && p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
 

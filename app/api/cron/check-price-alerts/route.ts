@@ -24,7 +24,13 @@ export async function GET(request: Request) {
 
   try {
     const result = await checkPriceDrops();
-    return NextResponse.json({ ok: true, ...result });
+    // Per-row failures are collected (not thrown) inside checkPriceDrops so
+    // one bad row can't stop the rest — but a run where any send or update
+    // failed must not report success. Vercel only marks a cron invocation
+    // as failed on a non-2xx status, so returning 200 here would hide every
+    // send failure from the one place failures are recorded.
+    const ok = result.errors.length === 0;
+    return NextResponse.json({ ok, ...result }, { status: ok ? 200 : 500 });
   } catch (error) {
     console.error("[check-price-alerts] failed:", error);
     return NextResponse.json(

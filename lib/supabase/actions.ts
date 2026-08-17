@@ -104,3 +104,57 @@ export async function signOutAction() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+export async function requestPasswordResetAction(
+  email: string
+): Promise<AuthActionResult> {
+  if (!email) {
+    return { error: "Email is required." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    // Lands on the code-exchange callback, which forwards to the
+    // set-a-new-password page with a live recovery session.
+    redirectTo: `${siteUrl()}/auth/callback?next=/auth/reset-password`,
+  });
+
+  // Supabase deliberately does not error for unknown addresses (no account
+  // enumeration) — an error here is rate limiting or configuration, and
+  // the user should see it rather than wait for an email that won't come.
+  if (error) {
+    return { error: error.message };
+  }
+}
+
+export async function updatePasswordAction(
+  password: string
+): Promise<AuthActionResult> {
+  if (!isPasswordValid(password)) {
+    return {
+      error:
+        "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character.",
+    };
+  }
+
+  const supabase = await createClient();
+  // A recovery session (set by /auth/callback when the reset link was
+  // clicked) is required — updateUser changes the password of whoever the
+  // session belongs to, so without one there is nobody to update.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return {
+      error:
+        "Your reset link has expired or already been used. Request a new one from the forgot-password page.",
+    };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/wishlist");
+}

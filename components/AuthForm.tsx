@@ -132,8 +132,14 @@ export default function AuthForm({
           {isSignup ? (
             <PasswordStrengthMeter password={password} />
           ) : (
-            <span className="mt-0.5 text-xs text-ivory-300">
+            <span className="mt-0.5 flex items-center justify-between text-xs text-ivory-300">
               At least 6 characters.
+              <Link
+                href="/auth/forgot-password"
+                className="font-medium text-gilt-400 transition-colors hover:text-gilt-300"
+              >
+                Forgot password?
+              </Link>
             </span>
           )}
         </label>

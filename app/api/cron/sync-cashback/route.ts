@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { syncAwinTransactions } from "@/lib/cashback/syncAwinTransactions";
+import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json). Same CRON_SECRET
@@ -24,7 +25,17 @@ export async function GET(request: Request) {
 
   try {
     const result = await syncAwinTransactions();
-    return NextResponse.json({ ok: true, ...result });
+    // Per-transaction failures are collected (not thrown) inside
+    // syncAwinTransactions so one bad row can't stop the rest — but a run
+    // where anything failed must not report success. Vercel only marks a
+    // cron invocation as failed on a non-2xx status, so returning 200 here
+    // would hide every sync failure from the one place failures are
+    // recorded. Same fix as check-price-alerts.
+    const ok = result.errors.length === 0;
+    // Dead-man's-switch: ping only on a fully clean run, so a silent
+    // failure shows up as a MISSED ping (see lib/monitoring/pingHealthcheck.ts).
+    if (ok) await pingHealthcheck("sync-cashback");
+    return NextResponse.json({ ok, ...result }, { status: ok ? 200 : 500 });
   } catch (error) {
     console.error("[sync-cashback] failed:", error);
     return NextResponse.json(

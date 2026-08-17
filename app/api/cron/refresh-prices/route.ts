@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { refreshPrices } from "@/lib/pricing/refreshPrices";
+import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json), scheduled before
@@ -26,6 +27,12 @@ export async function GET(request: Request) {
 
   try {
     const result = await refreshPrices();
+    // Dead-man's-switch: ping only when every partner ran clean, so a
+    // partner-level failure shows up as a MISSED ping even though this
+    // route's HTTP status is unchanged (see lib/monitoring/pingHealthcheck.ts).
+    if (result.partners.every((p) => p.errors.length === 0)) {
+      await pingHealthcheck("refresh-prices");
+    }
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error("[refresh-prices] failed:", error);

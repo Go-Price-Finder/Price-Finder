@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkPriceDrops } from "@/lib/alerts/checkPriceDrops";
+import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json). Vercel
@@ -30,6 +31,9 @@ export async function GET(request: Request) {
     // as failed on a non-2xx status, so returning 200 here would hide every
     // send failure from the one place failures are recorded.
     const ok = result.errors.length === 0;
+    // Dead-man's-switch: ping only on a fully clean run, so a silent
+    // failure shows up as a MISSED ping (see lib/monitoring/pingHealthcheck.ts).
+    if (ok) await pingHealthcheck("check-price-alerts");
     return NextResponse.json({ ok, ...result }, { status: ok ? 200 : 500 });
   } catch (error) {
     console.error("[check-price-alerts] failed:", error);

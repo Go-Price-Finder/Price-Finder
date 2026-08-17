@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { snapshotPrices } from "@/lib/pricing/snapshotPrices";
+import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json), ahead of
@@ -20,6 +21,12 @@ export async function GET(request: Request) {
 
   try {
     const result = await snapshotPrices();
+    // Dead-man's-switch: ping only on a fully clean run, so a silent
+    // failure shows up as a MISSED ping even though this route's HTTP
+    // status is unchanged (see lib/monitoring/pingHealthcheck.ts).
+    if (result.errors.length === 0) {
+      await pingHealthcheck("snapshot-prices");
+    }
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error("[snapshot-prices] failed:", error);

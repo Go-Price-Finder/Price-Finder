@@ -124,6 +124,41 @@ the irreversible option; the guard belongs on the read side. When the
 pipeline is verified working, record a cutover date here and have any future
 consumer filter to rows after it.
 
+### ✅ CUTOVER — the merge fix is live (recorded 2026-08-17)
+
+The key-mismatch fix shipped in `11ae044`, deployed READY
+**2026-08-17T01:33:08Z**. Verified red→green on real data: merged-vs-static
+divergence 0 before, exactly 27 after. Six-partner production baseline
+captured pre-deploy and re-checked post-deploy: **6/6 displayed prices
+unchanged**, including evdance's 21ft cable displaying $239.95 with a live
+$219.95 override active in the merge layer — pages read `lib/catalog.ts`
+and never this module, confirmed now by measurement, not just trace.
+Pre-flight: **0 price alerts exist (0 rows, 0 users)**, so the first live
+evaluation sends nothing; `evaluateAlertState`'s `alert_sent` guard bounds
+any future first-run to one send per row per dip.
+
+**The provenance line every future `price_history` consumer filters on:**
+
+- `recorded_date <= 2026-08-16`: **catalog echo** — the static display
+  price recorded daily by a merge that never fired. Not observations.
+- `recorded_date >= 2026-08-17`: **live-but-unprovenanced** — snapshots now
+  merge `current_prices`, but the table still has no provenance column
+  distinguishing observed merchant prices from display prices, and
+  `current_prices` itself is only as fresh as the feeds (two of six frozen;
+  see Section 3).
+
+**Pending discriminating check (scheduled, not yet run):** the first
+post-cutover snapshot (2026-08-17 ~12:00 UTC) must record a value differing
+from `catalog_products.price` for at least one of the 27 known-divergent
+products. That is the production proof the merge fires; the local 27/27
+red→green is the same assertion pre-deploy. If the 2026-08-17 snapshot
+still equals catalog on all 27, the fix did not take in production — stop
+and investigate before trusting anything above.
+
+PriceHistoryChart **stays suppressed** — this fix changes what future rows
+mean, not what the table contains; the restore condition (provenance) is
+unchanged.
+
 ### Blast radius of the eventual fix — traced, not assumed
 
 `grep -rn '"current_prices"'` across `app/`, `components/`, `lib/` returns

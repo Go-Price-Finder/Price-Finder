@@ -933,6 +933,107 @@ about — the table, the call graph — not from the narrative around it.
 
 ---
 
+## 9. Email deliverability (2026-08-17): the domain works, the app was pointed at nobody, and the cron swallowed send failures
+
+### 9a. The domain and the pipe are proven
+
+One authorized test message, from `Go Price Finder <alerts@send.gopricefinder.com>`
+(the only Resend-verified domain) to gpf@gopricefinder.com:
+
+- Resend id `f5864a69-3f7e-46d7-a6ca-0c7f6bbe286a`, created 20:44:17Z.
+- SES id `<010001a01177c74d-a8842155-8d50-43e2-ad54-6c0be2abcab1-000000@email.amazonses.com>`.
+- Delivery event confirmed DELIVERED (read from Resend's logs on the Cowork
+  side — see 9c for why this session couldn't read it) and physically
+  present in the gpf@ inbox (operator).
+- Negative control ran FIRST: a send from the bare, unverified
+  `alerts@gopricefinder.com` was rejected with a loud, distinguishable
+  403 `validation_error` ("The gopricefinder.com domain is not verified").
+  The test could have failed, and the failure shape was observed before
+  the pass was trusted.
+
+### 9b. The fallback finding — record this shape
+
+The app's only from address is:
+
+```ts
+EMAIL_FROM = process.env.RESEND_FROM_EMAIL ?? "Go Price Finder <onboarding@resend.dev>";
+```
+
+`RESEND_FROM_EMAIL` was set NOWHERE — not in Vercel, not locally. Production
+resolved to `onboarding@resend.dev`, Resend's shared test sender.
+
+**The predicted failure was a bare `@gopricefinder.com` from address, which
+fails loudly at send time (the 403 above). The actual state was worse in a
+quieter way: `onboarding@resend.dev` is a sender that WORKS for the account
+owner's own address and silently reaches nobody else.** A deliverability
+test written by someone who assumed the loud shape — send to yourself,
+watch it arrive — would have PASSED against a configuration that cannot
+email a single real user. The test that catches this must send from the
+address the app would actually use, to an address the account does not own,
+or must assert the resolved from address itself. (This session's test
+hardcoded the verified address and therefore proved the domain, not the
+app; the app-level fix is the env var, recorded below.)
+
+Fixed 2026-08-17: `RESEND_FROM_EMAIL="Go Price Finder <alerts@send.gopricefinder.com>"`
+set in `.env.local` (this session) and in Vercel Production + Preview
+(operator). The Vercel value takes effect at the next deploy, not before —
+env vars are read at runtime from the deployment's environment, and the
+deployment live at the time of this finding (`dpl_CArd9y8SZVfHsMVdy26BAkGn5jpL`,
+commit `419b3e4`) predates the variable.
+
+### 9c. Send-only key scoping — the read-block is evidence, not a gap
+
+The new RESEND_API_KEY is send-scoped: `emails.send` works;
+`emails.get(id)` returns 401 `restricted_api_key` ("This API key is
+restricted to only send emails"). This blocked in-session delivery
+confirmation (resolved via dashboard on the Cowork side) and is POSITIVE
+evidence the key rotation shipped the least-privilege scope it claimed to.
+The old full-scope key remains active pending the CI check (now done — see
+9e); revocation is the operator's call.
+
+### 9d. The swallow, fixed and demonstrated failing (third instance of the silent-200 family)
+
+`checkPriceDrops` catches per-row errors into `result.errors[]` (correct —
+one bad row must not stop the rest), but the cron route returned
+`{ ok: true, ...result }` with HTTP 200 regardless. A send failure was
+invisible in the only place Vercel records cron outcomes, which is exactly
+the refresh-prices shape (§1) and the sync-cashback shape (§4). Third
+instance of the family: **the check was not measuring what its name
+claimed** — `ok: true` meant "the loop finished", not "the emails sent".
+
+Fixed 2026-08-17 in `app/api/cron/check-price-alerts/route.ts`: any
+per-row error ⇒ HTTP 500, `ok: false`, errors in the body.
+
+Demonstrated failing before trusted: one temporary wishlist row (operator's
+own account, id `379d6e12-cfd4-43a5-be82-4808d47ef980`, inserted and
+deleted the same run, zero alert rows remain), the from address forced to
+the bare domain (the known 403 producer), the REAL route handler invoked
+against the REAL database: prediction `500 / checked:1 / sent:0 / one
+error naming the unverified domain` matched exactly. The fix has been
+observed producing a non-200 on a real send failure, not merely observed
+succeeding.
+
+**Who observes the non-200: today, NOTHING, automatically.** Verified
+against Vercel's docs: failed cron invocations surface in the dashboard
+Crons tab, in runtime logs (`vercel logs --status-code 5xx`), and on the
+Observability page — all pull-based; Vercel's native notifications cover
+deployment failures, not runtime 5xx on cron paths. This is the dead-cron
+lesson in different clothing and it is recorded deliberately: we ship the
+loud failure KNOWING it has no automatic observer. Proposal (not built,
+not authorized): an external dead-man's-switch monitor (healthchecks.io
+class) pinged at the END of each cron run on success — a missed ping
+alerts the operator by a channel that is neither Vercel nor Resend, so it
+catches both the dead-cron shape (no run) and the loud-failure shape
+(run, non-200), with no circularity through the email channel being
+monitored.
+
+### 9e. CI audit: the old key is not load-bearing anywhere in CI
+
+`.github/` contains exactly one workflow (`verify.yml`); zero references
+to RESEND anywhere in it — as designed, it wires only the two anon
+Supabase vars into the Build step. The old key's remaining known homes are
+Vercel envs and the Resend dashboard. No CI secret was changed.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown
@@ -998,3 +1099,13 @@ about — the table, the call graph — not from the narrative around it.
   history on all 954 product pages for 13 days; suppressed in `cfc8c03`,
   verified gone in production. Full record and restore condition:
   `claude/incident-2026-08-16-price-history-chart.md`.
+- Email (2026-08-17, §9): send.gopricefinder.com proven end to end
+  (accepted → delivered → in inbox); `RESEND_FROM_EMAIL` was unset
+  everywhere and production fell back to `onboarding@resend.dev` — a
+  sender that reaches only the account owner (quieter and worse than the
+  predicted loud bare-domain failure); env var now set locally + in Vercel,
+  effective at next deploy. check-price-alerts no longer returns 200 when
+  a send fails (fix demonstrated failing before trusted); the non-200 has
+  NO automatic observer today — recorded knowingly, dead-man's-switch
+  monitor proposed, not built. CI contains no RESEND reference; old key
+  revocation is unblocked and remains the operator's call.

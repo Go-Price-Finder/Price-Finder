@@ -1204,6 +1204,100 @@ can't show). No percent-off badge on any basis: the honest percent
 the "% off" misread this fixes, and there is no other basis to compute
 one from. Verified on rendered bytes, both branches.
 
+### 9l. Auth redirects pointed at localhost in production — and the three-claims pattern that found it
+
+**Measured state as found (operator, Supabase dashboard):** Site URL
+`http://localhost:3000`, Redirect URLs allow-list EMPTY. **Measured in
+code:** `lib/supabase/actions.ts` fell back to `http://localhost:3000`
+whenever `NEXT_PUBLIC_SITE_URL` was unset — and it was unset in Vercel
+(and locally). Both layers pointed every auth redirect at localhost;
+nothing was rescuing anything.
+
+**The pattern that found it is the finding (operator's own record,
+verbatim intent):** three successive claims on this one question —
+"nobody can register", then "registration works", then "Supabase's
+fallback masks it" — each falsified by the next measurement, each
+correction itself another unmeasured inference reasoned forward from a
+mechanism. None of the three framings is carried into this doc as fact;
+only measurements are.
+
+**Measured (2026-08-17, throwaway user `shawn+authtest-20260817@`,
+created and deleted the same session, 3 original users untouched):**
+
+- Confirmation email (real bytes, received mailbox): link is
+  `<project>.supabase.co/auth/v1/verify?token=…&type=signup&redirect_to=
+  https://gopricefinder.com/auth/callback` — the new allow-list accepts
+  the explicit target.
+- Click mechanics (untampered link via `admin.generateLink`, no email
+  transport): `email_confirmed_at` NULL before click → click returns 303
+  → confirmed_at SET server-side → redirect to target with the session
+  in the URL FRAGMENT. So under the old config, confirmation genuinely
+  succeeded while the user landed on a dead localhost page —
+  `email_confirmed_at` proves a token was processed, NOT that anyone had
+  a working signup. The operator's inferred mechanism is now measured,
+  and it held. The verify endpoint 303s to the redirect target even on
+  an invalid token (error in the fragment), so the target page is the
+  only thing a user ever sees.
+- Recovery email (real bytes, no explicit redirect): link is
+  `…/auth/v1/verify?token=…&type=recovery&redirect_to=https://gopricefinder.com`
+  — the Site URL default, i.e. the operator's config change is live;
+  under the old config this would have been localhost. The recovery
+  session travels in the fragment TO the redirect target (same measured
+  mechanics as confirmation), which is the operator's predicted
+  hard-break mechanism — confirmed as mechanism, but overtaken by a
+  bigger fact:
+- **The app has NO password-reset flow at all.** Zero calls to
+  `resetPasswordForEmail`, no forgot-password UI, no page that consumes
+  a recovery session (the root page ignores fragment tokens — the app
+  is cookie-based via @supabase/ssr). Reset isn't broken-by-localhost;
+  it is absent. A user who forgets their password has no recovery path.
+  Recorded as a product gap, not fixed (not authorized, and it's a
+  feature, not a repair).
+- Trace of `NEXT_PUBLIC_SITE_URL` consumers: exactly two —
+  `lib/supabase/actions.ts` (signup emailRedirectTo) and
+  `lib/siteOrigin.ts` (email images, §9j). Auth flows in code: password
+  sign-in (no redirect email), signup confirmation (fixed origin), sign
+  out. No magic link, no OAuth. Nothing else redirects.
+- auth.users: all 3 rows have `email_confirmed_at` set (operator-
+  measured — consistent with click-confirms-then-strands, though what
+  each human actually saw is not knowable from here);
+  mok7950@gmail.com created 2026-08-05, `last_sign_in_at` NULL —
+  confirmed, never signed in.
+
+**Fixed (2026-08-17):** operator set Supabase Site URL to
+`https://gopricefinder.com`, allow-list to `https://gopricefinder.com/**`
++ `http://localhost:3000/**`, and Vercel `NEXT_PUBLIC_SITE_URL`
+(build-time — not in the running deployment until the next build). Code:
+the localhost fallback in actions.ts is REMOVED — `siteUrl()` now derives
+from lib/siteOrigin.ts and THROWS when no origin is derivable. Loud by
+design: being rescued by another system's default is not being correct,
+and here nothing was even rescuing it. `.env.local` and
+`.env.local.example` now carry the var for local dev. Limitation noted:
+the Gmail-MCP transport mangles Supabase's one-time tokens (both emails,
+different corruption each) — link HOSTS and redirect_to are measurable
+through it; tokens are not, hence the generateLink path for click
+mechanics.
+
+### 9m. The near-miss class: defects whose only detector is "someone complains"
+
+Separate from the errors above, the shape itself: a production defect
+that produced NO symptom in any system we watch — every check was green,
+`email_confirmed_at` filled in, crons 200'd — because the failure
+surfaced only in a stranded human's browser tab, and the one user who
+may have hit it (mok7950: confirmed, never signed in, never came back)
+is indistinguishable from a user who simply lost interest. The project
+currently has NO detector for this class: the dead-man's switch (§9h)
+catches jobs that stop running, the non-200 fixes (§9d/§9g) catch jobs
+that fail loudly, but nothing catches a flow that completes successfully
+while delivering the user somewhere useless. The general form: **the
+system's own success signals measure the system's bookkeeping, not the
+user's outcome.** No fix shipped for the class (candidates — funnel
+metrics on signup→first-sign-in conversion, synthetic end-to-end probes
+that walk the real flow as a user would — are product/infra decisions,
+operator's call); the lesson recorded is that "no complaints" is not
+evidence of "no defect" when the defect's only witness is a stranger
+with no reason to report it.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown
@@ -1303,3 +1397,15 @@ one from. Verified on rendered bytes, both branches.
   (§9j). Test scripts' fabricated demo payload replaced with real
   catalog data. Rendered-bytes verification pending one post-deploy send
   (the template-source trap is §9j's whole lesson).
+- Auth (2026-08-17, night, §9l–§9m): Supabase Site URL was localhost with
+  an EMPTY allow-list AND the app fell back to localhost — every auth
+  redirect in production pointed at a dead page; confirmation succeeded
+  server-side (measured: NULL → click → set, session in fragment to the
+  target) while users landed nowhere. Operator fixed both configs; code
+  fallback removed, siteUrl() now throws when no origin derivable.
+  Password reset: NOT broken — ABSENT (no flow in the app at all);
+  recovery mechanics measured healthy on the new config. The
+  three-claims pattern and the near-miss class (§9m: success signals
+  measure bookkeeping, not user outcomes; no detector exists for
+  complete-but-useless flows) recorded. Throwaway test user created and
+  deleted same session; 3 original users untouched.

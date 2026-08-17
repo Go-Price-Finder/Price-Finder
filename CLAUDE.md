@@ -155,6 +155,16 @@ otherwise), not just Cowork/Claude Team chat sessions:
 Everything in this section applies to Supabase/Postgres work specifically.
 The general workflow rules above still apply on top of it.
 
+- **DDL gets a second reader (standing rule, 2026-08-17).** Migration SQL
+  written by one session is reviewed by a different session against the
+  migration's own stated gates BEFORE it is applied, then the author
+  applies it. Concretely: Cowork writes migration SQL → Claude Code reviews
+  it against the gates the migration document states for itself → Cowork
+  applies. Migrations 0015 and 0016 both reached production with no second
+  reader; the after-the-fact fingerprint verification caught nothing
+  because nothing was wrong — which is luck plus discipline, not a
+  control. A review that happens after application can only confirm damage.
+
 - **`supabase/migrations/` CANNOT currently rebuild production, and the
   folder's convention implies a reproducibility it does not have.** Migrations
   `0001`-`0003` predate migration tracking and are absent from Supabase's

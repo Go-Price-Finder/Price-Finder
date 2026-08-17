@@ -1298,6 +1298,22 @@ operator's call); the lesson recorded is that "no complaints" is not
 evidence of "no defect" when the defect's only witness is a stranger
 with no reason to report it.
 
+### 9n. Instrument note: when the measuring instrument corrupts the measurement, replace the instrument
+
+Recorded at the operator's request as its own lesson (2026-08-17). The
+Gmail-MCP transport mangles Supabase's one-time tokens (§9l) — the first
+click-test failed on all three plausible reconstructions of the mangled
+token. The wrong next move was to report "click mechanics unmeasurable"
+through the broken instrument; the right one, taken, was to notice the
+instrument itself was the problem and swap it: `admin.generateLink`
+returns the identical /auth/v1/verify link server-side with no transport
+in between, and the click mechanics measured cleanly on the first try.
+The general form: **a failed measurement is a fact about the instrument
+until proven to be a fact about the system** — distinguish them before
+reporting either. Most of the day's other errors were the inverse
+(trusting readings that were about the instrument — a test payload, a
+green 200, a filled-in timestamp — as if they were about the system).
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

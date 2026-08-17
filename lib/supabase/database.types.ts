@@ -168,6 +168,21 @@ export type Database = {
         ];
       };
       price_history: {
+        // Provenance columns added by migration 0015 (applied 2026-08-17,
+        // ~02:50 UTC, by the Cowork session; 14,293 pre-existing rows
+        // backfilled price_source='legacy_pre_provenance'). All six are
+        // NULLABLE by design — Cowork tightens to NOT NULL only after the
+        // snapshot writer (lib/pricing/snapshotPrices.ts) proves it stamps
+        // every new row. Do not tighten these types ahead of that.
+        //
+        // price_source is CHECK-constrained in Postgres to
+        // 'live_override' | 'catalog_fallback' | 'legacy_pre_provenance'
+        // (or NULL). Typed as the union so a bad literal fails tsc before
+        // it fails the CHECK.
+        //
+        // The three feed_* columns are inert (always written NULL) until
+        // feed persistence lands — the snapshot writer sets them
+        // explicitly so the day they become real is a one-file change.
         Row: {
           id: string;
           product_id: string;
@@ -175,6 +190,16 @@ export type Database = {
           price: number;
           recorded_at: string;
           recorded_date: string;
+          price_source:
+            | "live_override"
+            | "catalog_fallback"
+            | "legacy_pre_provenance"
+            | null;
+          observed_at: string | null;
+          feed_id: string | null;
+          feed_last_imported_at: string | null;
+          feed_last_checked_at: string | null;
+          catalog_price_at_snapshot: number | null;
         };
         Insert: {
           id?: string;
@@ -183,6 +208,16 @@ export type Database = {
           price: number;
           recorded_at?: string;
           recorded_date?: string;
+          price_source?:
+            | "live_override"
+            | "catalog_fallback"
+            | "legacy_pre_provenance"
+            | null;
+          observed_at?: string | null;
+          feed_id?: string | null;
+          feed_last_imported_at?: string | null;
+          feed_last_checked_at?: string | null;
+          catalog_price_at_snapshot?: number | null;
         };
         Update: {
           id?: string;
@@ -191,6 +226,16 @@ export type Database = {
           price?: number;
           recorded_at?: string;
           recorded_date?: string;
+          price_source?:
+            | "live_override"
+            | "catalog_fallback"
+            | "legacy_pre_provenance"
+            | null;
+          observed_at?: string | null;
+          feed_id?: string | null;
+          feed_last_imported_at?: string | null;
+          feed_last_checked_at?: string | null;
+          catalog_price_at_snapshot?: number | null;
         };
         Relationships: [
           {

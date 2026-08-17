@@ -1,5 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getAllRealProductsWithLivePrices } from "@/lib/pricing/getEffectivePrice";
+import { getAllRealProducts, type RealProduct } from "@/lib/partners";
+import {
+  fetchCurrentPriceOverrides,
+  type CurrentPriceRow,
+} from "@/lib/pricing/getEffectivePrice";
 import type { WishlistRetailerId } from "@/lib/types";
 
 export type SnapshotPricesResult = {
@@ -38,9 +42,46 @@ export type SnapshotPricesResult = {
  * Runs with the service-role client (lib/supabase/admin.ts) since it
  * writes rows for every product, not on behalf of one signed-in caller.
  */
+/** One provenanced snapshot row. Extracted as a pure function so the
+ * source/price/provenance logic is testable without a Supabase write —
+ * see scratch-tested equivalence: `price` here must equal what
+ * getAllRealProductsWithLivePrices() would return for the same product
+ * (both paths merge via the same fetchCurrentPriceOverrides map). */
+export function buildSnapshotRow(
+  product: RealProduct,
+  override: CurrentPriceRow | undefined
+) {
+  return {
+    product_id: product.id,
+    retailer: product.partnerId as WishlistRetailerId,
+    price: override ? override.price : product.price,
+    // Provenance (migration 0015). price_source says where `price` came
+    // from; observed_at is when that price was last actually observed
+    // upstream. For live_override rows that is current_prices.updated_at
+    // — with a documented caveat: updated_at is set on INSERT only (the
+    // upsert's ON CONFLICT path does not touch it), so it can understate
+    // freshness for a row whose price was re-confirmed since insert. It
+    // is the only observation timestamp that exists today; the feed_*
+    // columns below are the eventual honest source and are written as
+    // explicit NULLs until feed persistence lands.
+    price_source: override ? ("live_override" as const) : ("catalog_fallback" as const),
+    observed_at: override ? override.updated_at : null,
+    catalog_price_at_snapshot: product.price,
+    feed_id: null,
+    feed_last_imported_at: null,
+    feed_last_checked_at: null,
+  };
+}
+
 export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   const supabase = createAdminClient();
-  const products = await getAllRealProductsWithLivePrices();
+  // Merge is done here explicitly (static catalog + override map) rather
+  // than through getAllRealProductsWithLivePrices(), because provenance
+  // needs to know WHICH products had an override — the merged product
+  // alone can't say. Price equivalence with that function is exact: same
+  // override map, same lookup key, same fallback.
+  const products = getAllRealProducts();
+  const overrides = await fetchCurrentPriceOverrides();
 
   const result: SnapshotPricesResult = {
     attempted: products.length,
@@ -53,11 +94,9 @@ export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   // low thousands.
   const BATCH_SIZE = 500;
   for (let i = 0; i < products.length; i += BATCH_SIZE) {
-    const batch = products.slice(i, i + BATCH_SIZE).map((product) => ({
-      product_id: product.id,
-      retailer: product.partnerId as WishlistRetailerId,
-      price: product.price,
-    }));
+    const batch = products
+      .slice(i, i + BATCH_SIZE)
+      .map((product) => buildSnapshotRow(product, overrides.get(product.id)));
 
     const { error } = await supabase
       .from("price_history")

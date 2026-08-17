@@ -1034,6 +1034,83 @@ to RESEND anywhere in it — as designed, it wires only the two anon
 Supabase vars into the Build step. The old key's remaining known homes are
 Vercel envs and the Resend dashboard. No CI secret was changed.
 
+### 9f. Assembly test (2026-08-17, evening): the deployed path sent — the from header is the open measurement
+
+The §9a test proved the domain and §9d proved the failure branch; neither
+proved the deployed app SENDS through its own resolved configuration —
+components verified, assembly unverified, the exact state that let
+onboarding@resend.dev sit in production looking healthy. Authorized
+exercise: one temporary wishlist row (operator's account, id
+`b67c355c-ec73-4659-a484-c49493a327fa`, inserted 21:12Z and deleted the
+same run, table back to 0 rows), then the DEPLOYED route
+(`dpl_3jv6rSxoeXJeNXWXnKSdGKouwGWZ` at `748491c`, holding the production
+alias) invoked with CRON_SECRET.
+
+Result: HTTP 200, `{ok:true, checked:1, sent:1, reset:0, errors:[]}` —
+prediction matched. The success branch of the fixed route has now run for
+real: Resend ACCEPTED a send from whatever `EMAIL_FROM` resolved to in
+production.
+
+**The from header on the delivered message is the measurement, and it is
+PENDING an operator read.** The message went to the wishlist user's
+address (kawsar0990a@gmail.com); the Gmail account readable from this
+session is a different mailbox (it holds neither this message nor the
+§9a test that gpf@ verifiably received), so the header could not be read
+here. Acceptance narrows the state to exactly two:
+`alerts@send.gopricefinder.com` (env var resolved — assembly proven) or
+`onboarding@resend.dev` (env var did NOT reach the deployment, and that
+Gmail happens to be the Resend account-owner address — the finding stands
+despite the 200). The route response cannot distinguish these; only the
+received header can. Recorded rule restated: report the from address on
+the delivered message, not the one expected.
+
+### 9g. sync-cashback's identical swallow — fixed, demonstrated failing (2026-08-17)
+
+Same shape as §9d, fourth confirmed instance of the family:
+`syncAwinTransactions` collects per-transaction errors into
+`result.errors[]` (six collection sites), and the cron route returned
+`{ ok: true }` HTTP 200 regardless. Fixed identically: any error ⇒ 500,
+`ok: false`. Demonstrated failing before trusted: a FAKE AWIN token
+(the real one untouched, per standing rule) forced in-process produced a
+real 401 from api.awin.com, collected — not thrown — and the route
+returned 500 with the error named in the body; prediction matched. (AWIN's
+401 body echoes the presented token — harmless here because it was the
+fake demo string, and one more confirmation of the never-print-raw-
+auth-bodies rule from §4.)
+
+### 9h. Dead-man's switch — BUILT (2026-08-17), inert until the operator provisions the monitor
+
+`lib/monitoring/pingHealthcheck.ts` + one call at the end of each of the
+four cron routes, on a fully CLEAN run only (check-price-alerts and
+sync-cashback: `ok === true`; snapshot-prices: `errors` empty;
+refresh-prices: every partner's `errors` empty — its HTTP behavior is
+deliberately unchanged, so for those two routes the missed ping is the
+ONLY loud signal of a partial failure). Missed ping ⇒ healthchecks.io
+alerts the operator through a channel that is neither Vercel nor Resend —
+no circularity with either thing being monitored. Covers both observed
+failure shapes: the dead cron (no run ⇒ no ping) and the loud-but-
+unobserved failure (non-2xx ⇒ no ping).
+
+Verified: with `HEALTHCHECKS_PING_KEY` unset, zero fetches, no behavior
+change (the §9g demonstration ran the full route this way); with a key
+set, exactly one fetch per clean run, failures swallowed after a 5s
+timeout, never throws — a broken monitor ping fails INTO the alert, not
+past it. **The control is INERT until the operator creates the
+healthchecks.io project, sets `HEALTHCHECKS_PING_KEY` in Vercel, and
+assigns each check a daily schedule + grace window; until then the
+no-observer state of §9d persists.** Slugs: `refresh-prices`,
+`snapshot-prices`, `check-price-alerts`, `sync-cashback` (auto-created on
+first ping via `?create=1`).
+
+### 9i. Process note: the commit trailer changed because the model changed
+
+`748491c` and later carry `Co-Authored-By: Claude Fable 5`; earlier
+commits carry `Claude Opus 5`. Neither is a typo: the trailer records the
+model actually driving the session, and this session's model is Fable 5
+where prior sessions ran Opus 5. Standardizing on the old trailer would
+misattribute authorship, so the convention going forward is: the trailer
+names the model that authored the commit.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown
@@ -1109,3 +1186,13 @@ Vercel envs and the Resend dashboard. No CI secret was changed.
   NO automatic observer today — recorded knowingly, dead-man's-switch
   monitor proposed, not built. CI contains no RESEND reference; old key
   revocation is unblocked and remains the operator's call.
+- Email/crons (2026-08-17, evening, §9f–9h): deployed send path exercised
+  end to end (200, sent:1) — the from header on the delivered message is
+  the open measurement, pending an operator read of kawsar0990a@gmail.com
+  (two possible states; the 200 cannot distinguish them). sync-cashback's
+  identical swallow fixed and demonstrated failing (fourth instance of the
+  family). Dead-man's switch BUILT into all four cron routes
+  (clean-run-only pings, healthchecks.io class, non-Vercel non-Resend
+  alert channel) but INERT until HEALTHCHECKS_PING_KEY is provisioned —
+  the no-observer gap stays open until then. Old-key revocation being
+  actioned by the operator.

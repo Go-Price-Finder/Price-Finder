@@ -183,7 +183,7 @@ call sites, and only a call-site trace can support it.**
 ## 3. AWIN feed staleness: 476 products' prices cannot move, cron or no cron
 
 Found when the operator read the feed-audit table against its own summary
-sentence (see Section 6). Established with a read-only probe of AWIN's
+sentence (see Section 7). Established with a read-only probe of AWIN's
 feed-list CSV (2026-08-16):
 
 | Partner | Feed used by refreshPrices | Last Imported | Last Checked |
@@ -389,7 +389,7 @@ firing affiliate clicks on our own account — the operator can click a
 handful manually to settle it. Until then, treat tsar-bomba's deep links as
 attribution-suspect rather than product-dead. Note each classifier tier's
 failure in this measurement was a *naming-format* failure (pipes vs
-en-dashes vs sentence-names) — the same lesson as Section 6, applied to
+en-dashes vs sentence-names) — the same lesson as Section 7, applied to
 join keys.
 
 **Canvas Vows has the same exposure and it is unmeasurable feed-side** —
@@ -727,7 +727,86 @@ Revisit only when that answer arrives.
 - Deliberately not today: no activation sits on the account while the
   ticket is asking AWIN attribution questions.
 
-## 6. Process finding: prose written from the conclusion, not from the table
+## 6. Live-price display: Option A is the CHOSEN architecture, and it does not ship yet
+
+Decided by the operator 2026-08-17, after the merge-fix cutover, recorded so
+nobody re-litigates it.
+
+**The decision:** when live-price display ships, it ships as **Option A —
+build-time merge inside `fetchCatalogRaw`, within the `unstable_cache`
+boundary, plus a scheduled daily rebuild** (deploy hook after refresh-prices,
+~11:30 UTC). **The placement is the detail most likely to be lost:** merging
+inside the cached fetch is what keeps the whole build rendering one
+consistent snapshot AND keeps the query guard intact — the guard counts
+`__FETCH_CATALOG_HIT__` markers per cached-function invocation, so a second
+query inside the boundary is invisible to it, while a merge anywhere outside
+the boundary runs per-worker and breaks the collect/render expectations.
+
+**Why not yet:**
+- Payoff today is 27 of 954 products (2.8%), and the ceiling is structural:
+  285 products have no override at all, and two partners' overrides cannot
+  move while their feeds are frozen. Option A's value scales with feed
+  health, currently 4 of 6 — the same change is worth multiples more after
+  the AWIN situation resolves.
+- Cost is a daily 1,043-page rebuild, indefinitely, starting the day it
+  ships.
+- Ordering: fresher numbers without saying when they're from just moves the
+  honesty problem. The as-of label is honest regardless of feed health — it
+  ships first.
+
+**Disqualified alternatives, with reasons, so nobody reaches for them later:**
+- **ISR (Option B):** trips every documented tripwire at once —
+  `getRealProduct` must revert to its single-row query or each request pays
+  the 993× payload regression; the `mappedCatalogCache` staleness residual
+  becomes live; and it reverses the Step 13 fully-static decision the whole
+  Step 14 architecture stands on. All for freshness the upstream feeds
+  (daily at best, frozen for two partners) cannot justify.
+- **Client-side price swap (Option C):** RLS permits it, but served
+  HTML/JSON-LD would carry the catalog price while JS swaps the visible one
+  — a structured-data/displayed-price mismatch on the one number the site's
+  credibility rests on, plus price-flash and a per-page-view fetch. It is
+  PriceHistoryChart's architecture applied to the price itself.
+
+**Two side effects, GATED — not accepted.** Neither ships as a side effect
+of a price-display change; when Option A is authorized, each needs its own
+before/after and its own decision:
+- `getProductTitleSuffix` dedupes colliding products on `name && price`
+  (`lib/catalog.ts:419`), so merged prices change collision sets and page
+  `<title>`s move. That is a **content change**, not a price change.
+- `getFeaturedDeals` filters `originalPrice > price` (`lib/catalog.ts:563`)
+  and overrides carry feed RRP as `original_price`, so homepage Featured
+  Deals selection changes. That is a **merchandising change**, not a price
+  change.
+- Pattern name, for recognition: an unrequested behaviour change arriving
+  inside a refactor — the same shape as the category filter a subagent
+  declined to apply earlier in this project.
+
+**The verify suite under Option A: it does not break, it changes MEANING.**
+It compares the static files against `catalog_products` and neither side
+changes — 38/38 survives mechanically. What changes is what a pass
+certifies: no longer "what the user sees," but "the base layer under an
+overlay." Semantic carve-out, documented here, not a failing check.
+
+### The as-of label (ships first) — and a correction to its data source
+
+The honest as-of for **displayed** prices is **the catalog's
+last-verification date, not the feed's last-import date.** King-koil's feed
+imports daily, but the displayed prices date from the 2026-08-02 catalog
+refresh — a feed-dated label would overclaim freshness for every partner
+whose feed outruns their catalog. Feed-last-import becomes the correct
+field only under Option A, when pages display merged prices. (Same failure
+family as everything else in this document: the label must date the number
+actually shown.)
+
+Per-partner as-of dates, derived from git history and feed vintage:
+canvas-vows **2026-05-15** (imported Jul 29 from a feed frozen May 15 — the
+price data's vintage, and the census-proven drift case); king-koil and
+tsar-bomba 2026-08-02 (the `87877a2` refresh; tsar-bomba carries a code
+caveat — 26 of its 272 came from the frozen Default feed and are May-15
+vintage; per-product precision is a v2); brooklyn-delhi, evdance,
+golden-maple 2026-07-25 (original imports).
+
+## 7. Process finding: prose written from the conclusion, not from the table
 
 Four times in one day, a summary sentence and its own supporting data
 disagreed, and the data was right each time:

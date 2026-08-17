@@ -159,6 +159,51 @@ PriceHistoryChart **stays suppressed** — this fix changes what future rows
 mean, not what the table contains; the restore condition (provenance) is
 unchanged.
 
+### Provenance landed before the first live snapshot (2026-08-17, pre-12:00 UTC)
+
+Migration 0015 (Cowork, applied ~02:50 UTC): six nullable provenance
+columns on `price_history` + CHECK
+(`live_override | catalog_fallback | legacy_pre_provenance`), 14,293 prior
+rows backfilled `legacy_pre_provenance`, values untouched. The snapshot
+writer (`b89fe12`, deployed well before the 12:00 UTC cron) stamps every
+new row: `price_source`, `observed_at` (from `current_prices.updated_at`,
+insert-only caveat documented inline), `catalog_price_at_snapshot`, and
+the three `feed_*` columns as explicit NULLs until feed persistence lands.
+Dry-run over all 954: 669 live_override / 285 catalog_fallback / 0 null,
+price equivalence with the merged path exact. **Result: the
+"live-but-unprovenanced" class described above never came into existence
+— every row is provenanced from birth or cleanly legacy.** Columns stay
+nullable until Cowork tightens; do not tighten ahead of that.
+
+Prediction for the first provenanced run (2026-08-17 12:00 UTC), pass/fail
+on record: zero rows for 2026-08-17 with NULL `price_source`. If any are
+NULL, the writer didn't take — stop and report, do not patch data.
+
+**Expected-empty warning — do not "fix" this:** with Cowork's chart
+restore condition (`price_source='live_override' AND observed_at IS NOT
+NULL`, reading provenanced rows only), charts remain empty until
+refresh-prices writes fresh observations — which is gated on the
+operator's manual diagnostic of the cron. Empty charts in that window
+LOOK like a regression and are not one: suppression and provenance turned
+out to be the same action, and the emptiness is the honest state.
+
+### As-of correction (2026-08-17): per-feed, not per-partner
+
+The label section below/above stands corrected: the per-partner model
+shipped in `ac9506a` overclaimed freshness for 26 tsar-bomba products —
+Default-feed (105368) data frozen since 2026-05-15 displayed under an
+"Aug 2, 2026" label, 79 days of overclaim, the same offence the chart was
+suppressed for. My own file had documented it as "a v2 item"; the
+operator's correction: **as-of is a property of the feed, not the
+partner** — a partner can draw from multiple feeds. Remodelled in
+`790b646` as per-feed vintage with the 26 mapped to their source feed
+(derived from feed 105368's ids ∩ catalog; the suggested
+`scripts/_tsarbomba-mapping.json` turned out to be a CSV column mapping,
+not a product→feed map). Verified across all 954 and live in production:
+the 26 read May 15, the 246 read Aug 2, no date anywhere moved in the
+flattering direction. The per-feed shape is what the offers table needs,
+so the structure persists past this fix.
+
 ### Blast radius of the eventual fix — traced, not assumed
 
 `grep -rn '"current_prices"'` across `app/`, `components/`, `lib/` returns
@@ -183,7 +228,7 @@ call sites, and only a call-site trace can support it.**
 ## 3. AWIN feed staleness: 476 products' prices cannot move, cron or no cron
 
 Found when the operator read the feed-audit table against its own summary
-sentence (see Section 7). Established with a read-only probe of AWIN's
+sentence (see Section 8). Established with a read-only probe of AWIN's
 feed-list CSV (2026-08-16):
 
 | Partner | Feed used by refreshPrices | Last Imported | Last Checked |
@@ -389,7 +434,7 @@ firing affiliate clicks on our own account — the operator can click a
 handful manually to settle it. Until then, treat tsar-bomba's deep links as
 attribution-suspect rather than product-dead. Note each classifier tier's
 failure in this measurement was a *naming-format* failure (pipes vs
-en-dashes vs sentence-names) — the same lesson as Section 7, applied to
+en-dashes vs sentence-names) — the same lesson as Section 8, applied to
 join keys.
 
 **Canvas Vows has the same exposure and it is unmeasurable feed-side** —
@@ -806,7 +851,37 @@ caveat — 26 of its 272 came from the frozen Default feed and are May-15
 vintage; per-product precision is a v2); brooklyn-delhi, evdance,
 golden-maple 2026-07-25 (original imports).
 
-## 7. Process finding: prose written from the conclusion, not from the table
+## 7. Featured Deals vs the strategy's inclusion rule — quantified, sequencing problem confirmed
+
+`getFeaturedDeals` ranks by discount off merchant `originalPrice` — "% off
+MSRP" ranking, which the product-strategy inclusion rule forbids (a deal is
+defined by a product's own price history, not a merchant's claim). Not
+fixed; quantified (2026-08-17):
+
+- **Products currently surfacing: 1** — the entire
+  `originalPrice > price` pool across all 954 is one brooklyn-delhi
+  product. The homepage removed its Featured Deals section entirely
+  (`app/page.tsx:40`); `/deals` renders the pool unsliced, so exactly one
+  product displays sitewide.
+- **Survivors under a history-based rule today: 0.** No product has any
+  usable self-history — everything before the 2026-08-17 cutover is
+  catalog echo, and live-observed rows begin accumulating today, one per
+  day. A "below its own typical price" rule cannot qualify anything for
+  days-to-weeks.
+- So this is a **sequencing problem, not a live bug**: the violation's
+  current blast radius is one product, and the honest replacement rule
+  has nothing to run on yet. Two watch-items recorded: the Option A gated
+  side effect (overrides carry feed RRP as `original_price`, which would
+  inflate this pool the day live display ships), and the strategy doc
+  itself — which is NOT yet in this repo (see below).
+
+**Blocked P1 (2026-08-17): `claude/product-strategy-2026-08-17.md` and
+Cowork's D2 record do not exist locally** — `git status` clean, no such
+files on disk. Same transfer gap as the status-corrections doc. Nothing
+can be committed until the files actually land; this section's
+strategy-rule paraphrase is from the operator's message, not the doc.
+
+## 8. Process finding: prose written from the conclusion, not from the table
 
 Four times in one day, a summary sentence and its own supporting data
 disagreed, and the data was right each time:

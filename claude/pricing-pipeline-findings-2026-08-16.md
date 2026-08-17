@@ -1314,6 +1314,122 @@ reporting either. Most of the day's other errors were the inverse
 (trusting readings that were about the instrument — a test payload, a
 green 200, a filled-in timestamp — as if they were about the system).
 
+### 9o. Password reset — BUILT and verified end to end through the real production flow (2026-08-17)
+
+Why it existed as a hard blocker: Supabase will not let a confirmed email
+re-register, so a forgotten password was a PERMANENT lockout with no
+recovery path and no way to tell us (§9l). Built: `/auth/forgot-password`
+(entry point linked from the login form) → `resetPasswordForEmail` with
+`redirectTo=/auth/callback?next=/auth/reset-password` →
+`/auth/reset-password` sets the new password via `updatePasswordAction`
+(requires the recovery session; expired/reused links get a clear error
+pointing back to the entry point). Design matches the existing auth
+cards. Page count 1043 → 1045.
+
+Verified, the §9f standard (deployed path, arrived bytes, real click):
+
+- Deployed form, first attempt (22:2xZ): **"email rate limit exceeded"**
+  — surfaced loudly in the UI, and itself a standing finding: Supabase's
+  BUILT-IN SMTP allows ~2 auth emails/hour project-wide, signups and
+  resets sharing the budget. At any real volume that cap is its own
+  outage. Standard fix: Supabase custom SMTP pointed at the
+  already-verified send.gopricefinder.com Resend domain
+  (operator-owned config; not touched, recommended).
+- Second attempt after the window (22:57Z): arrived bytes read from the
+  received mailbox — `…/auth/v1/verify?token=pkce_…&type=recovery&
+  redirect_to=https%3A%2F%2Fgopricefinder.com%2Fauth%2Fcallback%3Fnext%3D
+  %2Fauth%2Freset-password` — exactly the predicted target, PKCE
+  (initiated by the deployed ssr client). The Gmail-MCP token mangling
+  (§9n) did NOT recur on this message; the transport corrupts
+  intermittently, not always.
+- **The real click, in the same browser that submitted the form (holding
+  the PKCE verifier cookie): verify → /auth/callback exchanged the code —
+  the first time `exchangeCodeForSession` has EVER run in production
+  (§9l: all prior confirmations stranded on localhost before reaching
+  it) — → landed on the reset form with a live session → new password
+  set through the deployed form → redirected to /wishlist signed in.**
+- Assertions: the form-set password signs in; the original password is
+  rejected; throwaway deleted; auth.users and public.users both back to
+  exactly the 3 original rows.
+- Earlier same-evening mechanics leg (untampered instrument, §9n):
+  recovery token → session → password change → new works / old rejected —
+  measured independently of the browser flow.
+
+### 9p. Synthetic auth probe — BUILT, first production run green (2026-08-17)
+
+The §9m detector, chosen by the operator over funnel metrics ("a funnel
+only moves after enough real people have already been harmed to shift a
+number"). Daily cron (15:00 UTC, `/api/cron/auth-probe`,
+`lib/monitoring/authProbe.ts`): creates a throwaway user, clicks a real
+confirmation link, and asserts what the USER experiences — the redirect
+targets this site and, followed to the end, resolves to a real page
+(HTTP 200 on this host); a row changing is exactly the green signal that
+hid the §9l defect, so the row change alone is never the pass. Then:
+recovery token changes the password, new password signs in, old password
+rejected, /auth/reset-password serves. Cleanup verified BY COUNT on both
+auth.users and public.users against the pre-run baseline; leftover probe
+users from a prior failed run are treated as failures in their own
+right. Any failed assertion ⇒ HTTP 500 + no dead-man's ping (slug
+`auth-probe`) — a broken auth flow surfaces through the same channel as
+a dead cron, once the healthchecks key exists.
+
+First production run (22:2xZ, deployed route, CRON_SECRET): 200, nine
+steps green, zero errors, cleanup verified at baseline 4/4. Operator
+independently verified both user tables with the join in both
+directions — zero auth-without-public, zero orphaned-public; the
+handle_new_user cascade holds on delete.
+
+Scope note, deliberate: the probe asserts flow mechanics and user-facing
+pages, not SMTP delivery (email transport can't be asserted from a
+Vercel cron, and §9o's rate-limit finding is a reason to not spend the
+shared email budget daily).
+
+### 9q. Build-time third-party dependency — removed; "transient" named the frequency and skipped the consequence
+
+The c668ee8 deploy failed: `/opengraph-image` prerender fetched
+fonts.googleapis.com at build time and got ETIMEDOUT. The first filing
+called it "transient, pre-existing, retriggered clean" — operationally
+right, diagnostically wrong (operator's correction, recorded): what it
+actually described is that EVERY production deploy sat behind a
+successful network fetch to a third party, on a project that has already
+shipped two urgent corrections (the chart suppression, the mojibake
+repair) where a dice roll between decision and production is not
+acceptable. **A retry that succeeds is evidence the dependency is flaky,
+not evidence the dependency is fine.** The right response to a transient
+external dependency in a build is not a better retry; it is not having
+the dependency.
+
+Fix (2026-08-17): fonts vendored into `app/fonts/`, both fetch sites
+removed.
+
+- `app/opengraph-image.tsx` read fonts via two fetches per family at
+  every build. Now reads vendored TTFs. Instrument detail worth keeping:
+  the old code's comment claimed Google served woff2 — it didn't; the
+  fetch sent no browser User-Agent, so Google served TTF (satori rejects
+  woff2 here with "Unsupported OpenType signature wOF2", which is how
+  the wrong comment surfaced). The vendored files are the same TTF
+  instances that fetch actually received.
+- `app/layout.tsx` used next/font/google (build-time download,
+  cache-mitigated, cold cache = network — the exact risk verify.yml's
+  comment documented for CI). Now next/font/local against vendored
+  latin-subset variable woff2s with the same axes (Schibsted wght
+  400..900; Fraunces opsz/SOFT/WONK); runtime serving was already
+  self-hosted either way, so the served HTML changes only in hashed font
+  URLs and fallback-metric source (Fraunces' fallback pinned to a serif
+  to match).
+- Verified: rendered OG image from the vendored build is BYTE-IDENTICAL
+  to the production baseline (sha256 `da32b308…` both sides); build
+  1045/1045 with zero font fetches.
+
+Full build-time external-fetch inventory (grep of app/ + lib/ for
+fetch/next-font, all prerender paths): the two sites above, plus
+Supabase catalog reads during static generation — a first-party DATA
+dependency that is the point of the architecture, not removable without
+giving up SSG; recorded as accepted, distinct in kind. Nothing else.
+Related note: the derive-don't-hardcode rule paid off here — CLAUDE.md
+never pinned the 1043 page count, so the two new auth pages (1045)
+required no magic-constant bump (operator observation, kept).
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown
@@ -1425,3 +1541,15 @@ green 200, a filled-in timestamp — as if they were about the system).
   measure bookkeeping, not user outcomes; no detector exists for
   complete-but-useless flows) recorded. Throwaway test user created and
   deleted same session; 3 original users untouched.
+- Auth features (2026-08-17, late night, §9o–§9q): password reset BUILT
+  and verified through the real production flow end to end — arrived
+  bytes, real click in the initiating browser, exchangeCodeForSession's
+  first-ever production run, form-set password in / old rejected,
+  cleanup 3/3 both tables. Synthetic auth probe BUILT (daily 15:00 UTC),
+  first production run 9/9 green — asserts user-experienced outcomes,
+  cleanup by count. Build-time third-party fetches REMOVED (fonts
+  vendored; OG image byte-identical, sha256 da32b308…); build no longer
+  gambles on fonts.googleapis.com. NEW standing finding: Supabase
+  built-in SMTP caps auth email at ~2/hour project-wide — custom SMTP
+  via the verified Resend domain recommended, operator-owned. Pages
+  1043 → 1045.

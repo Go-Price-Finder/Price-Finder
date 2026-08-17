@@ -131,7 +131,7 @@ export default async function GoldenMapleProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="golden-maple" />
+              <PriceAsOfLabel partnerId="golden-maple" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

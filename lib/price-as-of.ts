@@ -1,50 +1,115 @@
 /**
- * Per-partner "price as of" dates for the displayed (catalog) prices.
+ * "Price as of" dates for displayed (catalog) prices — PER-FEED model.
  *
- * THE DATE IS THE CATALOG'S LAST PRICE-VERIFICATION DATE, NOT THE FEED'S
- * LAST-IMPORT DATE. Displayed prices come from catalog_products (via
- * lib/catalog.ts), which is refreshed only by explicit imports — so a
- * partner whose AWIN feed updates daily (king-koil) still displays prices
- * from the last catalog refresh. Dating the label off the feed would
- * overclaim freshness for every partner whose feed outruns their catalog.
- * If live-price display ever ships (Option A, chosen but not shipped —
- * claude/pricing-pipeline-findings-2026-08-16.md §6), the honest source
- * becomes the feed's Last Imported and this map is superseded.
+ * AS-OF IS A PROPERTY OF THE FEED, NOT THE PARTNER (operator decision,
+ * 2026-08-17). A partner can draw from multiple feeds with different
+ * vintages — tsar-bomba's catalog is 246 products from the US feed
+ * (113495, current at the 2026-08-02 refresh) plus 26 from the Default
+ * feed (105368, frozen at AWIN since 2026-05-15). The first version of
+ * this file used one date per partner and labelled all 272 "Aug 2, 2026"
+ * — a 79-day freshness overclaim on 26 live pages, the same offence
+ * PriceHistoryChart was suppressed for. Per-feed is also the model the
+ * future offers table needs, so this is not throwaway structure.
  *
- * Derivation per partner (git history + feed vintage, established
- * 2026-08-17):
- * - canvas-vows: 2026-05-15 — imported 2026-07-29 (4f6f302) from AWIN feed
- *   103552, whose content froze at AWIN on 2026-05-15. The import date is
- *   NOT the data's date; the feed served a May-15 snapshot. A full-catalog
- *   census against the merchant (2026-08-16) found 93 of 194 title-matched
- *   prices no longer match any live variant — this is the partner the
- *   label exists for.
- * - king-koil: 2026-08-02 — catalog refreshed from a then-current feed
- *   (87877a2).
- * - tsar-bomba: 2026-08-02 — same refresh (87877a2). CAVEAT: 26 of 272
- *   products came from the Default feed (105368), frozen since 2026-05-15,
- *   so their price data is May-15 vintage behind an Aug-2 label.
- *   Per-product precision is a v2; the per-partner date is the majority
- *   truth (246 of 272 from the then-current US feed).
- * - brooklyn-delhi: 2026-07-25 — original import (8f1342a); no AWIN feed
- *   exists for this advertiser, so no later verification has been possible.
- * - evdance / golden-maple: 2026-07-25 — original import (14dc4cf).
- *   Fresher verified prices exist in current_prices (refresh-prices cron)
- *   but are not displayed; the label dates what is shown.
+ * THE DATE IS THE PRICE DATA'S VINTAGE: when the displayed number was
+ * last current at its source. For a feed frozen upstream, that is the
+ * freeze date regardless of when we imported it (canvas-vows: imported
+ * Jul 29 from a feed serving a May-15 snapshot → May 15). For an import
+ * from a then-current feed, it is the import/refresh date. It is NOT the
+ * feed's own last-import timestamp today — displayed prices come from
+ * catalog_products, refreshed only by explicit imports, so dating labels
+ * off live feed metadata would overclaim wherever the feed outruns the
+ * catalog (king-koil: feed imports daily, catalog verified 2026-08-02).
+ * If live-price display ships (Option A — chosen, not shipped; findings
+ * doc §6), the honest source becomes per-feed Last Imported and the
+ * VINTAGE values here get replaced, but the per-feed SHAPE stays.
  *
- * These are hand-maintained. UPDATE THE AFFECTED PARTNER'S DATE IN THE
- * SAME COMMIT as any catalog price refresh/re-import — a stale entry here
- * recreates the exact dishonesty this label exists to end.
+ * Derivations (git history + AWIN feed metadata, 2026-08-17):
+ * - awin:103552 (canvas-vows sole feed): frozen 2026-05-15; import
+ *   4f6f302 (Jul 29) copied a May-15 snapshot. Census 2026-08-16: 93 of
+ *   194 title-matched prices no longer match any live variant.
+ * - awin:105368 (tsar-bomba Default feed): frozen 2026-05-15; the 87877a2
+ *   refresh (Aug 2) merged its May-15 snapshot for the 26 products below.
+ * - awin:113495 (tsar-bomba US feed): current at the 87877a2 refresh →
+ *   2026-08-02.
+ * - awin:101819 (king-koil): current at the 87877a2 refresh → 2026-08-02.
+ * - awin:F1320 (evdance) / awin:F2615 (golden-maple): current at import
+ *   14dc4cf → 2026-07-25.
+ * - csv:brooklyn-delhi (no AWIN feed exists): import 8f1342a →
+ *   2026-07-25.
+ *
+ * Hand-maintained. UPDATE THE AFFECTED FEED'S VINTAGE IN THE SAME COMMIT
+ * as any catalog price refresh/re-import — a stale entry here recreates
+ * the exact dishonesty this label exists to end. If a re-import changes
+ * which feed a product came from, update TSAR_BOMBA_DEFAULT_FEED_SLUGS
+ * (or its successor mapping) in the same commit.
  */
 
-const PRICE_AS_OF: Record<string, string> = {
-  "brooklyn-delhi": "2026-07-25",
-  "canvas-vows": "2026-05-15",
-  evdance: "2026-07-25",
-  "golden-maple": "2026-07-25",
-  "king-koil": "2026-08-02",
-  "tsar-bomba": "2026-08-02",
+/** Price-data vintage per source feed (ISO date). */
+const FEED_VINTAGE: Record<string, string> = {
+  "awin:103552": "2026-05-15",
+  "awin:105368": "2026-05-15",
+  "awin:113495": "2026-08-02",
+  "awin:101819": "2026-08-02",
+  "awin:F1320": "2026-07-25",
+  "awin:F2615": "2026-07-25",
+  "csv:brooklyn-delhi": "2026-07-25",
 };
+
+/** Which feed a partner's products come from, unless overridden below. */
+const PARTNER_DEFAULT_FEED: Record<string, string> = {
+  "brooklyn-delhi": "csv:brooklyn-delhi",
+  "canvas-vows": "awin:103552",
+  evdance: "awin:F1320",
+  "golden-maple": "awin:F2615",
+  "king-koil": "awin:101819",
+  "tsar-bomba": "awin:113495",
+};
+
+/**
+ * The 26 tsar-bomba products sourced from the frozen Default feed
+ * (105368) rather than the US feed. Derived 2026-08-17 by intersecting
+ * feed 105368's pclick p= ids with the static catalog's — reproduces the
+ * 87877a2 commit message's own "26 Default-only" count exactly. (The
+ * scripts/_tsarbomba-mapping.json file is a CSV column mapping, not a
+ * product→feed map — this set had to be derived from the feeds.)
+ */
+const TSAR_BOMBA_DEFAULT_FEED_SLUGS = new Set([
+  "atomic-interchangeable-ceramic-edition-black",
+  "elemental-series-automatic-watch-tb8207a-black",
+  "elemental-series-automatic-watch-tb8207a-silver-blue",
+  "elemental-series-automatic-watch-tb8209a-silver-blue",
+  "elemental-series-automatic-watch-tb8209a-gold-black",
+  "elemental-series-automatic-watch-tb8209a-silver-black",
+  "elemental-series-automatic-watch-tb8210a-black",
+  "elemental-series-automatic-watch-tb8210a-silver-black",
+  "elemental-series-automatic-watch-tb8210a-black-orange",
+  "elemental-series-automatic-watch-tb8212-carbon-fiber-yellow",
+  "elemental-series-calendar-version-tb8204qa-light-blue",
+  "elemental-series-calendar-version-tb8204qa-green",
+  "elemental-series-carbon-fiber-automatic-watch-tb8207cf",
+  "elemental-series-ceramic-automatic-watch-tb8209c-white",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8208d-red",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8208d-white",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8208d-black",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8209d-white",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8209d-golden-black",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8209d-black",
+  "elemental-series-cubic-zirconia-automatic-watch-tb8209d-red",
+  "elemental-series-titanium-edition-tb8208t-black",
+  "elemental-series-titanium-edition-tb8208t-white",
+  "elemental-series-titanium-edition-tb8208t-blue",
+  "atomic-interchangeable-automatic-watch-zirconia-diamond-venus",
+  "atomic-interchangeable-calendar-watch-zirconia-diamond-venus",
+]);
+
+/** Resolve the source feed for a product. */
+function getSourceFeed(partnerId: string, slug: string): string | null {
+  if (partnerId === "tsar-bomba" && TSAR_BOMBA_DEFAULT_FEED_SLUGS.has(slug)) {
+    return "awin:105368";
+  }
+  return PARTNER_DEFAULT_FEED[partnerId] ?? null;
+}
 
 /** "2026-05-15" -> "May 15, 2026". Fixed locale + UTC so SSG output is
  * deterministic regardless of build machine settings. */
@@ -58,6 +123,7 @@ export function formatAsOfDate(iso: string): string {
   });
 }
 
-export function getPriceAsOf(partnerId: string): string | null {
-  return PRICE_AS_OF[partnerId] ?? null;
+export function getPriceAsOf(partnerId: string, slug: string): string | null {
+  const feed = getSourceFeed(partnerId, slug);
+  return feed ? (FEED_VINTAGE[feed] ?? null) : null;
 }

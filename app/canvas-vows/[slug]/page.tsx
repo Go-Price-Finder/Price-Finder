@@ -131,7 +131,7 @@ export default async function CanvasVowsProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="canvas-vows" />
+              <PriceAsOfLabel partnerId="canvas-vows" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

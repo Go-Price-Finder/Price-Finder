@@ -11,9 +11,19 @@ import { formatAsOfDate, getPriceAsOf } from "@/lib/price-as-of";
  *
  * Server component, zero client JS. Renders nothing for an unknown
  * partner rather than guessing a date.
+ *
+ * Takes the product slug because as-of is a property of the SOURCE FEED,
+ * not the partner — tsar-bomba draws from two feeds with vintages 79 days
+ * apart (see lib/price-as-of.ts).
  */
-export default function PriceAsOfLabel({ partnerId }: { partnerId: string }) {
-  const iso = getPriceAsOf(partnerId);
+export default function PriceAsOfLabel({
+  partnerId,
+  slug,
+}: {
+  partnerId: string;
+  slug: string;
+}) {
+  const iso = getPriceAsOf(partnerId, slug);
   if (!iso) return null;
   return (
     <p className="mt-1.5 text-xs text-ivory-400">

@@ -125,7 +125,7 @@ export default async function EvdanceProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="evdance" />
+              <PriceAsOfLabel partnerId="evdance" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

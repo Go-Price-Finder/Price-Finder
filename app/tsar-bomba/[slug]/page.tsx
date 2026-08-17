@@ -128,7 +128,7 @@ export default async function TsarBombaProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="tsar-bomba" />
+              <PriceAsOfLabel partnerId="tsar-bomba" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

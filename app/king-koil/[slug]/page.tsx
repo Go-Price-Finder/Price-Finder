@@ -128,7 +128,7 @@ export default async function KingKoilProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="king-koil" />
+              <PriceAsOfLabel partnerId="king-koil" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

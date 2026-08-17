@@ -408,6 +408,23 @@ reactor/nucleus/elemental and not "dark matter." **Confirmed
 discontinuations across all 272 products, after every tier and every
 correction: zero found.**
 
+### The vacuous join: keys that cannot match return zero, and zero reads as a pass
+
+A distinct instance of the check-not-measuring-its-name family, caught
+before it passed (2026-08-17, during Gate D of migration 0016). The task:
+prove no evdance catalog product traces to frozen feed 108581. The first
+join ran on `p=` deep-link ids and returned zero matches — which would have
+closed the gate — but the zero was **structurally vacuous**: evdance's deep
+links are `cread.php?ued=` format and carry no `p=` ids at all, so the join
+had no keys on one side and could never have returned anything. A zero from
+a join whose keys cannot match is not evidence of absence; it is the shape
+of the query. The gate was instead closed with the merchant-URL join (both
+sides carry `ued=`/product URLs): 108581's single product matched 0 of 72
+catalog URLs, with 70/72 catalog URLs positively resolving into F1320 as
+corroboration that the join CAN match. **Rule: before accepting a zero from
+any join, verify the join key exists and is populated on both sides — a
+join that cannot fail to return zero has not tested anything.**
+
 ### The namespace failure, named
 
 The recurring shape — this document's second transferable lesson, alongside

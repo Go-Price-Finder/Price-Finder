@@ -756,12 +756,12 @@ about — the table, the call graph — not from the narrative around it.
   ticket remains the real Canvas Vows fix.
 - Canvas Vows catalog-coverage gap noted for later: merchant lists 258 live
   products; we carry 204.
-- Canvas Vows mojibake: 203/204 descriptions double-encoded (882
-  occurrences), live on 203 pages × 3 surfaces (meta/body/JSON-LD); other
-  five partners clean. Repair simulated — windows-1252(C1-passthrough) →
-  UTF-8 round-trips 203/203 cleanly — NOT applied; requires fixing DB and
-  static file together or the 38/38 suite breaks. Description-only: writes
-  nothing to price_history.
+- Canvas Vows mojibake: REPAIRED (authorized, 2026-08-16, `07b080a`) —
+  both sides in one change, 203 DB rows + 882 static-file sequences,
+  all-gates-before-first-write, post-verified 204/204 with zero residual,
+  suite 38/38, prediction matched exactly. Before-state: 204 descriptions
+  dumped with sha256 pre-write; prior file bytes in git at `255699a`.
+  Frozen-file carve-out documented in the Step 14 plan.
 - Canvas Vows freshness: no last-updated data exists anywhere in the feed
   pipeline for this partner — AWIN's ingest timestamp is the only signal,
   and it's the frozen one.

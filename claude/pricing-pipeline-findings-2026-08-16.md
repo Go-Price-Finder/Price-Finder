@@ -981,6 +981,24 @@ env vars are read at runtime from the deployment's environment, and the
 deployment live at the time of this finding (`dpl_CArd9y8SZVfHsMVdy26BAkGn5jpL`,
 commit `419b3e4`) predates the variable.
 
+**CORRECTION (2026-08-17, operator's read of the full Resend send log):
+"email was never capable of sending" — this section's original framing —
+is FALSE, and the truth is worse.** Resend id
+`90041e8a-de63-4a05-846c-22ee048bde79`, 2026-07-23 03:42Z: delivered AND
+OPENED, From `Price Finder <onboarding@resend.dev>`, To
+kawsar0990a@gmail.com. That is the fallback sender WORKING in production —
+to the account owner. The accurate claim: email could reach exactly one
+person and nobody else. The hypothesis stated above ("a test written by
+someone who assumed the loud shape would have passed") is no longer a
+hypothesis; it has an artifact — someone tested the feature on themselves,
+saw success, and the configuration that cannot email a single real user
+looked healthy for 26 days. Historical note on that July message: it
+carried fabricated demo content to a real inbox — a headphones product not
+in the catalog, an Amazon search URL, an Unsplash stock photo (verified
+not live: 0 of 954 catalog rows have an Unsplash image). It came from the
+test scripts' invented payload, since replaced with real catalog data —
+see §9j for the bug that payload masked.
+
 ### 9c. Send-only key scoping — the read-block is evidence, not a gap
 
 The new RESEND_API_KEY is send-scoped: `emails.send` works;
@@ -1064,6 +1082,14 @@ despite the 200). The route response cannot distinguish these; only the
 received header can. Recorded rule restated: report the from address on
 the delivered message, not the one expected.
 
+**CLOSED (2026-08-17, operator's read from the Resend side):** message
+`f9c15a1c-2a18-466a-af7c-811cd0f6212b` reads
+`From: Go Price Finder <alerts@send.gopricefinder.com>`. The Vercel
+variable reached the build; the deployed app sends through its own
+resolved configuration. Assembly proven — and the same log read produced
+§9b's correction and the §9j/§9k defects, all found in the RENDERED
+message, none visible in the template source or the route response.
+
 ### 9g. sync-cashback's identical swallow — fixed, demonstrated failing (2026-08-17)
 
 Same shape as §9d, fourth confirmed instance of the family:
@@ -1109,7 +1135,74 @@ commits carry `Claude Opus 5`. Neither is a typo: the trailer records the
 model actually driving the session, and this session's model is Fable 5
 where prior sessions ran Opus 5. Standardizing on the old trailer would
 misattribute authorship, so the convention going forward is: the trailer
-names the model that authored the commit.
+names the model that authored the commit. (Operator concurred 2026-08-17:
+"Uniformity is not worth a false attribution.")
+
+### 9j. LIVE DEFECT, fixed 2026-08-17: every alert email had a broken hero image — and the regression shape matters
+
+The template emitted `product.image` verbatim into `<img src>`. All 954
+catalog rows hold SITE-RELATIVE paths
+(`/images/<partner>/<slug>.webp`-style, measured from Supabase by the
+operator), and email clients have no base URL — so every price alert this
+system could send had a broken image, in every client, always.
+
+**The regression shape, recorded deliberately: the template never
+changed — the MEANING of `product.image` did.** The 2026-07-23 test
+message used the scripts' fabricated demo payload with an ABSOLUTE
+Unsplash URL, which rendered fine. When real catalog data replaced demo
+data, the same template became wrong. The only email anyone ever
+inspected was the one where it happened to work — a test payload that
+doesn't match production data doesn't test production. Both test scripts
+now use a real catalog product for exactly this reason.
+
+Fix: `lib/siteOrigin.ts` derives the origin — never a hand-maintained
+constant — from `NEXT_PUBLIC_SITE_URL` (the codebase's existing
+absolute-link convention, used by lib/supabase/actions.ts) falling back
+to Vercel's `VERCEL_PROJECT_PRODUCTION_URL` system var. When neither
+exists the image is OMITTED entirely: an email with no image beats an
+email with a broken one, and the template never emits a relative URL
+again. Verified on rendered bytes: absolute `https://gopricefinder.com/...`
+URL (confirmed serving HTTP 200), and the omission branch confirmed with
+both vars absent — which is also `.env.local`'s actual state, so local
+renders omit the image until the operator adds the var locally.
+
+**The .webp decision — accept the gap, documented:** 713 of 954 images
+are .webp, which classic desktop Outlook (Word rendering engine) does not
+render even when absolute. Reasons to accept rather than convert: the
+entire current recipient base is three users on gmail.com/yahoo.com, both
+of which render WebP; classic-desktop-Outlook share of CONSUMER email is
+small and shrinking (new Outlook, Outlook web, and mobile all render
+WebP); the degradation is a blank slot with alt text, not a broken
+layout; and the alternatives are real costs against a hypothetical
+audience — Next's image optimizer negotiates format by Accept header
+(unverified behavior for webp-source-to-legacy-client, not something to
+build on), an external conversion proxy adds a dependency and a privacy
+hop, and pre-generating 954 JPEG variants is storage and build work. If
+the audience ever includes desktop-Outlook users in numbers, the fix
+belongs at image serving (host JPEG variants), not in the template.
+Revisit trigger: audience evidence, not speculation.
+
+### 9k. The savings claim was not supported by the data — presentation fixed, 2026-08-17
+
+The email rendered a struck-through "old price" and a "You save $X
+(Y% off)" badge, both derived from `wishlists.price_saved` — the price
+when the user bookmarked the product. `catalog_products.original_price`
+is NULL for that product and non-null for exactly ONE row in the whole
+catalog, so there is no market "was" price anywhere in the data.
+"Cheaper than when you saved it" and "87% off" are different claims and
+the email made the second — same family as the PriceHistoryChart
+incident: a true underlying number presented as a claim it does not
+support.
+
+Fixed in presentation only, data untouched: the current price stands
+alone (no strikethrough), followed by "When you saved it: $X — it's $Y
+less now", and the drop line only renders when the price actually IS
+lower than the saved price (a wishlist row saved BELOW the current price
+still alerts if the target allows it, and must not claim a drop it
+can't show). No percent-off badge on any basis: the honest percent
+("N% lower than when you saved it") is computable but invites exactly
+the "% off" misread this fixes, and there is no other basis to compute
+one from. Verified on rendered bytes, both branches.
 
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
@@ -1187,12 +1280,26 @@ names the model that authored the commit.
   monitor proposed, not built. CI contains no RESEND reference; old key
   revocation is unblocked and remains the operator's call.
 - Email/crons (2026-08-17, evening, §9f–9h): deployed send path exercised
-  end to end (200, sent:1) — the from header on the delivered message is
-  the open measurement, pending an operator read of kawsar0990a@gmail.com
-  (two possible states; the 200 cannot distinguish them). sync-cashback's
-  identical swallow fixed and demonstrated failing (fourth instance of the
-  family). Dead-man's switch BUILT into all four cron routes
-  (clean-run-only pings, healthchecks.io class, non-Vercel non-Resend
-  alert channel) but INERT until HEALTHCHECKS_PING_KEY is provisioned —
-  the no-observer gap stays open until then. Old-key revocation being
-  actioned by the operator.
+  end to end (200, sent:1) and CLOSED — operator read the header from the
+  Resend side: From alerts@send.gopricefinder.com; the Vercel var reached
+  the build. sync-cashback's identical swallow fixed and demonstrated
+  failing (fourth instance of the family). Dead-man's switch BUILT into
+  all four cron routes (clean-run-only pings, healthchecks.io class,
+  non-Vercel non-Resend alert channel) but INERT until
+  HEALTHCHECKS_PING_KEY is provisioned — the no-observer gap stays open
+  until then. Old-key revocation being actioned by the operator.
+- Email content (2026-08-17, late, §9b-correction/§9j/§9k, from the
+  operator's full send-log read): "never capable of sending" was FALSE —
+  the onboarding fallback delivered to the account owner on 2026-07-23
+  (opened), i.e. email reached exactly one person and nobody else, and
+  looked healthy doing it. Every alert email had a broken hero image
+  (954/954 relative paths; template unchanged, the MEANING of
+  product.image changed when real data replaced demo data) — fixed via
+  derived origin (lib/siteOrigin.ts), image omitted when no origin
+  derivable, never relative. Savings presentation unsupported by data
+  (strikethrough + %-off derived from price_saved) — replaced with the
+  claim the data supports: current price vs "when you saved it". .webp
+  Outlook-classic gap accepted with reasoning and a revisit trigger
+  (§9j). Test scripts' fabricated demo payload replaced with real
+  catalog data. Rendered-bytes verification pending one post-deploy send
+  (the template-source trap is §9j's whole lesson).

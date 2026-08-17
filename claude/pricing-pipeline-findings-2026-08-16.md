@@ -858,19 +858,25 @@ MSRP" ranking, which the product-strategy inclusion rule forbids (a deal is
 defined by a product's own price history, not a merchant's claim). Not
 fixed; quantified (2026-08-17):
 
-- **Products currently surfacing: 1** — the entire
-  `originalPrice > price` pool across all 954 is one brooklyn-delhi
-  product. The homepage removed its Featured Deals section entirely
-  (`app/page.tsx:40`); `/deals` renders the pool unsliced, so exactly one
-  product displays sitewide.
+- **Products currently surfacing: 0** (correction — Cowork measured the
+  live page; an earlier draft of this section said 1 by reading the
+  Supabase pool). `/deals` still reads the STATIC path (`lib/partners` —
+  Batch 5 never ran), where no product literal sets `originalPrice`, so
+  the live page renders zero deals. The Supabase pool
+  (`original_price > price` in `catalog_products`) is exactly 1 — one
+  brooklyn-delhi product — which is what would surface if/when the deals
+  page migrates. The homepage removed its Featured Deals section entirely
+  (`app/page.tsx:40`).
 - **Survivors under a history-based rule today: 0.** No product has any
   usable self-history — everything before the 2026-08-17 cutover is
   catalog echo, and live-observed rows begin accumulating today, one per
   day. A "below its own typical price" rule cannot qualify anything for
   days-to-weeks.
-- So this is a **sequencing problem, not a live bug**: the violation's
-  current blast radius is one product, and the honest replacement rule
-  has nothing to run on yet. Two watch-items recorded: the Option A gated
+- So **adopting the history-based inclusion rule costs nothing** (operator
+  conclusion from Cowork's measurement): the MSRP-ranked surface is zero
+  products live and one in the pool, and the honest replacement rule has
+  nothing to run on yet either — a sequencing convenience, not a
+  trade-off. Two watch-items recorded: the Option A gated
   side effect (overrides carry feed RRP as `original_price`, which would
   inflate this pool the day live display ships), and the strategy doc
   itself — which is NOT yet in this repo (see below).

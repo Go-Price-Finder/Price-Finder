@@ -1,6 +1,15 @@
 /**
  * "Price as of" dates for displayed (catalog) prices — PER-FEED model.
  *
+ * ⚠️ DEBT — INTERIM IMPLEMENTATION, DELETED BY COWORK'S STEP 2. This
+ * hand-maintained module (FEED_VINTAGE, PARTNER_DEFAULT_FEED, and
+ * especially TSAR_BOMBA_DEFAULT_FEED_SLUGS) is superseded by the
+ * feed_status table Cowork specced 2026-08-17 (per-feed rows, seven
+ * total). It shipped anyway because a live 79-day freshness overclaim on
+ * 26 pages outweighed mechanism purity — correct output today over a
+ * better mechanism tomorrow. When Step 2 lands, this file's data moves to
+ * feed_status and the label reads from there; do not extend this file.
+ *
  * AS-OF IS A PROPERTY OF THE FEED, NOT THE PARTNER (operator decision,
  * 2026-08-17). A partner can draw from multiple feeds with different
  * vintages — tsar-bomba's catalog is 246 products from the US feed

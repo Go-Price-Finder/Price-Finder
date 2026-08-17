@@ -30,10 +30,20 @@ export type CurrentPriceRow = {
   updated_at: string;
 };
 
-/** Fetch every row in current_prices as a Map keyed by `${product_id}:${retailer}`
- * (matching RealProduct.id's own `${partnerId}:${slug}` shape one-for-one,
- * since partnerId IS the retailer for real-partner products) for O(1)
- * lookup while merging. */
+/** Fetch every row in current_prices as a Map keyed by `product_id` alone.
+ *
+ * `product_id` IS RealProduct.id — the full `${partnerId}:${slug}` string,
+ * partner prefix included (see withLivePrice below, which queries by the
+ * same equality). Appending `:${retailer}` here built keys shaped
+ * `partner:slug:partner` that applyOverride's `overrides.get(product.id)`
+ * could never match, so the merge was a silent no-op from 2026-08-02 to
+ * 2026-08-16: current_prices was written daily and read by nothing,
+ * price_history recorded the static price as if observed, and price
+ * alerts never evaluated a live price. Full record:
+ * claude/pricing-pipeline-findings-2026-08-16.md, Section 2. Retailer
+ * needs no place in the key — it is derivable from the id's partner
+ * prefix, and (product_id, retailer) is unique per the table's conflict
+ * target with retailer always equal to that prefix for real partners. */
 export async function fetchCurrentPriceOverrides(): Promise<
   Map<string, CurrentPriceRow>
 > {
@@ -46,7 +56,7 @@ export async function fetchCurrentPriceOverrides(): Promise<
 
   const map = new Map<string, CurrentPriceRow>();
   for (const row of data ?? []) {
-    map.set(`${row.product_id}:${row.retailer}`, row);
+    map.set(row.product_id, row);
   }
   return map;
 }

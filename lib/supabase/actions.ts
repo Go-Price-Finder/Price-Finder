@@ -3,10 +3,25 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 import { getUsernameError, isPasswordValid } from "@/lib/validation";
+import { siteOrigin } from "@/lib/siteOrigin";
 
 export type AuthActionResult = { error: string } | void;
 
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+// Loud by design: a silently wrong origin here strands every confirming
+// user on a dead page with an unusable link — which is exactly what the
+// old `?? "http://localhost:3000"` fallback did in production for as long
+// as NEXT_PUBLIC_SITE_URL was unset (findings doc §9l). Being rescued by
+// another system's default is not being correct; refusing to run is.
+const siteUrl = () => {
+  const origin = siteOrigin();
+  if (!origin) {
+    throw new Error(
+      "No site origin derivable (NEXT_PUBLIC_SITE_URL and VERCEL_PROJECT_PRODUCTION_URL both unset) — " +
+        "refusing to build an auth redirect URL that would strand the user."
+    );
+  }
+  return origin;
+};
 
 export async function signUpAction(
   email: string,

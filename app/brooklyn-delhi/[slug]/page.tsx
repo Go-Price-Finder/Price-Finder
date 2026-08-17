@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PriceAsOfLabel from "@/components/PriceAsOfLabel";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -123,6 +124,8 @@ export default async function BrooklynDelhiProductPage({
                   className="static ml-auto"
                 />
               </div>
+
+              <PriceAsOfLabel partnerId="brooklyn-delhi" />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

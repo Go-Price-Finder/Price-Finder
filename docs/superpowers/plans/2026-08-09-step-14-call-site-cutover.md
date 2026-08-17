@@ -17,6 +17,7 @@
 - **Page count must stay 1043** after every batch (1018 from `generateStaticParams` + 25 static).
 - **Never import `lib/partners.ts` from a client component.** A single named value import pulls all six data files (~1.47MB) — this caused the 2026-08-01 homepage LCP regression. Type-only imports (`import type`) are erased and safe.
 - **`lib/partners.ts` and `lib/<partner>-data.ts` are read-only until Batch 7.** No deletions, no edits, no re-exports removed.
+  - **One documented carve-out (2026-08-16):** `lib/canvas-vows-data.ts` received a content-fidelity repair — 882 double-encoded UTF-8 sequences (mojibake from the merchant's upload path) fixed in 203 description literals, mirroring the identical repair applied to `catalog_products` in the same change. This is NOT a migration change: no product added/removed/reordered, no price touched, no shape change — the frozen file had to move because it is the rollback target, and leaving it corrupted means a future batch revert would silently restore mojibake. The 38-check suite passes against both repaired sides. See `claude/pricing-pipeline-findings-2026-08-16.md` (Canvas Vows mojibake section) for the full record.
 - **Credentials:** `next build` reads `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Locally Next loads `.env.local` automatically. Standalone scripts need `npx tsx --env-file=.env.local`.
 - **Verification is non-negotiable per CLAUDE.md:** `tsc --noEmit` → `eslint` → `next build` → review → push, every batch, no exceptions.
 

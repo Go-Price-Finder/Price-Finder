@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "Go Price Finder — Compare Prices, Shop Smarter";
@@ -5,23 +7,19 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
- * Fetches a Google Font as raw bytes for satori (the renderer behind
- * ImageResponse) — it needs actual font data, not a CSS @font-face rule.
- * Google's CSS2 API now serves WOFF2 by default (satori/ImageResponse
- * supports that directly, unlike older versions that required TTF), and
- * returns 3 unicode-range variants per weight (vietnamese/latin-ext/latin)
- * — picking the wrong one silently loads a font with the wrong character
- * coverage, so this specifically extracts the "latin" block rather than
- * just the first @font-face match in the response.
+ * Reads a vendored font for satori (the renderer behind ImageResponse) —
+ * it needs actual font data, not a CSS @font-face rule. These are the
+ * exact single-weight TTF instances Google's CSS2 API served to the old
+ * build-time fetch (which sent no browser User-Agent, so Google served
+ * truetype — the previous comment here claiming woff2 was wrong, and
+ * satori in this setup rejects woff2 with "Unsupported OpenType
+ * signature wOF2"). Static instances, not the variable files layout.tsx
+ * uses. Committed in app/fonts/ so prerendering this image no longer
+ * depends on a build-time network fetch to a third party — which failed
+ * a production deploy on 2026-08-17 (findings doc §9q).
  */
-async function loadGoogleFont(family: string, weight: number) {
-  const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}&display=swap`;
-  const css = await (await fetch(cssUrl)).text();
-  const latinBlock = css.split("/* latin */")[1] ?? css;
-  const match = latinBlock.match(/src: url\((.+?)\) format\('(?:woff2|opentype|truetype)'\)/);
-  if (!match) throw new Error(`Could not resolve a font URL for ${family} ${weight}`);
-  const fontRes = await fetch(match[1]);
-  return fontRes.arrayBuffer();
+function loadVendoredFont(file: string) {
+  return readFile(path.join(process.cwd(), "app", "fonts", file));
 }
 
 // Mirrors the light theme's (the site's default theme) actual token values
@@ -37,8 +35,8 @@ const TEXT_MUTED = "#756f5f";
 
 export default async function OpengraphImage() {
   const [frauncesSemibold, schibstedRegular] = await Promise.all([
-    loadGoogleFont("Fraunces", 600),
-    loadGoogleFont("Schibsted Grotesk", 400),
+    loadVendoredFont("fraunces-600-latin.ttf"),
+    loadVendoredFont("schibsted-grotesk-400-latin.ttf"),
   ]);
 
   return new ImageResponse(

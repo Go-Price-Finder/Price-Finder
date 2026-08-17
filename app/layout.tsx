@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk, Fraunces } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -11,17 +11,30 @@ import CinematicBackground from "@/components/CinematicBackground";
 // news/media publisher) instead of the generic default, per the approved
 // visual-direction redesign. See PHASE1 design-direction discussion for
 // why this pairs with Fraunces specifically.
-const schibsted = Schibsted_Grotesk({
+//
+// Vendored in app/fonts/ (next/font/local), NOT next/font/google: the
+// google variant downloads the files from fonts.gstatic.com during
+// `next build`, which put a third-party network fetch between every
+// deploy and production — and it failed one (findings doc §9q,
+// 2026-08-17). Same latin-subset variable woff2 files Google served,
+// committed; runtime serving was already self-hosted either way. The
+// files carry the same axes the google config requested (Schibsted:
+// wght 400..900; Fraunces: opsz/wght/SOFT/WONK).
+const schibsted = localFont({
+  src: "./fonts/schibsted-grotesk-variable-latin.woff2",
   variable: "--font-schibsted",
-  subsets: ["latin"],
   display: "swap",
+  weight: "400 900",
 });
 
-const fraunces = Fraunces({
+const fraunces = localFont({
+  src: "./fonts/fraunces-variable-latin.woff2",
   variable: "--font-fraunces",
-  subsets: ["latin"],
   display: "swap",
-  axes: ["opsz", "SOFT", "WONK"],
+  weight: "100 900",
+  // Serif fallback metrics — localFont defaults to Arial; next/font/google
+  // computed against a serif for this serif family.
+  adjustFontFallback: "Times New Roman",
 });
 
 export const metadata: Metadata = {

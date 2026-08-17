@@ -13,6 +13,7 @@
  */
 import { resend, EMAIL_FROM } from "../lib/email/resend";
 import { renderPriceDropAlertEmail } from "../lib/email/templates/priceDropAlert";
+import { getAllRealProducts } from "../lib/partners";
 
 async function main() {
   const to = process.env.TEST_EMAIL_TO;
@@ -25,14 +26,18 @@ async function main() {
     process.exit(1);
   }
 
+  // A REAL catalog product, never fabricated demo data — a fabricated
+  // payload with an absolute stock-photo URL is how the relative-image
+  // bug shipped unnoticed (findings doc §9j), and a test send should
+  // exercise exactly what production would send.
+  const product = getAllRealProducts()[0];
   const { subject, html } = renderPriceDropAlertEmail({
-    productName: "Wireless Noise-Cancelling Headphones",
-    productImageUrl:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
-    oldPrice: 349,
-    newPrice: 249,
-    retailerName: "Amazon",
-    dealUrl: "https://www.amazon.com/s?k=Wireless+Noise-Cancelling+Headphones",
+    productName: product.name,
+    productImageUrl: product.image,
+    priceWhenSaved: product.price + 3,
+    currentPrice: product.price,
+    retailerName: product.partnerName,
+    dealUrl: product.deepLink,
   });
 
   console.log("From:", EMAIL_FROM);

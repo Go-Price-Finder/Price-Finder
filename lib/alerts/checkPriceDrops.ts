@@ -69,8 +69,8 @@ export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
         const { subject, html } = renderPriceDropAlertEmail({
           productName: product.name,
           productImageUrl: product.image,
-          oldPrice: row.price_saved,
-          newPrice: product.price,
+          priceWhenSaved: row.price_saved,
+          currentPrice: product.price,
           retailerName: product.partnerName,
           dealUrl: product.deepLink,
         });

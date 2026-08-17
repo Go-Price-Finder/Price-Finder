@@ -11,13 +11,30 @@
  * (or any external stylesheet) — this is the one place in the codebase
  * those colors have to be duplicated as literal hex rather than a
  * `bg-sage-600`-style class.
+ *
+ * Two constraints found the hard way (findings doc §9j–§9k, 2026-08-17):
+ * - Image URLs must be ABSOLUTE. Email clients have no base URL, so the
+ *   catalog's site-relative paths render broken in every client. The
+ *   origin is derived (lib/siteOrigin.ts), never hand-maintained; when no
+ *   origin can be derived the image is omitted entirely rather than
+ *   emitted broken.
+ * - The only price-history fact available is wishlists.price_saved — the
+ *   price when the user bookmarked the product. The copy claims exactly
+ *   that ("when you saved it") and nothing more: no strikethrough, no
+ *   percent-off badge. catalog_products.original_price is null for
+ *   953/954 rows, so there is no basis for a market "was" price, and
+ *   "87% off" derived from price_saved is a claim the data doesn't
+ *   support.
  */
+import { siteOrigin } from "@/lib/siteOrigin";
 
 export type PriceDropEmailParams = {
   productName: string;
   productImageUrl?: string | null;
-  oldPrice: number;
-  newPrice: number;
+  /** wishlists.price_saved — what the product cost when the user saved it.
+   * NOT a market original price; the copy must not present it as one. */
+  priceWhenSaved: number;
+  currentPrice: number;
   retailerName: string;
   dealUrl: string;
 };
@@ -31,11 +48,24 @@ function formatUsd(value: number) {
 }
 
 export function renderPriceDropAlertEmail(params: PriceDropEmailParams) {
-  const { productName, productImageUrl, oldPrice, newPrice, retailerName, dealUrl } = params;
-  const savings = Math.max(oldPrice - newPrice, 0);
-  const savingsPct = oldPrice > 0 ? Math.round((savings / oldPrice) * 100) : 0;
+  const { productName, productImageUrl, priceWhenSaved, currentPrice, retailerName, dealUrl } =
+    params;
 
-  const subject = `Price drop: ${productName} is now ${formatUsd(newPrice)}`;
+  // Absolute or nothing — a relative src is broken in every email client.
+  // 713 of 954 catalog images are .webp, which classic desktop Outlook
+  // (Word rendering engine) won't render even when absolute; accepted gap,
+  // reasoning recorded in findings §9j — the alt text carries the slot.
+  const origin = siteOrigin();
+  const absoluteImageUrl = !productImageUrl
+    ? null
+    : /^https?:\/\//i.test(productImageUrl)
+      ? productImageUrl
+      : origin
+        ? `${origin}${productImageUrl.startsWith("/") ? "" : "/"}${productImageUrl}`
+        : null;
+
+  const drop = priceWhenSaved - currentPrice;
+  const subject = `Price drop: ${productName} is now ${formatUsd(currentPrice)}`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -57,8 +87,8 @@ export function renderPriceDropAlertEmail(params: PriceDropEmailParams) {
             <tr>
               <td style="background-color:#ffffff;border-radius:24px;box-shadow:0 8px 24px rgba(28,26,23,0.08);overflow:hidden;">
                 ${
-                  productImageUrl
-                    ? `<img src="${escapeHtml(productImageUrl)}" alt="${escapeHtml(productName)}" width="480" style="width:100%;max-height:260px;object-fit:cover;display:block;" />`
+                  absoluteImageUrl
+                    ? `<img src="${escapeHtml(absoluteImageUrl)}" alt="${escapeHtml(productName)}" width="480" style="width:100%;max-height:260px;object-fit:cover;display:block;" />`
                     : ""
                 }
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:28px 28px 32px;">
@@ -69,30 +99,17 @@ export function renderPriceDropAlertEmail(params: PriceDropEmailParams) {
                     </td>
                   </tr>
                   <tr>
-                    <td style="padding-bottom:20px;">
-                      <table role="presentation" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td style="padding-right:14px;vertical-align:bottom;">
-                            <span style="display:block;font-size:14px;color:#a39d94;text-decoration:line-through;">${formatUsd(oldPrice)}</span>
-                          </td>
-                          <td style="vertical-align:bottom;">
-                            <span style="display:block;font-size:28px;font-weight:600;color:#1c1a17;line-height:1;">${formatUsd(newPrice)}</span>
-                          </td>
-                        </tr>
-                      </table>
+                    <td style="padding-bottom:8px;">
+                      <span style="display:block;font-size:28px;font-weight:600;color:#1c1a17;line-height:1;">${formatUsd(currentPrice)}</span>
                     </td>
                   </tr>
-                  ${
-                    savings > 0
-                      ? `<tr>
-                    <td style="padding-bottom:22px;">
-                      <span style="display:inline-block;background-color:#f0f6f0;color:#2e6138;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;">
-                        You save ${formatUsd(savings)}${savingsPct > 0 ? ` (${savingsPct}% off)` : ""}
-                      </span>
+                  <tr>
+                    <td style="padding-bottom:22px;font-size:13px;line-height:1.5;color:#6b6660;">
+                      When you saved it: ${formatUsd(priceWhenSaved)}${
+                        drop > 0 ? ` — it&#39;s ${formatUsd(drop)} less now` : ""
+                      }
                     </td>
-                  </tr>`
-                      : ""
-                  }
+                  </tr>
                   <tr>
                     <td style="padding-bottom:24px;font-size:13px;line-height:1.5;color:#6b6660;">
                       Now at <strong style="color:#1c1a17;">${escapeHtml(retailerName)}</strong> — at or below the price you asked to be notified about.

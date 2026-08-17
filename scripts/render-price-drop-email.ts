@@ -1,23 +1,26 @@
 /**
  * Renders the price-drop alert email to a static HTML file for a visual
- * check, using a simulated price drop (Wireless Noise-Cancelling
- * Headphones, saved at $349, "dropped" to $249 against a $260 target) —
- * standing in for a live price feed per Step 6 of the price-drop-alert
- * build (no real feed exists yet).
+ * check, using a REAL catalog product — never fabricated demo data. The
+ * 2026-07-23 test send used an invented headphones product with an
+ * absolute Unsplash image, which is exactly why the relative-image bug
+ * shipped unnoticed: the only rendering anyone inspected was the one
+ * that couldn't exhibit it (findings doc §9j).
  *
  * Run with: npx tsx scripts/render-price-drop-email.ts
  */
 import { writeFileSync } from "node:fs";
 import { renderPriceDropAlertEmail } from "../lib/email/templates/priceDropAlert";
+import { getAllRealProducts } from "../lib/partners";
+
+const product = getAllRealProducts()[0];
 
 const { subject, html } = renderPriceDropAlertEmail({
-  productName: "Wireless Noise-Cancelling Headphones",
-  productImageUrl:
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
-  oldPrice: 349,
-  newPrice: 249,
-  retailerName: "Amazon",
-  dealUrl: "https://www.amazon.com/s?k=Wireless+Noise-Cancelling+Headphones",
+  productName: product.name,
+  productImageUrl: product.image,
+  priceWhenSaved: product.price + 3, // simulate having saved it at a higher price
+  currentPrice: product.price,
+  retailerName: product.partnerName,
+  dealUrl: product.deepLink,
 });
 
 console.log("Subject:", subject);

@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/sync-cashback",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/auth-probe",
+      "schedule": "0 15 * * *"
     }
   ]
 }

@@ -1,5 +1,82 @@
 # Partner sourcing — four networks, two gates (2026-08-18)
 
+## CJ SWEEP (2026-08-19, API — credentials landed) — and the finding that outranks the shortlist
+
+**Smoke test:** token + CID authenticate (200); joined advertisers: 0 —
+fresh account, everything below is not-joined. Redaction rule held
+throughout (status codes only on auth errors).
+
+### THE STRATEGIC ANSWER: YES, AND SUBSTANTIAL — CJ makes the product's name true
+
+Measured with a 0-joined account (CJ's GraphQL `shoppingProducts` is
+network-wide pre-join — 731.8M products visible):
+
+- **GTIN population:** Abt Electronics 95% of 1,000 sampled (catalog
+  22,679); Mattress Firm 100% of 1,000 (catalog 2,855); Wayfair 77% of
+  1,000 (catalog 41.7M). Manufacturer GTIN does not churn —
+  structurally better identity than aw_product_id (213/234 regenerated
+  in 16 days) and aligned with the standing durable-key rule.
+- **Cross-merchant overlap, measured directly** (gtin filter is a
+  SINGLE String — the list form silently returns zero, the vacuous-zero
+  trap, caught by positive control): **52% of Abt's appliance/TV GTINs
+  are carried by ≥2 CJ merchants** (co-carriers: Wayfair, Perigold,
+  Office Depot, Macy's, UnbeatableSale, Full Compass…); **32% of
+  Mattress Firm's GTINs** (1stopbedrooms, Macy's, Wayfair, JCPenney,
+  Boscov's…). One sampled GTIN appears at FIVE merchants
+  (662997155356: Abt | Birch Lane | Perigold | Wayfair |
+  1stopbedrooms).
+
+Consequence: every product in the current catalogue exists at exactly
+one retailer — the site cannot compare prices today. On CJ,
+multi-retailer comparison is measurably real in exactly our volatile
+target categories. CJ is not "another network."
+
+Also pre-join visible: `productFeeds` lists **15,542 feeds with product
+counts** — feed-exists is a knowable gate on CJ (unlike AWIN's
+pre-join walls). Feed schema is Google-shopping-shaped
+(gtin/mpn/brand/price/salePrice with sale windows).
+
+### Sweep results (advertiser-lookup, notjoined, keyword sweeps; 356 unique advertisers collected)
+
+EPC (3-month, per-100-clicks earnings) used as the volume/AOV proxy;
+network-rank 1–5 (5 = largest). Feed existence per advertiser is
+checkable via productFeeds/shoppingProducts before any application.
+
+**Volatile + accessible (the target):** BedJet (epc 365, rank 3, 8%),
+Mellow Sleep (216, 10%), Erommy (236, 8%), KEETSA (7%), DreamSofa (4%),
+Big Fig Mattress (5%), GARVEE (tools/equipment, 5%), Linsy Home (3%) —
+DTC tier, plausible approval at our traffic. With GTIN overlap, even
+single joins contribute to cross-merchant pairs (e.g. 1stopbedrooms
+rank-1 co-carries 10/16 of Mattress Firm's overlapping GTINs — a
+low-rank merchant that instantly creates comparison pairs).
+**Volatile + inaccessible today (wait list, unlock ≈5k visitors/mo
+sustained per public network guidance — not merchant quotes):**
+Mattress Firm (rank 5, epc 162), Macy's (rank 5), Abt Electronics
+(rank 4 — 1% commission but the OVERLAP HUB for appliances/TV),
+Wayfair, Frontgate, La-Z-Boy, Herman Miller, Lovesac, Office Depot.
+**Static + accessible (AVOID — the trap):** decor/craft DTC long tail
+(Olive Ateliers, ferm LIVING, Acanva…).
+**Static + inaccessible:** ignored.
+
+Gate 2 caveat, stated honestly: CJ program terms (coupon/deal/
+comparison-engine exclusions) are NOT exposed via the API — each
+target's terms need reading at application time, per the Best Buy
+precedent. Gate 1 numbers are public-guidance estimates.
+
+**No applications made, no terms accepted** — operator's, as always.
+
+### What this changes (flagged for the operator's strategy queue)
+
+1. The re-import/durable-key plan gains a second reason: GTIN in
+   catalog_products would let AWIN and CJ inventories join across
+   networks.
+2. The cutover (Step 14) remains the critical path — multi-retailer
+   product pages need the DB catalog as the single source before a
+   second network's products can mount.
+3. Abt + Wayfair + Perigold as a joined trio would make appliance/TV
+   comparison pages real at ~50% coverage of Abt's range — the first
+   true price-comparison inventory available to this project.
+
 ## ADDENDUM (same day): the shelf audit — 31 joined, 6 used, 23 baselined
 
 **The reordering finding (operator): 25 approved AWIN relationships sit

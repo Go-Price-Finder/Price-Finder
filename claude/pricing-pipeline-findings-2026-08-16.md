@@ -1780,6 +1780,48 @@ now make that attribution visible (the earlier partner-level "0/26
 one-day change" figure is withdrawn on the same grounds). Only feed
 113495's counters speak to Tsar Bomba's live repricing.
 
+### 9w. Diff-instrument validation (pre-08-25), exact-name NO-GO, and the durable-key rule (2026-08-19)
+
+**The 08-25 diff instrument is VALID for all three priority feeds —
+measured, not assumed** (prompted by §9v's finding that 113495
+regenerated 213/234 ids in 16 days, which would have made a churning-key
+diff uninterpretable): re-pulled today vs the 08-18 baselines —
+Alorair F2715: 186/186 ids in both, 0 lost, 0 new; aaawave F2639:
+1678/1678, 0 lost, 5 new; Vevor 72571: 20453/20453, 0 lost, 15 new.
+Zero baseline ids lost anywhere. The tsar-bomba id churn is a property
+of that feed (classic-template aw_product_id regeneration), not of the
+shelf.
+
+**Diff keys declared for Monday:** Alorair and aaawave are
+Google-template feeds — key = `id` (the merchant's own item id; proven
+stable). Vevor is classic-template — the baseline is keyed on
+aw_product_id (proven stable across this check); as insurance against
+mid-week churn, today's full aw_product_id → merchant_product_id map
+(20,468 rows) is committed alongside the baselines
+(`28831-72571-keymap-2026-08-19.ndjson.gz`), so the diff can bridge to
+the durable key even if aw ids regenerate before Monday.
+
+**Instrument artifact, confessed before it becomes a finding:** the
+name-overlap side-measurement showed absurd churn (Vevor 118/17,345
+names "matching" after one day) — that is the BASELINE's 80-char name
+truncation colliding with full-length names in the comparison, i.e. a
+fact about the instrument (§9n), not about merchants. Names play no
+part in any diff key; the baselines stand.
+
+**Exact-name bridge: NO-GO (operator decision 2026-08-19), recorded so
+it is not relitigated:** ≤56 products on one merchant; names churn on
+the same schedule as ids so it rots identically; per-row merchant-site
+verification is manual, unscalable, and repeats as names drift; and the
+real fix (re-import keyed on merchant_product_id) is blocked on the
+Step 14 cutover. The 21 id-recovered products are kept; the effort goes
+to the cutover, which unblocks the catalog pipeline rather than 56
+products.
+
+**DURABLE-KEY RULE (standing, operator 2026-08-19): merchant_product_id
+(or the Google-template `id`, which is merchant-owned) is the key for
+ALL future feed work — diffing, re-import, new-partner onboarding.
+aw_product_id is an export-time artifact, not an identity.**
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

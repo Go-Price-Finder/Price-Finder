@@ -2103,6 +2103,14 @@ Full Compass 40%, Tennis Express 7%, evdance 0%, Autel 0%. §13's
 AWIN feed lacks identity, the products do not lack counterparties.
 Comparison-pair map and re-ranked shortlist: partner-sourcing doc.
 
+**TECHNIQUE, recorded at operator request (the Monoprice catch):**
+distinct-brand sampling — count distinct `brand` values in a ~100-row
+feed sample; own-brand ≈ 1–2, reseller ≈ tens. Twenty rows turned a
+judged axis into a measured one and caught a name that reads reseller
+measuring as house-brand (Monoprice, 2 brands). Reusable anywhere a
+feed exposes a brand column; pairs with the GTIN join test (this
+section) which measures the finer per-product property.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

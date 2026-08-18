@@ -283,8 +283,15 @@ const DEFAULT_MAPPING_CANDIDATES = {
   // re-importing later to backfill an identifier is expensive. Insurance,
   // not architecture: no join logic or comparison surface exists yet.
   gtin: ["gtin", "ean", "upc", "barcode", "product_gtin"],
-  category: ["category", "product_type", "merchant_category", "product_category"],
-  deepLink: ["deep_link", "merchant_deep_link", "affiliate_url", "product_url", "url"],
+  // google_product_category: Google-template feeds (F-prefixed AWIN feeds,
+  // e.g. aaawave F2639) put the real taxonomy there and often leave
+  // product_type empty — without this candidate every product lands
+  // "Uncategorized" (found preparing the aaawave import, 2026-08-19).
+  category: ["category", "product_type", "google_product_category", "merchant_category", "product_category"],
+  // aw_deep_link/link: Google-template feeds carry the tracking link in
+  // aw_deep_link and the merchant URL in link — neither was in the classic
+  // candidate list, so deepLink resolution failed outright on F-feeds.
+  deepLink: ["deep_link", "aw_deep_link", "merchant_deep_link", "affiliate_url", "product_url", "link", "url"],
   image: ["image_link", "image_url", "image", "large_image", "photo"],
   additionalImages: ["additional_image_link", "additional_images", "gallery"],
 };

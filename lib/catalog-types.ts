@@ -23,6 +23,12 @@ export type RealProduct = {
   description: string;
   price: number;
   originalPrice?: number;
+  /** Manufacturer GTIN/EAN/UPC when the source feed carried one. Captured
+   * at import (operator ruling 2026-08-19: capture, don't join) as the
+   * durable cross-network identity key — no join logic or comparison
+   * surface consumes it yet, and catalog_products' matching column is a
+   * pending Cowork DDL item. */
+  gtin?: string;
   image: string;
   images: string[];
   /** Specific subcategory as the partner's own data names it (e.g.

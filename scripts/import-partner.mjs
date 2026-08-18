@@ -277,6 +277,12 @@ const DEFAULT_MAPPING_CANDIDATES = {
   description: ["description", "product_description", "desc"],
   price: ["search_price", "sale_price", "price", "current_price"],
   originalPrice: ["rrp_price", "rrp", "list_price", "original_price", "was_price"],
+  // GTIN capture (operator ruling 2026-08-19: capture, do not join).
+  // Manufacturer identifiers are the durable cross-network key (CJ carries
+  // them 77-100%; AWIN feeds vary 0-100%) — capturing at import is cheap,
+  // re-importing later to backfill an identifier is expensive. Insurance,
+  // not architecture: no join logic or comparison surface exists yet.
+  gtin: ["gtin", "ean", "upc", "barcode", "product_gtin"],
   category: ["category", "product_type", "merchant_category", "product_category"],
   deepLink: ["deep_link", "merchant_deep_link", "affiliate_url", "product_url", "url"],
   image: ["image_link", "image_url", "image", "large_image", "photo"],
@@ -386,6 +392,7 @@ const columns = {
   description: resolveColumn(headers, "description"),
   price: resolveColumn(headers, "price"),
   originalPrice: resolveColumn(headers, "originalPrice"),
+  gtin: resolveColumn(headers, "gtin"),
   category: resolveColumn(headers, "category"),
   deepLink: resolveColumn(headers, "deepLink"),
   image: resolveColumn(headers, "image"),
@@ -419,6 +426,10 @@ for (const [i, row] of parsed.data.entries()) {
   const name = (row[columns.name] || "").trim();
   const price = parsePrice(row[columns.price]);
   const rawOriginal = columns.originalPrice ? parsePrice(row[columns.originalPrice]) : null;
+  // Only a plausible GTIN/EAN/UPC (8-14 digits) is kept — anything else is
+  // noise, and a wrong identifier is worse than none (it would mis-join).
+  const rawGtin = columns.gtin ? String(row[columns.gtin] || "").trim() : "";
+  const gtin = /^\d{8,14}$/.test(rawGtin) ? rawGtin : null;
   const rawCategory = (columns.category ? row[columns.category] : "") || "Uncategorized";
   const rawDeepLink = columns.deepLink ? row[columns.deepLink] : "";
   const deepLink = buildDeepLink(rawDeepLink);
@@ -479,6 +490,7 @@ for (const [i, row] of parsed.data.entries()) {
     description: finalDescription,
     price,
     originalPrice,
+    gtin,
     deepLink,
     image: imagePaths[0],
     images: imagePaths,
@@ -616,6 +628,7 @@ function productToTs(p) {
     `    price: ${p.price},`,
   ];
   if (p.originalPrice != null) lines.push(`    originalPrice: ${p.originalPrice},`);
+  if (p.gtin != null) lines.push(`    gtin: ${tsQuote(p.gtin)},`);
   lines.push(`    deepLink: ${tsQuote(p.deepLink)},`);
   lines.push(`    image: ${tsQuote(p.image)},`);
   lines.push(`    images: [${p.images.map(tsQuote).join(", ")}],`);
@@ -649,6 +662,9 @@ export type ${pascalId}Product = {
   description: string;
   price: number;
   originalPrice?: number;
+  /** Manufacturer GTIN/EAN/UPC when the source feed carried one — captured
+   * for future cross-network identity (findings §13), unused today. */
+  gtin?: string;
   deepLink: string;
   image: string;
   images: string[];

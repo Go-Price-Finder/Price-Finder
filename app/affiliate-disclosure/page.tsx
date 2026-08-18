@@ -77,6 +77,21 @@ export default function AffiliateDisclosurePage() {
               .
             </p>
             <p className="text-xs text-ivory-400">Last updated July 2026.</p>
+
+            <p className="mt-4 border-t border-gilt-500/20 pt-6 text-xs text-ivory-400">
+              Related:{" "}
+              <Link href="/terms" className="underline-offset-4 hover:text-gilt-400 hover:underline">
+                Terms of Service
+              </Link>
+              {" · "}
+              <Link href="/privacy" className="underline-offset-4 hover:text-gilt-400 hover:underline">
+                Privacy Policy
+              </Link>
+              {" · "}
+              <Link href="/contact" className="underline-offset-4 hover:text-gilt-400 hover:underline">
+                Contact
+              </Link>
+            </p>
           </div>
         </section>
       </main>

@@ -26,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/trending`, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/how-it-works`, changeFrequency: "monthly", priority: 0.3 },
     { url: `${SITE_URL}/affiliate-disclosure`, changeFrequency: "yearly", priority: 0.2 },
+    // Trust pages (2026-08-19). This file still reads the static data path
+    // (Batch 5 pending) but these are static URLs — nothing awkward here.
+    { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   const departmentPages: MetadataRoute.Sitemap = getRealCategories().map((category) => ({

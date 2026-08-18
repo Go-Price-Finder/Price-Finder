@@ -2,38 +2,36 @@ import Link from "next/link";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 
-const CONTACT_EMAIL = "gopricefinder@gmail.com";
+const CONTACT_EMAIL = "gpf@gopricefinder.com";
 
-// Most of these are still placeholder "#" links (no Careers/Press/Privacy
-// Policy/Terms of Service page exists yet — out of scope here) — only
-// Contact Us and the new Affiliate Disclosure link go somewhere real.
+// Every link goes somewhere real. The old placeholder "#" entries
+// (Careers, Press, Help Center, Price Alerts) are gone rather than
+// pointing nowhere — a footer of dead links reads as a feed dump to the
+// affiliate-network reviewers who open this site (2026-08-19, trust-pages
+// work; the FlexOffers rejection is the precedent).
 const FOOTER_LINKS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Shop",
     links: [
-      { label: "Trending", href: "#" },
-      { label: "Categories", href: "#" },
-      { label: "Deals", href: "#" },
-      { label: "Price Alerts", href: "#" },
+      { label: "Trending", href: "/trending" },
+      { label: "Categories", href: "/categories" },
+      { label: "Deals", href: "/deals" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "#" },
-      { label: "How It Works", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press", href: "#" },
+      { label: "About Us", href: "/about" },
+      { label: "How It Works", href: "/how-it-works" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Support",
+    title: "Legal",
     links: [
-      { label: "Help Center", href: "#" },
-      { label: "Contact Us", href: `mailto:${CONTACT_EMAIL}` },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
       { label: "Affiliate Disclosure", href: "/affiliate-disclosure" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
     ],
   },
 ];
@@ -112,17 +110,9 @@ export default function Footer() {
               {CONTACT_EMAIL}
             </a>
           </p>
-          <div className="flex items-center gap-4">
-            {["Twitter", "Instagram", "LinkedIn"].map((social) => (
-              <a
-                key={social}
-                href="#"
-                className="text-xs font-medium text-ivory-300 underline-offset-4 transition-colors hover:text-gilt-400 hover:underline"
-              >
-                {social}
-              </a>
-            ))}
-          </div>
+          {/* Social links deliberately absent until real profiles exist —
+              dead "#" anchors are worse than nothing (same rationale as the
+              placeholder link removal above). */}
         </div>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAllRealProducts, type RealProduct } from "@/lib/partners";
+import { freshnessCutoffIso } from "@/lib/pricing/freshness";
 import type { WishlistRetailerId } from "@/lib/types";
 
 /**
@@ -48,9 +49,18 @@ export async function fetchCurrentPriceOverrides(): Promise<
   Map<string, CurrentPriceRow>
 > {
   const supabase = createAdminClient();
+  // Read-side TTL (operator decision 2026-08-18, findings §9s): an
+  // override whose updated_at is older than the freshness threshold is
+  // NOT applied — the product falls back to its catalog price. An
+  // uncorroborated old observation presented as a live price is the same
+  // offence PriceHistoryChart was suppressed for. The row itself is
+  // deliberately left in place (deletion would destroy the record of
+  // what was genuinely observed); if matching resumes for that product,
+  // the next refresh run re-stamps it and it self-heals back into use.
   const { data, error } = await supabase
     .from("current_prices")
-    .select("product_id, retailer, price, original_price, updated_at");
+    .select("product_id, retailer, price, original_price, updated_at")
+    .gte("updated_at", freshnessCutoffIso());
 
   if (error) throw error;
 
@@ -99,11 +109,14 @@ export async function getAllRealProductsWithLivePrices(): Promise<
 export async function withLivePrice(product: RealProduct): Promise<RealProduct> {
   const supabase = createAdminClient();
   const [partnerId, ...slugParts] = product.id.split(":");
+  // Same read-side TTL as fetchCurrentPriceOverrides above — the two
+  // readers must agree on what counts as a live price.
   const { data, error } = await supabase
     .from("current_prices")
     .select("price, original_price")
     .eq("product_id", product.id)
     .eq("retailer", partnerId as WishlistRetailerId)
+    .gte("updated_at", freshnessCutoffIso())
     .maybeSingle();
 
   // slugParts intentionally unused beyond validating id shape — product_id

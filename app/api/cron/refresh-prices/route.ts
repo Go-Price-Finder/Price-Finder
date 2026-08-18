@@ -2,20 +2,7 @@ import { NextResponse } from "next/server";
 import { refreshPrices } from "@/lib/pricing/refreshPrices";
 import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-/**
- * Freshness threshold derivation (findings §9r — argue it, don't pick it):
- * refreshPrices stamps updated_at on EVERY matched row it upserts, changed
- * or not, so max(current_prices.updated_at) measures "when did a refresh
- * run last demonstrably touch the table" — a cadence WE own (daily cron),
- * not merchant repricing, which nobody owns. 2 days = one fully missed or
- * silently-broken run, plus cron jitter. Raising this number fixes
- * nothing: it only converts missed runs into silence. If the cron cadence
- * changes, re-derive from the new cadence; a red here with an unchanged
- * cadence means the pipeline has not demonstrably observed prices for two
- * straight days, regardless of what any individual run returned.
- */
-const FRESHNESS_LIMIT_MS = 2 * 24 * 60 * 60 * 1000;
+import { freshnessCutoffIso } from "@/lib/pricing/freshness";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json), scheduled before
@@ -78,29 +65,32 @@ export async function GET(request: Request) {
       }
     }
 
-    // Freshness: see FRESHNESS_LIMIT_MS derivation above. Checked AFTER
-    // the run, so a working run (which stamps every matched row) turns
-    // this green by having demonstrably observed prices — a stale value
-    // here means neither this run nor any recent one touched the table.
+    // Freshness, count-based and per-partner (threshold derivation in
+    // lib/pricing/freshness.ts). The first version of this control used
+    // max(updated_at), which only reddens when EVERY row is stale — one
+    // partner silently dropping out of matching (the zombie shape,
+    // findings §9r/§9s) leaves MAX fresh and the check green. The
+    // assertion is: ZERO override rows older than the threshold, reported
+    // per partner, because "golden-maple stopped matching" and
+    // "everything died" must not produce the same signal. Checked AFTER
+    // the run, so rows this run stamped are fresh by construction.
     const supabase = createAdminClient();
-    const { data: newest, error: freshErr } = await supabase
+    const { data: staleRows, error: freshErr } = await supabase
       .from("current_prices")
-      .select("updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .select("product_id, retailer")
+      .lt("updated_at", freshnessCutoffIso());
     if (freshErr) {
       failures.push(`freshness read failed: ${freshErr.message}`);
-    } else if (!newest) {
-      failures.push("freshness: current_prices is empty");
-    } else {
-      const ageMs = Date.now() - new Date(newest.updated_at).getTime();
-      if (ageMs > FRESHNESS_LIMIT_MS) {
-        failures.push(
-          `freshness: max(current_prices.updated_at) is ${(ageMs / 86400000).toFixed(1)} days old ` +
-            `(limit 2 days) — no refresh run has demonstrably touched current_prices within the limit`
-        );
-      }
+    } else if (staleRows && staleRows.length > 0) {
+      const byPartner: Record<string, number> = {};
+      for (const r of staleRows) byPartner[r.retailer] = (byPartner[r.retailer] ?? 0) + 1;
+      failures.push(
+        `freshness: ${staleRows.length} override row(s) older than the 2-day limit — per partner: ` +
+          Object.entries(byPartner)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(", ") +
+          ` — these prices are not corroborated by any current feed and the read-side TTL is excluding them`
+      );
     }
 
     // Dead-man's-switch: ping only when every partner ran clean AND the

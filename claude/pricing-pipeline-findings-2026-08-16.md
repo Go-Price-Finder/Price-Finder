@@ -1707,6 +1707,79 @@ parsed XML and raw served HTML, not summarized renderings.
   category page weight (medium), lastmod (small), and everything
   Search Console shows in ~48h.
 
+### 9v. Tsar-bomba coverage: the zero was feed SELECTION, not matching — selection now data-driven (2026-08-19)
+
+**Diagnosis (Gate D discipline held):** "113495 matches zero catalog
+rows" decomposed under both-sides key verification (catalog 272/272
+p= ids populated; 113495 234/234 aw_product_ids) with a positive control
+(same join vs 105368 → the known 26): the true id intersection is
+**21, not 0** — matching the prior "disjoint 21-product swap" record.
+Mechanism A: refreshPrices NEVER READ 113495 — the English/no-Vertical
+heuristic always picked the frozen default (105368) because the live
+feed carries Vertical=Fashion. Mechanism B: the other 225 cannot
+id-match — disjoint id spaces (113495 ∩ 105368 = 0 shared ids), and
+since the 246 were IMPORTED from 113495 on 08-02 yet only 21 ids
+survive, **113495 regenerated 213 of 234 ids in 16 days** — id-matching
+against it rots fast; at re-import time, investigate merchant_product_id
+as the durable key. 113495 is ALIVE (Last Imported 2026-08-12).
+
+**Operator error, recorded at their instruction alongside §9l's
+three-claims and §9r's fifteen-days-dead — third instance this week of
+reasoning outcome-to-mechanism:** "the active feed matches nothing" was
+inferred from a coverage zero without checking whether the mechanism
+ever ran. The pattern, not the instances, is the finding.
+
+**Blast radius, measured before shipping:** heuristic pick vs
+feed_status-driven pick differs for tsar-bomba ONLY (105368 →
+105368+113495); canvas-vows 103552, king-koil 101819, evdance F1320,
+golden-maple F2615 all identical; brooklyn-delhi's difference is
+representational (heuristic-finds-nothing vs explicit `none:` sentinel —
+same skip, now data).
+
+**Shipped (operator decisions 1+2):** feed selection reads
+feed_status.is_catalog_source — curated data, not a string coincidence;
+a wrong selection is now a visible data error (missing rows → loud
+partner error; feed_status read failure → whole run fails; sentinel
+rows → explicit skip). Partners can carry MULTIPLE catalog-source
+feeds; results and log lines are now per (partner, feed). pinnedFeedId
+is gone (feed_status replaced it). Both tsar feeds read: the frozen 26
+stay (honest 2026-05-15 vintage), the live 21 add on top. Verified
+in-process against the real route, predictions exact: tsar 105368
+{189 rows, 26 matched} + 113495 {234 rows, 21 matched, 21 NEW},
+all other partners byte-identical behaviour, current_prices 669 → 690,
+tsar coverage 26 → 47, freshness red 38 unchanged. Expect tomorrow's
+snapshot at ~652 live_override / ~302 catalog_fallback.
+
+**PERMANENT RULE (operator, 2026-08-19): model-token matching is
+REJECTED — not risky, wrong by construction.** 204 catalog products
+collapse to 31 distinct TB-model tokens, so a model-level join
+guarantees many-to-one collisions — fabricated price movements, the
+PriceHistoryChart offence. Not to be revisited because 130 is a bigger
+number than 56.
+
+**Design only, NOT shipped — exact-name matching for up to 56 more:**
+The zero-shared-names question is SETTLED: same inventory (12 shared
+model tokens), radically different name formatting — 105368 uses terse
+names carrying variant colors ("Elemental Series-Automatic Watch
+TB8209A Silver Blue"); 113495 uses long marketing copy WITHOUT variant
+colors (variant lives in its `colour` column). Consequences for the
+design: (a) the 56 exact matches are catalog names that came FROM
+113495 at import and haven't churned — name churn is real, so this
+bridge decays like the id bridge; (b) any name match must verify
+variant identity via the colour column, not the name; (c) protocol per
+the standing gate — verified sample against tsar-bomba's live site
+BEFORE bulk, prediction stated (ceiling: 21 id + ≤56 name = 77 of 246),
+and ONE confirmed wrong-variant match kills the METHOD, not the sample.
+This is a bridge, not a destination — the structural fix is re-import
+from 113495, blocked on Step 14.
+
+**Tag for 2026-08-25 (operator instruction, carried):** tsar-bomba's
+`unchangedVsCurrent` on feed 105368 measures re-confirmation of a feed
+frozen 2026-05-15, NOT merchant pricing behaviour — per-feed counters
+now make that attribution visible (the earlier partner-level "0/26
+one-day change" figure is withdrawn on the same grounds). Only feed
+113495's counters speak to Tsar Bomba's live repricing.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

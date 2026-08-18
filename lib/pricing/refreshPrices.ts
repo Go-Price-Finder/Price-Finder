@@ -89,15 +89,6 @@ type PartnerAwinMapping = {
   partnerId: string;
   advertiserName: string;
   verified: boolean;
-  /** Optional explicit AWIN "Feed ID" to prefer when an advertiser has
-   * more than one feed that would otherwise tie under the
-   * English/no-Vertical selection rule below (see chooseFeed). Without
-   * this, a tie is broken by feed-list row order, which is incidental
-   * CSV ordering from AWIN's API, not something this code actually
-   * controls — safe today, but silently fragile if AWIN ever reorders
-   * that list. Set this whenever a live audit finds more than one
-   * qualifying feed for the same advertiser. */
-  pinnedFeedId?: string;
   /** Overrides the generic "name is unverified" skip message below when
    * verified: false for a reason OTHER than an unconfirmed name (e.g. the
    * name is confirmed correct but AWIN has no feed for this advertiser
@@ -132,12 +123,11 @@ const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
       `datafeed for it at all (0 of 21 active feeds), not because of a naming problem. ` +
       `Re-run scripts/awin-status-report.ts periodically; flip verified: true once a feed appears.`,
   },
-  // Name confirmed live 2026-08-03. Two active English feeds exist for
-  // this advertiser (F1320, 81 products, freshest; and the older 108581,
-  // 1 product, stale since 2026-05-15) — both would otherwise tie under
-  // the English/no-Vertical rule, so pinnedFeedId removes the ambiguity
-  // explicitly instead of relying on incidental feed-list row order.
-  { partnerId: "evdance", advertiserName: "EVDANCE", verified: true, pinnedFeedId: "F1320" },
+  // Name confirmed live 2026-08-03. Which of this advertiser's feeds get
+  // read is decided by public.feed_status (F1320 is_catalog_source=true;
+  // the stale 1-product 108581 false) — see the selection comment in
+  // refreshPrices() below. The old pinnedFeedId mechanism is gone.
+  { partnerId: "evdance", advertiserName: "EVDANCE", verified: true },
   // Name confirmed live 2026-08-03. Exactly one active feed (F2615, 352
   // products) — no ambiguity.
   { partnerId: "golden-maple", advertiserName: "Golden Maple", verified: true },
@@ -219,6 +209,13 @@ export type PartnerRefreshResult = {
   matched: number;
   unmatched: number;
   unmatchedExamples: string[];
+  /** Which AWIN feed this entry measured. A partner can have MULTIPLE
+   * catalog-source feeds (tsar-bomba: frozen 105368 + live 113495), so
+   * the partners array can carry more than one entry per partnerId —
+   * counters must be read per (partner, feed), and a frozen feed's
+   * unchangedVsCurrent is a re-confirmation of stale data, not merchant
+   * behaviour (findings §9v). Absent on skip entries. */
+  feedId?: string;
   priceChanges: number;
   /** Matched rows whose price column parsed to a usable number — the rows
    * that were actually compared against anything. matched - compared =
@@ -294,6 +291,30 @@ export type RefreshPricesResult = {
   partners: PartnerRefreshResult[];
 };
 
+function emptyPartnerResult(partnerId: string, feedId?: string): PartnerRefreshResult {
+  return {
+    partnerId,
+    feedId,
+    feedRows: 0,
+    matched: 0,
+    unmatched: 0,
+    unmatchedExamples: [],
+    priceChanges: 0,
+    compared: 0,
+    unchangedVsCatalog: 0,
+    newRows: 0,
+    changedVsCurrent: 0,
+    unchangedVsCurrent: 0,
+    upserted: 0,
+    matchedById: 0,
+    matchedByName: 0,
+    duplicateKeyCollisions: 0,
+    errors: [],
+    nameFallbackDiagnostics: [],
+    idNotInCatalogExamples: [],
+  };
+}
+
 export async function refreshPrices(): Promise<RefreshPricesResult> {
   const feedListUrl = process.env.AWIN_FEED_LIST_URL;
   if (!feedListUrl) {
@@ -308,6 +329,29 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
   const activeStaticProducts = getAllRealProducts();
   const supabase = createAdminClient();
 
+  // FEED SELECTION IS DATA-DRIVEN (operator decision 2026-08-19, findings
+  // §9v): public.feed_status's is_catalog_source rows name the feed(s)
+  // this pipeline reads per partner. The old English/no-Vertical string
+  // heuristic was a coincidence — it picked correctly for five partners
+  // and picked tsar-bomba's FROZEN default (105368) forever, because the
+  // live feed (113495) carries Vertical=Fashion and always lost the tie.
+  // Curated rows make a wrong selection a visible data error instead of a
+  // silent fallthrough. If this read fails, the whole run fails loudly —
+  // there is deliberately no heuristic fallback to fall back into.
+  const { data: feedStatusRows, error: feedStatusError } = await supabase
+    .from("feed_status")
+    .select("partner_id, feed_id, notes")
+    .eq("is_catalog_source", true);
+  if (feedStatusError) {
+    throw new Error(
+      `feed_status read failed — feed selection is data-driven and cannot proceed: ${feedStatusError.message}`
+    );
+  }
+  const feedStatusByPartner = new Map<string, { feed_id: string; notes: string | null }[]>();
+  for (const r of feedStatusRows ?? []) {
+    feedStatusByPartner.set(r.partner_id, [...(feedStatusByPartner.get(r.partner_id) ?? []), r]);
+  }
+
   const partnerResults: PartnerRefreshResult[] = [];
 
   for (const mapping of PARTNER_AWIN_NAMES) {
@@ -317,112 +361,63 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
 
     if (complianceEntry?.status !== "active") {
       partnerResults.push({
-        partnerId: mapping.partnerId,
+        ...emptyPartnerResult(mapping.partnerId),
         skipped: `compliance status is "${complianceEntry?.status ?? "missing"}", not "active"`,
-        feedRows: 0,
-        matched: 0,
-        unmatched: 0,
-        unmatchedExamples: [],
-        priceChanges: 0,
-        compared: 0,
-        unchangedVsCatalog: 0,
-        newRows: 0,
-        changedVsCurrent: 0,
-        unchangedVsCurrent: 0,
-        upserted: 0,
-        matchedById: 0,
-        matchedByName: 0,
-        duplicateKeyCollisions: 0,
-        errors: [],
-        nameFallbackDiagnostics: [],
-        idNotInCatalogExamples: [],
       });
       continue;
     }
 
     if (!mapping.verified) {
       partnerResults.push({
-        partnerId: mapping.partnerId,
+        ...emptyPartnerResult(mapping.partnerId),
         skipped:
           mapping.skipReason ??
           `AWIN advertiser name "${mapping.advertiserName}" is unverified — confirm the exact name ` +
             `in the AWIN publisher dashboard and set verified: true in lib/pricing/refreshPrices.ts ` +
             `before this partner is included.`,
-        feedRows: 0,
-        matched: 0,
-        unmatched: 0,
-        unmatchedExamples: [],
-        priceChanges: 0,
-        compared: 0,
-        unchangedVsCatalog: 0,
-        newRows: 0,
-        changedVsCurrent: 0,
-        unchangedVsCurrent: 0,
-        upserted: 0,
-        matchedById: 0,
-        matchedByName: 0,
-        duplicateKeyCollisions: 0,
-        errors: [],
-        nameFallbackDiagnostics: [],
-        idNotInCatalogExamples: [],
       });
       continue;
     }
 
-    const result: PartnerRefreshResult = {
-      partnerId: mapping.partnerId,
-      feedRows: 0,
-      matched: 0,
-      unmatched: 0,
-      unmatchedExamples: [],
-      priceChanges: 0,
-      compared: 0,
-      unchangedVsCatalog: 0,
-      newRows: 0,
-      changedVsCurrent: 0,
-      unchangedVsCurrent: 0,
-      upserted: 0,
-      matchedById: 0,
-      matchedByName: 0,
-      duplicateKeyCollisions: 0,
-      errors: [],
-      nameFallbackDiagnostics: [],
-      idNotInCatalogExamples: [],
-    };
-
-    const candidates = feedList.filter(
-      (r) =>
-        r["Advertiser Name"] === mapping.advertiserName &&
-        r["Membership Status"] === "active"
-    );
-    // A pinned feed id takes priority whenever set (see PartnerAwinMapping's
-    // pinnedFeedId comment) — falls through to the English/no-Vertical
-    // heuristic if the pin doesn't match anything currently in the feed
-    // list (e.g. AWIN retired/renamed that feed id), so a stale pin
-    // degrades to the old best-effort behavior instead of hard-failing.
-    const pinned = mapping.pinnedFeedId
-      ? candidates.find((c) => c["Feed ID"] === mapping.pinnedFeedId)
-      : undefined;
-    const chosen =
-      pinned ??
-      candidates.find((c) => c["Language"] === "English" && !c["Vertical"]) ??
-      candidates.find((c) => c["Language"] === "English") ??
-      candidates[0];
-
-    if (!chosen) {
-      result.errors.push(
-        `No active AWIN feed found for advertiser "${mapping.advertiserName}" in the feed list.`
-      );
-      partnerResults.push(result);
+    const statusFeeds = feedStatusByPartner.get(mapping.partnerId) ?? [];
+    // Sentinel rows (feed_id like "none:brooklyn-delhi") encode "no feed
+    // exists for this partner" as data — treated as an explicit skip.
+    const realFeeds = statusFeeds.filter((f) => !f.feed_id.startsWith("none"));
+    if (statusFeeds.length === 0) {
+      partnerResults.push({
+        ...emptyPartnerResult(mapping.partnerId),
+        errors: [
+          `No feed_status rows with is_catalog_source=true for "${mapping.partnerId}" — feed ` +
+            `selection is data-driven (migration 0016); add this partner's rows before it can refresh.`,
+        ],
+      });
+      continue;
+    }
+    if (realFeeds.length === 0) {
+      partnerResults.push({
+        ...emptyPartnerResult(mapping.partnerId),
+        skipped: statusFeeds[0].notes ?? "feed_status sentinel: no feed exists for this partner",
+      });
       continue;
     }
 
-    if (mapping.pinnedFeedId && !pinned) {
+    for (const statusFeed of realFeeds) {
+    const result: PartnerRefreshResult = emptyPartnerResult(mapping.partnerId, statusFeed.feed_id);
+
+    const chosen = feedList.find(
+      (r) =>
+        r["Feed ID"] === statusFeed.feed_id &&
+        r["Advertiser Name"] === mapping.advertiserName &&
+        r["Membership Status"] === "active"
+    );
+    if (!chosen) {
       result.errors.push(
-        `Pinned feed id "${mapping.pinnedFeedId}" for "${mapping.advertiserName}" not found in ` +
-          `today's feed list — fell back to "${chosen["Feed ID"]}" (${chosen["Language"]}). ` +
-          `Re-verify with scripts/awin-status-report.ts and update pinnedFeedId.`
+        `feed_status names feed "${statusFeed.feed_id}" for "${mapping.advertiserName}" but today's ` +
+          `feed list has no active row for it — stale feed_status, or AWIN retired the feed. ` +
+          `Verify with scripts/awin-status-report.ts and update feed_status.`
       );
+      partnerResults.push(result);
+      continue;
     }
 
     let rows: Record<string, string>[];
@@ -677,6 +672,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     }
 
     partnerResults.push(result);
+    } // per-feed loop (see the data-driven selection comment above)
   }
 
   return { partners: partnerResults };

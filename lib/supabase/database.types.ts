@@ -132,6 +132,56 @@ export type Database = {
           },
         ];
       };
+      feed_status: {
+        // Hand-edited to match migration 0016 (applied by Cowork; DDL in
+        // claude/migration-0016-feed-status-STEP2.md) — same hand-edit
+        // precedent as the 0015 provenance columns below.
+        Row: {
+          feed_id: string;
+          partner_id: string;
+          feed_name: string | null;
+          feed_last_imported_at: string | null;
+          feed_last_checked_at: string | null;
+          feed_status_read_at: string | null;
+          catalog_imported_at: string;
+          catalog_import_ref: string | null;
+          is_catalog_source: boolean;
+          notes: string | null;
+        };
+        Insert: {
+          feed_id: string;
+          partner_id: string;
+          feed_name?: string | null;
+          feed_last_imported_at?: string | null;
+          feed_last_checked_at?: string | null;
+          feed_status_read_at?: string | null;
+          catalog_imported_at: string;
+          catalog_import_ref?: string | null;
+          is_catalog_source?: boolean;
+          notes?: string | null;
+        };
+        Update: {
+          feed_id?: string;
+          partner_id?: string;
+          feed_name?: string | null;
+          feed_last_imported_at?: string | null;
+          feed_last_checked_at?: string | null;
+          feed_status_read_at?: string | null;
+          catalog_imported_at?: string;
+          catalog_import_ref?: string | null;
+          is_catalog_source?: boolean;
+          notes?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feed_status_partner_id_fkey";
+            columns: ["partner_id"];
+            isOneToOne: false;
+            referencedRelation: "partners";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       current_prices: {
         Row: {
           product_id: string;

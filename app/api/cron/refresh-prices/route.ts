@@ -39,6 +39,7 @@ export async function GET(request: Request) {
         "[refresh-prices] " +
           JSON.stringify({
             partner: p.partnerId,
+            feedId: p.feedId ?? null,
             skipped: p.skipped ?? null,
             feedRows: p.feedRows,
             matched: p.matched,
@@ -61,7 +62,9 @@ export async function GET(request: Request) {
     // bare 200 spent 15 days hiding.
     for (const p of result.partners) {
       if (!p.skipped && p.feedRows > 0 && p.matched === 0) {
-        failures.push(`${p.partnerId}: matched 0 of ${p.feedRows} feed rows — matching is broken`);
+        failures.push(
+          `${p.partnerId} (feed ${p.feedId ?? "?"}): matched 0 of ${p.feedRows} feed rows — matching is broken`
+        );
       }
     }
 

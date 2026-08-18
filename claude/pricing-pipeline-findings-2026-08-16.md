@@ -2029,6 +2029,26 @@ Also: affiliate-disclosure's in-prose gopricefinder@gmail.com corrected
 to gpf@gopricefinder.com (operator-authorized; last surviving
 instance). Footer editorial call (dead-link removal) endorsed and kept.
 
+### §12. THE META-FINDING (operator, 2026-08-19, recorded in its sharpest form) — and the Batch 6/7 hold
+
+**In a stale document, STATUS CLAIMS ROT AND JUDGMENTS DON'T.**
+Everything the 2026-08-16 handover asserted about STATE was wrong or
+unverifiable (Batch 4 blocked; the CI drift check existing; tasks 1–5
+open). Everything it asserted about METHOD held perfectly (verify
+against the artifact; prove a check can fail; an AI reporting done is
+not evidence). That is how the plan and the handover are to be READ
+from here, and how the next handover must be WRITTEN: the two layers
+separated explicitly, because one has a shelf life and the other
+doesn't.
+
+**Batch 6 and 7: HELD, deliberately — not blocked.** The cutover's
+purpose (cheap catalogue expansion) is achieved with Batch 5. 6 and 7
+are the deletion endgame, and deletion is the one irreversible step.
+Per the plan's own judgment-layer instruction — the layer that survived
+reconciliation — Batch 7 does not run until every earlier batch has
+been live long enough to TRUST, not merely to pass its checks. Batch 5
+was an hour old at the time of this ruling.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

@@ -1,5 +1,44 @@
 # Partner sourcing — four networks, two gates (2026-08-18)
 
+## GTIN COVERAGE, AWIN SIDE — and the measured AWIN↔CJ join (2026-08-19)
+
+**Question:** does adding GTIN to catalog_products join AWIN to CJ, or
+is it pure schema cost? Measured across 29 fresh feed pulls (23 shelf
+baselined feeds + 6 catalog-partner feeds — one gone from the list),
+then the join itself tested by querying AWIN GTINs against CJ's
+network-wide product API.
+
+**Coverage is bimodal.** High: Sparkle 100%, Tennis Express 99% (49,325
+of 49,782!), evdance 97%, aaawave 91%, Kings Camo 72%, Autel 56%, FED
+Fitness 47%. Zero or near-zero: **Vevor 0% (no identifier column at
+all — the biggest volatile shelf feed cannot join)**, Creality ~0%,
+Oedro/Ottocast/Nextrition/Ravin/Feinuote/FENRIR/Freshine 0%, Valerion
+1%, XGIMI 7%. Current catalog partners: canvas-vows 0%, tsar-bomba 0%
+(both feeds), golden-maple 0%, king-koil 22% — **only evdance (97%)
+carries GTIN among today's six.**
+
+**The join test (15 sampled GTINs per merchant, one CJ query each):**
+- **aaawave: 15/15 (100%) found on CJ** — carriers WD Europe,
+  antonline, UnbeatableSale, Alza, OnBuy. Branded PC-components
+  inventory joins the networks perfectly.
+- evdance: 0/15. Autel: 0/15 — own-brand DTC goods; GTINs populated
+  but nobody else carries the products.
+- Tennis Express: 1/15 (Holabird Sports) — branded but thin overlap.
+
+**VERDICT, stated plainly: neither fantasy nor free.** The AWIN↔CJ
+GTIN join is real and measured — but only for BRANDED multi-retailer
+inventory. It is dead for DTC own-brand merchants, which is most of the
+current catalogue (evdance's 97% GTIN coverage joins to nothing because
+only evdance sells evdance). The schema column is worth adding IF and
+only if the catalogue expands toward branded goods (aaawave is the
+proof case: an already-approved shelf merchant whose entire inventory
+joins CJ's Abt/Wayfair/antonline cluster). Strategy consequence,
+flagged: the price-comparison vision runs through branded inventory —
+own-brand DTC merchants can populate pages but can never populate a
+comparison.
+
+## CJ SWEEP (2026-08-19, API — credentials landed) — and the finding that outranks the shortlist
+
 ## CJ SWEEP (2026-08-19, API — credentials landed) — and the finding that outranks the shortlist
 
 **Smoke test:** token + CID authenticate (200); joined advertisers: 0 —

@@ -2049,6 +2049,43 @@ reconciliation — Batch 7 does not run until every earlier batch has
 been live long enough to TRUST, not merely to pass its checks. Batch 5
 was an hour old at the time of this ruling.
 
+### §13. The third axis: OWN-BRAND vs RESELLER — sixth instance, standing rule, GTIN ruling (2026-08-19)
+
+**OPERATOR ERROR, recorded at their instruction as the SIXTH instance:**
+every merchant on the issued Tier-1 shortlist (BedJet, KEETSA, Big Fig,
+Mellow Sleep, GARVEE, Erommy, Kingbull, Troxus, Addmotor, Cyrusher) is
+own-brand DTC — a list structurally incapable of producing a price
+comparison, ranked on approval bar and volatility without ever asking
+who RESELLS. The aaawave join test isolated the variable cleanly:
+15/15 aaawave (branded resold inventory) vs 0/15 evdance and Autel —
+evdance's 97% GTIN coverage joining to NOTHING is the perfect control.
+Comparison requires a product with more than one seller; own-brand
+guarantees exactly one, forever.
+
+**STANDING RULE (operator, 2026-08-19): merchant selection has THREE
+axes, not two — volatility, accessibility, and OWN-BRAND vs RESELLER.
+The third is structural; no amount of traffic moves it.** And it is
+MEASURABLE, not judged: distinct `brand` values in a 100-row feed
+sample (own-brand ≈ 1, reseller ≈ many) — measured classifications in
+the sourcing doc.
+
+**GTIN ruling (operator): CAPTURE, DO NOT JOIN.** Import path now
+extracts a validated 8–14-digit GTIN/EAN/UPC into generated data
+(scripts/import-partner.mjs; optional `gtin` on RealProduct). No join
+logic, no comparison surface — today GTIN would join aaawave to nothing
+we hold, and machinery for an unavailable join is premature. The
+asymmetry is the reason: capturing is cheap; re-importing to backfill
+an identifier is expensive. Insurance, not architecture.
+catalog_products' matching column is a pending Cowork DDL item (the
+0017 second-reader flow applies).
+
+**Vevor, both true, neither cancels the other (operator instruction):**
+20,453 products, the biggest volatile shelf feed, excellent for price
+HISTORY — and its AWIN feed carries NO identifier column, so via AWIN
+it can never participate in COMPARISON. (Sourcing doc records the CJ
+twist: Vevor's CJ feed carries GTIN at 100% — the limitation is the
+AWIN export, not the merchant.)
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

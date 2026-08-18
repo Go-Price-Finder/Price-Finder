@@ -1,5 +1,53 @@
 # Partner sourcing — four networks, two gates (2026-08-18)
 
+## THE AAAWAVE CLUSTER: is comparison reachable TODAY? (2026-08-19) — YES, via antonline
+
+**The question:** aaawave is already approved (AWIN, 1,683 products,
+91% GTIN); its inventory lands in a CJ cluster. Which cluster members
+are plausibly accessible at 227 visitors/month? Measured on a 120-GTIN
+aaawave sample (68/120 = 57% exist on CJ at all):
+
+| CJ merchant | overlap depth (of 120) | rank | comm | US-serviceable | verdict |
+|---|---|---|---|---|---|
+| UnbeatableSale.com | 37 | UNKNOWN (keyword lookup doesn't return its record) | ? | yes | possible — bar unmeasurable via API |
+| **antonline** | **33** | **2** | 1.5% | yes | **THE candidate — accessible reseller (66 brands/100 rows, 25,572 products)** |
+| Alza.at / Alza.de | 27 / 26 | 0 | 1.5% | no (EU) | geography, not bar |
+| Zoro | 23 | 5 | 4% | yes | gated (wait list ~5k/mo) |
+| OnBuy.com | 22 | 5 | 1% | no (UK) | out |
+| WD Europe | 15 | 0 | 5% | no (EU) | out |
+| Office Depot | 9 | 5 | 0.5% | yes | gated + thin |
+
+**Answer: antonline (CJ 6217498, rank 2) + already-held aaawave =
+genuine multi-retailer price comparison on ~28% of aaawave's sampled
+GTIN inventory (33/120), TODAY, with a single application.** The first
+time this site could do the thing it is named after. UnbeatableSale
+(deepest at 37) is the possible second — its approval bar is not
+exposed via the API and needs application-time reading.
+
+## THE THIRD AXIS, MEASURED: own-brand vs reseller (2026-08-19)
+
+Distinct `brand` values per 100-row CJ feed sample:
+
+- **RESELLERS (comparison-capable):** antonline 66, Full Compass 71,
+  Sonic Electronix 46, Zoro 26, Wayfair 47, Mattress Firm 17.
+- **OWN-BRAND (pages, never comparison):** SVS 1, Audioengine 1,
+  Worx 1, Bluetti 1, Vevor-on-CJ 1, OM SYSTEM 2 (olympus/om system),
+  **Monoprice 2 — a surprise: house-brand, NOT the reseller its name
+  suggests.** EcoFlow 6 (mostly-own).
+- AWIN Tier-1 shortlist (BedJet, KEETSA, Big Fig, Mellow Sleep, GARVEE,
+  Erommy, Kingbull, Troxus, Addmotor, Cyrusher): own-brand by
+  inspection (each sells only its own label) — the sixth-instance
+  finding; see findings §13.
+
+**Re-sweep verdict, re-classified on the third axis:** the accessible
+AV tier splits — Full Compass (r2) and Sonic Electronix (r2) are
+accessible RESELLERS (comparison-capable); SVS/Audioengine/Monoprice
+are own-brand (pages only). Cameras: OM SYSTEM is own-brand — the CJ
+camera cell is empty for comparison, not just thin. Power tools:
+Worx/EcoFlow/Bluetti own-brand; the comparison-capable names (Zoro,
+Global Equipment, MSC) are all gated — tools comparison waits on
+traffic, or on antonline's tools slice.
+
 ## GTIN COVERAGE, AWIN SIDE — and the measured AWIN↔CJ join (2026-08-19)
 
 **Question:** does adding GTIN to catalog_products join AWIN to CJ, or

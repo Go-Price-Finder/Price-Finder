@@ -1870,6 +1870,36 @@ matched, matched_by_id, matched_by_name, compared, new_rows,
 changed_vs_current, unchanged_vs_current, upserted,
 duplicate_key_collisions, stale_overrides.
 
+### 9y. Migration 0017 applied; gate-2 behaviour verified; the WRITER CONTRACT (binding, 2026-08-19)
+
+0017 v2 applied by Cowork at this session's clean verdict (config
+verified Cowork-side: table exists, RLS on, 0 policies, 11 nullable
+integers, feed_id NOT NULL, 1 unique constraint on (run_id, partner_id,
+feed_id)). **Gate-2 BEHAVIOUR verified on the live table** (config ≠
+behaviour): one service-role row seeded → service reads 1 row no error;
+**anon reads 0 rows NO error** (the expected silent invisibility, not
+the worse errors-instead case); anon INSERT rejected loudly (42501 RLS
+violation); seed deleted, table left at 0 rows.
+
+**THE WRITER CONTRACT — two clauses, binding on whoever builds the
+refresh_runs writer (not yet authorized):**
+
+1. Counters initialise to 0 in memory. The writer MUST map
+   skipped-or-errored-before-a-stage to NULL, never 0. Zero and unknown
+   must not collapse — that collapse is the origin of the fifteen-day
+   story (§9r) and must not re-enter through the writer.
+2. feed_id is NOT NULL and skip entries have no feed. RULING: skip
+   entries are WRITTEN, under the feed_status sentinel id
+   (none:<partner> form) — never omitted. A skipped partner that leaves
+   no row is indistinguishable from a partner nobody tried, which is
+   clause 1's ambiguity in a different column.
+
+Types: refresh_runs hand-added to database.types.ts in its own commit
+(this section's companion), matching 0017 v2 exactly, with the contract
+restated in the type's doc comment. feed_status's own hand-edit landed
+2026-08-19 in `a4d6ffb` (it rode the feed-selection commit rather than
+its own — noted; the drift habit ends with both tables now in types).
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

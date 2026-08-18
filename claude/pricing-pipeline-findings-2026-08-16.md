@@ -1939,6 +1939,32 @@ Batch 4 is the critical path** — the read-only getProductTitleSuffix
 question (rendering for the 225 no-price products vs the static path,
 sampled across both the 47 and the 225) is the next turn's work.
 
+### §10. Batch 4 gate: CLEAN — 272/272 title parity, and the blocker's premise dissolved (2026-08-19)
+
+**The sweep (all 272 tsar-bomba products, not a sample):** name + 
+getProductTitleSuffix output compared between the static path
+(lib/partners) and the DB path (catalog_products via fetchCatalogRaw's
+exact SELECT — lib/catalog itself can't run outside the Next runtime,
+its unstable_cache throws, so the sweep replicates its query and the
+textually-identical 10-line suffix algorithm): **272/272 identical, 0
+divergent, 0 missing**, across both populations (47 with current_prices
+rows, 225 without; population split verified in-sweep).
+
+**The structural answer to the blocker:** NEITHER suffix implementation
+reads current_prices — both render the CATALOG price (lib/catalog reads
+catalog_products only; Option A remains gated) — so "no price row"
+cannot affect a title under current code. The 47/225 distinction is
+irrelevant to metadata parity. Additionally: all six PRODUCT templates
+already import from @/lib/catalog (tsar-bomba included) — production
+product titles already render from the DB and the build is green at
+1045/1045. The remaining static-path consumers are the aggregate
+surfaces: app/page.tsx (home), categories + category/[slug] +
+category/[...path], deals, trending, sitemap.ts, OurPartners,
+RealProductCard, and the pricing libs (getEffectivePrice /
+refreshPrices / snapshotPrices read the static catalog by design until
+Option A). Batch 4's gate is answered: no divergence exists to block
+the cutover of those surfaces.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

@@ -1822,6 +1822,54 @@ products.
 ALL future feed work — diffing, re-import, new-partner onboarding.
 aw_product_id is an export-time artifact, not an identity.**
 
+### 9x. Zombie ruling executed; availability sweep inverts the hypothesis; feed-drop monitoring proposal (2026-08-19)
+
+**Deletion (operator-authorized):** the 38 stale current_prices rows
+deleted (golden-maple 23, evdance 12, king-koil 3 — count verified
+before and after). current_prices at **652**; tsar-bomba holds 47;
+**freshness control GREEN (0 stale)**. price_history retains every
+observation. The refresh-prices healthcheck slug's arming condition
+("the 38 resolved") is now MET — operator can arm it.
+
+**Availability sweep (read-only, merchant sites only — the AWIN
+tracking links were never clicked; gm/ev merchant URLs extracted from
+the catalog's own cread ued= params, king-koil resolved via the
+merchant's products.json): 36 of 38 are STILL LIVE.** golden-maple 22
+live / 1 gone (face-skin-tones acrylic paint set, 404); evdance 11
+live / 1 gone (U40 wall-mounted charger, 404); king-koil 3/3 live
+(variants of the merchant's single air-mattress listing —
+kingkoilairbeds.com sells exactly one product). **Feed-drop here is a
+CURATION signal, not an availability signal** — these merchants trimmed
+their feeds while continuing to sell. The
+shopper-clicks-through-to-a-dead-product failure is real for exactly 2
+pages, not 38. Those 2 are flagged for an operator page decision
+(retire/noindex/keep); no catalogue change made.
+
+**Feed-drop as a monitored signal — proposal, not built:** the detector
+largely already exists: any product whose override stops being stamped
+trips the count-based per-partner freshness control within 2 days (that
+is precisely how the 38 surfaced). What's missing is attribution and a
+runbook. Proposed: (a) a `droppedFromFeed` list in each refresh run's
+per-feed log line — the partner's current_prices rows unmatched by any
+of its feeds this run (cheap: the pre-upsert read already fetches them);
+(b) a standing runbook for freshness red: run the availability check
+(the script pattern now exists) → merchant-live ⇒ curation drop, delete
+the stale override, keep the page; merchant-404 ⇒ discontinuation,
+retire/noindex the page (operator decision); (c) optionally fold
+per-product drop events into refresh_runs once applied. Until (a)
+ships, the freshness red IS the alarm and the runbook is manual.
+
+**Migration 0017 v2:** the amendment list arrived but the assembled SQL
+text did not — review pending the actual bytes (the second-reader rule
+reviews the writer's text, not the reviewer's reconstruction).
+Pre-stated requirements for the two named checks: constraint
+`unique (run_id, partner_id, feed_id)` with `feed_id text NOT NULL`
+(a nullable feed_id lets Postgres treat NULLs as distinct and silently
+permit duplicate partner rows); nullable-integer set = feed_rows,
+matched, matched_by_id, matched_by_name, compared, new_rows,
+changed_vs_current, unchanged_vs_current, upserted,
+duplicate_key_collisions, stale_overrides.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

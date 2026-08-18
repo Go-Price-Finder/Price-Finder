@@ -1,5 +1,96 @@
 # Partner sourcing — four networks, two gates (2026-08-18)
 
+## ADDENDUM (same day): the shelf audit — 31 joined, 6 used, 23 baselined
+
+**The reordering finding (operator): 25 approved AWIN relationships sit
+unused.** Audit of all 31 joined programmes: 6 are catalogue partners;
+of the other 25, **23 have live feeds** (Cosabella and Cozeware do not).
+Notable unused inventory: **Vevor US (20,453-product feed** — tools,
+equipment, appliances, e-mobility, promo-heavy), **Tennis Express
+(49,850)**, **Creality (48,028** — 3D printers), **XGIMI (10 feeds)** and
+**Valerion (540)** projectors, **Autel (43** — EV chargers, sits right
+next to evdance), Kings Camo (8,138), Sparkle (3,689), aaawave (1,678),
+Feinuote (1,652), Monument Grills (1,055), Oedro (789), plus smaller
+(FENRIR 298, FED Fitness 322, Wavytalk 420, AUTO-VOX 156, Alorair 186,
+Ravin 181, PURTY BODY 134, DDPAI 114, Argendon 61, Nextrition 19,
+Ottocast 14).
+
+**Baselines captured 2026-08-18 (~00:5x–01:1x UTC 08-19), one chosen
+English feed per advertiser, 23/23 succeeded:** compact price snapshots
+(id/name/effective price/regular price) in
+`claude/feed-baselines-2026-08-18/*.ndjson.gz` with `manifest.json`
+(feed id, row counts, sha256 of uncompressed content, id column/format,
+capture time — feed URLs deliberately excluded: they carry the publisher
+key). The 7-day diff (due 2026-08-25) measures real repricing per
+merchant. Nothing imported to the catalogue — Step 14 sequencing
+constraint holds.
+
+**Feed-template finding:** joined feeds split into two templates.
+F-prefixed feeds are Google-Shopping-schema (id/title/price/sale_price);
+numeric feeds are AWIN-classic (aw_product_id/search_price). **No feed
+of the 23 — nor evdance's F1320, used as positive control because our
+catalogue holds originalPrice values imported from it — populates
+sale_price or any rrp/was column today.** These merchants express
+promotion by MOVING the price, not by flagging it, so the 7-day price
+diff is the only volatility instrument these feeds support — and the
+scarcity of was-price data measured here also bounds what any future
+"original price" UI can honestly claim. All 23 baselined feeds carry
+numeric product ids (the id scheme the 2026-05-15 freeze hit; F-scheme
+FEED IDS are unrelated to product-id format — recorded to prevent
+conflating the two).
+
+**FlexOffers resolved as far as code can:** commit `36609b3`,
+2026-07-24 04:43Z, "Add FlexOffers site-verification meta tag" — the
+account reached the domain-verification step 25 days ago, during the
+same build era as the 07-23 test email. Account state beyond that is
+credential-gated (operator checking). If live: Purple (~3.2%/30d) and
+Saatva open the mattress cell with zero applications. Technique noted at
+operator request: reading our own served <head> located a network
+relationship no inventory listed — assets leave fingerprints in the
+artifact even when they're absent from the records.
+
+## The application shortlist (operator's clicks, kept short)
+
+1. **Kingbull Bike** — AWIN 124136, e-bike, published 362-product feed.
+2. **Troxus / Addmotor / Cyrusher** — AWIN e-bike DTC tier; feeds
+   unknown-not-absent pre-join.
+3. **GE Appliances (71161), Electrolux (34515), DeLonghi (33739)** —
+   appliance majors on the network where we already exist; bar unknown,
+   application free.
+
+Nothing else this week. Projectors need no application (XGIMI + Valerion
+already joined); mattresses ride on the FlexOffers account check; tools
+wait for the Vevor 7-day diff (Vevor may cover the category without any
+application at all).
+
+## Best Buy: PERMANENTLY EXCLUDED (decision recorded 2026-08-18)
+
+Not a wait-list entry, and not to be re-litigated at higher traffic:
+program guidance restricts deal/coupon sites, brand-comparison content,
+and high-volume comparison pages — a category ban aimed at this exact
+business model — and even admitted publishers get ~0.5% commission on a
+1-day cookie, which cannot fund a comparison site's economics at any
+traffic level. Both the ban and the economics have to change before
+this is worth an hour of anyone's time.
+
+## OPEN STRATEGIC DECISION — flagged, not resolved: cashback vs the merchant pool
+
+Two recorded facts in tension. (1) The August strategic growth plan puts
+cashback at the centre of the revenue model. (2) This research found
+that merchant affiliate terms exclude coupon/deal/cashback publishers
+often enough that it is a named genre of exclusion clause — and
+cashback status trips those clauses MORE often than price-comparison
+framing does (Best Buy above is one concrete instance; affiliate-manager
+guidance treats "should we allow coupon/cashback sites" as a standing
+policy question). Consequence if unaddressed: the cashback pivot may
+systematically shrink the merchant pool the whole business depends on —
+the wallet ledger would be built for relationships the wallet itself
+disqualifies us from. Needs an operator decision BEFORE anyone builds a
+wallet ledger: cashback-first (accept a smaller pool), comparison-first
+(defer cashback), or a split-brand structure. Evidence level: public
+terms and directory guidance, not merchant conversations — a
+merchant-by-merchant terms read should precede the decision.
+
 Read-only research. Nothing applied to, no accounts created, no terms
 accepted — all commercial commitments remain the operator's.
 

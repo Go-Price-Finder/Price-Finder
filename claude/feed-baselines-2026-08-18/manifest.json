@@ -1,0 +1,347 @@
+[
+  {
+    "advertiserId": "113200",
+    "advertiser": "Valerion US",
+    "feedId": "F191",
+    "feedRows": 540,
+    "baselined": 540,
+    "sha256_uncompressed": "57b20bc155d5219c91e3b24b65dc4122e956c5fd85a4d4aa450a93b418513f89",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:34.150Z"
+  },
+  {
+    "advertiserId": "116187",
+    "advertiser": "Kings Camo (US)",
+    "feedId": "F328",
+    "feedRows": 8156,
+    "baselined": 8138,
+    "sha256_uncompressed": "f37d20f0c4a6839e769a6863ecfe334ba5a0f9549e08898f08a585d89625edd6",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:35.114Z"
+  },
+  {
+    "advertiserId": "97013",
+    "advertiser": "CrealityOfficialStore",
+    "feedId": "F372",
+    "feedRows": 48028,
+    "baselined": 48028,
+    "sha256_uncompressed": "1ba7bca5fb0bb49e288e4407cc565bc0edc235b7f1ab77199e4ff849b3888059",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:38.143Z"
+  },
+  {
+    "advertiserId": "77150",
+    "advertiser": "XGIMI LIMITED",
+    "feedId": "F637",
+    "feedRows": 136,
+    "baselined": 136,
+    "sha256_uncompressed": "340becd26b75e9e603f51a993caa34ac83b958dbd77366d6870356edff9da28b",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:38.824Z"
+  },
+  {
+    "advertiserId": "105835",
+    "advertiser": "Freshine Products, Inc",
+    "feedId": "F871",
+    "feedRows": 423,
+    "baselined": 420,
+    "sha256_uncompressed": "8b2e5bd5e4d1c6fe78dd4af94208fcb6985d0a0c46e5040354c4666afdbb3005",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:39.329Z"
+  },
+  {
+    "advertiserId": "86861",
+    "advertiser": "AUTO-VOX",
+    "feedId": "F950",
+    "feedRows": 156,
+    "baselined": 156,
+    "sha256_uncompressed": "6926ffe4dc74baf6efdb7d869ded28c18846057c665beaf3e4dc62c72dce9b62",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:39.865Z"
+  },
+  {
+    "advertiserId": "119629",
+    "advertiser": "PURTY BODY Affiliate Program",
+    "feedId": "F1263",
+    "feedRows": 134,
+    "baselined": 134,
+    "sha256_uncompressed": "e82196df201a489a91de844ddcc85bd6530f6c9769684f1855d834799df4a543",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:40.346Z"
+  },
+  {
+    "advertiserId": "98159",
+    "advertiser": "FENRIR",
+    "feedId": "F1673",
+    "feedRows": 298,
+    "baselined": 298,
+    "sha256_uncompressed": "b25327b283116b87713c0d0a1092385012b1d77dbc20d6c95ed6613a150ebd7b",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:40.857Z"
+  },
+  {
+    "advertiserId": "123366",
+    "advertiser": "DDPAI Global",
+    "feedId": "F2403",
+    "feedRows": 114,
+    "baselined": 114,
+    "sha256_uncompressed": "427a59d178ea98467e4d11e48616529934ecd1b8e774c5fcd5bd3a3ef8454696",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:41.400Z"
+  },
+  {
+    "advertiserId": "43143",
+    "advertiser": "aaawave",
+    "feedId": "F2639",
+    "feedRows": 1678,
+    "baselined": 1678,
+    "sha256_uncompressed": "fc42fb87540fb815d5955ab1cd8713de6c1391590240e69aa493fda1b1ef9d48",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:42.126Z"
+  },
+  {
+    "advertiserId": "104549",
+    "advertiser": "AlorairCrawlspace",
+    "feedId": "F2715",
+    "feedRows": 186,
+    "baselined": 186,
+    "sha256_uncompressed": "0a0659b4107791cf379abcd5ac556d29d6020ab7cdb8e10650d4214219250f37",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:42.620Z"
+  },
+  {
+    "advertiserId": "111366",
+    "advertiser": "Sparkle GmbH",
+    "feedId": "F2916",
+    "feedRows": 3690,
+    "baselined": 3689,
+    "sha256_uncompressed": "85ccf8097b94116e1e4b8ae1c1de7a60ed668d9a6797fc8c092062edccfc3207",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:43.268Z"
+  },
+  {
+    "advertiserId": "72577",
+    "advertiser": "Autel",
+    "feedId": "F3092",
+    "feedRows": 43,
+    "baselined": 43,
+    "sha256_uncompressed": "75551d95653f868bc062efde55301499f29b201eb26ecd4a1cb0882f321605e2",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:43.724Z"
+  },
+  {
+    "advertiserId": "125138",
+    "advertiser": "FED Fitness US",
+    "feedId": "F3104",
+    "feedRows": 322,
+    "baselined": 322,
+    "sha256_uncompressed": "04a16ce31a3436110c98c31d3195e694e7ed58f51d198b55062e17460d4576fd",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:44.411Z"
+  },
+  {
+    "advertiserId": "45915",
+    "advertiser": "Shenzhen Feinuote Electronic Technology Co., Ltd.",
+    "feedId": "F3176",
+    "feedRows": 1652,
+    "baselined": 1652,
+    "sha256_uncompressed": "07fbd8f818397de035a147ac2129399feabae0e0376675895389c02e0137dfc5",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:45.219Z"
+  },
+  {
+    "advertiserId": "125634",
+    "advertiser": "Tennis Express",
+    "feedId": "F3224",
+    "feedRows": 49880,
+    "baselined": 49850,
+    "sha256_uncompressed": "6f4d452682629991e4a93aeac0c935d4282412426a86a55f46363982028f83ee",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:48.195Z"
+  },
+  {
+    "advertiserId": "126513",
+    "advertiser": "Argendon Crawlspace & commercial dehumidifier",
+    "feedId": "F3509",
+    "feedRows": 61,
+    "baselined": 61,
+    "sha256_uncompressed": "144c9c242490ad5d8265f72c07415c164b90128a77f99dafbb217111f972ab45",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:48.719Z"
+  },
+  {
+    "advertiserId": "127253",
+    "advertiser": "Monument Grills (US)",
+    "feedId": "F3775",
+    "feedRows": 1057,
+    "baselined": 1055,
+    "sha256_uncompressed": "6acdb660309c74a15f7573e87e610afc80b617f53804a2066bb022b26f7cb39e",
+    "idColumn": "id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:49.380Z"
+  },
+  {
+    "advertiserId": "28831",
+    "advertiser": "Vevor US",
+    "feedId": "72571",
+    "feedRows": 20453,
+    "baselined": 20453,
+    "sha256_uncompressed": "a0e4b41ebadf3966df479dde7e164f815f892c03726176c91debf2cd50e04167",
+    "idColumn": "aw_product_id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:51.683Z"
+  },
+  {
+    "advertiserId": "28349",
+    "advertiser": "Oedro (US)",
+    "feedId": "91986",
+    "feedRows": 789,
+    "baselined": 789,
+    "sha256_uncompressed": "a888b5557ff5aa6a7a1ea291d53afafb99b4e88b98a17bf8ac0fef06c6f03cc2",
+    "idColumn": "aw_product_id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:51.892Z"
+  },
+  {
+    "advertiserId": "113600",
+    "advertiser": "Nextrition Pet (US)",
+    "feedId": "101913",
+    "feedRows": 19,
+    "baselined": 19,
+    "sha256_uncompressed": "54d517aacb47440c3f1809a7de93c9c8c0e157e1f49ae90339fd79c58b40578d",
+    "idColumn": "aw_product_id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:52.119Z"
+  },
+  {
+    "advertiserId": "115809",
+    "advertiser": "Ravin Crossbows (US)",
+    "feedId": "102973",
+    "feedRows": 186,
+    "baselined": 181,
+    "sha256_uncompressed": "3161e8be63cf24b528875b6a03e9225149148527ed0a36901a520cc641eef04c",
+    "idColumn": "aw_product_id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:52.237Z"
+  },
+  {
+    "advertiserId": "96499",
+    "advertiser": "Ottocast",
+    "feedId": "109551",
+    "feedRows": 14,
+    "baselined": 14,
+    "sha256_uncompressed": "f45d2de74a13863fa33238222ec1b44e768178e253f24d6ae372f6947ef8540e",
+    "idColumn": "aw_product_id",
+    "idFormats": [
+      "numeric"
+    ],
+    "onSaleNow": 0,
+    "withRegularOrRrp": 0,
+    "capturedAt": "2026-08-18T03:02:52.358Z"
+  }
+]

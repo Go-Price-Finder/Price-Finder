@@ -13,6 +13,7 @@ import PriceAlertCTA from "@/components/PriceAlertCTA";
 import { ChevronRightIcon, ExternalLinkIcon, StarIcon } from "@/components/icons";
 import { getAllRealProducts, getPartner, getRealProduct } from "@/lib/catalog";
 import { buildProductJsonLd } from "@/lib/structured-data";
+import { isDiscontinuedAtRetailer } from "@/lib/discontinued";
 
 export async function generateStaticParams() {
   const partner = await getPartner("evdance");
@@ -128,15 +129,21 @@ export default async function EvdanceProductPage({
               <PriceAsOfLabel partnerId="evdance" slug={product.slug} />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                <a
-                  href={product.deepLink}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-6 py-3 text-sm font-semibold text-accent-ink transition-colors hover:bg-gilt-400"
-                >
-                  View on EVDANCE
-                  <ExternalLinkIcon className="h-3.5 w-3.5" />
-                </a>
+                {isDiscontinuedAtRetailer(product.id) ? (
+                  <div className="flex flex-1 items-center justify-center rounded-full border border-gilt-500/30 bg-noir-800 px-6 py-3 text-sm font-medium text-ivory-300">
+                    EVDANCE no longer stocks this item
+                  </div>
+                ) : (
+                  <a
+                    href={product.deepLink}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gilt-500 px-6 py-3 text-sm font-semibold text-accent-ink transition-colors hover:bg-gilt-400"
+                  >
+                    View on EVDANCE
+                    <ExternalLinkIcon className="h-3.5 w-3.5" />
+                  </a>
+                )}
                 <a
                   href="#details"
                   className="flex flex-1 items-center justify-center rounded-full border border-gilt-500/30 bg-noir-800 px-6 py-3 text-sm font-semibold text-ivory-100 transition-colors hover:border-gilt-400 hover:text-gilt-400"
@@ -145,9 +152,11 @@ export default async function EvdanceProductPage({
                 </a>
               </div>
 
-              <p className="text-xs text-ivory-400">
-                &ldquo;View on EVDANCE&rdquo; takes you to EVDANCE&rsquo;s own store to complete your purchase.
-              </p>
+              {!isDiscontinuedAtRetailer(product.id) && (
+                <p className="text-xs text-ivory-400">
+                  &ldquo;View on EVDANCE&rdquo; takes you to EVDANCE&rsquo;s own store to complete your purchase.
+                </p>
+              )}
 
               <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start">
                 <PriceHistoryChart

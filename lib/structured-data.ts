@@ -1,5 +1,6 @@
 import type { RealProduct } from "./partners";
 import { getPartnerPolicy } from "./partner-policies";
+import { isDiscontinuedAtRetailer } from "./discontinued";
 
 export const SITE_URL = "https://gopricefinder.com";
 export const SITE_NAME = "Go Price Finder";
@@ -30,12 +31,21 @@ const RETURN_FEES_SCHEMA_VALUE: Record<string, string> = {
  * the product is listed at all.
  */
 export function buildProductJsonLd(product: RealProduct) {
+  // Carve-out to the InStock rationale above: products confirmed gone at
+  // the retailer (lib/discontinued.ts — merchant-site 404, verified) say
+  // so in the schema too, and stop pointing the offer URL at a dead
+  // merchant page. The visible page makes the same claim (no outbound
+  // link, "no longer stocks this item"), so schema and display stay in
+  // agreement — the §3/§9k rule.
+  const discontinued = isDiscontinuedAtRetailer(product.id);
   const offers: Record<string, unknown> = {
     "@type": "Offer",
-    url: product.deepLink,
+    ...(discontinued ? {} : { url: product.deepLink }),
     priceCurrency: "USD",
     price: product.price,
-    availability: "https://schema.org/InStock",
+    availability: discontinued
+      ? "https://schema.org/Discontinued"
+      : "https://schema.org/InStock",
     seller: {
       "@type": "Organization",
       name: product.partnerName,

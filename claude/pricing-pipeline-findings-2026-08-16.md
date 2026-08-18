@@ -1586,6 +1586,77 @@ be drawn from pre-2026-08-18 rows.
 operator's instruction — Cowork writes the migration, this session
 reviews against its stated gates before application. Not written here.
 
+### 9t. Zombie diagnosis: 38/38 are feed-side removals; alert ruling; migration 0017 review (2026-08-18)
+
+**The diagnosis (operator-authorized, read-only; remedy deliberately not
+presumed):** for every one of the 38, is the product present in today's
+feed by the same key matching uses? Answer, unanimous across all three
+partners: **NO — all 38 are feed-side removals; matching did not
+regress.** golden-maple (feed F2615, 359 rows): all 23 names absent —
+cork-sheet and replaceable-brush product lines dropped from the feed.
+evdance (F1320, 71 rows): all 12 names absent — the "flux" charger line
+(including all 8 price-flip products from §9s) no longer in the feed.
+king-koil (101819, 27 rows): all 3 p= ids absent — dropped or
+renumbered. Zero "present-but-unmatched" (regression-shaped) cases;
+zero shadowed by catalog name collisions (checked — byName is last-wins
+and could have hidden this shape). Per the operator's own framing the
+remedy now chooses itself — the rows are dead and deletion is
+defensible — but that decision is the operator's and nothing was
+changed; the TTL keeps the harm neutralized meanwhile. Worth noting:
+the diagnosis method (compare against the same feed the matcher reads,
+with the same key extraction) is committed in the transcript record;
+the check distinguished three failure shapes in advance rather than
+accepting the first zero.
+
+**Alert ruling (operator, 2026-08-18), recorded as a conscious
+time-boxed exception, not a mute:** five slugs arm when the healthchecks
+key lands (snapshot-prices, check-price-alerts, sync-cashback,
+auth-probe, refresh-prices' four siblings) — **refresh-prices is HELD.**
+Arming condition, named: the 38 resolved. Deadline, named:
+**2026-08-25.** If still unresolved then, continuing the hold must be a
+conscious decision taken that day — a mute that outlives its deadline
+without a decision is the antipattern this doc keeps finding. (Kept in
+front of us, operator's remark: today produced label-vs-reality defects
+in BOTH directions from one root — overstating freshness in
+current_prices reads, understating it in observed_at — and only one of
+those is the kind anyone thinks to look for.)
+
+**Migration 0017 (refresh_runs) review — Cowork wrote, this session
+reviewed against the stated gates per the 419b3e4 rule; apply is
+Cowork's step:**
+
+1. PASS — `refresh_runs` does not exist (probe returns PGRST205,
+   schema-cache miss).
+2. SQL enables RLS and declares zero policies ✓. The "RLS + no policies
+   = invisible to anon" mechanism could NOT be demonstrated pre-apply:
+   every candidate table with no anon policy has zero rows, and 0=0 is
+   the vacuous zero this doc refuses to count. Post-apply test
+   specified instead, on the real table: seed one service-role row,
+   then anon select must return zero rows WITHOUT error while service
+   sees one. To be run by this session immediately after apply.
+3. AGREE, no argument — telemetry must survive its subject; a record
+   that vanishes when the partner does is not a record.
+4. AGREE — the table observes, it does not constrain.
+5. SQL passes (all integers nullable). **Writer-contract caveat,
+   flagged:** the in-memory PartnerRefreshResult initializes every
+   counter to 0, so the FUTURE writer must map "errored/skipped before
+   stage X" to NULL, not pass initialized zeros through — otherwise
+   zero-and-unknown collapse re-enters via the writer with the schema
+   powerless to stop it. Skipped partners' feed_rows must be NULL, not
+   0; a failed feed download likewise.
+6. GAPS, reported before apply: (a) `match_strategy text` (singular)
+   cannot carry the instrument's matchedById/matchedByName counts — a
+   partner can match via both, and the id-vs-name share is the match
+   reliability signal; recommend two integer columns or accept the loss
+   explicitly. (b) Missing columns for emitted counters: new_rows (part
+   of the discriminator triple), compared (distinguishes matched-but-
+   price-unparseable), unchanged_vs_catalog / price_changes_vs_catalog,
+   duplicate_key_collisions — recommend at minimum new_rows and
+   compared, or record which counters are deliberately not persisted.
+   (c) `error_message text` vs the instrument's errors[] — writer joins
+   or truncates; acceptable, noted. All present columns' types match
+   the instrument's emissions ✓.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

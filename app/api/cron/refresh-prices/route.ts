@@ -3,6 +3,7 @@ import { refreshPrices } from "@/lib/pricing/refreshPrices";
 import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { freshnessCutoffIso } from "@/lib/pricing/freshness";
+import { recordRefreshRuns } from "@/lib/pricing/recordRefreshRuns";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json), scheduled before
@@ -27,8 +28,11 @@ export async function GET(request: Request) {
     }
   }
 
+  const runId = crypto.randomUUID();
+  const startedAt = new Date().toISOString();
   try {
     const result = await refreshPrices();
+    const finishedAt = new Date().toISOString();
 
     // Persist the per-partner counters where something stores them (Vercel
     // runtime logs; retention-limited, so the response body carries them
@@ -82,19 +86,36 @@ export async function GET(request: Request) {
       .from("current_prices")
       .select("product_id, retailer")
       .lt("updated_at", freshnessCutoffIso());
+    // null = the freshness read itself failed: unknown, not zero — the
+    // refresh_runs writer records NULL stale_overrides in that case.
+    let stalePerPartner: Record<string, number> | null = null;
     if (freshErr) {
       failures.push(`freshness read failed: ${freshErr.message}`);
-    } else if (staleRows && staleRows.length > 0) {
-      const byPartner: Record<string, number> = {};
-      for (const r of staleRows) byPartner[r.retailer] = (byPartner[r.retailer] ?? 0) + 1;
-      failures.push(
-        `freshness: ${staleRows.length} override row(s) older than the 2-day limit — per partner: ` +
-          Object.entries(byPartner)
-            .map(([k, v]) => `${k}=${v}`)
-            .join(", ") +
-          ` — these prices are not corroborated by any current feed and the read-side TTL is excluding them`
-      );
+    } else {
+      stalePerPartner = {};
+      for (const r of staleRows ?? []) stalePerPartner[r.retailer] = (stalePerPartner[r.retailer] ?? 0) + 1;
+      if ((staleRows?.length ?? 0) > 0) {
+        failures.push(
+          `freshness: ${staleRows!.length} override row(s) older than the 2-day limit — per partner: ` +
+            Object.entries(stalePerPartner)
+              .map(([k, v]) => `${k}=${v}`)
+              .join(", ") +
+            ` — these prices are not corroborated by any current feed and the read-side TTL is excluding them`
+        );
+      }
     }
+
+    // Durable telemetry (migration 0017, findings §9y). A failed write is
+    // a loud failure — silently lost telemetry is the original sin.
+    const writeErr = await recordRefreshRuns(supabase, {
+      runId,
+      route: "refresh-prices",
+      startedAt,
+      finishedAt,
+      partners: result.partners,
+      stalePerPartner,
+    });
+    if (writeErr) failures.push(writeErr);
 
     // Dead-man's-switch: ping only when every partner ran clean AND the
     // liveness/freshness controls pass, so any silent failure shows up as

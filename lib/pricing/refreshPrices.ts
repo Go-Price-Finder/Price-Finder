@@ -216,6 +216,21 @@ export type PartnerRefreshResult = {
    * unchangedVsCurrent is a re-confirmation of stale data, not merchant
    * behaviour (findings §9v). Absent on skip entries. */
   feedId?: string;
+  /** How far this entry got — the fact that lets the refresh_runs writer
+   * honor its binding contract (findings §9y): counters initialise to 0
+   * in memory, so WITHOUT this field a partner that errored before a
+   * stage would be indistinguishable from one that ran it and counted
+   * zero. The writer maps counters from stages NOT reached to NULL,
+   * never 0.
+   *   skipped      — never attempted (compliance/unverified/sentinel)
+   *   pre-download — errored before the feed downloaded (selection,
+   *                  feed-list, or download failure): ALL counters unknown
+   *   downloaded   — feed parsed and matching loop completed: feedRows +
+   *                  matching counters known; vs-current + upserted unknown
+   *   diffed       — pre-upsert read done: only upserted unknown
+   *   done         — run completed (incl. the empty-batch case, where the
+   *                  vs-current counters are genuine zeros) */
+  stage: "skipped" | "pre-download" | "downloaded" | "diffed" | "done";
   priceChanges: number;
   /** Matched rows whose price column parsed to a usable number — the rows
    * that were actually compared against anything. matched - compared =
@@ -295,6 +310,7 @@ function emptyPartnerResult(partnerId: string, feedId?: string): PartnerRefreshR
   return {
     partnerId,
     feedId,
+    stage: "pre-download",
     feedRows: 0,
     matched: 0,
     unmatched: 0,
@@ -362,6 +378,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     if (complianceEntry?.status !== "active") {
       partnerResults.push({
         ...emptyPartnerResult(mapping.partnerId),
+        stage: "skipped",
         skipped: `compliance status is "${complianceEntry?.status ?? "missing"}", not "active"`,
       });
       continue;
@@ -370,6 +387,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     if (!mapping.verified) {
       partnerResults.push({
         ...emptyPartnerResult(mapping.partnerId),
+        stage: "skipped",
         skipped:
           mapping.skipReason ??
           `AWIN advertiser name "${mapping.advertiserName}" is unverified — confirm the exact name ` +
@@ -396,6 +414,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     if (realFeeds.length === 0) {
       partnerResults.push({
         ...emptyPartnerResult(mapping.partnerId),
+        stage: "skipped",
         skipped: statusFeeds[0].notes ?? "feed_status sentinel: no feed exists for this partner",
       });
       continue;
@@ -429,6 +448,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       continue;
     }
     result.feedRows = rows.length;
+    result.stage = "downloaded";
 
     const partnerProducts = activeStaticProducts.filter((p) => p.partnerId === mapping.partnerId);
 
@@ -660,6 +680,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         else if (prev !== row.price) result.changedVsCurrent++;
         else result.unchangedVsCurrent++;
       }
+      result.stage = "diffed";
 
       const { error } = await supabase
         .from("current_prices")
@@ -669,6 +690,11 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       } else {
         result.upserted = upsertBatch.length;
       }
+      result.stage = "done";
+    } else {
+      // Empty batch: nothing matched with a usable price, so the
+      // vs-current counters and upserted are GENUINE zeros, not unknowns.
+      result.stage = "done";
     }
 
     partnerResults.push(result);

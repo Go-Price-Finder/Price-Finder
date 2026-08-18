@@ -2103,6 +2103,16 @@ Full Compass 40%, Tennis Express 7%, evdance 0%, Autel 0%. §13's
 AWIN feed lacks identity, the products do not lack counterparties.
 Comparison-pair map and re-ranked shortlist: partner-sourcing doc.
 
+**§13b correction (2026-08-19, Vevor plan measurement):** multi-seller
+tallies must EXCLUDE the merchant's own regional programmes — "Vevor
+AU/CA/UK/MX" is the same nameplate, not a counterparty. Vevor's league
+entry corrects to **72%** (≥$100 tier, Vevor-named carriers excluded);
+the raw 85% included regional-programme rows. Second finding: **no
+per-product AWIN↔CJ bridge exists for Vevor** (SKU 0/300, title 2%) —
+its comparison capability is real and unreachable through the AWIN
+membership; full analysis and the aaawave-first recommendation in
+claude/vevor-import-plan-2026-08-19.md.
+
 **TECHNIQUE, recorded at operator request (the Monoprice catch):**
 distinct-brand sampling — count distinct `brand` values in a ~100-row
 feed sample; own-brand ≈ 1–2, reseller ≈ tens. Twenty rows turned a

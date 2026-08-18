@@ -2113,6 +2113,19 @@ its comparison capability is real and unreachable through the AWIN
 membership; full analysis and the aaawave-first recommendation in
 claude/vevor-import-plan-2026-08-19.md.
 
+**SEVENTH INSTANCE (operator, self-recorded 2026-08-19):** the
+"own-brand means single-seller" rule was built from two data points
+(evdance, Autel) and applied categorically without testing a third —
+Vevor's 72% refuted it. The replacement rule is superior because it is
+measured, not judged, and the league table is now the PRIMARY merchant
+selection instrument, kept current as merchants are tested.
+
+**TECHNIQUE (operator credit, recorded):** registering a prediction AND
+naming the exact mechanism that would refute it, then observing that
+mechanism — predicting your own framework's failure condition is the
+strongest form of being wrong, and the reason the Vevor result was
+trusted immediately instead of argued with.
+
 **TECHNIQUE, recorded at operator request (the Monoprice catch):**
 distinct-brand sampling — count distinct `brand` values in a ~100-row
 feed sample; own-brand ≈ 1–2, reseller ≈ tens. Twenty rows turned a

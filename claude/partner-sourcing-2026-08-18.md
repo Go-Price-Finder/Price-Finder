@@ -1,5 +1,45 @@
 # Partner sourcing — four networks, two gates (2026-08-18)
 
+## THE COMPARISON-PAIR MAP (2026-08-19, late) — three pairs, all plausibly accessible
+
+Join tests run with predictions registered first; both predictions
+wrong in instructive directions, recorded per house standard:
+
+- **Vevor-on-CJ join test: 85% of 40 sampled GTINs carried by ANOTHER
+  merchant** (UnbeatableSale 34, Wayfair 12, OnBuy 3, Zoro 2) —
+  predicted LOW on the own-brand rule; the evdance result did NOT
+  reproduce. **THE AXIS REFINES: own-brand-at-manufacture ≠
+  single-seller.** Vevor distributes through marketplaces/closeout
+  resellers; evdance and Autel don't distribute at all. The operative,
+  measurable property is PER-PRODUCT MULTI-SELLER SHARE, not the
+  merchant's nameplate. Measured so far: evdance 0%, Autel 0%, Tennis
+  Express 7%, Full Compass 40%, aaawave 57%, **Vevor 85% — the highest
+  measured, on the biggest shelf feed.** (The prior turn's "Vevor can
+  never participate in comparison" is hereby corrected: via AWIN it has
+  no identity column, but the products are comparison-capable — CJ
+  supplies both identity and counterparties.)
+- **Full Compass join test: 40%** (prediction >25% held) — co-carriers
+  led by zZounds (7/16). The aaawave result GENERALISES to pro-AV, a
+  second category.
+
+**The pairs, with measured records:**
+1. **aaawave (HELD, AWIN) + antonline (CJ 6217498, rank 2, 1.5%)** —
+   PC components; 33/120 depth.
+2. **aaawave + Vevor (both HELD, AWIN) + UnbeatableSale (CJ 1567450,
+   rank 3, 10%)** — one application co-carries BOTH held merchants
+   (aaawave 37/120, Vevor 34/40). The single highest-leverage
+   application on the board.
+3. **Full Compass (CJ 6382932, rank 2, 4%, RESELLER 71 brands) +
+   zZounds (CJ 1779394, rank 1, 6%)** — pro-AV pair, both accessible,
+   category-independent confirmation of the strategy.
+
+**Re-ranked shortlist under the three axes (reseller-first — rank buys
+commission, resale buys comparison):** UnbeatableSale (r3) → antonline
+(r2) → Full Compass (r2) → zZounds (r1) → Sonic Electronix (r2,
+reseller 46 brands) → then and only then the own-brand tier (Kingbull
+etc.) for page inventory, explicitly not for comparison. All prior
+own-brand Tier-1 entries demoted on the third axis.
+
 ## THE AAAWAVE CLUSTER: is comparison reachable TODAY? (2026-08-19) — YES, via antonline
 
 **The question:** aaawave is already approved (AWIN, 1,683 products,

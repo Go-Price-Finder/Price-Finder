@@ -2086,6 +2086,23 @@ it can never participate in COMPARISON. (Sourcing doc records the CJ
 twist: Vevor's CJ feed carries GTIN at 100% — the limitation is the
 AWIN export, not the merchant.)
 
+### §13b. The axis refines under measurement: per-product multi-seller share (2026-08-19, late)
+
+Two join tests with predictions registered first; BOTH predictions
+wrong, faithfully recorded. Vevor-on-CJ: predicted LOW (own-brand rule)
+— measured **85% of sampled GTINs carried by another merchant**
+(UnbeatableSale 34/40, Wayfair 12). The evdance result did NOT
+reproduce; own-brand-at-manufacture is not single-seller when the
+manufacturer DISTRIBUTES. Full Compass: predicted >25% — measured 40%
+(zZounds leading), so the aaawave result generalises beyond PC parts.
+**The §13 third axis is hereby refined: the operative property is
+PER-PRODUCT MULTI-SELLER SHARE, measured by GTIN join test — not the
+merchant's nameplate.** Measured league table: Vevor 85%, aaawave 57%,
+Full Compass 40%, Tennis Express 7%, evdance 0%, Autel 0%. §13's
+"Vevor can never participate in comparison" is corrected in place: the
+AWIN feed lacks identity, the products do not lack counterparties.
+Comparison-pair map and re-ranked shortlist: partner-sourcing doc.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

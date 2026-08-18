@@ -132,6 +132,84 @@ export type Database = {
           },
         ];
       };
+      refresh_runs: {
+        // Hand-edited to match migration 0017 v2 (Cowork-applied
+        // 2026-08-19 after second-reader review; gate-2 RLS behaviour
+        // verified on the live table). All eleven counter integers are
+        // nullable BY CONTRACT: the writer maps skipped-or-errored-
+        // before-a-stage to NULL, never 0 — zero and unknown must not
+        // collapse. feed_id is NOT NULL: skip entries are written under
+        // the feed_status sentinel id (none:<partner>), never omitted —
+        // a skipped partner that leaves no row is indistinguishable from
+        // a partner nobody tried (findings §9y).
+        Row: {
+          id: string;
+          run_id: string;
+          route: string;
+          partner_id: string;
+          feed_id: string;
+          feed_rows: number | null;
+          matched: number | null;
+          matched_by_id: number | null;
+          matched_by_name: number | null;
+          compared: number | null;
+          changed_vs_current: number | null;
+          unchanged_vs_current: number | null;
+          upserted: number | null;
+          new_rows: number | null;
+          stale_overrides: number | null;
+          duplicate_key_collisions: number | null;
+          error_message: string | null;
+          started_at: string;
+          finished_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          run_id: string;
+          route: string;
+          partner_id: string;
+          feed_id: string;
+          feed_rows?: number | null;
+          matched?: number | null;
+          matched_by_id?: number | null;
+          matched_by_name?: number | null;
+          compared?: number | null;
+          changed_vs_current?: number | null;
+          unchanged_vs_current?: number | null;
+          upserted?: number | null;
+          new_rows?: number | null;
+          stale_overrides?: number | null;
+          duplicate_key_collisions?: number | null;
+          error_message?: string | null;
+          started_at: string;
+          finished_at: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          run_id?: string;
+          route?: string;
+          partner_id?: string;
+          feed_id?: string;
+          feed_rows?: number | null;
+          matched?: number | null;
+          matched_by_id?: number | null;
+          matched_by_name?: number | null;
+          compared?: number | null;
+          changed_vs_current?: number | null;
+          unchanged_vs_current?: number | null;
+          upserted?: number | null;
+          new_rows?: number | null;
+          stale_overrides?: number | null;
+          duplicate_key_collisions?: number | null;
+          error_message?: string | null;
+          started_at?: string;
+          finished_at?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       feed_status: {
         // Hand-edited to match migration 0016 (applied by Cowork; DDL in
         // claude/migration-0016-feed-status-STEP2.md) — same hand-edit

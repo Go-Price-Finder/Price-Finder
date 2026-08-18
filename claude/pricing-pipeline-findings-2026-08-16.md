@@ -1463,6 +1463,18 @@ blindnesses, each recorded:**
 3. **The discriminating counters lived only in response bodies nothing
    stored.**
 
+**OPERATOR ERROR, recorded as such (operator's own instruction,
+2026-08-18) — alongside the code defect, not folded into it:** the
+fifteen-days-dead claim was the operator's; they ran the query
+themselves, and escalated the result above Batch 4 and partner expansion
+on the strength of a column whose name did not describe its contents.
+The comment lied, and separately the operator trusted a field name over
+its behaviour — the same family of error, committed by the person
+policing the family. Corollary, also theirs: **a wrong instrument
+silently poisons every reading taken with it, including ones already
+published as fact** — the "zero rows written today" measurement earlier
+the same evening was retro-invalidated by the same defect.
+
 **Fixes shipped (`8811f0c`), scoped to instrumentation + control:**
 - Counters per partner per run: feedRows/matched/compared/
   unchangedVsCatalog/newRows/changedVsCurrent/unchangedVsCurrent/
@@ -1515,6 +1527,64 @@ feed shrank) — they override the catalog with Aug-3 prices indefinitely,
 their updated_at will never advance, and the freshness control (MAX)
 does not see them. Any remedy (delete stale overrides, read-side TTL,
 per-row staleness sweep) is a separate decision, not taken.
+(Superseded same night: remedy decided and shipped — §9s.)
+
+### 9s. Freshness control v2 (count-based, per-partner), read-side TTL for stale overrides, and the observed_at answer (2026-08-18)
+
+**Control v2 — the day-one blind spot, named by the operator and
+closed:** max(updated_at) is the age of the NEWEST row; it reddens only
+when EVERY row is stale — total death, the least likely failure. One
+partner silently dropping out of matching (exactly the zombie shape §9r
+found) leaves MAX fresh and the check green. Replaced with a count:
+**zero override rows older than the threshold, reported per partner** —
+"golden-maple stopped matching" and "everything died" now produce
+different signals. Demonstrated failing on today's data, prediction
+exact: **RED — 38 stale rows, golden-maple=23, evdance=12, king-koil=3.**
+Consequence stated plainly: this check stays RED daily (500, no ping)
+until the 38 are resolved — that red is honest (38 uncorroborated
+prices exist) but it will mask NEW stale rows inside an already-red
+signal and will fire the dead-man alert every day once the healthchecks
+key lands. Resolution paths (operator's call): authorized deletion
+after the observation is recorded, or a catalog re-import that lets
+matching reach those products again.
+
+**Read-side TTL — operator decision, shipped:** an override whose
+updated_at is older than the freshness threshold is NOT applied; the
+product falls back to catalog price. Not deletion — the observation
+stays in the table, and if matching resumes the next stamp self-heals
+the row back into use. An uncorroborated 15-day-old price presented as
+live is the same offence PriceHistoryChart was suppressed for. Impact
+stated BEFORE shipping and verified after: the TTL'd reader applies
+exactly **631** of 669 overrides; **8 products change value** (all
+evdance chargers, stale overrides differing from catalog — 3 correcting
+down, 5 up), **30** change provenance only (stale value equals catalog:
+live_override → catalog_fallback in the next snapshot, honest); the
+sentinel 21ft (stamped 00:12Z) stays applied at 219.95. Wrong-signature
+named in advance: any of the 631 fresh rows dropping out would mean the
+filter is broken — verified not the case. Premise correction recorded:
+product PAGES don't consume overrides (Option A is gated), so the
+change surfaces in snapshots and alert evaluation, not page HTML.
+Both readers (fetchCurrentPriceOverrides and the zero-caller
+withLivePrice) carry the same filter — the two must agree on what
+counts as live.
+
+**observed_at — yes, frozen too, by inheritance; asked before assumed:**
+price_history.observed_at is not independently stamped; snapshotPrices
+copies override.updated_at at write time. Every eligible row written to
+date therefore inherited the insert-only defect: all 669 say
+2026-08-02/03 while the pipeline was in fact re-observing daily — the
+recorded observation age UNDERSTATES actual recency (backwards from the
+usual failure: the data is FRESHER than its label). Second instance of
+the same defect in the same table, via inheritance. What the chart can
+honestly show: nothing about observation age from rows recorded through
+2026-08-17; from the first post-stamping snapshot (2026-08-18 12:00)
+onward, observed_at is accurate. This does not un-fail the chart-restore
+conditions (§ previous ruling stands); it adds one: age claims must not
+be drawn from pre-2026-08-18 rows.
+
+**refresh_runs table:** deferred to the DDL second-reader flow at the
+operator's instruction — Cowork writes the migration, this session
+reviews against its stated gates before application. Not written here.
 
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
@@ -1653,3 +1723,14 @@ per-row staleness sweep) is a separate decision, not taken.
   current matching, invisible to MAX-based freshness) — flagged, not
   fixed. Chart restore: NO (operator ruling recorded — depth 1 day,
   stale observations, read filter is a decision not code).
+- Freshness v2 + TTL (2026-08-18, §9s): count-based per-partner
+  freshness control (RED today: 38 = gm23/ev12/kk3 — stays red until
+  the zombies are resolved, by design); read-side TTL ships — stale
+  overrides not applied, observation kept, self-healing; verified 631
+  applied / 8 value flips (all evdance) / sentinel holds; pages
+  unaffected (Option A gated). observed_at: frozen too, by inheritance
+  from updated_at — all pre-2026-08-18 rows understate observation
+  recency; accurate from the first post-stamping snapshot. Operator
+  error recorded as such in §9r (field name trusted over behaviour;
+  wrong instrument poisons published readings). refresh_runs deferred
+  to Cowork DDL flow.

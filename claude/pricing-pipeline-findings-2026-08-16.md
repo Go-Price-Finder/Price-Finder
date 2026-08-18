@@ -1657,6 +1657,56 @@ Cowork's step:**
    or truncates; acceptable, noted. All present columns' types match
    the instrument's emissions ✓.
 
+### 9u. Technical SEO audit (2026-08-18, read-only, findings only — operator chooses order after Search Console lands)
+
+Context: 227 visitors/30d, 5 Google referrals, domain 4 weeks old.
+Operator's own probe caveats honored — everything below measured from
+parsed XML and raw served HTML, not summarized renderings.
+
+- **Sitemap (was the top suspect): NO DEFECT.** 1031 parsed `<url>`
+  entries (the ~565 was a summarizing model's miscount); **954/954
+  product hrefs present**, zero missing; the 14-route gap to the 1045
+  build is the intentionally excluded auth/account/search set.
+  app/sitemap.ts reads getAllRealProducts — same source as the pages.
+  LOW: no `<lastmod>` on any entry (the one hint Google actually uses;
+  changefreq/priority are ignored).
+- **MEDIUM — no `<link rel="canonical">` anywhere** (checked home,
+  product, category). Inbound AWIN clickthroughs and future UTM-tagged
+  URLs can index as duplicates with nothing declaring the clean URL.
+  Self-referencing canonicals via Next metadata is the cheap fix.
+- **MEDIUM — www → apex redirect is 307 (temporary).** Weaker
+  canonical-consolidation signal than permanent; Vercel domain-config
+  toggle, operator-side. (http→https and trailing-slash are 308 ✓.)
+- **MEDIUM — category pages render entire departments server-side:**
+  arts-crafts = 348 product cards, **3.1 MB HTML**. Upside measured: no
+  orphan pages — every product is ≤3 hops from home (nav → category →
+  product; partner pagination is a second path). The structural cost is
+  page weight, not reachability. grocery-food "23 with no pagination"
+  is complete, not truncated (23 is the whole department).
+- **INFO — robots.txt:** `/products/` is vestigial (no such route;
+  serves only 404s) — disallow harmless; `/search` disallow is the
+  documented deliberate choice (no unique indexable content, matches
+  sitemap exclusion).
+- **GOOD — head/schema on all three page types:** title, meta
+  description, lang, viewport, og:* complete; Product JSON-LD rich
+  (offers + shippingDetails + hasMerchantReturnPolicy — the two old
+  Search Console warnings remain fixed); **schema price matches
+  displayed price** (structurally guaranteed today: pages and schema
+  both read the static catalog; re-check the day Option A wires
+  overrides into pages); breadcrumb JSON-LD present on category pages.
+- **CWV:** lab run blocked tonight (anonymous PSI quota exhausted);
+  structural indicators on the product page are healthy — hero image
+  preloaded with srcset, fonts preloaded (the §9q vendored woff2s,
+  self-hosted), 95 KB HTML, 103 KB shared JS; prior homepage LCP/TBT
+  fixes (2026-08-01 doc) remain in place. The weak CWV spot is the 3.1
+  MB category HTML above. Field p75s live in the Speed Insights
+  dashboard (no query API — operator-side read).
+- **Traffic interpretation, stated once:** with the sitemap complete
+  and on-page basics present, 5 Google referrals at week 4 is a normal
+  cold start, not a technical block — the levers are canonicals (small),
+  category page weight (medium), lastmod (small), and everything
+  Search Console shows in ~48h.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

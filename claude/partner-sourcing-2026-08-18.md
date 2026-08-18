@@ -37,7 +37,60 @@ flagged: the price-comparison vision runs through branded inventory —
 own-brand DTC merchants can populate pages but can never populate a
 comparison.
 
-## CJ SWEEP (2026-08-19, API — credentials landed) — and the finding that outranks the shortlist
+## TARGETED RE-SWEEP: TVs/AV, cameras, power tools (2026-08-19) — was the bedroom-heavy shortlist a market fact or a search artifact?
+
+**Method difference, stated first:** the original sweep gave every
+category 3 keywords × 1 page with no feed probes, and its top-40 output
+was globally EPC-sorted — mattress keywords were on-target while
+"electronics"/"tools" matched junk, so furniture dominated what was
+visible. This re-sweep: 7–8 sharper keywords per category, 2 pages,
+and a per-candidate FEED-EXISTENCE probe (shoppingProducts totalCount,
+knowable pre-join). **Part artifact, part market fact — and it differs
+by category.**
+
+**TV / home-AV (257 unique advertisers): the accessible middle tier
+EXISTS — for AV, not for television panels.** Accessible with feeds:
+SVS (rank 3, 7%, 91 products — premium speakers/subs, $500–2,500 AOV),
+Monoprice (rank 3, 10%, 4,629), Audioengine (rank 1, 5%, 6,279), Full
+Compass (rank 2, 4%, 93,769 — pro AV). Gated: Sony (r4), Epson (r4),
+Harman (r4), Abt (r4). Television PANELS specifically are structurally
+big-box/brand-gated on CJ; projector/audio AV is reachable today — and
+pairs with the already-joined AWIN XGIMI + Valerion.
+
+**Cameras (38 unique — genuinely thin, NOT an artifact):** even the
+deeper sweep finds almost nothing accessible. Canon (r5), Sony (r4)
+gated; the one real accessible camera brand is **OM SYSTEM (rank 1,
+3%, 1,364-product feed** — the Olympus successor: mirrorless bodies
+and lenses, high AOV). Everything else is adjacent (dash cams, photo
+frames, car AV). The camera mid-tier isn't absent from the MARKET —
+it lives at Impact's retailers (B&H, Adorama) rather than on CJ.
+Verdict: on CJ, the accessible cell is near-empty with one real
+exception; the category is reachable via a different network, not via
+more traffic on this one.
+
+**Power tools (222 unique): the middle tier EXISTS but is SHIFTED —
+power stations and prosumer outdoor, not traditional trade brands.**
+Accessible with feeds: **Worx (rank 2, 3%, 371 — a real consumer
+power-tool brand)**, EcoFlow (r3/r2, feeds), Bluetti (r3, 374), Bad Ass
+Extension Cords (r1, 316). Gated: Jackery (r5), Global Equipment (r4,
+359k products), MSC (r4, 2.17M). DeWalt/Milwaukee don't appear as CJ
+programmes — trade brands route through gated retailers on other
+networks (Acme/ShareASale, ToolNut/Impact).
+
+**Cross-network finding, possibly the most valuable line: Vevor is ALSO
+on CJ (5966681, rank 4, 4%, 15,146-product feed) — with GTIN populated
+on 100% of 200 sampled rows,** versus its AWIN feed's zero identifier
+columns. The "Vevor can't join" problem is an AWIN-export artifact,
+not a merchant property: CJ-Vevor provides the identity layer
+AWIN-Vevor lacks (source via CJ, or CJ-for-identity + AWIN-for-
+commission — a commercial call; the rank-4 gate applies on the CJ
+side).
+
+**Direct answer to the structural question:** the DTC middle tier that
+exists in mattresses and e-bikes is PRESENT in home-AV and
+power-adjacent tools, ABSENT-on-CJ (but present-on-Impact) for
+cameras, and absent for television panels at any traffic level —
+panels are a brand/big-box category, full stop.
 
 ## CJ SWEEP (2026-08-19, API — credentials landed) — and the finding that outranks the shortlist
 

@@ -1430,6 +1430,92 @@ Related note: the derive-don't-hardcode rule paid off here — CLAUDE.md
 never pinned the 1043 page count, so the two new auth pages (1045)
 required no magic-constant bump (operator observation, kept).
 
+### 9r. The refresh pipeline was WORKING all along — three compounding blindnesses made it unreadable (2026-08-18, 00:xx UTC)
+
+**The verdict first, from the instrumented run (deployed route, one
+sanctioned manual invocation):** all five verified partners matched —
+canvas-vows 204/204 (by id), king-koil 26/27 (id), tsar-bomba 26/189
+(id; the linkrot), evdance 52/71 (name), golden-maple 323/359 (name) —
+631 rows upserted, **zero partners at matched==0**, and the discriminator
+caught a live event on its first run: evdance `changedVsCurrent=1`, a
+real price change written by that very run. Per the pre-stated
+distinction: matched > 0 with unchanged ≈ matched ⇒ **working pipeline,
+mostly-static feeds** — the "broken, and the 200 is a lie" branch is
+refuted. Independent corroboration: the 27-vs-28 reconciliation (§ below)
+shows a divergence that appeared BETWEEN the 01:33Z cutover measurement
+and the 12:00Z snapshot — bracketing the 11:00Z cron, the only writer.
+
+**Why 15 days of this looked like a dead pipeline — three compounding
+blindnesses, each recorded:**
+
+1. **The header comment lied.** It claimed "upsert any price that's
+   changed"; the code has never filtered to changes — every matched row
+   is upserted every run. (Comment corrected in code.)
+2. **`current_prices.updated_at` never bumps on update.** 0006 gives it
+   `default now()` and NO on-update trigger; the upsert payload never
+   included it, and ON CONFLICT DO UPDATE only writes payload columns.
+   So max(updated_at)=Aug-3 meant "last NEW ROW Aug 3", not "last write
+   Aug 3" — fifteen days of successful daily updates and fifteen days of
+   nothing leave IDENTICAL timestamps. This also retro-invalidates
+   every "0 rows updated today" observation made via updated_at,
+   including this doc's own earlier ones and the operator's independent
+   two-write-days measurement: those measured inserts, not writes.
+3. **The discriminating counters lived only in response bodies nothing
+   stored.**
+
+**Fixes shipped (`8811f0c`), scoped to instrumentation + control:**
+- Counters per partner per run: feedRows/matched/compared/
+  unchangedVsCatalog/newRows/changedVsCurrent/unchangedVsCurrent/
+  upserted/errors — `changedVsCurrent` measured against the table's
+  BEFORE state. Persisted as structured log lines in Vercel runtime logs
+  (retention-limited — a durable `refresh_runs` table is the right home
+  and is DDL, so it goes through the second-reader rule: Cowork writes,
+  this session reviews) and returned in the body.
+- **Observation stamping:** every upserted row now sets updated_at
+  explicitly — a same-price sighting in today's feed IS a fresh
+  observation. This is what makes any freshness signal meaningful, and
+  it flows into snapshot observed_at with correct semantics.
+- **Liveness control:** verified partner + feed downloaded + matched 0
+  ⇒ failure. **Freshness control:** max(current_prices.updated_at)
+  older than 2 days ⇒ failure regardless of what any run returned.
+  Threshold derived, not picked: after stamping, staleness measures
+  "runs that touched the table," whose cadence WE own (daily cron) —
+  2 days = one missed run + jitter; raising it converts missed runs
+  into silence and the derivation is pinned in the route comment.
+  Control failures ⇒ HTTP 500 + no dead-man's ping. **Demonstrated
+  failing on real data first: RED at 14.9 days against today's pre-run
+  state; GREEN after the instrumented run because 631 rows were
+  demonstrably stamped — both readings correct.**
+
+**Item-3 answer — the 285 products with no current_prices row ever, three
+distinct classes, not one:** brooklyn-delhi 29/29 (partner skipped by
+design — AWIN has no feed; `verified: false` with reason); tsar-bomba
+246/272 (feed ids dead — the known linkrot; their feed rows exist but
+carry ids absent from the catalog); evdance 8 + golden-maple 2
+(name-matching tail — feed names that normalize to nothing in the
+catalog). None of these is the same failure as a working-but-unread
+pipeline, and none is fixed by anything in this section.
+
+**Item-5 answer — 27 vs 28 reconciled:** the registration's own
+comparison (current_prices vs catalog_products), re-run today, yields 28
+— and so does the snapshot-based comparison; the two catalog sources
+agree. Since the cutover measurement recorded exactly 27 at 01:33Z and
+the first divergent-28 evidence is the 12:00Z snapshot, the 28th
+divergence (golden-maple wet palette, 45.99 vs 44.99) appeared in the
+window containing the 11:00Z refresh run — the only writer. The
+registered 27 was CORRECT at registration time; the count moved because
+the pipeline moved a price. Working-pipeline evidence, not a
+registration defect.
+
+**New residue found by the instrument, flagged not fixed: 38 zombie
+overrides.** 669 rows exist; today's run touched 631. The other 38
+(golden-maple 23, evdance 12, king-koil 3) were written in the Aug-2/3
+era by matching that no longer matches (feed name churn; king-koil's
+feed shrank) — they override the catalog with Aug-3 prices indefinitely,
+their updated_at will never advance, and the freshness control (MAX)
+does not see them. Any remedy (delete stale overrides, read-side TTL,
+per-row staleness sweep) is a separate decision, not taken.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown
@@ -1553,3 +1639,17 @@ required no magic-constant bump (operator observation, kept).
   built-in SMTP caps auth email at ~2/hour project-wide — custom SMTP
   via the verified Resend domain recommended, operator-owned. Pages
   1043 → 1045.
+- Refresh pipeline (2026-08-18, §9r): WORKING all along — instrumented
+  run matched 631 rows across all 5 verified partners and caught one
+  live price change (evdance); 15 days of apparent no-ops were three
+  compounding blindnesses (lying comment, updated_at never bumping on
+  update, counters stored nowhere). Observation stamping + liveness +
+  freshness controls shipped and demonstrated (RED 14.9d pre-run,
+  GREEN post-run, both correct). 27-vs-28 reconciled: the 28th
+  divergence was WRITTEN by the 11:00Z cron — working-pipeline
+  evidence, registration was correct. The 285 rowless products are
+  three design/known classes (brooklyn-delhi skip 29, tsar linkrot 246,
+  name-tail 10). NEW: 38 zombie overrides (Aug-3 prices, unreachable by
+  current matching, invisible to MAX-based freshness) — flagged, not
+  fixed. Chart restore: NO (operator ruling recorded — depth 1 day,
+  stale observations, read filter is a decision not code).

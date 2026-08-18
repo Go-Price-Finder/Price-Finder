@@ -19,8 +19,14 @@ import type { WishlistRetailerId } from "@/lib/types";
  * row to an existing static product primarily by the AWIN merchant
  * product id embedded in its deep link (extractAwinProductId below),
  * falling back to normalized product name only when an id isn't
- * available, and upsert any price that's changed into
- * public.current_prices. It never touches the static
+ * available, and upsert EVERY matched row's price into
+ * public.current_prices — changed or not. (An earlier version of this
+ * comment claimed "upsert any price that's changed"; the code has never
+ * filtered to changes, and the wrong comment helped 15 days of
+ * indistinguishable no-op-looking runs go unread — findings doc §9r.
+ * Re-upserting an unchanged price is CORRECT: today's feed showing the
+ * same price is a fresh observation, and the stamped updated_at below is
+ * what the freshness control measures.) It never touches the static
  * lib/<partner>-data.ts files, never adds or removes products — only
  * price/originalPrice can move, and only for products that already exist
  * in the static catalog. A feed row that can't be matched to an existing
@@ -214,6 +220,24 @@ export type PartnerRefreshResult = {
   unmatched: number;
   unmatchedExamples: string[];
   priceChanges: number;
+  /** Matched rows whose price column parsed to a usable number — the rows
+   * that were actually compared against anything. matched - compared =
+   * rows lost to a missing/invalid feed price (each also logs an error). */
+  compared: number;
+  /** compared rows whose feed price EQUALS the static catalog price
+   * (priceChanges above is the complement — feed price != static catalog). */
+  unchangedVsCatalog: number;
+  /** THE DISCRIMINATOR (findings §9r): measured against what
+   * current_prices held immediately BEFORE this run's upsert.
+   *   matched > 0 && changedVsCurrent == 0  -> pipeline working, feed
+   *                                            prices static today
+   *   matched == 0                          -> matching broken; any 200
+   *                                            from this run is a lie
+   * A bare "upserted: 0/669" cannot tell those apart, which is exactly
+   * how 15 days of runs went unread. */
+  newRows: number;
+  changedVsCurrent: number;
+  unchangedVsCurrent: number;
   /** Distinct static products with a matched feed row, after collapsing
    * duplicate-key collisions (see duplicateKeyCollisions below) — this is
    * the number of rows actually sent to Supabase, which can be lower than
@@ -300,6 +324,11 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatched: 0,
         unmatchedExamples: [],
         priceChanges: 0,
+        compared: 0,
+        unchangedVsCatalog: 0,
+        newRows: 0,
+        changedVsCurrent: 0,
+        unchangedVsCurrent: 0,
         upserted: 0,
         matchedById: 0,
         matchedByName: 0,
@@ -324,6 +353,11 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         unmatched: 0,
         unmatchedExamples: [],
         priceChanges: 0,
+        compared: 0,
+        unchangedVsCatalog: 0,
+        newRows: 0,
+        changedVsCurrent: 0,
+        unchangedVsCurrent: 0,
         upserted: 0,
         matchedById: 0,
         matchedByName: 0,
@@ -342,6 +376,11 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       unmatched: 0,
       unmatchedExamples: [],
       priceChanges: 0,
+      compared: 0,
+      unchangedVsCatalog: 0,
+      newRows: 0,
+      changedVsCurrent: 0,
+      unchangedVsCurrent: 0,
       upserted: 0,
       matchedById: 0,
       matchedByName: 0,
@@ -422,6 +461,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         retailer: WishlistRetailerId;
         price: number;
         original_price: number | null;
+        updated_at: string;
       }
     >();
 
@@ -567,7 +607,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       const rrp = parseFeedPrice(firstNonEmpty(row, RRP_COLUMNS));
       const originalPrice = rrp != null && rrp > price ? rrp : null;
 
+      result.compared++;
       if (price !== staticProduct.price) result.priceChanges++;
+      else result.unchangedVsCatalog++;
 
       // Keyed by product_id (retailer is constant within this partner's
       // batch) so that if a second feed row lands on the same static
@@ -588,11 +630,42 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         retailer: mapping.partnerId as WishlistRetailerId,
         price,
         original_price: originalPrice,
+        // Stamped explicitly: 0006 gives updated_at `default now()` with NO
+        // on-update trigger, so an upsert that hits ON CONFLICT DO UPDATE
+        // leaves it untouched — which is how 15 days of possible daily
+        // updates became indistinguishable from 15 days of nothing
+        // (findings §9r). Semantically this is an observation stamp:
+        // today's feed carrying this price IS a fresh observation, even
+        // when the value is unchanged. The route's freshness control
+        // depends on this stamp.
+        updated_at: new Date().toISOString(),
       });
     }
 
     const upsertBatch = [...upsertByProductId.values()];
     if (upsertBatch.length > 0) {
+      // The discriminator counts need the BEFORE state — what did this
+      // partner's rows hold prior to this run's write (see the
+      // changedVsCurrent doc comment on PartnerRefreshResult).
+      const { data: existingRows, error: existingErr } = await supabase
+        .from("current_prices")
+        .select("product_id, price")
+        .eq("retailer", mapping.partnerId as WishlistRetailerId);
+      if (existingErr) {
+        result.errors.push(`Pre-upsert read of current_prices failed: ${existingErr.message}`);
+        partnerResults.push(result);
+        continue;
+      }
+      const existingPriceByProductId = new Map(
+        (existingRows ?? []).map((r) => [r.product_id, Number(r.price)])
+      );
+      for (const row of upsertBatch) {
+        const prev = existingPriceByProductId.get(row.product_id);
+        if (prev === undefined) result.newRows++;
+        else if (prev !== row.price) result.changedVsCurrent++;
+        else result.unchangedVsCurrent++;
+      }
+
       const { error } = await supabase
         .from("current_prices")
         .upsert(upsertBatch, { onConflict: "product_id,retailer" });

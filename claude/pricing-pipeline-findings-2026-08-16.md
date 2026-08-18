@@ -1900,6 +1900,45 @@ restated in the type's doc comment. feed_status's own hand-edit landed
 2026-08-19 in `a4d6ffb` (it rode the feed-selection commit rather than
 its own — noted; the drift habit ends with both tables now in types).
 
+### 9z. refresh_runs writer BUILT and contract-demonstrated; the two dead pages fixed (2026-08-19)
+
+**Writer** (`lib/pricing/recordRefreshRuns.ts`, wired into the
+refresh-prices route): keyed off a new `stage` field on
+PartnerRefreshResult (skipped / pre-download / downloaded / diffed /
+done) — recorded fact, not inference, which is what makes the NULL
+mapping honest. Both binding clauses demonstrated on the LIVE table
+before trusting: (clause 2) a real run wrote brooklyn-delhi under
+`none:brooklyn-delhi` with ALL counters NULL — sentinel + NULL, not
+absence + zeros; (clause 1) a synthetic pre-download entry through the
+real writer landed all-NULL (the in-memory zeros did not leak), and a
+downloaded-stage entry kept known counters (100/40) while NULLing
+unreached ones. The distinction also holds for stale_overrides: a
+successful freshness read writes known zeros; a failed read writes NULL.
+Demo rows deleted; the real run's 7 rows stand as the first durable
+telemetry. That run was also refresh-prices' FIRST GREEN (200, 0 stale)
+since the count-based control shipped — the ping condition now passes
+daily if nothing regresses. Telemetry write failure surfaces as a route
+failure (500, no ping) — silently lost telemetry is the original sin.
+Known limitation, recorded: a run that THROWS (e.g. feed-list URL
+missing, feed_status unreadable) writes no rows at all — the 500 is the
+signal for that class; a run-level sentinel row could close it later.
+
+**Dead pages** (operator decision, third delivery): the two
+merchant-404 products (golden-maple face-skin-tones paint set, evdance
+U40 charger) keep their pages and their index status; the outbound
+affiliate link is replaced by "<Partner> no longer stocks this item";
+the link explainer paragraph is suppressed; and the Product JSON-LD
+drops the offer url and says availability=Discontinued — schema and
+display in agreement (§3/§9k rule). Implemented as a two-entry hand
+list (`lib/discontinued.ts`) with the explicit note that the
+generalized discontinued-product flow is the pattern to build AFTER the
+Step 14 cutover — the list must not grow past a handful.
+
+**Next (operator pivot, binding): infrastructure intake stops. Step 14
+Batch 4 is the critical path** — the read-only getProductTitleSuffix
+question (rendering for the 225 no-price products vs the static path,
+sampled across both the 47 and the 225) is the next turn's work.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

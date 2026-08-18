@@ -1965,6 +1965,70 @@ refreshPrices / snapshotPrices read the static catalog by design until
 Option A). Batch 4's gate is answered: no divergence exists to block
 the cutover of those surfaces.
 
+### §11. Step 14 plan reconciled against the repo; Batch 5 SHIPPED; the fifth instance (2026-08-19)
+
+**OPERATOR ERROR, recorded at their instruction as the FIFTH instance
+this week and the most expensive:** "Batch 4 is blocked" was inherited
+from the 2026-08-16 handover and steered ~six messages of planning
+across two days without being checked against the repo — despite the
+handover's own opening instruction (written by the same operator) to
+verify rather than trust it. The other four instances misdirected
+measurements; this one misdirected the plan. The critical path
+(catalogue-expansion surfaces) sat behind a batch that shipped on
+2026-08-1x as `00e4aae`/`771c7db`.
+
+**Plan-vs-repo reconciliation (verified by evidence, not checkboxes —
+the plan's checkbox state is globally stale and should never be read
+as status; the inline ✅ annotation boxes are the reliable layer):**
+
+- Tasks 1–5: ALL DONE. catalog-types.ts exists; all 13 lib/catalog
+  exports present (incl. every Batch-5 dependency); category-mapper
+  memo shipped via a12f809 (the 2026-08-01 LCP work — the plan's Task 3
+  by another route); unstable_cache live; check-build-queries.mjs +
+  verify-catalog-migration.ts exist; CI carries the two anon Supabase
+  secrets.
+- Batches 1–4: ALL SHIPPED (419f132, 67c31a8, 6bb3f43, 00e4aae +
+  771c7db) — closing grep gate re-verified clean.
+- Batch 5: was genuinely not done — now SHIPPED (815bb25, below).
+- Batch 6: NOT done — lib/data.ts unmigrated, and the three
+  record-why comments (search.ts, refreshPrices.ts,
+  getEffectivePrice.ts) are absent. SearchBar's type-only import is
+  intact (the load-bearing `type` keyword present).
+- Batch 7 (delete lib/partners): not started, and per Batch 6's own
+  note CANNOT run until the three request-time consumers get narrow
+  queries.
+- Handover assertions: kawsar/260806 remote branch GONE (deleted this
+  session, 2026-08-16; shawn/260806 remains as instructed). Cashback
+  RLS: migration 0007 defines owner-scoped SELECT-only policies on
+  cashback_claims + cashback_ledger_entries (no write policies) — as
+  designed. CI migration-drift check: DOES NOT EXIST in verify.yml
+  (tsc/lint/build only) — if the handover claimed one, that claim is
+  stale. CLAUDE.md brand colours: the section exists and is
+  conceptually current but nominally stale — it names cream/sage while
+  the code's tokens are NAMED noir/gilt/ivory/espresso with cream/sage
+  VALUES (per opengraph-image.tsx's own token-mirror comment).
+
+**Batch 5 shipped (815bb25) with the hold's reason stated first:** the
+plan's stated reason for holding Batch 5 was SEQUENCING — it aggregates
+across all partners, so it runs after every partner batch. Batches 1–4
+being verifiably shipped, the reason is gone, not forgotten. (The
+operator's original "do NOT start Batch 5" sentence arrived truncated
+in the 2026-08-16 handover; its tail is unknowable, but the plan-side
+reason is the documented one and it is satisfied.) Verified per the
+plan's own protocol: 1049/1049 pages, query guard PASS (11 collect /
+0 render), First Load JS unchanged at 103 kB, full static-vs-catalog
+equivalence suite green. **Prediction recorded before deploy: /deals
+does NOT change — getFeaturedDeals is static=1 = catalog=1; one product
+is the honest-markdown policy, not the static path.** All aggregate
+surfaces (home, categories tree, deals, trending, sitemap, OurPartners)
+now read the DB catalog — the real gate on catalogue expansion is open;
+what remains of Step 14 is Batch 6 (lib/data.ts + three record-why
+comments) and the Batch 7 deletion blocked behind narrow queries.
+
+Also: affiliate-disclosure's in-prose gopricefinder@gmail.com corrected
+to gpf@gopricefinder.com (operator-authorized; last surviving
+instance). Footer editorial call (dead-link removal) endorsed and kept.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

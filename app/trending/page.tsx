@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getBestSellers } from "@/lib/partners";
+import { getBestSellers } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Trending — Go Price Finder",
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
  * data behind it. Once there's real traffic/sales data, this can become
  * its own ranking.
  */
-export default function TrendingPage() {
-  const products = getBestSellers();
+export default async function TrendingPage() {
+  const products = await getBestSellers();
 
   return (
     <>

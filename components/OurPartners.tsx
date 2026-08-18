@@ -1,16 +1,17 @@
 import Link from "next/link";
-import { PARTNERS } from "@/lib/partners";
+import { getPartners } from "@/lib/catalog";
 
 /**
  * "Our Partners" / "Featured Shops" — a grid of the real retailers Price
- * Finder actually works with, right below Hero. Reads entirely from
- * lib/partners.ts, so a new partner shows up here automatically the
- * moment it's added to that registry — nothing in this component needs
+ * Finder actually works with, right below Hero. Reads from
+ * lib/catalog.ts (Step 14 batch 5), so a new partner shows up here automatically the
+ * moment it's added to the catalog — nothing in this component needs
  * to change. No real logo art exists for any partner yet, so each card
  * renders a styled wordmark instead of a fabricated logo image.
  */
-export default function OurPartners() {
-  if (PARTNERS.length === 0) return null;
+export default async function OurPartners() {
+  const partners = await getPartners();
+  if (partners.length === 0) return null;
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
@@ -25,7 +26,7 @@ export default function OurPartners() {
       </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {PARTNERS.map((partner) => (
+        {partners.map((partner) => (
           <Link
             key={partner.id}
             href={partner.href}

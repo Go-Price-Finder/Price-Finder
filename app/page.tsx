@@ -8,16 +8,16 @@ import HowItWorks from "@/components/HowItWorks";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import { buildOrganizationJsonLd } from "@/lib/structured-data";
-import { getAllRealProducts, PARTNERS } from "@/lib/partners";
+import { getAllRealProducts, getPartners } from "@/lib/catalog";
 
-export default function Home() {
+export default async function Home() {
   // Computed here (a Server Component) rather than inside Hero (a "use
   // client" component) — importing lib/partners.ts from a client component
   // would bundle its ~1.5MB catalog into client-side JS just for these two
   // numbers. See Hero.tsx's HeroStats comment.
   const heroStats = {
-    products: getAllRealProducts().length,
-    partners: PARTNERS.length,
+    products: (await getAllRealProducts()).length,
+    partners: (await getPartners()).length,
   };
 
   return (

@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getProductsByCategoryPath, getPopulatedCategoryPaths } from "@/lib/partners";
+import { getProductsByCategoryPath, getPopulatedCategoryPaths } from "@/lib/catalog";
 import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
 
 /**
@@ -18,14 +18,14 @@ import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
  * don't get their own pages — only the leaf does — so those two segments
  * of the breadcrumb below are plain text, not links.
  */
-export function generateStaticParams() {
-  return getPopulatedCategoryPaths().map(({ deptSlug, path }) => ({
+export async function generateStaticParams() {
+  return (await getPopulatedCategoryPaths()).map(({ deptSlug, path }) => ({
     slug: deptSlug,
     path,
   }));
 }
 
-function resolvePath(slug: string, path: string[]) {
+async function resolvePath(slug: string, path: string[]) {
   if (path.length !== 3) return undefined;
   const [catSlug, ptgSlug, typeSlug] = path;
   return getProductsByCategoryPath(slug, catSlug, ptgSlug, typeSlug);
@@ -37,7 +37,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; path: string[] }>;
 }): Promise<Metadata> {
   const { slug, path } = await params;
-  const result = resolvePath(slug, path);
+  const result = await resolvePath(slug, path);
   if (!result) return { title: "Not found — Go Price Finder" };
   return {
     title: `${result.productType} — Go Price Finder`,
@@ -51,7 +51,7 @@ export default async function CategoryLeafPage({
   params: Promise<{ slug: string; path: string[] }>;
 }) {
   const { slug, path } = await params;
-  const result = resolvePath(slug, path);
+  const result = await resolvePath(slug, path);
   if (!result) notFound();
 
   // Only the levels that have a real page of their own go in here — not

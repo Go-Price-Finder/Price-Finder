@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getCategoryBySlug, getRealCategories } from "@/lib/partners";
+import { getCategoryBySlug, getRealCategories } from "@/lib/catalog";
 import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
 
 /**
@@ -18,8 +18,8 @@ import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/structured-data";
  * across every partner that has any, via getCategoryBySlug — with nothing
  * else on the page.
  */
-export function generateStaticParams() {
-  return getRealCategories().map((category) => ({ slug: category.slug }));
+export async function generateStaticParams() {
+  return (await getRealCategories()).map((category) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({
@@ -28,7 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await getCategoryBySlug(slug);
   if (!category) return { title: "Not found — Go Price Finder" };
   return {
     title: `${category.name} — Go Price Finder`,
@@ -42,7 +42,7 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 
   // Matches the visible breadcrumb nav below exactly — same 3 crumbs,

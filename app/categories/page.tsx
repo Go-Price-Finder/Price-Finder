@@ -3,7 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ChevronRightIcon, ChevronDownIcon } from "@/components/icons";
-import { getAllRealProducts, slugifyRealCategory } from "@/lib/partners";
+import { getAllRealProducts, slugifyRealCategory } from "@/lib/catalog";
 import { mapProductToCategory } from "@/lib/category-mapper";
 import taxonomy from "@/config/walmart-taxonomy.json";
 
@@ -47,13 +47,13 @@ function pathKey(...parts: string[]): string {
   return parts.join("|||");
 }
 
-function computeCounts() {
+async function computeCounts() {
   const deptCounts = new Map<string, number>();
   const catCounts = new Map<string, number>();
   const ptgCounts = new Map<string, number>();
   const ptCounts = new Map<string, number>();
 
-  for (const product of getAllRealProducts()) {
+  for (const product of await getAllRealProducts()) {
     const mapping = mapProductToCategory({
       title: product.name,
       description: product.description,
@@ -77,8 +77,8 @@ function computeCounts() {
   return { deptCounts, catCounts, ptgCounts, ptCounts };
 }
 
-export default function CategoriesPage() {
-  const { deptCounts, catCounts, ptgCounts, ptCounts } = computeCounts();
+export default async function CategoriesPage() {
+  const { deptCounts, catCounts, ptgCounts, ptCounts } = await computeCounts();
 
   return (
     <>

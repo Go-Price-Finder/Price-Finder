@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getFeaturedDeals } from "@/lib/partners";
+import { getFeaturedDeals } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Deals — Go Price Finder",
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
  * now honestly show nothing rather than a fabricated deal when no real
  * product is on sale.
  */
-export default function DealsPage() {
-  const deals = getFeaturedDeals();
+export default async function DealsPage() {
+  const deals = await getFeaturedDeals();
 
   return (
     <>

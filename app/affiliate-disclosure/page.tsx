@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ChevronRightIcon } from "@/components/icons";
 
-const CONTACT_EMAIL = "gopricefinder@gmail.com";
+const CONTACT_EMAIL = "gpf@gopricefinder.com";
 
 export const metadata: Metadata = {
   title: "Affiliate Disclosure — Go Price Finder",

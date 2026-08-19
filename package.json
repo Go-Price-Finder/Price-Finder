@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --env-file-if-exists=.env.local scripts/check-postgrest-caps.mjs --build-gate",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/check-postgrest-caps.mjs --build-gate && npx tsx --env-file-if-exists=.env.local scripts/check-compliance-materialization.ts --build-gate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

@@ -2710,3 +2710,102 @@ Feed-wide measurement behind this: 1,683 rows, 91.2% carry a valid
 gtin, 1,520 distinct, **15 gtins appear on more than one row**, 2 of
 which collide with our 500. All 500 of our products are reachable by
 gtin in today's feed.
+
+### §20. GTIN join shipped for aaawave — collision guard as the centrepiece (2026-08-19)
+
+Approved and built. GTIN is FIRST-CHOICE, not sole-primary: name stays
+armed behind it until the 08-25 diff measures GTIN churn, so the guard
+is in place while the decision it informs stays open.
+
+- `gtin` threaded RawPartnerProduct -> normalizeProduct -> RealProduct.
+  RealProduct already declared `gtin?: string`; nothing populated it.
+  catalog_products.gtin is deliberately NOT read by the refresh — two
+  sources of truth in one pipeline is a drift surface we do not need.
+- Per-partner `matchStrategy`, default `["id","name"]`, so canvas-vows,
+  king-koil and tsar-bomba are bit-for-bit unaffected. aaawave opts into
+  `["gtin","id","name"]`.
+- **Collision guard:** a gtin is usable only when unambiguous on BOTH
+  sides — exactly one catalog product and exactly one feed row. Feed-side
+  counting spans the WHOLE feed, not just rows we carry, because a
+  duplicate row we do not carry is precisely the one that would overwrite
+  us. Banned gtins fall through to name; never resolved by picking the
+  first or the closest price, both of which invent a decision the data
+  does not support.
+- The king-koil rule is preserved and deliberately NOT extended to gtin.
+  An extracted id that is not ours means a SKU we do not carry -> stop.
+  A gtin that is not ours means OUR side is sparse (only post-2026-08-19
+  imports carry gtins) -> continue. Same syntax, different epistemics.
+
+Behaviour-verified against the live feed writing nothing: 500/500 carry
+a gtin; collisionsInCatalog=0, collisionsInFeed=2, keysUsable=498; the
+guard FIRED on both known-bad gtins; matched=500 (byGtin=498, byName=2)
+— the two banned ones recovered by name, the designed fallthrough. Match
+total unchanged, so the registered 1,152 prediction stands; only the
+attribution moves.
+
+`refresh_runs.matched_by_gtin` is NOT written: the column does not exist
+and the operator owns that migration, explicitly to avoid 0020's mistake
+(schema ahead of its writer is indistinguishable from a broken writer).
+Counters are live in the response body and logs today.
+
+### §21. Materialisation audit: which compliance flags can actually be changed by changing them (2026-08-19)
+
+Generalised from §19b at the operator's direction. A gate whose decision
+is materialised into stored data at write time cannot be changed by
+flipping the gate — and the failure mode is that NOTHING HAPPENS, which
+is the hardest kind to notice, in the one layer where we would least
+want to miss it.
+
+**Write-time / materialised — flipping is a silent no-op until re-sync:**
+- `imageUsagePermission` — normalizeProduct swaps the placeholder and the
+  sync writes the RESULT into catalog_products.image/images. §19b, real.
+- `status` and `comparisonEngineConfirmed` — checkImportGate filters
+  ALL_WIRED_PARTNERS into PARTNERS at module load, and rows were written
+  from that filtered export; lib/catalog.ts deliberately never re-checks.
+  Setting a partner active creates nothing (benign). **Moving a partner
+  AWAY from active removes nothing — production keeps serving a partner
+  whose terms review was withdrawn.** That direction was previously
+  unguarded and is the sharpest thing this audit found.
+- `noPlagiarism` — import-time only; text already generated is never
+  revisited.
+
+**Read-time — takes effect at next deploy, no re-sync:**
+- `excludedProducts`, via requiresPerSkuFeatureCheck() inside
+  lib/catalog.ts's getFeaturedDeals/getBestSellers.
+
+**Import-time warnings only:** ftcDisclosureRequired, priceSyncSensitive,
+noMedicalClaims.
+
+**Records only, no code branches on them:** commissionRate/Basis/Tiers,
+commissionBase, cookieDays, paymentSchedule, excludedCategories,
+termsSource, googleShoppingAllowed, couponSharingRestricted,
+noBrandedPaidSearch, noUnauthorizedCoupons, noTrademarkBidding,
+noCouponSiteBehavior, noMarketplaceResale, noScrapingWithoutConsent,
+usAvailabilityOnly, paidSearchRequiresConsent, mustUseOfficialFeed,
+noBrandComparisonWording and every *Note. Several are declared in the TS
+type, which makes them LOOK enforced; none are.
+
+**Remedy — both halves, because they reach different readers:**
+1. `scripts/check-compliance-materialization.ts` compares the registry
+   against stored rows on every build (wired into the blocking prebuild
+   gate) and fails when they disagree, in BOTH directions — stale
+   placeholders after an unlock, real photos still served after a
+   withdrawal, and rows existing for a non-live partner.
+2. A `$materialization` block at the top of partner-compliance.json
+   states, per flag, where it is evaluated and what changing it requires,
+   sitting where the next person editing a flag will actually look.
+
+**It found a real pre-existing instance on its first run, and the first
+diagnosis was wrong.** tsar-bomba had 10 rows holding the placeholder
+while images were permitted. Not a stale sync — the placeholder is in the
+STATIC data file (10 products whose photos failed to download at import
+and were never retried), faithfully mirrored into the DB. The check now
+compares against what the current registry plus static data would
+produce rather than against a blanket zero, so it names the right
+remedy: an import-time image gap, reported as a note. Left as a finding
+for the operator to rule on, not silently fixed.
+
+Proven able to fail before being trusted: flipping aaawave to "pending"
+with the DB unchanged -> FAIL naming 500 rows serving unpermitted photos,
+and `npm run build` exits 1 with zero Next output; selftest with inverted
+expectations -> exit 1; restored -> PASS.

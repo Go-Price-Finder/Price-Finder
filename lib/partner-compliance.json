@@ -1,5 +1,23 @@
 {
-  "$comment": "Compliance registry \u2014 the single source of truth for whether a partner's terms have been reviewed and what restrictions apply. Every partner that has ever been reviewed (active, pending, or reviewed-but-not-applied) gets an entry here, even if nothing from that partner is live yet \u2014 this is a record of terms review, not a list of live partners. lib/partner-compliance.ts reads this file to gate every import (scripts/import-partner.mjs) and every render of partner data on the live site. Update this file whenever new terms are reviewed or a partner's status changes \u2014 nothing else needs to change for the gate to pick it up.",
+  "$comment": "Compliance registry — the single source of truth for whether a partner's terms have been reviewed and what restrictions apply. Every partner that has ever been reviewed (active, pending, or reviewed-but-not-applied) gets an entry here, even if nothing from that partner is live yet — this is a record of terms review, not a list of live partners. lib/partner-compliance.ts reads this file to gate every import (scripts/import-partner.mjs) and every render of partner data on the live site. Update this file whenever new terms are reviewed or a partner's status changes — nothing else needs to change for the gate to pick it up.",
+  "$materialization": {
+    "_read_this_before_editing_any_flag": "A flag whose decision is MATERIALISED into stored data at write time CANNOT be changed by editing it here. Editing it looks like a policy change and is a silent no-op until the affected rows are re-synced. Categories below; scripts/check-compliance-materialization.ts enforces them on every build (package.json prebuild) and fails the build when this file and public.catalog_products disagree. Audited 2026-08-19, findings §19b/§21.",
+    "writeTime_requiresResync": {
+      "imageUsagePermission": "MATERIALISED. normalizeProduct (lib/partners.ts) swaps in IMAGE_PENDING_PLACEHOLDER when this does not allow real images, and the catalog sync writes the RESULT into catalog_products.image/images. lib/catalog.ts deliberately does not re-check. CHANGING THIS REQUIRES re-running that partner's catalog sync (e.g. scripts/sync-aaawave-catalog.ts) AND, when unlocking, downloading the images. Real instance: 2026-08-19, aaawave flipped to confirmed and 500 pages still rendered the placeholder until re-sync.",
+      "status": "MATERIALISED via checkImportGate/isPartnerLive, which filters ALL_WIRED_PARTNERS into PARTNERS at module load; rows were written from that filtered export. Setting a partner to active does NOT create rows (benign: nothing shows). MOVING A PARTNER AWAY FROM active does NOT remove existing rows — production keeps serving a partner whose terms review was withdrawn. That direction is the dangerous one and is a build-failing check.",
+      "comparisonEngineConfirmed": "MATERIALISED — same gate and same consequences as status.",
+      "noPlagiarism": "WRITE-TIME, import only. Consumed by scripts/import-partner.mjs when generating descriptions; descriptions are then baked into lib/<partner>-data.ts and catalog_products.description. Changing it affects FUTURE imports only and never rewrites text already imported."
+    },
+    "readTime_takesEffectAtNextDeploy": {
+      "excludedProducts": "NOT materialised. requiresPerSkuFeatureCheck() is evaluated at read time inside lib/catalog.ts's getFeaturedDeals/getBestSellers, so a change takes effect on the next build with no re-sync. Pages are statically generated, so 'next deploy', not 'immediately'."
+    },
+    "importTimeWarningsOnly": {
+      "ftcDisclosureRequired": "Prints a warning during import. Affects nothing already imported.",
+      "priceSyncSensitive": "Prints a warning during import. Affects nothing already imported.",
+      "noMedicalClaims": "Prints a warning during import. Affects nothing already imported."
+    },
+    "recordedFactsNoCodeReadsThem": "commissionRate, commissionBasis, commissionTiers, commissionBase, cookieDays, cookieDaysConflict, paymentSchedule, excludedCategories, termsSource, googleShoppingAllowed, couponSharingRestricted, noBrandedPaidSearch, noUnauthorizedCoupons, noTrademarkBidding, noCouponSiteBehavior, noMarketplaceResale, noScrapingWithoutConsent, usAvailabilityOnly, paidSearchRequiresConsent, mustUseOfficialFeed, noBrandComparisonWording and every *Note field are RECORDS ONLY - several are declared in lib/partner-compliance.ts's type but no code branches on them. Editing them changes documentation, never behaviour. Do not assume any of them enforces anything."
+  },
   "partners": {
     "brooklyn-delhi": {
       "network": "AWIN",
@@ -13,7 +31,7 @@
         "includesGiftWrap": false
       },
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "No branding guidelines in partner terms; content use is encouraged. Proceeding with attribution based on terms language and risk assessment \u2014 written confirmation from Malika has not been received yet.",
+      "imageUsageNote": "No branding guidelines in partner terms; content use is encouraged. Proceeding with attribution based on terms language and risk assessment — written confirmation from Malika has not been received yet.",
       "noBrandedPaidSearch": true,
       "noUnauthorizedCoupons": true,
       "comparisonEngineConfirmed": true
@@ -28,7 +46,7 @@
         "includesGiftWrap": true
       },
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/67740) \u2014 every section (Branding, Publishers, PPC, Transactions, De-Duplication) is either unanswered or contains no image/content/branding usage language at all; Branding tab holds only generic program-overview marketing copy, not usage rules. This is genuine silence, not explicit permission \u2014 no restriction was found, but none was granted either. Proceeding assessed-low-risk on that basis, same treatment as Brooklyn Delhi. Revisit if EVDANCE ever publishes real terms.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/67740) — every section (Branding, Publishers, PPC, Transactions, De-Duplication) is either unanswered or contains no image/content/branding usage language at all; Branding tab holds only generic program-overview marketing copy, not usage rules. This is genuine silence, not explicit permission — no restriction was found, but none was granted either. Proceeding assessed-low-risk on that basis, same treatment as Brooklyn Delhi. Revisit if EVDANCE ever publishes real terms.",
       "comparisonEngineConfirmed": true
     },
     "golden-maple": {
@@ -41,7 +59,7 @@
         "includesGiftWrap": true
       },
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/124092) \u2014 Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is governing law/terms-modification/notification only, no mention of images; Publishers/PPC/Transactions/De-Duplication questionnaires unanswered). Genuine silence, not explicit permission \u2014 no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Canvas Vows/King Koil.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/124092) — Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is governing law/terms-modification/notification only, no mention of images; Publishers/PPC/Transactions/De-Duplication questionnaires unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Canvas Vows/King Koil.",
       "comparisonEngineConfirmed": true
     },
     "aaawave": {
@@ -57,10 +75,10 @@
         "includesCCFees": false,
         "includesGiftWrap": false
       },
-      "excludedCategories": "none \u2014 the terms answer 'Are any products or product categories excluded from earning commission?' with No",
+      "excludedCategories": "none — the terms answer 'Are any products or product categories excluded from earning commission?' with No",
       "paymentSchedule": "monthly via AWIN",
       "cookieDays": 90,
-      "cookieDaysConflict": "The programme terms (13 Feb 2026) state 90 days; the AWIN directory export states 120. UNRESOLVED, and deliberately recorded rather than averaged or silently picked: AWIN's own API does not expose cookie duration on either /programmes or /programmedetails (checked 2026-08-19 \u2014 programmedetails returns kpi.validationDays: 7, which is the commission validation period, NOT the cookie window). 90 is encoded because the merchant's own terms document is the more authoritative of the two available sources. 120 is deliberately NOT encoded anywhere. Resolve from the AWIN dashboard programme profile if it ever states it.",
+      "cookieDaysConflict": "The programme terms (13 Feb 2026) state 90 days; the AWIN directory export states 120. UNRESOLVED, and deliberately recorded rather than averaged or silently picked: AWIN's own API does not expose cookie duration on either /programmes or /programmedetails (checked 2026-08-19 — programmedetails returns kpi.validationDays: 7, which is the commission validation period, NOT the cookie window). 90 is encoded because the merchant's own terms document is the more authoritative of the two available sources. 120 is deliberately NOT encoded anywhere. Resolve from the AWIN dashboard programme profile if it ever states it.",
       "comparisonEngineConfirmed": true,
       "comparisonEngineNote": "Terms list Comparison engine, Comparison shopping service (CSS) and Shopping directory among allowed partner types, and 'Who Should Join?' names 'Tech bloggers & comparison sites' first.",
       "imageUsagePermission": "confirmed",
@@ -71,7 +89,7 @@
       "network": "AWIN",
       "status": "reviewed-not-applied",
       "noPlagiarism": true,
-      "noPlagiarismNote": "Cannot copy product descriptions or website text verbatim \u2014 must be written independently or sourced only from the AWIN product feed",
+      "noPlagiarismNote": "Cannot copy product descriptions or website text verbatim — must be written independently or sourced only from the AWIN product feed",
       "noCouponSiteBehavior": true,
       "comparisonEngineConfirmed": true
     },
@@ -87,26 +105,26 @@
         "includesGiftWrap": false
       },
       "excludedProducts": true,
-      "excludedProductsNote": "Some SKUs excluded from commission \u2014 verify per-product before featuring in Best Sellers/Deals",
+      "excludedProductsNote": "Some SKUs excluded from commission — verify per-product before featuring in Best Sellers/Deals",
       "noTrademarkBidding": true,
       "noTrademarkBiddingNote": "Affiliates prohibited from bidding on Alorair-branded keywords (e.g. \"Alorair,\" \"Alorair dehumidifier\") on PPC platforms like Google/Bing Ads.",
       "noUnauthorizedCoupons": true,
-      "noUnauthorizedCouponsNote": "Only coupon codes issued officially through Awin may be promoted \u2014 no expired, fake, or unauthorized codes.",
+      "noUnauthorizedCouponsNote": "Only coupon codes issued officially through Awin may be promoted — no expired, fake, or unauthorized codes.",
       "ftcDisclosureRequired": true,
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/104549) \u2014 stronger than mere silence: the General tab explicitly lists 'Banner & Text Links: Access a variety of high-converting marketing materials, including banners, product images, and text links' as a program benefit. No restriction on product-photo display anywhere in the terms (Branding tab is company/product overview copy, not usage rules; Publishers/PPC questionnaires unanswered).",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/104549) — stronger than mere silence: the General tab explicitly lists 'Banner & Text Links: Access a variety of high-converting marketing materials, including banners, product images, and text links' as a program benefit. No restriction on product-photo display anywhere in the terms (Branding tab is company/product overview copy, not usage rules; Publishers/PPC questionnaires unanswered).",
       "comparisonEngineConfirmed": true
     },
     "energy-muse": {
       "network": "AWIN",
       "status": "reviewed-not-applied",
       "noMedicalClaims": true,
-      "noMedicalClaimsNote": "No claims about curing/treating ailments \u2014 keep descriptions factual only",
+      "noMedicalClaimsNote": "No claims about curing/treating ailments — keep descriptions factual only",
       "priceSyncSensitive": true,
-      "priceSyncNote": "Advertiser explicitly warns prices change often \u2014 sync feed frequently or omit price from static descriptions",
+      "priceSyncNote": "Advertiser explicitly warns prices change often — sync feed frequently or omit price from static descriptions",
       "googleShoppingAllowed": false,
       "comparisonEngineConfirmed": false,
-      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms \u2014 verify before going live"
+      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms — verify before going live"
     },
     "advanced-clinicals": {
       "network": "AWIN",
@@ -114,7 +132,7 @@
       "commissionRate": "not disclosed until accepted, subject to change",
       "couponSharingRestricted": true,
       "comparisonEngineConfirmed": false,
-      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms \u2014 verify before going live"
+      "comparisonEngineNote": "Not explicitly confirmed in reviewed terms — verify before going live"
     },
     "caire-beauty": {
       "network": "AWIN",
@@ -122,16 +140,16 @@
       "cookieDays": 90,
       "commissionRate": "not disclosed until accepted",
       "noMarketplaceResale": true,
-      "noMarketplaceResaleNote": "Terms prohibit reselling on marketplaces like Amazon/eBay \u2014 doesn't restrict GoPriceFinder's referral/comparison model.",
+      "noMarketplaceResaleNote": "Terms prohibit reselling on marketplaces like Amazon/eBay — doesn't restrict GoPriceFinder's referral/comparison model.",
       "noBrandedPaidSearch": true,
       "noBrandedPaidSearchNote": "Affiliates cannot outbid Caire Beauty on branded keywords in paid search (Google/Bing/Yahoo).",
       "noScrapingWithoutConsent": true,
       "noScrapingWithoutConsentNote": "Terms explicitly prohibit scraping the site/app for content (images, logos, text) without Caire Beauty's express written consent.",
       "usAvailabilityOnly": true,
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/93563) \u2014 Branding tab explicitly states 'This advertiser is yet to define program terms under Branding.' General tab grants a non-exclusive, limited license to use Caire Beauty's logo/trademarks 'solely in the form and manner available from... the Platform' (AWIN-provided assets), but doesn't explicitly address product-photo display rights the way some other partners' terms do. Genuine silence on the Branding tab specifically \u2014 no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Golden Maple/King Koil/Canvas Vows.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/93563) — Branding tab explicitly states 'This advertiser is yet to define program terms under Branding.' General tab grants a non-exclusive, limited license to use Caire Beauty's logo/trademarks 'solely in the form and manner available from... the Platform' (AWIN-provided assets), but doesn't explicitly address product-photo display rights the way some other partners' terms do. Genuine silence on the Branding tab specifically — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Golden Maple/King Koil/Canvas Vows.",
       "comparisonEngineConfirmed": false,
-      "comparisonEngineNote": "Publishers, PPC, Transactions, and De-Duplication tabs are all entirely unanswered on AWIN \u2014 no explicit confirmation or denial of comparison-shopping-service eligibility. Not explicitly confirmed in reviewed terms \u2014 verify before going live."
+      "comparisonEngineNote": "Publishers, PPC, Transactions, and De-Duplication tabs are all entirely unanswered on AWIN — no explicit confirmation or denial of comparison-shopping-service eligibility. Not explicitly confirmed in reviewed terms — verify before going live."
     },
     "canvas-vows": {
       "network": "AWIN",
@@ -145,7 +163,7 @@
       "noCouponSiteBehavior": true,
       "noCouponSiteBehaviorNote": "Coupon sites are not allowed in this affiliate program at all.",
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/90193) \u2014 Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (Publishers/PPC questionnaires unanswered). Genuine silence, not explicit permission \u2014 no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/90193) — Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (Publishers/PPC questionnaires unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
       "comparisonEngineConfirmed": true
     },
     "king-koil": {
@@ -162,11 +180,11 @@
       "noUnauthorizedCoupons": true,
       "noUnauthorizedCouponsNote": "Only codes issued officially through Awin/King Koil may be promoted; commission can be zeroed out for unauthorized codes.",
       "paidSearchRequiresConsent": true,
-      "paidSearchRequiresConsentNote": "Terms state no paid search activity of any kind (search engines, ad networks, social) is allowed without King Koil's prior consent \u2014 stricter than the standard Awin questionnaire's per-item \"Yes\" answers suggest.",
+      "paidSearchRequiresConsentNote": "Terms state no paid search activity of any kind (search engines, ad networks, social) is allowed without King Koil's prior consent — stricter than the standard Awin questionnaire's per-item \"Yes\" answers suggest.",
       "mustUseOfficialFeed": true,
-      "mustUseOfficialFeedNote": "Scraping the site for product data is explicitly prohibited \u2014 must use the provided product feed.",
+      "mustUseOfficialFeedNote": "Scraping the site for product data is explicitly prohibited — must use the provided product feed.",
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/115216) \u2014 Branding tab explicitly states 'No branding guidelines.'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is coupon/PPC/feed rules only, no mention of images; Publishers questionnaire unanswered). Genuine silence, not explicit permission \u2014 no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/115216) — Branding tab explicitly states 'No branding guidelines.'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is coupon/PPC/feed rules only, no mention of images; Publishers questionnaire unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
       "comparisonEngineConfirmed": true
     },
     "tsar-bomba": {
@@ -181,7 +199,7 @@
         "includesGiftWrap": true
       },
       "imageUsagePermission": "assessed-low-risk",
-      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/109230) \u2014 a clear, intentional grant, not silence: the program overview explicitly lists 'High-Converting Creative Assets: Access to professional imagery showcasing our unique quick-release technology' as an affiliate benefit, and separately names 'SEO-Driven Marketers & Review Sites: For high-intent traffic looking for premium watch alternatives' as a target partner type \u2014 both verified verbatim. Strongest basis of any partner reviewed so far.",
+      "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/109230) — a clear, intentional grant, not silence: the program overview explicitly lists 'High-Converting Creative Assets: Access to professional imagery showcasing our unique quick-release technology' as an affiliate benefit, and separately names 'SEO-Driven Marketers & Review Sites: For high-intent traffic looking for premium watch alternatives' as a target partner type — both verified verbatim. Strongest basis of any partner reviewed so far.",
       "comparisonEngineConfirmed": true
     },
     "cosabella": {
@@ -196,7 +214,7 @@
         "includesGiftWrap": false
       },
       "imageUsagePermission": "confirmed",
-      "imageUsageNote": "Confirmed via Cosabella's own official Program Terms and Conditions PDF (Social Media Quick-Reference Guide, '4. Approved Imagery'): 'If you need brand assets, you may only use the official, authorized images provided directly within your publisher dashboard. Do not pull unapproved images from Google or third-party sites.' Verified verbatim in the formal, binding terms document \u2014 a direct written grant published by the partner, not our own risk assessment of ambiguous language (the separate marketing-overview PDF uses softer language: 'Wide range of banners, text links, product feeds, reels, and seasonal creative assets').",
+      "imageUsageNote": "Confirmed via Cosabella's own official Program Terms and Conditions PDF (Social Media Quick-Reference Guide, '4. Approved Imagery'): 'If you need brand assets, you may only use the official, authorized images provided directly within your publisher dashboard. Do not pull unapproved images from Google or third-party sites.' Verified verbatim in the formal, binding terms document — a direct written grant published by the partner, not our own risk assessment of ambiguous language (the separate marketing-overview PDF uses softer language: 'Wide range of banners, text links, product feeds, reels, and seasonal creative assets').",
       "noTrademarkBidding": true,
       "noTrademarkBiddingNote": "Terms state explicitly: 'We do NOT allow trademark bidding.' Direct linking is allowed, but not on trademark terms. Brand terms (e.g. \"Cosabella\") are also listed as an ineligible-for-commission paid-search keyword.",
       "noBrandedPaidSearch": true,

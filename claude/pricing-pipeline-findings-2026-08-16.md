@@ -2170,6 +2170,35 @@ highest-price, $161.99–$18,999 median $429); staging control accepted
 as specified; Cowork DDL spec delivered (aaawave plan doc) — the import
 is blocked on those rows by design.
 
+### §14b. 0018 behaviour-verified; 0019/0020 reviewed CLEAN (2026-08-19)
+
+**0018 post-apply behaviour test (all mutations reverted, 0 gtin rows
+after):** valid 13-digit accepted; five ACTUAL rejected writes (empty
+string, 7 digits, 15 digits, hyphens, whitespace — all 23514);
+**non-uniqueness proven positively: the same gtin accepted under two
+partner_ids, 2 rows sharing it** — the property the column exists for,
+tested by doing it, not by the absence of UNIQUE.
+
+**0019 (retailer enum 'aaawave'): CLEAN.** Hash 5f5f769c…/568 bytes
+exact; single idempotent ALTER TYPE ADD VALUE, nothing else; value
+proven ABSENT live (22P02 on an enum-cast probe). The deliberate
+0019/0020 split (never rely on "probably works" in a migration)
+endorsed.
+
+**0020 (partners row): CLEAN, one deliberate omission flagged for the
+operator to own:** hash 1a0566a1…/1445 exact; live gates verified —
+partners = 6, max display_order = 6, no aaawave row, id 'aaawave'
+matches the enum value exactly, href internal, logo_url NULL like all
+six. Tagline checked against the AWIN programme description AS SERVED
+BY THE API (not the file's quotation): the quoted text is word-for-word
+real, "AAAwave" styling is the merchant's own. The tagline drops
+"Crypto mining equipment" from the merchant's category list —
+defensible condensation, flagged per corrected-over-plausible so the
+omission is a choice, not an accident.
+
+Apply order 0019 → confirm → 0020, as specified. The sequencing rule
+stands: session code entries land WITH the import, never before.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

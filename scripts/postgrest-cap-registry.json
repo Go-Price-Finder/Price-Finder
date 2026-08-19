@@ -1,6 +1,10 @@
 {
   "_comment": "Read by scripts/check-postgrest-caps.mjs (findings §17/§18). Every UNBOUNDED read the scanner finds must have a sites entry stating why it cannot silently truncate at PostgREST's 1,000-row cap; every watch runs a live exact count and fails above maxRows (thresholds at 80% of the cap so the check reddens BEFORE truncation begins). Do not register a new site without a reason that names the bound.",
   "sites": {
+    "lib/catalog.ts::catalog_products::0": {
+      "reason": "Hand-rolled .range() KEPT deliberately: fetchProductsPage loops in fetchCatalogRaw ('while (lastPageLength === PAGE_SIZE)') AND retries transient statement timeouts (57014) with backoff, which fetchAllRows does not — this read runs at build time under 13-way collect concurrency and blocked a Vercel deploy without the retry (findings §16, commit f71c65d). Loop verified by the per-partner built-page counts: 1,454 pages from a 1,454-row table at PAGE_SIZE 250.",
+      "watch": "catalog_products-total"
+    },
     "lib/catalog.ts::partners::0": {
       "reason": "partners table, one row per partner (7 today). Grows ~1/import; watched.",
       "watch": "partners-total"

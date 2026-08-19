@@ -2541,3 +2541,34 @@ output): partners 7/800, feed_status 9/800, wishlists 0/800,
 current_prices 652/800, catalog_products 1,454/4,000 — all ok;
 4 unbounded sites registered with named bounds; 33 total .from()
 sites = 14 writes + 7 count-only + 8 bounded + 4 registered.
+
+### §18b. The check now runs automatically and BLOCKS; the range rule closes the stated hole (2026-08-19)
+
+**Where it runs (the honest answer was "nowhere" until this):** wired
+as package.json `"prebuild"` — npm runs it before every `npm run
+build`, locally and on Vercel, and a nonzero exit kills the build
+before Next starts. Proven by planting a violation and running `npm
+run build`: exit 1, zero build output lines. Mode split per the
+operator's instruction (static never gated behind the credentialed
+half):
+- `--static`: classification + registry drift only. No credentials, no
+  network. Runs anywhere.
+- `--build-gate` (the prebuild mode, via --env-file-if-exists): static
+  half always blocks; live watches also run whenever credentials are
+  present (one retry on transient errors, then a persistent count
+  failure FAILS the build — unknown is not zero). Credentials absent →
+  loud skip line, static-only pass.
+- default: both halves, exit 2 if credentials are missing.
+Local builds get the live half from .env.local; Vercel builds get it
+from project env (verified from the deploy build log).
+
+**Range rule (operator ruling):** .range() is only auto-trusted as
+paged when it is fetchAllRows itself or a visible fetchAllRows call
+site. Any other .range() must be registered with a reason that proves
+the loop — removing the specific convenient mistake of reaching for
+.range to "handle" paging and stopping after one call. First honest
+run flagged a real pre-existing case: fetchCatalogRaw's hand-rolled
+loop, registered as KEPT deliberately (it carries the 57014
+transient-retry the helper lacks, and its loop is proven by 1,454
+built pages from a 1,454-row table). Failure mode proven with a
+planted single-shot .range(0, 999): exit 1 naming file:line.

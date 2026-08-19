@@ -3388,3 +3388,57 @@ PASS.
   behaviour-tested migration across three tables. Worth doing when the
   legacy products table is retired wholesale; not worth it to prevent a
   recurrence the tripwire already prevents.
+
+### §35. A counter that lies: new_rows counted intent in the table built to stop exactly this (2026-08-19, operator finding)
+
+**The instance (deliberately retro-UNEDITED — the 11:00Z aaawave row is
+evidence, and the contradiction is the finding):** `new_rows: 500,
+upserted: 0`. Both cannot be true; nothing was written, so nothing was
+new. The three vs-current discriminators were incremented from the
+PRE-write diff — counters of what the code planned — while `upserted`
+was set from the write result. Only the outcome counter noticed the FK
+failure. A cold reader of that row concludes 500 rows were added on a
+run that added nothing, in refresh_runs, the telemetry table §9y built
+so zero and unknown could never collapse again — this is the sibling
+failure: PLANNED and DID collapsing.
+
+**Audit of every persisted counter — intention or outcome:**
+| counter | verdict |
+|---|---|
+| feed_rows | OUTCOME of download+parse (rows the parser returned) |
+| matched / matched_by_id / matched_by_name / matched_by_gtin | OUTCOME of the match phase (computation completed in memory) |
+| gtin_collisions_in_feed / _in_catalog / gtin_keys_usable | OUTCOME of the collision guard |
+| compared | OUTCOME of price-parsing over matched rows |
+| duplicate_key_collisions | OUTCOME of batch construction |
+| **new_rows** | **WAS INTENTION — converted** |
+| **changed_vs_current** | **WAS INTENTION — converted** |
+| **unchanged_vs_current** | **WAS INTENTION — converted** |
+| upserted | OUTCOME (the only write-counter that ever was) |
+| stale_overrides | OUTCOME (server-side exact counts, §18) |
+
+15 persisted numeric counters audited; three were intentions, all three
+on the write step. The in-memory-only result fields
+(unchangedVsCatalog, priceChanges, unmatched) are phase outcomes and
+are not persisted.
+
+**The conversion:** the pre-write diff now counts into locals; the
+result fields are assigned FROM the upsert outcome — the upsert is one
+atomic call, so on success the planned split IS the outcome, and on
+failure the outcome is 0/0/0 written, with upserted=0 and error_message
+carrying the failure. The writer gates all three on stage "done"
+(upsertKnown), so a crash between diff and write leaves them NULL —
+unknown, not the plan.
+
+**The invariant (writer, loud not storable):** any row with
+new_rows > upserted is REFUSED before insert with a message naming the
+partner and both values; the route surfaces it as a failure (500 + 
+withheld healthcheck ping). Proven with a stub client before being
+trusted: the lying row (new_rows 500 / upserted 0) was refused and the
+insert never reached; the honest row stored.
+
+**F2639 is a LIVE feed — first direct evidence (operator observation):**
+feed_rows moved 1,683 → 1,685 between the 11:00Z and 21:39Z runs — two
+rows in ten hours — unlike the three feeds frozen at 2026-05-15.
+Recorded in the 08-25 diff prep: the aaawave diff is read against a
+feed KNOWN to move, so a feed_rows delta of ZERO on the 25th is itself
+a signal worth investigating, not background noise.

@@ -38,7 +38,8 @@ export async function recordRefreshRuns(
     const stage = p.stage;
     // Stage thresholds: which counter groups are KNOWN at each stage.
     const downloadKnown = stage === "downloaded" || stage === "diffed" || stage === "done";
-    const diffKnown = stage === "diffed" || stage === "done";
+    // diffKnown removed (§35): the three vs-current counters are write
+    // OUTCOMES now, known only at stage "done" — see their mapping below.
     const upsertKnown = stage === "done";
     return {
       run_id: args.runId,
@@ -64,9 +65,13 @@ export async function recordRefreshRuns(
       gtin_keys_usable: downloadKnown ? p.gtinKeysUsable : null,
       compared: downloadKnown ? p.compared : null,
       duplicate_key_collisions: downloadKnown ? p.duplicateKeyCollisions : null,
-      new_rows: diffKnown ? p.newRows : null,
-      changed_vs_current: diffKnown ? p.changedVsCurrent : null,
-      unchanged_vs_current: diffKnown ? p.unchangedVsCurrent : null,
+      // Write-OUTCOME counters (findings §35): known only once the upsert
+      // step completed — success or recorded failure — never from the
+      // pre-write diff. A run that crashed between "diffed" and "done"
+      // leaves them NULL (unknown), not the planned numbers (intent).
+      new_rows: upsertKnown ? p.newRows : null,
+      changed_vs_current: upsertKnown ? p.changedVsCurrent : null,
+      unchanged_vs_current: upsertKnown ? p.unchangedVsCurrent : null,
       upserted: upsertKnown ? p.upserted : null,
       stale_overrides: args.stalePerPartner ? (args.stalePerPartner[p.partnerId] ?? 0) : null,
       error_message: p.errors.length ? p.errors.join("; ").slice(0, 2000) : null,
@@ -75,6 +80,24 @@ export async function recordRefreshRuns(
     };
   });
 
+  // COUNTER-INTEGRITY INVARIANT (findings §35, operator ruling): a row
+  // claiming more new rows than were written is a lie about what the
+  // database did, and the writer refuses to store it — loud beats stored.
+  // (The 11:00Z 2026-08-19 aaawave row that motivated this — new_rows
+  // 500, upserted 0 — is deliberately retro-UNEDITED: it is evidence.)
+  for (const row of rows) {
+    if (
+      row.new_rows !== null &&
+      row.upserted !== null &&
+      row.new_rows > row.upserted
+    ) {
+      return (
+        `refresh_runs write REFUSED — counter-integrity violation for ${row.partner_id}/${row.feed_id}: ` +
+        `new_rows ${row.new_rows} > upserted ${row.upserted}. A counter must describe what the database ` +
+        `did, not what the code planned. Nothing was stored for this run; fix the counter derivation.`
+      );
+    }
+  }
   const { error } = await supabase.from("refresh_runs").insert(rows);
   return error ? `refresh_runs write failed: ${error.message}` : null;
 }

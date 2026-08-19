@@ -891,11 +891,26 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       const existingPriceByProductId = new Map(
         existingRows.map((r) => [r.product_id, Number(r.price)])
       );
+      // COUNT INTO LOCALS, ASSIGN FROM OUTCOME (findings §35). The
+      // previous version incremented result.newRows/changedVsCurrent/
+      // unchangedVsCurrent HERE, before the write — counters of intent.
+      // On 2026-08-19's 11:00Z run the aaawave upsert was rejected whole
+      // by an FK and the telemetry row read new_rows: 500, upserted: 0 —
+      // two numbers that cannot both be true, in the table built to stop
+      // exactly this. Every persisted counter must describe what the
+      // database DID: the upsert below is one atomic call, so on success
+      // the planned split IS the outcome, and on failure the outcome is
+      // zero rows written — with upserted=0 and error_message carrying
+      // the failure. recordRefreshRuns enforces new_rows <= upserted and
+      // refuses to store a violation.
+      let plannedNew = 0;
+      let plannedChanged = 0;
+      let plannedUnchanged = 0;
       for (const row of upsertBatch) {
         const prev = existingPriceByProductId.get(row.product_id);
-        if (prev === undefined) result.newRows++;
-        else if (prev !== row.price) result.changedVsCurrent++;
-        else result.unchangedVsCurrent++;
+        if (prev === undefined) plannedNew++;
+        else if (prev !== row.price) plannedChanged++;
+        else plannedUnchanged++;
       }
       result.stage = "diffed";
 
@@ -904,8 +919,14 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         .upsert(upsertBatch, { onConflict: "product_id,retailer" });
       if (error) {
         result.errors.push(`Upsert failed: ${error.message}`);
+        result.newRows = 0;
+        result.changedVsCurrent = 0;
+        result.unchangedVsCurrent = 0;
       } else {
         result.upserted = upsertBatch.length;
+        result.newRows = plannedNew;
+        result.changedVsCurrent = plannedChanged;
+        result.unchangedVsCurrent = plannedUnchanged;
       }
       result.stage = "done";
     } else {

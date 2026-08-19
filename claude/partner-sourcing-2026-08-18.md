@@ -484,3 +484,15 @@ price-comparison framing does.
 No applications, no accounts, no terms accepted, no feed pulls beyond
 the AWIN list we already consume. Commission figures for AWIN candidates
 await either dashboard reads (operator) or joining.
+
+## 08-25 diff prep note (added 2026-08-19, findings §35)
+
+F2639 (aaawave) is MEASURED LIVE: feed_rows 1,683 at the 2026-08-19
+11:00Z run → 1,685 at the 21:39Z run — two rows in ten hours, the first
+direct evidence this feed changes, unlike the three feeds frozen at
+2026-05-15. Read the 08-25 aaawave diff against a feed known to move:
+a feed_rows delta of ZERO on the 25th would itself be a finding to
+investigate (feed stopped updating? pinned URL? upstream freeze), not
+background noise. The GTIN churn baseline to diff against is the
+21:39:16Z refresh_runs row: keys_usable 498, collisions 2 feed / 0
+catalog, matched_by_gtin 498, matched_by_name 2.

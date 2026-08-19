@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/supabase/fetchAllRows";
 import { getAllRealProducts, type RealProduct } from "@/lib/partners";
 import { freshnessCutoffIso } from "@/lib/pricing/freshness";
 import type { WishlistRetailerId } from "@/lib/types";
@@ -57,15 +58,25 @@ export async function fetchCurrentPriceOverrides(): Promise<
   // deliberately left in place (deletion would destroy the record of
   // what was genuinely observed); if matching resumes for that product,
   // the next refresh run re-stamps it and it self-heals back into use.
-  const { data, error } = await supabase
-    .from("current_prices")
-    .select("product_id, retailer, price, original_price, updated_at")
-    .gte("updated_at", freshnessCutoffIso());
-
-  if (error) throw error;
+  // Paged (findings §17): this read was at 652 of PostgREST's 1,000-row
+  // cap when audited, and aaawave matching alone could cross it. With
+  // revalidate: false this runs at BUILD time, so a truncated read would
+  // freeze silently-static prices into published pages until the next
+  // deploy. Ordered by the (product_id, retailer) PK so ranges are
+  // deterministic.
+  const cutoff = freshnessCutoffIso();
+  const rows = await fetchAllRows<CurrentPriceRow>((from, to) =>
+    supabase
+      .from("current_prices")
+      .select("product_id, retailer, price, original_price, updated_at")
+      .gte("updated_at", cutoff)
+      .order("product_id")
+      .order("retailer")
+      .range(from, to)
+  );
 
   const map = new Map<string, CurrentPriceRow>();
-  for (const row of data ?? []) {
+  for (const row of rows) {
     map.set(row.product_id, row);
   }
   return map;

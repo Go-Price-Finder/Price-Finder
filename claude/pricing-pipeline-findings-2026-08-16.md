@@ -2480,3 +2480,64 @@ crosses on a predictable event (aaawave override matching). Two more
 have named crossing conditions (per-partner overrides >1,000; alert
 wishlist rows >1,000). Fixes deliberately NOT shipped with this audit
 — priority is the operator's call; the audit is the deliverable.
+
+### §18. §17 turned into a test; the counting rule adopted (2026-08-19)
+
+**Rule adopted (operator ruling): a read whose purpose is to count
+should COUNT, not fetch.** `count: exact, head: true` is computed
+server-side and immune to max-rows; a fetch-then-count is capped at
+1,000 and lies hardest exactly when the number is largest — which for
+an instrument is exactly when it matters. Reference implementation:
+the cron freshness check (app/api/cron/refresh-prices/route.ts) now
+uses a global exact count plus per-partner exact counts, and gained a
+blind-spot fix in the process: stale rows under a retailer NOT in the
+current partner list are now reported as "unmapped" instead of being
+invisible to grouping built from whatever rows happened to come back.
+
+**Fixes shipped in one change (operator ruling: bundle, not sequence):**
+- fetchCurrentPriceOverrides (was 652/1,000, crosses on aaawave
+  matching; build-time read under revalidate: false, so truncation
+  would FREEZE into published pages until the next deploy) — paged.
+- refreshPrices pre-upsert diff (per-partner, max 323 today; corrupts
+  discriminator counters at >1,000 overrides per partner) — paged.
+- checkPriceDrops (0 rows today; the only failure mode on the list
+  that breaks a promise to a user — the 1,001st armed wishlist row
+  would silently never alert) — paged.
+- lib/supabase/fetchAllRows.ts: the shared paging helper; deterministic
+  PK ordering required, short-page termination.
+
+**§17 as a test: scripts/check-postgrest-caps.mjs +
+scripts/postgrest-cap-registry.json.** The audit is re-derived from
+the code and the live DB on every run, so it cannot rot the way a
+dated prose table does:
+1. Scans every `.from()` chain in lib/app/components/scripts and
+   classifies it (write / count-only / bounded / UNBOUNDED).
+2. Every UNBOUNDED site must have a registry entry stating the bound.
+   **How it detects additions: the scan is exhaustive and the registry
+   only silences named sites — a new unbounded read anywhere fails the
+   check until paged or registered with a reason.** Stale registry
+   entries (site removed) also fail: no drift in either direction,
+   same bidirectional pattern as check-build-queries.
+3. Registry watches run live exact counts vs thresholds at 80% of the
+   cap (reddens BEFORE truncation) — partners, feed_status, wishlists,
+   current_prices at 800; catalog_products at 4,000 (that one guards
+   the §16 gzip-cache headroom, since the read itself pages safely).
+
+**Proven it can fail before trusting it passing (operator requirement):**
+- Planted a temporary unbounded read (lib/__captest_planted.ts) →
+  exit 1, named file:line and both remedies. Deleted.
+- CAP_CHECK_SELFTEST=1 forces every watch threshold to -1 → exit 1,
+  all 5 watches FAIL. Documented in the script header.
+- Clean rerun → exit 0. First honest run also failed on the 4 real
+  unbounded sites before the registry existed (the derivation is real,
+  not seeded from the audit's conclusions).
+
+Known stated limits: a hand-rolled single-shot .range(0,999) scans as
+"bounded" (the scanner can't see loops — use fetchAllRows so the
+mistake is unavailable); the scanner is regex-grade, not a TS parser.
+
+Current machine-checked crossing table (2026-08-19, the check's own
+output): partners 7/800, feed_status 9/800, wishlists 0/800,
+current_prices 652/800, catalog_products 1,454/4,000 — all ok;
+4 unbounded sites registered with named bounds; 33 total .from()
+sites = 14 writes + 7 count-only + 8 bounded + 4 registered.

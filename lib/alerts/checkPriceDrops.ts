@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/supabase/fetchAllRows";
 import { resend, EMAIL_FROM } from "@/lib/email/resend";
 import { renderPriceDropAlertEmail } from "@/lib/email/templates/priceDropAlert";
 import { getAllRealProductsWithLivePrices } from "@/lib/pricing/getEffectivePrice";
@@ -39,12 +40,19 @@ export type CheckPriceDropsResult = {
 export async function checkPriceDrops(): Promise<CheckPriceDropsResult> {
   const supabase = createAdminClient();
 
-  const { data: rows, error } = await supabase
-    .from("wishlists")
-    .select("id, product_id, retailer, price_saved, target_price, alert_sent, users(email)")
-    .not("target_price", "is", null);
-
-  if (error) throw error;
+  // Paged (findings §17): zero alert-armed rows exist today, which is
+  // exactly why this is the right time to fix it — unpaged, the 1,001st
+  // armed wishlist row would silently never alert, and that failure mode
+  // breaks a promise to a user rather than a number on a page. Ordered
+  // by the primary key so ranges are deterministic.
+  const rows = await fetchAllRows((from, to) =>
+    supabase
+      .from("wishlists")
+      .select("id, product_id, retailer, price_saved, target_price, alert_sent, users(email)")
+      .not("target_price", "is", null)
+      .order("id")
+      .range(from, to)
+  );
 
   const products = await getAllRealProductsWithLivePrices();
   const result: CheckPriceDropsResult = { checked: 0, sent: 0, reset: 0, errors: [] };

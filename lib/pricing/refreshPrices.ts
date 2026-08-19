@@ -1,6 +1,7 @@
 import { gunzipSync } from "node:zlib";
 import Papa from "papaparse";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/supabase/fetchAllRows";
 import { getAllRealProducts } from "@/lib/partners";
 import complianceRegistry from "@/lib/partner-compliance.json";
 import type { WishlistRetailerId } from "@/lib/types";
@@ -669,17 +670,30 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       // The discriminator counts need the BEFORE state — what did this
       // partner's rows hold prior to this run's write (see the
       // changedVsCurrent doc comment on PartnerRefreshResult).
-      const { data: existingRows, error: existingErr } = await supabase
-        .from("current_prices")
-        .select("product_id, price")
-        .eq("retailer", mapping.partnerId as WishlistRetailerId);
-      if (existingErr) {
-        result.errors.push(`Pre-upsert read of current_prices failed: ${existingErr.message}`);
+      // Paged (findings §17): unpaged, this silently capped at PostgREST's
+      // 1,000 rows per partner — harmless today (max 323), but a partner
+      // with >1,000 override rows (full-aaawave scale) would corrupt the
+      // new/changed discriminator counts: rows beyond the cap would tally
+      // as "new" while the upsert itself quietly updated them.
+      let existingRows: { product_id: string; price: number }[];
+      try {
+        existingRows = await fetchAllRows((from, to) =>
+          supabase
+            .from("current_prices")
+            .select("product_id, price")
+            .eq("retailer", mapping.partnerId as WishlistRetailerId)
+            .order("product_id")
+            .range(from, to)
+        );
+      } catch (existingErr) {
+        result.errors.push(
+          `Pre-upsert read of current_prices failed: ${existingErr instanceof Error ? existingErr.message : String(existingErr)}`
+        );
         partnerResults.push(result);
         continue;
       }
       const existingPriceByProductId = new Map(
-        (existingRows ?? []).map((r) => [r.product_id, Number(r.price)])
+        existingRows.map((r) => [r.product_id, Number(r.price)])
       );
       for (const row of upsertBatch) {
         const prev = existingPriceByProductId.get(row.product_id);

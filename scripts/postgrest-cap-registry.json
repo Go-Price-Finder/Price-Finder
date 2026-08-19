@@ -1,0 +1,48 @@
+{
+  "_comment": "Read by scripts/check-postgrest-caps.mjs (findings §17/§18). Every UNBOUNDED read the scanner finds must have a sites entry stating why it cannot silently truncate at PostgREST's 1,000-row cap; every watch runs a live exact count and fails above maxRows (thresholds at 80% of the cap so the check reddens BEFORE truncation begins). Do not register a new site without a reason that names the bound.",
+  "sites": {
+    "lib/catalog.ts::partners::0": {
+      "reason": "partners table, one row per partner (7 today). Grows ~1/import; watched.",
+      "watch": "partners-total"
+    },
+    "lib/pricing/refreshPrices.ts::feed_status::0": {
+      "reason": "feed_status filtered on is_catalog_source=true (8 of 9 rows today). One row per feed; grows ~1/import; watched on the whole table, which bounds any filter of it.",
+      "watch": "feed_status-total"
+    },
+    "lib/supabase/queries.ts::wishlists::0": {
+      "reason": "getWishlistByUser — per-user .eq(user_id) read. Bounded by one user's saved items; a user with >1,000 items would see a truncated list (cosmetic, their own view only). Whole-table watch reddens long before any single user can hold 1,000 rows.",
+      "watch": "wishlists-total"
+    },
+    "components/PriceHistoryChart.tsx::price_history::0": {
+      "reason": "Schema-bounded: filtered to one (product_id, retailer) over LOOKBACK_DAYS=90, and the table PK is (product_id, retailer, recorded_date) — at most one row per day, so <=90 rows per read regardless of table size (16,201 total when audited). No watch: the bound is structural, not a count.",
+      "watch": null
+    }
+  },
+  "watch": {
+    "partners-total": {
+      "table": "partners",
+      "maxRows": 800,
+      "onCross": "lib/catalog.ts's partners read will start silently truncating at 1,000 — page it with fetchAllRows before then."
+    },
+    "feed_status-total": {
+      "table": "feed_status",
+      "maxRows": 800,
+      "onCross": "refreshPrices' feed-selection read will start silently truncating at 1,000 — page it; a missing feed_status row makes the refresh silently skip that partner's catalog source."
+    },
+    "wishlists-total": {
+      "table": "wishlists",
+      "maxRows": 800,
+      "onCross": "getWishlistByUser's per-user bound is no longer safely below the cap in aggregate — re-audit per-user maximums and page the read."
+    },
+    "current_prices-total": {
+      "table": "current_prices",
+      "maxRows": 800,
+      "onCross": "No unpaged reader remains (all paged/count-based since §17 fixes), but crossing 800 means the override layer outgrew the audit's assumptions — re-run the §17 classification."
+    },
+    "catalog_products-total": {
+      "table": "catalog_products",
+      "maxRows": 4000,
+      "onCross": "fetchCatalogRaw pages correctly at any size; this watch guards the gzip cache-item tripwire's headroom instead (findings §16) — at ~4,000 rows the compressed snapshot approaches Next's 2MB data-cache item cap. Check the [catalog] console.error tripwire and shrink the snapshot."
+    }
+  }
+}

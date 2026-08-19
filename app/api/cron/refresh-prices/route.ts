@@ -4,6 +4,7 @@ import { pingHealthcheck } from "@/lib/monitoring/pingHealthcheck";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { freshnessCutoffIso } from "@/lib/pricing/freshness";
 import { recordRefreshRuns } from "@/lib/pricing/recordRefreshRuns";
+import type { WishlistRetailerId } from "@/lib/types";
 
 /**
  * Triggered once a day by Vercel Cron (see vercel.json), scheduled before
@@ -81,27 +82,63 @@ export async function GET(request: Request) {
     // per partner, because "golden-maple stopped matching" and
     // "everything died" must not produce the same signal. Checked AFTER
     // the run, so rows this run stamped are fresh by construction.
+    // Count-based, not fetch-based (findings §17 rule: a read whose
+    // purpose is to count should COUNT). The previous version fetched the
+    // stale rows and counted them client-side — but PostgREST caps every
+    // fetch at 1,000 rows, and this instrument exists precisely for the
+    // everything-went-stale scenario, which is when the stale set would
+    // exceed the cap and the per-partner numbers would silently lie.
+    // `count: exact, head: true` is computed server-side and immune.
+    // The global count plus per-partner counts also close a blind spot
+    // the row fetch never had: any residual (stale rows under a retailer
+    // NOT in this run's partner list — e.g. a removed partner) is
+    // reported as "unmapped" instead of being invisible to per-partner
+    // grouping built only from rows that happened to come back.
     const supabase = createAdminClient();
-    const { data: staleRows, error: freshErr } = await supabase
-      .from("current_prices")
-      .select("product_id, retailer")
-      .lt("updated_at", freshnessCutoffIso());
+    const cutoff = freshnessCutoffIso();
     // null = the freshness read itself failed: unknown, not zero — the
     // refresh_runs writer records NULL stale_overrides in that case.
     let stalePerPartner: Record<string, number> | null = null;
-    if (freshErr) {
-      failures.push(`freshness read failed: ${freshErr.message}`);
+    const { count: staleTotal, error: freshErr } = await supabase
+      .from("current_prices")
+      .select("*", { count: "exact", head: true })
+      .lt("updated_at", cutoff);
+    if (freshErr || staleTotal === null) {
+      failures.push(
+        `freshness count failed: ${freshErr?.message ?? "count came back null"}`
+      );
     } else {
-      stalePerPartner = {};
-      for (const r of staleRows ?? []) stalePerPartner[r.retailer] = (stalePerPartner[r.retailer] ?? 0) + 1;
-      if ((staleRows?.length ?? 0) > 0) {
-        failures.push(
-          `freshness: ${staleRows!.length} override row(s) older than the 2-day limit — per partner: ` +
-            Object.entries(stalePerPartner)
-              .map(([k, v]) => `${k}=${v}`)
-              .join(", ") +
-            ` — these prices are not corroborated by any current feed and the read-side TTL is excluding them`
-        );
+      const perPartner: Record<string, number> = {};
+      let countErrored = false;
+      for (const p of result.partners) {
+        const { count, error: partnerErr } = await supabase
+          .from("current_prices")
+          .select("*", { count: "exact", head: true })
+          .lt("updated_at", cutoff)
+          .eq("retailer", p.partnerId as WishlistRetailerId);
+        if (partnerErr || count === null) {
+          failures.push(
+            `freshness count failed for ${p.partnerId}: ${partnerErr?.message ?? "count came back null"}`
+          );
+          countErrored = true;
+          break;
+        }
+        if (count > 0) perPartner[p.partnerId] = count;
+      }
+      if (!countErrored) {
+        const mapped = Object.values(perPartner).reduce((a, b) => a + b, 0);
+        const unmapped = staleTotal - mapped;
+        if (unmapped > 0) perPartner["unmapped"] = unmapped;
+        stalePerPartner = perPartner;
+        if (staleTotal > 0) {
+          failures.push(
+            `freshness: ${staleTotal} override row(s) older than the 2-day limit — per partner: ` +
+              Object.entries(perPartner)
+                .map(([k, v]) => `${k}=${v}`)
+                .join(", ") +
+              ` — these prices are not corroborated by any current feed and the read-side TTL is excluding them`
+          );
+        }
       }
     }
 

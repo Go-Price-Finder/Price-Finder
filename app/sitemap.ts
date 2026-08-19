@@ -31,6 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.4 },
     // Editorial guides (route approved 2026-08-19): index plus one entry
     // per guide, lastmod = the guide's own lastReviewed frontmatter.
+    { url: `${SITE_URL}/stores`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/guides`, changeFrequency: "weekly", priority: 0.5 },
     ...getAllGuides().map((g) => ({
       url: `${SITE_URL}/guides/${g.slug}`,

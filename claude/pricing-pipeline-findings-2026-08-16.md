@@ -3212,3 +3212,56 @@ editorial prose is reviewed by the §23 method at authoring time — a
 narrower check that is correct over a broader one that trains people to
 allowlist their way past it. The first guide's §23 pass matched the
 operator's own; approved and published as delivered.
+
+### §31. SiteHeader integrated; /stores shipped; Gift cards DROPPED by the operator's own rule (2026-08-19)
+
+**Gating answers, established before building:**
+- **/stores did not exist** — not at any path; the homepage OurPartners
+  section was the only stores surface. Built as the mandated real grid
+  (getPartners-fed, per-store counts and taglines, sitemap entry).
+- **Rakuten credentials are NOT wired** (no RAKUTEN_* env keys; Rakuten
+  exists only in July research notes), **no Giftcards.com feed is
+  available**, and lib/partner-compliance.json has **no giftcards.com
+  entry** — terms never reviewed, and the compliance gate is a hard
+  requirement for any partner display. No affiliate link can even be
+  constructed without publisher credentials. Stated plainly: no page
+  with genuine content can be built today, so per the operator's own
+  rule the **"Gift cards" nav item is DROPPED**, with the reinstate
+  condition written into the NAV comment: credentials + feed +
+  compliance entry, in the SAME commit as a real page. Zero
+  /gift-cards references in the built output.
+
+**Component landed as delivered with three surgical, commented
+corrections, all verification-driven:** (1) the Gift cards NAV entry
+removed per the drop rule; (2) /login and /signup do not exist — auth
+lives at /auth/login and /auth/signup, links corrected; (3) the rail's
+"Browse category" link pointed at /categories/<slug>, which does not
+exist — the detail route is /category/<slug> (the plural is the index
+browser). Rail slugs verified to align exactly with the category
+route's own generateStaticParams derivation (same
+slugifyRealCategory(parentCategory) both sides).
+
+**Props are fully derived, nothing hardcoded** (per the brief):
+components/Header.tsx is now a server wrapper keeping its name so all
+~38 call sites swap without churn; stores come from getPartners(),
+categories from getAllRealProducts() grouped by parentCategory with
+storeIds derived per department — the menu cannot claim a store carries
+a category it doesn't, and §21 materialisation applies unchanged.
+
+**Verified:** every nav destination resolves against the BUILT output
+(/stores /deals /trending /guides /how-it-works /categories static;
+/search and /auth/login exist as server-rendered routes; /auth/signup
+static; /category/<slug> sample static). The claims tripwire passed
+over the finished header (its "N products, checked daily" line uses the
+accepted checked-daily formulation). The search placeholder "Search
+products across our stores" is TRUE: /search runs searchRealProducts
+over the whole catalog, all stores at once.
+
+**Flagged to the operator, shipped as designed (their component, their
+call):** (1) the header is light-palette (stone/white/rose) on a site
+whose pages are dark (noir/gilt) — if this is the first step of a
+broader redesign, pages will follow; if not, it reads as a white banner
+on dark pages; (2) the delivered design has static Log in / Sign up and
+no auth-state affordances — signed-in users lose the wishlist bell,
+account menu and sign-out that the previous header carried, and the
+theme toggle is gone. Both revert in one commit if ruled against.

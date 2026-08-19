@@ -612,7 +612,26 @@ if (IMAGES_BLOCKED_BY_COMPLIANCE) {
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
   console.log(`Images: ${imageResults.ok} downloaded, ${imageResults.skipped} already existed, ${imageResults.failed.length} failed.`);
   if (imageResults.failed.length > 0) {
-    console.log("Failed image downloads (data file still references these paths — re-run this script later, from a machine with network access to these URLs, to retry just the missing ones):");
+    // FAILURE IS WRITTEN AS THE PLACEHOLDER, never as the intended path
+    // (findings §24). The previous behaviour emitted the success path into
+    // the data file and reported the failure only here in scrollback — so
+    // 9 canvas-vows products served broken 404 images to real visitors for
+    // weeks with nothing anywhere indicating a problem. An error handler
+    // that writes the value it WOULD have written on success is not error
+    // handling, it is failure erasure. The placeholder degrades visibly,
+    // matches how the compliance image gate already renders, and is
+    // surfaced permanently by scripts/check-compliance-materialization.ts
+    // as an import-image-gap note — the failure stays observable after
+    // this process exits.
+    const IMAGE_PENDING_PLACEHOLDER = "/images/_placeholders/image-pending.png";
+    const failedDests = new Set(imageResults.failed.map((f) => f.dest));
+    for (const p of products) {
+      p.images = p.images.map((dest) => (failedDests.has(dest) ? IMAGE_PENDING_PLACEHOLDER : dest));
+      if (failedDests.has(p.image)) p.image = IMAGE_PENDING_PLACEHOLDER;
+      // The primary may also BE images[0] post-swap:
+      if (p.images.length > 0 && p.images[0] === IMAGE_PENDING_PLACEHOLDER) p.image = IMAGE_PENDING_PLACEHOLDER;
+    }
+    console.log("Failed image downloads — the data file will carry the PLACEHOLDER for these (visible degradation), not the missing path:");
     for (const f of imageResults.failed.slice(0, 20)) {
       console.log(`  ${f.product}: ${f.url} -> ${f.error}`);
     }

@@ -41,10 +41,18 @@ export default function PriceHistorySparkline({
         />
         <circle cx="46" cy="10" r="3" className="fill-gilt-500" />
       </svg>
+      {/* Copy fixed 2026-08-19 (findings §25). The old captions made two
+          false observation claims: "1 price drop ($X → $Y)" presented the
+          FEED'S OWN MARKDOWN (originalPrice) as a drop we observed over
+          time — we never observed the higher price — and "no price
+          changes yet" was false for products where the daily refresh has
+          recorded real changes. This card only knows price/originalPrice,
+          so it now claims exactly what those fields support: a store
+          markdown, and a true statement about what is coming. */}
       <span className="text-xs font-medium text-ivory-400">
         {hasDiscount
-          ? `Tracking since launch — 1 price drop ($${originalPrice} → $${price})`
-          : "Tracking since launch — no price changes yet"}
+          ? `Marked down by the store: $${originalPrice} → $${price}`
+          : "Price history charts are on the way"}
       </span>
     </div>
   );

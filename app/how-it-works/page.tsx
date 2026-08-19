@@ -7,7 +7,7 @@ import { SearchIcon, BellIcon, TrendingUpIcon } from "@/components/icons";
 export const metadata: Metadata = {
   title: "How It Works — Go Price Finder",
   description:
-    "See how Go Price Finder is designed to help you find and compare deals as we grow our retailer coverage.",
+    "How Go Price Finder finds real prices, checks them daily, and alerts you when they drop.",
 };
 
 export default function HowItWorksPage() {
@@ -24,8 +24,8 @@ export default function HowItWorksPage() {
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
-            From finding the right deal to comparing prices across retailers —
-            here&apos;s exactly how the whole process works, start to finish.
+            From finding the right deal to getting an email the moment a price
+            drops — here&apos;s exactly how the whole process works.
           </p>
         </section>
 
@@ -44,14 +44,14 @@ export default function HowItWorksPage() {
                 Finding deals
               </span>
               <h2 className="mt-1 font-display text-2xl font-medium text-ivory-50 sm:text-3xl">
-                Search or browse — we scan the whole market at once
+                Search or browse every store we track at once
               </h2>
               <p className="mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
                 Type a product name into the search bar, or browse by
-                category from the homepage. Go Price Finder is designed to
-                search across the retailers we track and lay out matching
-                listings side by side, so you can compare in one place
-                instead of checking each store one by one.
+                category. One search covers every partner store&apos;s
+                catalog at once — real listings with real prices — instead
+                of checking each store one by one. We&apos;re steadily
+                growing that coverage.
               </p>
             </div>
           </div>
@@ -69,14 +69,15 @@ export default function HowItWorksPage() {
                   Price tracking
                 </span>
                 <h2 className="mt-1 font-display text-2xl font-medium text-ivory-50 sm:text-3xl">
-                  Price history tracking is coming soon
+                  Set a target price, get an email when it drops
                 </h2>
                 <p className="mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
-                  We&apos;re building price history charts so you can see how
-                  a product has moved over time and judge whether now is a
-                  good time to buy. Save an item to your wishlist and set a
-                  target price now, so you&apos;re ready to get notified as
-                  soon as drop alerts go live.
+                  Price-drop alerts are live: save an item to your wishlist,
+                  set a target price, and we email you when the price falls
+                  to it. Behind the scenes we already record every price,
+                  every day — the charts that let you explore that history
+                  and judge whether now is a good time to buy are on the
+                  way.
                 </p>
               </div>
             </div>
@@ -94,15 +95,16 @@ export default function HowItWorksPage() {
                 Saving money
               </span>
               <h2 className="mt-1 font-display text-2xl font-medium text-ivory-50 sm:text-3xl">
-                Multi-retailer comparison helps you find a better price
+                Real, verified prices — with comparison on the way
               </h2>
               <p className="mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
-                Product pages list the retailers we track for that item,
-                sorted cheapest first, with a &quot;Best Price&quot; badge
-                marking the lowest of those. Comparing multiple stores
-                instead of buying from the first one you find is where real
-                savings tend to come from — Go Price Finder is built to make
-                that comparison easy.
+                Every product page shows a real price from the store that
+                sells it, refreshed daily and stamped with when it was last
+                verified. Showing the same product across multiple stores,
+                cheapest first, is what we&apos;re building next — comparing
+                stores instead of buying from the first one you find is
+                where real savings tend to come from, and that&apos;s the
+                site this is becoming.
               </p>
             </div>
           </div>

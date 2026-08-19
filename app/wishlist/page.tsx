@@ -54,7 +54,7 @@ export default function WishlistPage() {
                   ? "Loading your saved items…"
                   : items.length === 0
                     ? "Nothing saved yet."
-                    : `Comparing ${items.length} item${items.length === 1 ? "" : "s"} across retailers, side by side.`}
+                    : `${items.length} saved item${items.length === 1 ? "" : "s"} — set a target price on any of them to get a drop alert.`}
               </p>
             </div>
             {!loading && user && items.length > 0 && (

@@ -2906,3 +2906,117 @@ listing "the retailers we track for that item, sorted cheapest first,
 with a 'Best Price' badge" — NO such multi-retailer product-page list
 or badge exists anywhere. /wishlist also says "Comparing N items
 across retailers, side by side." One commit away on request.
+
+### §24. THE RULE: an error handler that writes the value it would have written on success is not error handling, it is failure erasure (2026-08-19, operator ruling)
+
+Canvas-vows is the finding, not tsar-bomba. Tsar's import failures were
+recorded AS the placeholder — visible, degrading honestly. Canvas's
+importer generated the data file with the INTENDED image paths
+regardless of download outcome, reporting failures only to scrollback —
+its own message said it plainly: "data file still references these
+paths — re-run this script later" (advice that was itself broken: the
+duplicate-registry guard exits 1 on re-runs for wired partners). So 9
+product pages served broken 404 images to real visitors for weeks with
+nothing anywhere indicating a problem. The difference between a system
+that degrades and one that lies — and the lying variant is the one to
+hunt. Same family as §19's check-that-cannot-fail: both convert "this
+broke" into "this is fine."
+
+**Fixed:** import-partner.mjs now writes IMAGE_PENDING_PLACEHOLDER into
+the generated data file for every failed download — visible degradation
+that matches the compliance gate's own rendering and stays observable
+after the process exits, because check-compliance-materialization.ts
+surfaces it permanently as an import-image-gap note.
+
+**Audit of the rest of the family** (importer, syncs, refresh, catalog):
+- import-partner.mjs image paths — THE instance, fixed above.
+- import-partner.mjs empty-description fallback ("<name> from
+  <partner>.") — borderline: synthesizes success-shaped content on a
+  data gap, but the sentence is true and visible. Reported, unchanged.
+- import-partner.mjs --tagline default "" — silently empty registry
+  entry (bit aaawave; caught by hand). Reported, unchanged.
+- category-mapper department fallback — visible label, honest-ish.
+  Reported, unchanged.
+- getPriceAsOf unknown partner -> label silently absent — an ABSENT
+  claim, not a false one; acceptable. Reported.
+- Everything else already fails loudly: parsePrice null -> row skipped
+  and counted; resolveColumn -> exit 1; sync scripts -> exit 1 per
+  failure; refresh/catalog reads -> throw; cron catches -> HTTP 500;
+  writer contract -> NULL-not-0. The §19b footer Subscribe no-op was the
+  UI-side member of this family, already removed.
+
+### §25. Site-wide claim inventory; the rendered-output sweep becomes permanent (2026-08-19, operator rulings)
+
+**Why permanent (operator's words, recorded):** the footer Subscribe
+form was not a wording problem — it collected visitors' email addresses
+under a promise of price alerts and discarded them, on every page, and
+NO source-level review would have caught a submit handler that no-ops,
+because the source looked like a working form. Claims must be checked
+where the visitor meets them: in the rendered output.
+
+**The instrument:** scripts/check-rendered-claims.mjs, wired as
+package.json "postbuild" so `npm run build` (local and Vercel) fails if
+a banned phrase reappears in any site-owned route's rendered HTML.
+String-level regression tripwire over every §23/§25-confirmed
+falsehood, with a route-scoped allowlist requiring a written reason, a
+site-name positive control (a broken extractor's clean result is
+worthless, §19), and CLAIMS_CHECK_SELFTEST=1 proven to exit 1. Its
+stated limit: a NEW false claim in fresh wording passes — the semantic
+audit remains session work whenever self-description copy changes.
+**Its first honest run failed the build on a route nobody had audited**
+(/categories "Coming soon") — which on inspection is an HONEST stated
+policy about empty taxonomy nodes, now the allowlist's first entry,
+with the reason written next to it.
+
+**/how-it-works and /wishlist fixed to the homepage standard:** "we
+scan the whole market at once" (we search our own 1,454-product
+catalog); "lay out matching listings side by side" (no same-product
+cross-store surface exists); "Price history tracking is coming soon...
+notified as soon as drop alerts go live" (alerts are LIVE; recording is
+live; only charts pending); the multi-retailer product-page list
+"sorted cheapest first, with a 'Best Price' badge" (exists nowhere —
+rewritten as what's being built next); /wishlist "Comparing N items
+across retailers, side by side" (it is a saved-items list with target
+prices — now says so).
+
+**Sweep of all 19 site-owned routes found one more false-claim family
+nobody named: PriceHistorySparkline, on EVERY product card.**
+"Tracking since launch — 1 price drop ($95 → $63)" presented the feed's
+own markdown (originalPrice) as a price drop WE OBSERVED over time — we
+never observed the higher price. And "no price changes yet" was false
+for products where the daily refresh HAS recorded changes (evdance
+flips). The card only knows price/originalPrice, so it now claims
+exactly what those fields support: "Marked down by the store: $X → $Y"
+and "Price history charts are on the way".
+
+**Verdicts on the remaining routes:** deals ("genuine markdowns...
+never a fabricated discount" — TRUE, verified at Batch 5); categories
+(honest, allowlisted); trending/search/auth (no self-claims beyond the
+shared footer, now honest); partner pages (merchant-authored content +
+the fixed sparkline). Trust pages (about/contact/privacy/terms/
+affiliate-disclosure) are operator-authored verbatim text — verified
+claims hold (password hashing, transactional-email provider, no payment
+processing, affiliate-only links), with ONE line flagged for the
+operator rather than edited: /about's "When you look at a product...
+the goal is that you can see not just the price but the context —
+what it cost last month" is aspiration-framed ("the goal is") but
+adjacent to a capability that isn't displayed yet; the operator owns
+those words and the call.
+
+**Ruling 2 executed — the 3 feed-absent tsar products, measured at the
+merchant's own storefront (search-suggest + product JSON, never a
+tracking link):**
+- TB8228CF ($500): LIVE and purchasable, exact model title, merchant
+  price $500.00 — equals ours exactly.
+- TB8220L ($1,200): LIVE and purchasable — RENAMED "Nucleus Femme 03"
+  at the merchant, Blue variant $1,200.00 equals ours exactly. The
+  rename is why name matching could never find it: the name-decay
+  failure mode §20 anticipates, proven on real data.
+- TB8218 ($830.99): ambiguous — the fixed SKU is gone; the model
+  survives only inside a build-your-own "Atomic-Custom Watch Kit"
+  configurator (variant prices $259.96–$3,059.84). Our exact
+  configuration/price is not confirmable.
+All 19 broken-image products remain listed per the ruling (absence
+from a feed is a fact about the feed — the 36-of-38 lesson); the
+delist decision on TB8218 is the operator's, now with the measurement
+in hand.

@@ -111,3 +111,43 @@ rule):
 No import run, no application, no DDL written here. The 08-25 diff
 remains the main clock; aaawave's diff doubles as the volatility test
 for this import's inventory.
+
+## TRANCHE 1 — SELECTED (2026-08-19, operator-approved criteria)
+
+GTIN-bearing AND highest-price, never feed order: **500 products,
+$161.99–$18,999, median $429**, category spread Computer Components
+(228), Memory (41), Hubs & Switches (21), Servers (15), PCBs (15),
+Audio (26). Source universe: 1,535 GTIN-bearing priced rows of 1,683.
+Filtered CSV at `scratch/aaawave-tranche1.csv` (gitignored importer
+input; regenerate with scratch/aaawave-tranche1.ts). Staging cadence as
+accepted: ~500/tranche, next tranche gated on discovered→indexed
+movement with the backlog not growing faster than the tranche added;
+3+ weeks stalled = stop volume, investigate quality.
+
+## COWORK DDL SPEC (operator drafts, session reviews, operator applies — the 0017/0018 flow)
+
+**1. retailer enum value** — 0004 pattern:
+   `alter type retailer add value if not exists 'aaawave';`
+   Gates: value absent today; note ALTER TYPE ... ADD VALUE cannot run
+   inside a transaction block under some tooling — apply standalone.
+
+**2. partners row** — INSERT into public.partners:
+   id `aaawave` (must match partnerId everywhere, ^[a-z0-9-]+$),
+   name `aaawave` (the brand styles itself lowercase), tagline
+   (operator drafts — it renders on the site), href `/aaawave`,
+   logo_url NULL, display_order 7 (verify max(display_order)=6 first).
+   Gates: row absent today; href exact; id casing.
+
+**3. feed_status row — AT IMPORT TIME, not before:** (feed_id 'F2639',
+   partner_id 'aaawave', is_catalog_source true, catalog_imported_at =
+   the actual import timestamp, catalog_import_ref = the import commit,
+   feed_last_imported_at from the feed-list CSV at import). Gates:
+   partner row exists first (FK); catalog_imported_at NOT NULL means
+   this row cannot honestly exist before the import does.
+
+**SEQUENCING WARNING (loud-error interaction, by design):** the
+session-side code entries (PARTNER_AWIN_NAMES verified:true +
+partner-compliance active) must land in the SAME change as the import +
+feed_status row — landing them earlier makes the next 11:00 UTC
+refresh-prices run error loudly for aaawave ("no feed_status rows"),
+a 500 + no ping, until the row exists. Correct behaviour; wrong day.

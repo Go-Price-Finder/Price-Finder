@@ -2134,6 +2134,42 @@ measuring as house-brand (Monoprice, 2 brands). Reusable anywhere a
 feed exposes a brand column; pairs with the GTIN join test (this
 section) which measures the finer per-product property.
 
+### §14. 0018 reviewed CLEAN; the identity/observation rule; Vevor ruling; eighth instance (2026-08-19)
+
+**Migration 0018 (catalog_products.gtin): verdict CLEAN** on the
+delivered bytes (sha256 5e6dd227…, 1,529 bytes, hash-verified per the
+relay rule; column confirmed absent pre-apply). All gates hold:
+nullable/no-default, CHECK accepts NULL + 8/12/13/14 digits and rejects
+empty/7/15/non-digit/hyphen/whitespace, index partial and NOT unique,
+nothing else touched. Check-digit omission accepted — shared-invalid
+GTINs are shared manufacturer data, real joins a validator would burn.
+Post-apply behaviour test (incl. an actual REJECTED insert and
+pg_indexes verification) runs on apply confirmation.
+
+**RULE, recorded as one position with 0017's opposite stance:
+CONSTRAIN IDENTITY, DO NOT CONSTRAIN OBSERVATION.** match_strategy
+records what happened — constraining it stops the table describing
+reality. gtin is a join claim — a malformed value colliding with
+another malformed value puts two unrelated products in front of a
+customer as the same item at two prices: not a bad record, a lie on
+the page.
+
+**EIGHTH INSTANCE (operator, self-recorded):** Vevor was re-ranked
+first on its 85% multi-seller share without checking whether the held
+membership could realise it (it cannot: no GTIN in the AWIN feed, SKU
+bridge 0/300, title bridge 2%). The property was real; the path was
+never checked. RULING: Vevor takes NEITHER path yet — Path A waits on
+the CJ approval (which waits on traffic), Path B (volume without
+comparison) declined: undifferentiated inventory spending crawl ration
+is what earned the 203-page backlog. Revisit when the CJ approval
+lands or the indexing ration loosens. League-table rule made standing:
+a merchant's own regional nameplates are not a second seller.
+
+**aaawave tranche 1 selected** (500 products, GTIN-bearing ×
+highest-price, $161.99–$18,999 median $429); staging control accepted
+as specified; Cowork DDL spec delivered (aaawave plan doc) — the import
+is blocked on those rows by design.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

@@ -37,7 +37,7 @@
  * restrictions (imageUsagePermission: "pending") and per-SKU
  * Best-Sellers/Deals restrictions (excludedProducts: true) are enforced
  * the same way, more narrowly — see normalizeProduct and
- * getFeaturedDeals/getBestSellers below.
+ * getFeaturedDeals/getRecentlyAdded below.
  */
 
 import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
@@ -486,25 +486,25 @@ export function getFeaturedDeals(): RealProduct[] {
     });
 }
 
-/** "Best sellers" — real products carrying a "Best Seller" badge from the
- * source data, falling back to the highest-rated products if no partner
- * has tagged any yet, so the section never shows an arbitrary slice.
+/** "Recently added" — the newest products in the catalogue, derived from
+ * import recency, which is real data we actually hold (PARTNERS array
+ * order is import order; display_order in the DB mirrors it). This
+ * REPLACED getBestSellers on 2026-08-19 (findings §28): that section
+ * built the site's entire "Best Sellers" pool from three July
+ * hand-authored badges on one partner of seven, with a fallback ranked
+ * by 18 July review counts from the same single partner — a
+ * homepage-level claim ("best sellers") the data could not support, the
+ * §27 inference rule at section scale. affiliate_clicks held ZERO rows
+ * when measured, so a popularity ranking was the sparkline again.
+ * "Recently added" asserts only what import order proves.
  *
  * Same per-SKU compliance gate as getFeaturedDeals above — a partner
- * flagged excludedProducts is left out of Best Sellers entirely until its
- * products get a real per-SKU commission-exclusion check. */
-export function getBestSellers(partnerIds?: string[]): RealProduct[] {
-  const pool = (
-    partnerIds
-      ? getAllRealProducts().filter((p) => partnerIds.includes(p.partnerId))
-      : getAllRealProducts()
-  ).filter((p) => !requiresPerSkuFeatureCheck(p.partnerId));
-
-  const badged = pool.filter((p) => p.badge === "Best Seller");
-  if (badged.length > 0) return badged;
-
-  return [...pool]
-    .filter((p) => p.rating)
-    .sort((a, b) => (b.rating?.stars ?? 0) - (a.rating?.stars ?? 0))
-    .slice(0, 8);
+ * flagged excludedProducts is left out entirely until its products get a
+ * real per-SKU commission-exclusion check. */
+export function getRecentlyAdded(limit = 12): RealProduct[] {
+  const partnersNewestFirst = [...PARTNERS].reverse();
+  return partnersNewestFirst
+    .flatMap((partner) => partner.products)
+    .filter((p) => !requiresPerSkuFeatureCheck(p.partnerId))
+    .slice(0, limit);
 }

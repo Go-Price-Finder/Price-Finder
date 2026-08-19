@@ -22,7 +22,7 @@ import { signOutAction } from "@/lib/supabase/actions";
 // category" section's #categories anchor, which no longer exists — that
 // section was removed from the homepage in favor of this page.
 const NAV_LINKS = [
-  { label: "Trending", href: "/trending" },
+  { label: "New arrivals", href: "/trending" },
   { label: "Categories", href: "/categories" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Deals", href: "/deals" },

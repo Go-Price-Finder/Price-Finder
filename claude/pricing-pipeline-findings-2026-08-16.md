@@ -3097,3 +3097,48 @@ two numbers from one instant — and it rendered a claim about time.
   Options: drop the time-sensitive badges (Limited Stock, New), keep
   merchant-attributed ones only if re-verified, or drop all badges
   until a provenance rule exists. Operator's call.
+
+### §28. Best Sellers was a homepage-level fabricated claim; replaced with what import order proves (2026-08-19, operator ruling)
+
+**Badges dropped** — all 18 (brooklyn-delhi only, hand-typed at the July
+import: "New" x11, "Best Seller" x3, "Online Only" x3, "Limited Stock"
+x1), from the static file AND the DB (18 rows badge->null, read-back:
+zero badges remain anywhere). Same class as the sparkline: claims the
+data cannot support, rendered as if current. No provenance rule for
+eighteen hand-typed labels.
+
+**The bigger half, per the ruling: getBestSellers built the site's
+ENTIRE Best Sellers pool from three July labels typed by hand on one
+partner of seven** — a section whose title asserted popularity nobody
+measured — with a fallback ranked by the same single partner's 18
+frozen July review counts. Options were taken in the operator's stated
+order: (1) derive from affiliate_clicks — MEASURED FIRST: the table
+holds ZERO rows, so a popularity ranking would be the sparkline again;
+(2) rename to what the data supports — CHOSEN: "Recently added",
+derived from import recency (PARTNERS order / display_order mirrors
+import chronology, which is real data we hold), 12 newest products,
+both implementations (lib/partners.ts + lib/catalog.ts) kept in sync
+and the equivalence suite updated to compare them. /trending retitled
+"Recently added products" with copy that says why ("we don't rank by
+popularity, because we have no traffic or sales data to rank with");
+nav/footer labels now "New arrivals". The ROUTE keeps its URL (indexed;
+an address, not a sentence) — revisit if a measured popularity signal
+ever exists. "best seller" and "trending" join the banned-phrase list
+until that day.
+
+**Residual reported for ruling, not fixed:** brooklyn-delhi's 18
+hand-authored July RATINGS (stars + review counts) still render on its
+cards — merchant-attributed and less time-sensitive than "Limited
+Stock", but frozen since July and unlabelled as such. Same family,
+weaker instance; the operator owns the call.
+
+**Elevation, per the operator, of §27's "refreshed daily" catch — the
+most instructive finding of the honesty pass, above the ones the
+operator named, in these terms:** the author of the standard violated
+it within hours, and only the machine caught it. Nothing was careless
+about it — "refreshed" and "checked" are near-synonyms in ordinary
+speech and differ only against implementation detail. That is the
+point: THIS CLASS REGENERATES FROM ORDINARY LANGUAGE, faster than
+anyone can remember not to produce it, which is the strongest possible
+argument that the postbuild tripwire is infrastructure rather than a
+nicety.

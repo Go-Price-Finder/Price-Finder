@@ -214,10 +214,10 @@ async function main() {
     staticDeals.length === catalogDeals.length,
     `static=${staticDeals.length} catalog=${catalogDeals.length}`
   );
-  const staticBest = fromStatic.getBestSellers();
-  const catalogBest = await fromCatalog.getBestSellers();
+  const staticBest = fromStatic.getRecentlyAdded();
+  const catalogBest = await fromCatalog.getRecentlyAdded();
   report(
-    "getBestSellers() count",
+    "getRecentlyAdded() count",
     staticBest.length === catalogBest.length,
     `static=${staticBest.length} catalog=${catalogBest.length}`
   );

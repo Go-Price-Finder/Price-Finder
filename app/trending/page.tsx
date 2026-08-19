@@ -4,25 +4,25 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RealProductCard from "@/components/RealProductCard";
 import { ChevronRightIcon } from "@/components/icons";
-import { getBestSellers } from "@/lib/catalog";
+import { getRecentlyAdded } from "@/lib/catalog";
 
 export const metadata: Metadata = {
-  title: "Trending — Go Price Finder",
+  title: "New Arrivals — Go Price Finder",
   description:
-    "Trending products across every real Go Price Finder partner — right now that's the same list as our Best Sellers.",
+    "The newest products in the Go Price Finder catalogue, from our most recent partner imports.",
 };
 
 /**
- * Trending == Best Sellers for now — there's still no real traffic/sales
- * signal to compute a distinct "what's suddenly popular" ranking from, so
- * this page intentionally shows the exact same real data as the
- * homepage's Best Sellers section (getBestSellers() across every active
- * partner) rather than inventing a trending algorithm with no real usage
- * data behind it. Once there's real traffic/sales data, this can become
- * its own ranking.
+ * "Recently added" (findings §28). This page used to be titled
+ * "Trending products" and fed by getBestSellers() — a pool built from
+ * three July hand-authored badges on one partner, i.e. a popularity
+ * claim nobody measured (affiliate_clicks: 0 rows). Import recency is
+ * data we actually hold, so that is what the page now claims. The ROUTE
+ * stays /trending (it is indexed; a URL is an address, not a sentence) —
+ * revisit the route name if a real popularity signal ever exists.
  */
 export default async function TrendingPage() {
-  const products = await getBestSellers();
+  const products = await getRecentlyAdded();
 
   return (
     <>
@@ -34,22 +34,23 @@ export default async function TrendingPage() {
               Home
             </Link>
             <ChevronRightIcon className="h-3 w-3" />
-            <span className="text-ivory-200">Trending</span>
+            <span className="text-ivory-200">New arrivals</span>
           </nav>
         </div>
 
         <section className="mx-auto max-w-7xl px-5 pb-2 pt-6 text-center sm:px-8">
           <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
-            Trending
+            Recently added
           </span>
           <h1 className="mt-2 text-balance font-display text-3xl font-medium tracking-tight text-ivory-50 sm:text-4xl">
-            Trending products
+            Recently added products
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
-            The same real products as our Best Sellers — trending and best
-            sellers are the same list until we have real traffic and sales
-            data to rank by instead.
+            The newest products in our catalogue, from our most recent
+            partner imports. We don&rsquo;t rank by popularity, because we
+            have no traffic or sales data to rank with — when we do, a real
+            ranking can live here.
           </p>
         </section>
 
@@ -57,7 +58,7 @@ export default async function TrendingPage() {
           {products.length === 0 ? (
             <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
               <p className="text-sm text-ivory-300">
-                No trending products yet — check back soon.
+                Nothing here yet.
               </p>
             </div>
           ) : (

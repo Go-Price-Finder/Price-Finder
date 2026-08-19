@@ -22,7 +22,7 @@
  * something already true of the data, not a real check. The one
  * compliance concern NOT baked into the data is the per-SKU curated-
  * placement gate (excludedProducts in lib/partner-compliance.json), which
- * lib/partners.ts applies at read time in getFeaturedDeals/getBestSellers
+ * lib/partners.ts applies at read time in getFeaturedDeals/getRecentlyAdded
  * — reproduced the same way here, for the same reason.
  *
  * Known gap, not solved here (flagging per the migration scope doc's own
@@ -188,8 +188,8 @@ async function fetchCatalogRaw(): Promise<{
   // from the static arrays for golden-maple, canvas-vows and tsar-bomba
   // (measured 2026-08-09) and was silently changing related-product
   // selection on 476 pages. Anything that does .filter().slice(n) or has a
-  // non-total sort comparator inherits this order — getBestSellers'
-  // badged path does no sorting at all. The ordering is also what makes
+  // non-total sort comparator inherits this order — e.g.
+  // getRecentlyAdded (§28) does no sorting of its own within a partner. The ordering is also what makes
   // .range() pagination coherent: (partner_id, sort_order) is unique per
   // row (0010's backfill invariant), so consecutive ranges never skip or
   // duplicate.
@@ -259,7 +259,7 @@ async function fetchCatalogRaw(): Promise<{
   // the blocks by the partner's display_order (0009). Array.prototype.sort is
   // stable per spec, so intra-partner sort_order (0010) is preserved.
   //
-  // This matters because getFeaturedDeals, getBestSellers and every
+  // This matters because getFeaturedDeals, getRecentlyAdded and every
   // .filter().slice(n) read the flat list: without it, getAllRealProducts()
   // returns the same products in a different sequence than lib/partners.ts.
   //
@@ -670,19 +670,29 @@ export async function getFeaturedDeals(): Promise<RealProduct[]> {
     });
 }
 
-export async function getBestSellers(
-  partnerIds?: string[]
-): Promise<RealProduct[]> {
-  const all = await getAllRealProducts();
-  const pool = (
-    partnerIds ? all.filter((p) => partnerIds.includes(p.partnerId)) : all
-  ).filter((p) => !requiresPerSkuFeatureCheck(p.partnerId));
-
-  const badged = pool.filter((p) => p.badge === "Best Seller");
-  if (badged.length > 0) return badged;
-
-  return [...pool]
-    .filter((p) => p.rating)
-    .sort((a, b) => (b.rating?.stars ?? 0) - (a.rating?.stars ?? 0))
-    .slice(0, 8);
+/** "Recently added" — the newest products in the catalogue, derived from
+ * import recency (partners.display_order mirrors import order), which is
+ * real data we actually hold. REPLACED getBestSellers on 2026-08-19
+ * (findings §28): that section built the site's entire "Best Sellers"
+ * pool from three July hand-authored badges on one partner of seven,
+ * with a rating fallback drawn from the same single partner's 18 frozen
+ * July review counts — a section title asserting popularity nobody
+ * measured (affiliate_clicks held ZERO rows). Mirrors
+ * lib/partners.ts's getRecentlyAdded exactly — keep the two in sync. */
+export async function getRecentlyAdded(limit = 12): Promise<RealProduct[]> {
+  const { products, partnersById } = await fetchCatalog();
+  const newestFirst = [...partnersById.entries()].sort(
+    (a, b) => (b[1].displayOrder ?? 0) - (a[1].displayOrder ?? 0)
+  );
+  const out: RealProduct[] = [];
+  for (const [partnerId] of newestFirst) {
+    if (out.length >= limit) break;
+    for (const p of products) {
+      if (p.partnerId !== partnerId) continue;
+      if (requiresPerSkuFeatureCheck(p.partnerId)) break;
+      out.push(p);
+      if (out.length >= limit) break;
+    }
+  }
+  return out;
 }

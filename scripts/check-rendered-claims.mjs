@@ -41,6 +41,8 @@ const BANNED = {
   "what it cost last month": "the /about claim the operator corrected on themselves: implied displayed price history before the charts exist (§26) — the replacement text says the history is being collected and the charts are not live yet",
   "how it has moved": "same /about claim, as originally worded in the shipped sentence (§26)",
   "refreshed daily": "displayed prices are static catalog prices (Option A gated); the daily job CHECKS them — 'refreshed' claimed the check updates the display (§27)",
+  "best seller": "the Best Sellers pool was three July hand-typed badges on one partner; we hold no sales data — allowlist this only when a measured popularity signal exists (§28)",
+  "trending": "same claim as best seller: popularity nobody measured; the /trending ROUTE keeps its URL but no copy may assert trending-ness (§28)",
 };
 // Route-scoped exceptions for LEGITIMATE uses: { "route.html": ["phrase"] }.
 // Every entry needs a reason. An exception without a reason is how banned

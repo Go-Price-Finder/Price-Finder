@@ -153,6 +153,10 @@ export type Database = {
           matched: number | null;
           matched_by_id: number | null;
           matched_by_name: number | null;
+          matched_by_gtin: number | null;
+          gtin_collisions_in_feed: number | null;
+          gtin_collisions_in_catalog: number | null;
+          gtin_keys_usable: number | null;
           compared: number | null;
           changed_vs_current: number | null;
           unchanged_vs_current: number | null;
@@ -175,6 +179,10 @@ export type Database = {
           matched?: number | null;
           matched_by_id?: number | null;
           matched_by_name?: number | null;
+          matched_by_gtin?: number | null;
+          gtin_collisions_in_feed?: number | null;
+          gtin_collisions_in_catalog?: number | null;
+          gtin_keys_usable?: number | null;
           compared?: number | null;
           changed_vs_current?: number | null;
           unchanged_vs_current?: number | null;
@@ -197,6 +205,10 @@ export type Database = {
           matched?: number | null;
           matched_by_id?: number | null;
           matched_by_name?: number | null;
+          matched_by_gtin?: number | null;
+          gtin_collisions_in_feed?: number | null;
+          gtin_collisions_in_catalog?: number | null;
+          gtin_keys_usable?: number | null;
           compared?: number | null;
           changed_vs_current?: number | null;
           unchanged_vs_current?: number | null;

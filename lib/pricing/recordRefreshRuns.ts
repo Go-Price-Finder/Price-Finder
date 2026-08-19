@@ -49,6 +49,19 @@ export async function recordRefreshRuns(
       matched: downloadKnown ? p.matched : null,
       matched_by_id: downloadKnown ? p.matchedById : null,
       matched_by_name: downloadKnown ? p.matchedByName : null,
+      // Migration 0022 — the gtin quartet. Two layers of NULL, both
+      // honest and distinct by clause 1's logic: stage-unknown (this
+      // entry never reached matching) and strategy-unused (the partner's
+      // matchStrategy has no "gtin" — the in-memory counters stay null,
+      // see PartnerRefreshResult). A partner that RAN the strategy and
+      // matched nothing writes a genuine 0. The three collision/usable
+      // counters are the churn instrument: whether a merchant's gtins
+      // are stable enough for a primary key is answered by diffing them
+      // across runs (baseline 2026-08-19: feed=2, catalog=0, usable=498).
+      matched_by_gtin: downloadKnown ? p.matchedByGtin : null,
+      gtin_collisions_in_feed: downloadKnown ? p.gtinCollisionsInFeed : null,
+      gtin_collisions_in_catalog: downloadKnown ? p.gtinCollisionsInCatalog : null,
+      gtin_keys_usable: downloadKnown ? p.gtinKeysUsable : null,
       compared: downloadKnown ? p.compared : null,
       duplicate_key_collisions: downloadKnown ? p.duplicateKeyCollisions : null,
       new_rows: diffKnown ? p.newRows : null,

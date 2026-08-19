@@ -319,21 +319,27 @@ export type PartnerRefreshResult = {
   matchedById: number;
   matchedByName: number;
   /** Matched via the manufacturer GTIN — the durable cross-import key
-   * (migration 0018). Only ever non-zero for partners whose
-   * matchStrategy includes "gtin". */
-  matchedByGtin: number;
+   * (migration 0018). NULL when this partner's matchStrategy does not
+   * include "gtin" (or the stage never reached matching) — a partner not
+   * using the strategy is honestly different from one that tried and
+   * matched zero. Persisted to refresh_runs.matched_by_gtin (0022). */
+  matchedByGtin: number | null;
   /** Gtins BANNED as match keys this run because they were ambiguous:
    * two catalog products shared one gtin (…InCatalog), or the gtin
    * appeared on more than one feed row (…InFeed). These are not errors
-   * and not failures — they are the guard working. Their rows fall
-   * through to the next strategy. A number climbing over time means the
-   * feed's identifier quality is degrading and deserves a look. */
-  gtinCollisionsInCatalog: number;
-  gtinCollisionsInFeed: number;
+   * and not failures — they are the guard working; their rows fall
+   * through to the next strategy. Persisted to refresh_runs (0022) as
+   * THE CHURN INSTRUMENT: whether a merchant's gtins are stable enough
+   * to be a primary key is answered by diffing these across runs — a
+   * value living only in a response body cannot be diffed against
+   * itself on 25 August. Baseline (2026-08-19 offline measurement):
+   * feed=2, catalog=0, usable=498. NULL when strategy/stage never ran. */
+  gtinCollisionsInCatalog: number | null;
+  gtinCollisionsInFeed: number | null;
   /** Gtins that survived the guard and were usable as keys — the honest
    * denominator for "how much of this partner is joinable by identity".
-   * 0 when the strategy doesn't include gtin (not "no gtins exist"). */
-  gtinKeysUsable: number;
+   * NULL when the strategy doesn't include gtin (not "no gtins exist"). */
+  gtinKeysUsable: number | null;
   /** Count of feed rows that matched a key (id or name) already claimed by
    * an earlier row in this same run. With id-based matching this should
    * normally be 0 — every SKU has a distinct id. A nonzero count here
@@ -394,10 +400,10 @@ function emptyPartnerResult(partnerId: string, feedId?: string): PartnerRefreshR
     upserted: 0,
     matchedById: 0,
     matchedByName: 0,
-    matchedByGtin: 0,
-    gtinCollisionsInCatalog: 0,
-    gtinCollisionsInFeed: 0,
-    gtinKeysUsable: 0,
+    matchedByGtin: null,
+    gtinCollisionsInCatalog: null,
+    gtinCollisionsInFeed: null,
+    gtinKeysUsable: null,
     duplicateKeyCollisions: 0,
     errors: [],
     nameFallbackDiagnostics: [],
@@ -563,13 +569,14 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     const byGtin = new Map<string, (typeof partnerProducts)[number]>();
     const bannedGtins = new Set<string>();
     if (gtinStrategyEnabled) {
+      let collisionsInCatalog = 0;
       for (const p of partnerProducts) {
         const g = normalizeGtin(p.gtin);
         if (!g) continue;
         if (byGtin.has(g)) {
           // Two catalog products under one gtin — ambiguous on our side.
           bannedGtins.add(g);
-          result.gtinCollisionsInCatalog++;
+          collisionsInCatalog++;
           continue;
         }
         byGtin.set(g, p);
@@ -577,6 +584,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       // Ambiguous on the FEED side: count occurrences across the whole
       // feed, not just rows we would have matched — a duplicate row we
       // don't carry is exactly the one that would overwrite us.
+      let collisionsInFeed = 0;
       const feedGtinCounts = new Map<string, number>();
       for (const row of rows) {
         const g = normalizeGtin(firstNonEmpty(row, GTIN_COLUMNS));
@@ -585,11 +593,17 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       for (const [g, n] of feedGtinCounts) {
         if (n > 1 && byGtin.has(g)) {
           bannedGtins.add(g);
-          result.gtinCollisionsInFeed++;
+          collisionsInFeed++;
         }
       }
       for (const g of bannedGtins) byGtin.delete(g);
+      // Assign all four together: the strategy RAN, so every one of these
+      // is a known number from here on (0 is a genuine zero), while a
+      // partner that never entered this block keeps NULL throughout.
+      result.gtinCollisionsInCatalog = collisionsInCatalog;
+      result.gtinCollisionsInFeed = collisionsInFeed;
       result.gtinKeysUsable = byGtin.size;
+      result.matchedByGtin = 0;
     }
 
     const upsertByProductId = new Map<
@@ -720,6 +734,19 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
           // gtin miss doesn't imply "a SKU we don't carry", because only
           // post-2026-08-19 imports carry gtins at all, so our side is
           // sparse by construction rather than authoritative.
+          //
+          // DELIBERATE ASYMMETRY WITH THE id RULE BELOW — do not "tidy"
+          // them into agreement (operator-endorsed 2026-08-19). An
+          // unknown id means a SKU we don't carry; an unknown gtin means
+          // OUR side is sparse. Same syntax, different epistemics.
+          //
+          // EXPIRY CONDITION, not "revisit someday": when every ACTIVE
+          // partner's catalog carries gtin coverage, an unknown gtin will
+          // mean exactly what an unknown id means today, and this rule
+          // should INVERT to `break` (gtin-not-ours => SKU we don't
+          // carry => stop). Check with: every partner in PARTNERS whose
+          // matchStrategy includes "gtin" has products.every(p => p.gtin).
+          // Today only aaawave qualifies, so the fall-through stands.
           continue;
         }
         if (key === "id") {
@@ -784,7 +811,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       }
       result.matched++;
       if (matchedVia === "id") result.matchedById++;
-      else if (matchedVia === "gtin") result.matchedByGtin++;
+      else if (matchedVia === "gtin") result.matchedByGtin = (result.matchedByGtin ?? 0) + 1;
       else result.matchedByName++;
 
       const price = parseFeedPrice(firstNonEmpty(row, PRICE_COLUMNS));

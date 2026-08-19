@@ -2641,3 +2641,29 @@ image ruling is sound, imageUsagePermission flipped to "confirmed" and
 the 500-product image pass ran. Residual risk (authorized-dealer
 photography likely manufacturer-owned, no sublicensable rights
 established) recorded in the registry entry, reverts in one field edit.
+
+### §19b. Flipping the compliance flag was NOT enough — the gate is baked in at write time (2026-08-19)
+
+Recorded because the verification step the operator specified ("no page
+still renders the pending placeholder") is the only thing that caught
+it. After imageUsagePermission flipped to "confirmed" and 500/500
+images downloaded successfully, a cold build STILL rendered the
+placeholder on all 500 pages.
+
+Cause: the placeholder swap happens in normalizeProduct
+(lib/partners.ts) at the moment products are read from the static data
+file — and scripts/sync-aaawave-catalog.ts wrote catalog_products from
+those already-normalized products while the gate was CLOSED. So the
+DB rows that Step-14 pages actually read had IMAGE_PENDING_PLACEHOLDER
+stored in image/images. lib/catalog.ts's own header says this
+explicitly ("the per-partner image-pending placeholder swap ... already
+baked into every row at write time") — the design is intentional and
+correct; the consequence is that a compliance flip is a TWO-part
+change: flip the flag AND re-sync every affected row.
+
+Standing rule for any future partner: flipping imageUsagePermission
+requires re-running that partner's catalog sync, or the flip is
+invisible in production. Verified after re-sync: 500 rows with real
+paths / 0 placeholder in the DB; cold build 500 pages, 0 placeholders,
+500 referencing a real webp; live production spot-checks return
+HTTP 200 image/webp on sampled files, landing page 0 placeholders.

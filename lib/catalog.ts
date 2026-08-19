@@ -193,33 +193,53 @@ async function fetchCatalogRaw(): Promise<{
   // .range() pagination coherent: (partner_id, sort_order) is unique per
   // row (0010's backfill invariant), so consecutive ranges never skip or
   // duplicate.
-  const PAGE_SIZE = 1000;
-  const fetchProductsPage = async (from: number) =>
-    supabase
-      .from("catalog_products")
-      .select(
-        "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
-      )
-      .order("partner_id")
-      .order("sort_order")
-      .range(from, from + PAGE_SIZE - 1);
+  // PAGE_SIZE 250, not the 1,000 max-rows ceiling: the statement stays open
+  // while its rows stream to the client, and Postgres' statement_timeout
+  // (57014) counts that streaming time. The first Vercel build after the
+  // aaawave import failed exactly there — 13 concurrent collect-phase
+  // fetches each streaming ~2MB of long-description rows across regions
+  // pushed individual statements past the role's timeout. Smaller pages
+  // mean more round trips but each statement finishes quickly, and the
+  // retry below absorbs the transient timeouts that remain (57014
+  // server-side, "upstream request timeout" from the gateway — both
+  // observed, both transient).
+  const PAGE_SIZE = 250;
+  const PAGE_RETRIES = 3;
+  const fetchProductsPage = async (from: number) => {
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= PAGE_RETRIES; attempt++) {
+      const res = await supabase
+        .from("catalog_products")
+        .select(
+          "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
+        )
+        .order("partner_id")
+        .order("sort_order")
+        .range(from, from + PAGE_SIZE - 1);
+      if (!res.error) return res.data ?? [];
+      lastError = res.error;
+      const transient =
+        res.error.code === "57014" || /timeout/i.test(res.error.message ?? "");
+      if (!transient) break;
+      await new Promise((r) => setTimeout(r, 500 * attempt));
+    }
+    throw lastError;
+  };
 
-  const [firstPageRes, partnersRes] = await Promise.all([
+  const [firstPage, partnersRes] = await Promise.all([
     fetchProductsPage(0),
     supabase
       .from("partners")
       .select("id, name, tagline, href, logo_url, display_order")
       .order("display_order"),
   ]);
-  if (firstPageRes.error) throw firstPageRes.error;
   if (partnersRes.error) throw partnersRes.error;
-  const productRows = [...(firstPageRes.data ?? [])];
-  let lastPageLength = firstPageRes.data?.length ?? 0;
+  const productRows = [...firstPage];
+  let lastPageLength = firstPage.length;
   while (lastPageLength === PAGE_SIZE) {
-    const pageRes = await fetchProductsPage(productRows.length);
-    if (pageRes.error) throw pageRes.error;
-    productRows.push(...(pageRes.data ?? []));
-    lastPageLength = pageRes.data?.length ?? 0;
+    const page = await fetchProductsPage(productRows.length);
+    productRows.push(...page);
+    lastPageLength = page.length;
   }
 
   const partnersById = new Map<string, PartnerMeta>();

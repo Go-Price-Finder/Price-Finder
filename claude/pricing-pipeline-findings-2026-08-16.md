@@ -2667,3 +2667,46 @@ invisible in production. Verified after re-sync: 500 rows with real
 paths / 0 placeholder in the DB; cold build 500 pages, 0 placeholders,
 500 referencing a real webp; live production spot-checks return
 HTTP 200 image/webp on sampled files, landing page 0 placeholders.
+
+### §19c. The colliding GTIN is check-digit VALID — which retroactively justifies 0018 omitting check-digit validation (2026-08-19)
+
+Operator computed it: `0606034877917` has a correct check digit
+(computed 7, actual 7). It is a **structurally perfect GTIN on the
+wrong product** — the same identifier appears in feed F2639 on both
+"AMD Ryzen 7 7800X3D OEM + Cooler Master MasterLiquid 360" @ $395.99
+(one of our 500) and "Pimoroni VL53L1X Time of Flight Sensor" @ $24.99.
+
+**Consequence 1 — the omission was right, and for a sharper reason
+than when it was made.** 0018 deliberately validated only shape
+(`^[0-9]{8,14}$`), not the check digit. Had we implemented check-digit
+validation, this row would have PASSED it, and a passing check digit
+reads as evidence of a trustworthy key — the validation would have
+actively increased confidence in the one row that most deserved
+suspicion. Stated generally: **a constraint on identity catches
+malformed identity, never misattributed identity.** Only the collision
+guard catches this class. This is a case where adding a stricter
+constraint would have made the system less safe by supplying false
+assurance — the §19 pattern one layer down (a check that cannot detect
+the failure is worse than no check, because it converts "unverified"
+into "verified clean").
+
+**Consequence 2 — this is the concrete instance of 0018's own stated
+rationale.** The migration header argues, in its own words:
+
+> "gtin is an IDENTITY CLAIM used to join. A malformed gtin that
+> happens to collide with another malformed gtin produces a FALSE
+> COMPARISON PAIR — two unrelated products shown to a customer as the
+> same item at two prices. That is not a bad record, it is a lie on
+> the page. Rule: constrain identity, do not constrain observation."
+
+Measured reality refines it: the collision needed no malformed gtin at
+all. A perfectly-formed one, wrong at the source, produces the identical
+lie. The abstraction was written before the instance existed; the
+instance is now on file next to it. The header's rule stands — what
+changes is that shape validation is necessary and nowhere near
+sufficient, and the guard, not the constraint, is what prevents the lie.
+
+Feed-wide measurement behind this: 1,683 rows, 91.2% carry a valid
+gtin, 1,520 distinct, **15 gtins appear on more than one row**, 2 of
+which collide with our 500. All 500 of our products are reachable by
+gtin in today's feed.

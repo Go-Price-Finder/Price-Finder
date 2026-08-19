@@ -13,13 +13,21 @@ const STEPS = [
     icon: BellIcon,
     title: "Track prices & get alerts",
     description:
-      "Price history and drop alerts are in development. Save an item to your wishlist and set a target price now, so you're ready the moment tracking goes live.",
+      // Alerts are LIVE (lib/alerts/checkPriceDrops.ts, daily cron at
+      // 13:00Z, real emails via Resend) — this copy said "in development"
+      // long after they shipped (findings §23). Price history RECORDING is
+      // also live (snapshot-prices cron); only the charts are still to come.
+      "Save an item to your wishlist and set a target price — when the price drops to it, we email you. Charts of each product's price history are on the way; we're already recording it daily.",
   },
   {
     icon: TrendingUpIcon,
-    title: "Compare before you buy",
+    title: "Real prices, verified daily",
     description:
-      "We lay retailer prices side by side, shipping and fees included where available, and flag the lowest one we're tracking — so you can make a more informed choice.",
+      // The old copy claimed side-by-side price comparison with a
+      // lowest-price flag and shipping/fees — none of which exists yet
+      // (the GTIN identity work that enables cross-store comparison is in
+      // progress, findings §20). Describe what the site does TODAY.
+      "Every listing is a real price from a real store, refreshed daily and stamped with when it was last verified. Cross-store comparison of the same product is what we're building next.",
   },
 ];
 

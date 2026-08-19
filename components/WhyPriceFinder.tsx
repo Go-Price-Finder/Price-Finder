@@ -1,26 +1,34 @@
 import { TagIcon, BellIcon, StoreIcon } from "./icons";
 
-// These used to show a made-up figure ($47, 100+, 6,200+) — with no real
-// usage or retailer data behind Go Price Finder yet, they say plainly
-// "data collection in progress" instead. A fourth card ("4 tiers... of
-// loyalty rewards") was removed along with the retired loyalty/points
-// program (see lib/loyalty.ts) — it described a feature that no longer
-// exists, not a usage statistic that could go stale on its own.
+// History of this section, because each generation failed differently:
+// v1 showed made-up figures ($47, 100+, 6,200+) — fabricated. v2 said
+// "Data collection in progress" — which became its own false claim: no
+// per-user savings collection was in progress (there were no users), and
+// one card described "stores compared side by side on every search", a
+// capability that does not exist yet (findings §23). v3 (this one) makes
+// only claims the code keeps: real markdowns come from the feed's own
+// price fields (import-partner.mjs never fabricates originalPrice),
+// alerts are live (checkPriceDrops + daily 13:00Z cron + Resend), and
+// every price is re-checked daily by the 11:00Z refresh with a per-
+// listing verification stamp (PriceAsOfLabel).
 const VALUE_PROPS = [
   {
     icon: TagIcon,
-    stat: "Data collection in progress",
-    label: "Saved on average, per user, per month",
+    stat: "Real markdowns only",
+    label:
+      "A discount only shows when the store's own feed shows one — we never invent a strike-through price.",
   },
   {
     icon: BellIcon,
-    stat: "Data collection in progress",
-    label: "Products you can track at once, with price-drop alerts",
+    stat: "Price-drop alerts, live today",
+    label:
+      "Save an item, set a target price, and we email you when the price falls to it.",
   },
   {
     icon: StoreIcon,
-    stat: "Data collection in progress",
-    label: "Stores compared side by side on every search",
+    stat: "Checked every day",
+    label:
+      "Prices are refreshed daily against each store's live feed, and every listing shows when it was last verified.",
   },
 ];
 

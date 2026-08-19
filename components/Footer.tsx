@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Logo from "./Logo";
-import SearchBar from "./SearchBar";
 
 const CONTACT_EMAIL = "gpf@gopricefinder.com";
 
@@ -44,20 +43,31 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory-300">
-              Go Price Finder helps you find better deals. Data collection in
-              progress.
+              Go Price Finder helps you find better deals — real prices from
+              real stores, checked daily.
             </p>
 
+            {/* This block used to render an email field with a Subscribe
+                button whose submit handler was a deliberate no-op
+                (SearchBar's disableSearchNav) — a dead control that took a
+                visitor's email under the promise of alerts and dropped it,
+                the worst claim on the page (findings §23). Alerts are real,
+                but they work through wishlist target prices — so say that,
+                and link there. */}
             <div className="mt-6 max-w-sm">
               <p className="mb-2 text-sm font-medium text-ivory-100">
                 Get price drop alerts
               </p>
-              <SearchBar
-                placeholder="Enter your email"
-                buttonLabel="Subscribe"
-                showIcon={false}
-                disableSearchNav
-              />
+              <p className="text-sm leading-relaxed text-ivory-300">
+                <Link
+                  href="/wishlist"
+                  className="text-gilt-400 underline-offset-4 hover:underline"
+                >
+                  Save an item to your wishlist
+                </Link>{" "}
+                and set a target price — we email you when the price drops
+                to it.
+              </p>
             </div>
           </div>
 

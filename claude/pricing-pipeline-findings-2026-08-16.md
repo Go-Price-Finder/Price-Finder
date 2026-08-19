@@ -2860,3 +2860,49 @@ import-image-gap notes, DB and static in agreement, PASS.
 feeds entirely) should remain listed at all — they cannot receive
 price refreshes and their images are gone at the source. Delisting is
 beyond this session's authorized scope.
+
+### §23. Homepage honesty pass — every self-description audited against what the code does (2026-08-19)
+
+Same defect class as the data layer's, in copy, where a visitor reads
+it. Method: extract ALL rendered text from a cold build's index.html,
+identify every claim of capability/cadence/status, verify each against
+code. Verdicts:
+
+| Claim (rendered) | Where | Verdict | Action |
+|---|---|---|---|
+| "Weekly" price checks / "checked every week" | Hero stat + tagline | FALSE — cron is daily (vercel.json 11:00Z) | -> "Daily" / "every day" |
+| "every price is checked weekly" | FutureOfWebsite | FALSE — same | -> daily |
+| "Prices are checked weekly," | WhyTrustPrices | FALSE — same | -> daily |
+| "Price history and drop alerts are in development" | HowItWorks step 2 | FALSE — alerts LIVE (checkPriceDrops, 13:00Z cron, Resend); history RECORDING live (snapshot-prices, 16,201 rows); only charts pending | rewritten: alerts live, charts on the way |
+| "We lay retailer prices side by side... flag the lowest one" | HowItWorks step 3 | FALSE — no cross-store comparison surface exists (§20 gtin work is what will enable it); no lowest-flag; no shipping/fees anywhere | rewritten to what is true today; step retitled |
+| "Data collection in progress" x3 | WhyPriceFinder cards | FALSE — no per-user savings collection exists (no users); one card claimed "stores compared side by side on every search" | cards replaced with three claims the code keeps (real markdowns / alerts live / checked daily) |
+| "Data collection in progress." | Footer tagline, EVERY page | FALSE — same | rewritten |
+| Footer "Get price drop alerts" + email + Subscribe | Footer, EVERY page | WORST ON PAGE — the submit handler was a deliberate no-op (SearchBar disableSearchNav): took a visitor's email under the promise of alerts and dropped it | dead form removed; replaced with a link to the REAL alert flow (wishlist + target price) |
+| "each listing shows when it was last verified" | WhyTrustPrices | TRUE (PriceAsOfLabel; all 7 partners mapped) | kept |
+| "Discounts are real markdowns only... deals page says so" | WhyTrustPrices | TRUE (originalPrice only from feed's own markdown; /deals honest-empty verified at Batch 5) | kept |
+| "Every affiliate link is disclosed" / "Rankings aren't for sale" | WhyTrustPrices | TRUE | kept |
+| Hero products/partners counts | Hero | TRUE (computed from live catalog per build) | kept |
+| "no sponsored rankings, no fabricated discounts" | Hero | TRUE | kept |
+
+Stated caveat on "daily", recorded in the code comment: the daily
+refresh covers the six feed-bearing partners; brooklyn-delhi's 29
+products (2% of catalog) have no AWIN feed and are not re-checked —
+the per-listing as-of label carries that per-listing truth, which is
+why the "checked daily" + "each listing shows when verified" pairing
+is the honest formulation.
+
+Verified: rendered re-sweep post-fix — weekly / in development / in
+progress / side by side / Subscribe / lowest all ZERO on the built
+homepage, with a live positive control ('checked' x5). Per §19: the
+sweep's zero is licensed because the same extraction found all of
+these strings before the fix.
+
+OUT OF SCOPE, REPORTED NOT FIXED (operator named the homepage):
+/how-it-works carries the same class, worse — "we scan the whole
+market at once", "lay out matching listings side by side", "Price
+history tracking is coming soon... notified as soon as drop alerts go
+live" (alerts are live), and a paragraph describing product pages
+listing "the retailers we track for that item, sorted cheapest first,
+with a 'Best Price' badge" — NO such multi-retailer product-page list
+or badge exists anywhere. /wishlist also says "Comparing N items
+across retailers, side by side." One commit away on request.

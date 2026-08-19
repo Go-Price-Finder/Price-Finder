@@ -24,7 +24,11 @@ export default function Hero({ stats }: { stats: HeroStats }) {
   const STATS = [
     { value: String(stats.products), label: "Products tracked" },
     { value: String(stats.partners), label: "Partner stores" },
-    { value: "Weekly", label: "Price checks" },
+    // "Daily" is the cron's real cadence (vercel.json: refresh-prices at
+    // 11:00Z every day) — this said "Weekly" long after the job went
+    // daily, an understated-but-false self-description (findings §23).
+    // Per-listing truth lives in each product page's as-of label.
+    { value: "Daily", label: "Price checks" },
   ];
 
   // scrollProgress is unused now that HeroScene's background is gone, but
@@ -124,7 +128,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
           className="mx-auto mt-6 max-w-xl text-balance text-base leading-relaxed text-ivory-300 sm:text-lg"
         >
           Real listings from real stores — no sponsored rankings, no
-          fabricated discounts, checked every week.
+          fabricated discounts, checked every day.
         </motion.p>
 
         <motion.div

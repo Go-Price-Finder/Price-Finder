@@ -14,7 +14,12 @@ const TRUST_POINTS = [
     body: "We earn a commission when you buy — disclosed in our site footer and full disclosure page.",
   },
   {
-    title: "Prices are checked weekly,",
+    // Daily is the real cadence (vercel.json cron, 11:00Z). The paired
+    // body line ("each listing shows when it was last verified") is what
+    // carries per-listing truth — e.g. a partner whose network feed
+    // disappears stops being re-checked, and its listings' as-of labels
+    // say so honestly.
+    title: "Prices are checked daily,",
     body: "and each listing shows when it was last verified.",
   },
   {

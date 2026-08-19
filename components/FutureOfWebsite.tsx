@@ -22,14 +22,14 @@ export default function FutureOfWebsite() {
           fabricated discounts that make so much of online shopping feel
           untrustworthy. Right now that means a small, hand-picked group of
           partners — but every product you see is real, and every price is
-          checked weekly.
+          checked daily.
         </p>
         <p>
           As we grow, expect more stores, a wider range of categories, and
           smarter search that gets better at understanding what you&rsquo;re
-          actually looking for. We&rsquo;re also building toward real price
-          history, so you can see whether now is genuinely a good time to
-          buy.
+          actually looking for. We already record every price we see, every
+          day — the charts that let you explore that history, and see
+          whether now is genuinely a good time to buy, are on the way.
         </p>
         <p>
           None of that changes what this site is for: helping you find a

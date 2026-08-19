@@ -2439,3 +2439,44 @@ import would each have crossed additional caps unannounced.
   error recorded as such in §9r (field name trusted over behaviour;
   wrong instrument poisons published readings). refresh_runs deferred
   to Cowork DDL flow.
+
+### §17. Codebase-wide PostgREST max-rows audit (2026-08-19, ordered after §16)
+
+Method per the operator's instrument-discipline rule: a read that
+silently returns 1,000 is indistinguishable from a table that has
+1,000 rows, so every "rows returned" below was compared against an
+independently obtained `count: exact, head: true` (which is computed
+server-side and immune to max-rows). Head-count reads and single-row
+reads (.maybeSingle/.limit(1) on unique keys) are immune by
+construction. And the shape of how §16 hid is now a standing hazard:
+aaawave sorts FIRST alphabetically, so the newest, most-scrutinised
+partner was the last thing that would ever have revealed truncation —
+scrutiny concentrated exactly where the bug wasn't.
+
+Every `.from()` site in lib/, app/, components/, scripts/ (no .rpc()
+reads exist):
+
+| # | Site | Read (filter) | Rows today | Verdict |
+|---|------|---------------|-----------:|---------|
+| 1 | lib/catalog.ts fetchCatalogRaw | catalog_products, full | 1,454 | OVER — already paged+retried (§16, commits 78186ae/f71c65d) |
+| 2 | lib/catalog.ts same fn | partners, full | 7 | SAFE (grows ~1/import) |
+| 3 | lib/pricing/getEffectivePrice.ts fetchCurrentPriceOverrides | current_prices ≥ freshness cutoff | 652 (verified complete: unpaged return = exact count) | CLOSE — 65% of cap. Crosses if overrides exceed 1,000; aaawave matching alone could add up to 500 (652+500=1,152). Failure mode when crossed: rows beyond the cap silently keep static prices — invisible. HIGHEST-PRIORITY remaining fix. |
+| 4 | app/api/cron/refresh-prices/route.ts freshness read | current_prices < cutoff | 0 | SAFE today, but it is an INSTRUMENT for the everything-went-stale scenario, exactly when the stale set would exceed 1,000 — it would under-report (still nonzero, so the alarm fires, but per-partner counts would lie). Recommend per-partner exact counts instead of row fetch. |
+| 5 | lib/pricing/refreshPrices.ts pre-upsert diff | current_prices .eq(retailer) | max 323 (golden-maple; per-partner: cv 204, kk 26, tb 47, gm 323, ev 52) | SAFE today. Crosses when ONE partner holds >1,000 override rows (full-aaawave at 2,637 products would). Failure mode: newRows/changedVsCurrent counters corrupt; the upsert itself is unaffected. Fix before any >1,000-product partner matches. |
+| 6 | lib/pricing/refreshPrices.ts feed selection | feed_status .eq(is_catalog_source, true) | 8 (of 9) | SAFE |
+| 7 | lib/alerts/checkPriceDrops.ts | wishlists .not(target_price, is, null) | 0 | SAFE today, growth-unbounded with users. When alert rows exceed 1,000, alerts beyond the cap silently never send. Fix before alerts are promoted to users. |
+| 8 | lib/supabase/queries.ts getWishlistByUser | wishlists .eq(user_id) | 0 | SAFE (per-user bound; a single user with >1,000 saved items would see a truncated list — cosmetic) |
+| 9 | components/PriceHistoryChart.tsx | price_history .eq(product,retailer) ≥ 90d | ≤90/product by PK (one row per product×retailer×date) | SAFE — table is 16,201 rows total but is never read unpaged |
+| 10 | lib/pricing/snapshotPrices.ts | price_history upsert only, 500-row batches, minimal returning | n/a | SAFE (write path) |
+| 11 | lib/cashback/syncAwinTransactions.ts | 4 reads, all .maybeSingle()/.limit(1) on unique keys | 0 in all four tables | SAFE by construction |
+| 12 | lib/monitoring/authProbe.ts | public.users via exact head-count | 3 | IMMUNE by design. Note: auth.admin.listUsers({perPage: 1000}) is a SEPARATE cap class (GoTrue pagination, not PostgREST) — revisit when users approach 1,000. |
+| 13 | scripts/sync-aaawave-catalog.ts read-backs | exact head-counts | 500 | IMMUNE by design (the §16-era read-back was already non-self-referential) |
+| 14 | (products table, 954 rows) | only ever read embedded inside wishlists join | bounded by parent | SAFE |
+
+Summary: ONE read was over the cap (already fixed, §16). ZERO reads
+are truncating today — every unpaged read's return was verified equal
+to its exact count. ONE is close (fetchCurrentPriceOverrides, 65%) and
+crosses on a predictable event (aaawave override matching). Two more
+have named crossing conditions (per-partner overrides >1,000; alert
+wishlist rows >1,000). Fixes deliberately NOT shipped with this audit
+— priority is the operator's call; the audit is the deliverable.

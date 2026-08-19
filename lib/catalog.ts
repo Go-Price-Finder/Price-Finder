@@ -328,16 +328,29 @@ export async function getPartner(id: string): Promise<Partner | undefined> {
  */
 export async function getPartners(): Promise<Partner[]> {
   const { products, partnersById } = await fetchCatalog();
-  return [...partnersById.entries()]
-    .sort(([, a], [, b]) => a.displayOrder - b.displayOrder)
-    .map(([id, meta]) => ({
-      id,
-      name: meta.name,
-      tagline: meta.tagline,
-      href: meta.href,
-      logo: meta.logo,
-      products: products.filter((p) => p.partnerId === id),
-    }));
+  return (
+    [...partnersById.entries()]
+      .sort(([, a], [, b]) => a.displayOrder - b.displayOrder)
+      .map(([id, meta]) => ({
+        id,
+        name: meta.name,
+        tagline: meta.tagline,
+        href: meta.href,
+        logo: meta.logo,
+        products: products.filter((p) => p.partnerId === id),
+      }))
+      // A partner with no catalog rows renders NOWHERE: no homepage card,
+      // no hero count, no sitemap URL. Found live 2026-08-19 (findings
+      // §15): migration 0020 inserted the aaawave partners row ahead of
+      // its import, and a cold build put a homepage card on the site
+      // linking to a 404 — this list previously rendered every row
+      // unconditionally. Filtered on PRODUCTS (what a visitor can
+      // actually browse), deliberately not on feed_status (pipeline
+      // metadata: a partner with products but a broken feed row should
+      // still render). getPartner(id) stays unfiltered so a mid-import
+      // partner remains resolvable to its own route.
+      .filter((partner) => partner.products.length > 0)
+  );
 }
 
 /** The per-partner category list that lib/<partner>-data.ts exports as

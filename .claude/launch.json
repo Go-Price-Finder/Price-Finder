@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "prod",
+      "name": "pricefinder-prod",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start"],
       "port": 3000

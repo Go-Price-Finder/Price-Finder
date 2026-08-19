@@ -2,41 +2,63 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Logo from "./Logo";
+import SearchBar from "./SearchBar";
+import ThemeToggle from "./ThemeToggle";
+import { ChevronRightIcon, HeartIcon } from "./icons";
+import { useWishlist } from "@/lib/wishlist-context";
+import { useAuth } from "@/lib/auth-context";
+import { signOutAction } from "@/lib/supabase/actions";
 
 /* ---------------------------------------------------------------------------
  * SiteHeader
  *
- * Data comes in as props. Nothing is hardcoded except the nav labels, each of
- * which must point at a route that exists:
+ * STRUCTURE is the operator-delivered design (2026-08-19): two rows, a
+ * "Stores" mega menu with a category rail + store panel and a pinned
+ * "See all stores" button, monogram tiles, flag-as-location-indicator.
+ * COLOURS are the site's token system (noir/gilt/ivory), per the operator's
+ * correction: the delivered stone/white/rose values were placeholders
+ * "written by someone who had not seen the site", and the site has TWO
+ * themes driven by these tokens — a hardcoded palette is wrong in both.
+ * Token classes here render correctly under light and dark exactly like
+ * every other surface (findings §32).
+ *
+ * SIGNED-IN AFFORDANCES restored per the same ruling (a live functional
+ * regression, not a design question): wishlist link with live count,
+ * account state with sign-out, theme toggle, the live-suggestion
+ * SearchBar, and the back button on non-home pages — everything the
+ * replaced header carried, in the new design language, EXCEPT the old
+ * notifications bell, which was a button with no handler (a dead control,
+ * §24's family) and is deliberately not resurrected. Log in / Sign up
+ * render only when signed out.
+ *
+ * Data comes in as props. Nothing is hardcoded except the nav labels, each
+ * of which must point at a route that exists:
  *   /stores  /deals  /trending  /guides  /how-it-works
  * (/gift-cards is deliberately absent — see the NAV comment below)
  *
  * "Stores", not "Partners" -- partner is our word for a commercial
  * relationship; a shopper thinks in stores. Use the visitor's word.
  *
- * The menu is a category rail on the left with a store panel on the right,
- * and a "See all stores" button pinned above both. The rail's first row is
- * "All stores", selected by default, so the panel opens full rather than
- * showing two stores until you hover something -- that default is what makes
- * a rail read well at seven stores instead of at seventy.
- *
- * /gift-cards SHIPS WITH THIS NAV ITEM, never after it. Discounted gift cards
- * are one of the few categories where the discount IS the product, so the
- * section is on-strategy -- but a nav item promises a section exists, and
- * nav-first is how a link becomes a promise nothing keeps.
+ * The rail's first row is "All stores", selected by default, so the panel
+ * opens full rather than showing two stores until you hover something --
+ * that default is what makes a rail read well at seven stores instead of
+ * at seventy.
  *
  * Deliberately ABSENT, each for a stated reason:
  *   - Country picker  US-only. The flag is a location indicator, not a
- *                     control. A dropdown offering no alternative would be a
- *                     dead control. No currency shown: we take no payment, so
- *                     currency was never ours to state.
- *   - Store logos     every partner's logo_url is NULL by design (we do not
- *                     hotlink the network CDN). StoreTile renders a monogram
- *                     at the exact footprint a logo would occupy, so hosting
- *                     logos later is not a layout change.
- *   - Restaurants, flights, hotels, pharmacy, AI shopping -- we do not have
- *                     them. Their absence is the point of the redesign.
+ *                     control. A dropdown offering no alternative would be
+ *                     a dead control. No currency shown: we take no
+ *                     payment, so currency was never ours to state.
+ *   - Store logos     every partner's logo_url is NULL by design (we do
+ *                     not hotlink the network CDN). StoreTile renders a
+ *                     monogram at the exact footprint a logo would occupy,
+ *                     so hosting logos later is not a layout change.
+ *   - Notifications bell  the old header's was a handler-less button — a
+ *                     dead control. It returns when notifications exist.
+ *   - Restaurants, flights, hotels, pharmacy, AI shopping -- we do not
+ *                     have them. Their absence is the point of the design.
  * ------------------------------------------------------------------------- */
 
 export type HeaderStore = {
@@ -62,12 +84,12 @@ type Props = {
 
 const NAV = [
   // "Gift cards" DROPPED per the operator's own sequencing rule
-  // (2026-08-19): no Rakuten credentials are wired, no Giftcards.com feed
-  // is available, and lib/partner-compliance.json has no giftcards.com
-  // entry (terms never reviewed), so no page with genuine content can be
-  // built today — and a nav item promises a section exists. REINSTATE
-  // when all three exist, in the SAME commit as a real /gift-cards page:
-  // { label: "Gift cards", href: "/gift-cards" },
+  // (2026-08-19, ruling upheld): no Rakuten credentials are wired, no
+  // Giftcards.com feed is available, and lib/partner-compliance.json has
+  // no giftcards.com entry (terms never reviewed), so no page with genuine
+  // content can be built today — and a nav item promises a section exists.
+  // REINSTATE when all three exist, in the SAME commit as a real
+  // /gift-cards page: { label: "Gift cards", href: "/gift-cards" },
   { label: "Deals", href: "/deals" },
   { label: "New arrivals", href: "/trending" },
   { label: "Buying guides", href: "/guides" },
@@ -79,11 +101,21 @@ export default function SiteHeader({ categories, stores }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>(ALL);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { count } = useWishlist();
+  const { user, loading, signOutLocally } = useAuth();
+  const isHome = pathname === "/";
 
   const storeById = new Map(stores.map((s) => [s.id, s]));
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    await signOutLocally();
+    await signOutAction();
+  }
 
   // Close on route change.
   useEffect(() => {
@@ -125,66 +157,93 @@ export default function SiteHeader({ categories, stores }: Props) {
           ?.storeIds.map((id) => storeById.get(id))
           .filter((x): x is HeaderStore => Boolean(x)) ?? []);
 
+  /** Wishlist link with live count — desktop and mobile share it. */
+  function WishlistLink({ className = "" }: { className?: string }) {
+    return (
+      <Link
+        href="/wishlist"
+        aria-label={`Wishlist, ${count} saved item${count === 1 ? "" : "s"}`}
+        className={`relative flex h-11 w-11 items-center justify-center rounded-full text-ivory-100 transition-colors hover:bg-noir-700 hover:text-ivory-50 ${className}`}
+      >
+        <HeartIcon className="h-5 w-5" filled={count > 0} />
+        {count > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gilt-500 px-1 text-[10px] font-semibold text-accent-ink">
+            {count}
+          </span>
+        )}
+      </Link>
+    );
+  }
+
   return (
     <div ref={wrapRef} className="relative z-50">
-      <header className="border-b border-stone-200/70 bg-white/90 backdrop-blur-md">
-        {/* ---------------- row 1: logo · search · account ---------------- */}
+      <header className="sticky top-0 border-b border-gilt-500/20 bg-noir-900/85 backdrop-blur-md">
+        {/* ---------------- row 1: back · logo · search · account ---------------- */}
         <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="shrink-0 text-2xl font-semibold tracking-tight text-stone-900"
-          >
-            GoPrice<span className="text-rose-500">Finder</span>
+          {!isHome && (
+            <button
+              type="button"
+              onClick={() => router.back()}
+              aria-label="Go back"
+              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gilt-500/25 bg-noir-800 text-ivory-100 shadow-soft transition-all duration-200 hover:border-gilt-400 hover:text-gilt-400 sm:flex"
+            >
+              <ChevronRightIcon className="h-4 w-4 rotate-180" />
+            </button>
+          )}
+
+          <Link href="/" className="shrink-0" aria-label="Go Price Finder home">
+            <Logo />
           </Link>
 
-          <form
-            action="/search"
-            className="relative mx-auto hidden w-full max-w-2xl md:block"
-            role="search"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 20 20"
-              fill="none"
-              className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-400"
-            >
-              <circle cx="9" cy="9" r="6.25" stroke="currentColor" strokeWidth="1.6" />
-              <path d="m13.5 13.5 3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-            <input
-              type="search"
-              name="q"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products across our stores"
-              aria-label="Search products"
-              className="w-full rounded-full border border-stone-200 bg-stone-50 py-3.5 pl-13 pr-28 text-[15px] text-stone-900 placeholder:text-stone-400 outline-none transition focus:border-stone-300 focus:bg-white focus:ring-4 focus:ring-stone-900/5"
-              style={{ paddingLeft: "3.25rem" }}
-            />
-            <button
-              type="submit"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800 active:scale-[0.98]"
-            >
-              Search
-            </button>
-          </form>
+          {/* Live-suggestion search (the replaced header's SearchBar, not a
+              plain GET form — the suggestion dropdown was one of the
+              affordances the first integration lost). */}
+          <div className="mx-auto hidden w-full max-w-2xl md:block">
+            <SearchBar placeholder="Search products across our stores" />
+          </div>
 
           <div className="ml-auto flex items-center gap-2 md:ml-0">
-            <Link
-              href="/auth/login"
-              className="hidden rounded-full px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 sm:inline-flex"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="hidden rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-stone-800 hover:shadow active:scale-[0.98] sm:inline-flex"
-            >
-              Sign up
-            </Link>
+            <WishlistLink className="hidden lg:flex" />
+            <ThemeToggle />
 
-            {/* Static, non-interactive. We serve one region; a picker that
-                offers no alternative would be a control that does nothing. */}
+            {loading ? (
+              <div className="hidden h-10 w-24 animate-pulse rounded-full bg-noir-700 sm:block" />
+            ) : user ? (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Link
+                  href="/wishlist"
+                  className="flex items-center gap-2 rounded-full border border-ivory-100/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-ivory-50 transition-all duration-200 hover:border-gilt-400/40 hover:bg-gilt-500/10"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gilt-500/15 text-xs font-semibold text-gilt-400">
+                    {user.email?.charAt(0).toUpperCase() ?? "?"}
+                  </span>
+                  Wishlist
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  className="rounded-full border border-gilt-500/40 bg-noir-800 px-4 py-2.5 text-sm font-medium text-gilt-400 transition-all duration-200 hover:border-gilt-400 hover:bg-gilt-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {signingOut ? "Logging out…" : "Log out"}
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="hidden rounded-full px-4 py-2.5 text-sm font-medium text-ivory-200 transition hover:bg-noir-700 hover:text-ivory-50 sm:inline-flex"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="hidden rounded-full bg-gilt-500 px-5 py-2.5 text-sm font-medium text-accent-ink shadow-soft transition hover:bg-gilt-400 active:scale-[0.98] sm:inline-flex"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
+
             {/* Location indicator, not a control. We serve the United States
                 only; there is nothing to switch to. No currency: we take no
                 payment, so currency is not ours to state. */}
@@ -202,7 +261,7 @@ export default function SiteHeader({ categories, stores }: Props) {
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Menu"
               aria-expanded={mobileOpen}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-stone-700 transition hover:bg-stone-100 md:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-ivory-100 transition hover:bg-noir-700 md:hidden"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 {mobileOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></>}
@@ -220,8 +279,8 @@ export default function SiteHeader({ categories, stores }: Props) {
             aria-haspopup="true"
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition ${
               menuOpen
-                ? "bg-stone-900 text-white"
-                : "text-stone-700 hover:bg-stone-100"
+                ? "bg-gilt-500 text-accent-ink"
+                : "text-ivory-200 hover:bg-noir-700 hover:text-ivory-50"
             }`}
           >
             <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
@@ -244,8 +303,8 @@ export default function SiteHeader({ categories, stores }: Props) {
                 href={item.href}
                 className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${
                   active
-                    ? "bg-stone-100 text-stone-900"
-                    : "text-stone-700 hover:bg-stone-100"
+                    ? "bg-noir-700 text-ivory-50"
+                    : "text-ivory-200 hover:bg-noir-700 hover:text-ivory-50"
                 }`}
               >
                 {item.label}
@@ -258,17 +317,17 @@ export default function SiteHeader({ categories, stores }: Props) {
         {menuOpen && (
           <div className="absolute inset-x-0 top-full hidden md:block">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="overflow-hidden rounded-3xl border border-stone-200/70 bg-white shadow-[0_24px_70px_-20px_rgba(28,25,23,0.25)]">
+              <div className="overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft-lg">
                 {/* See all stores -- a real button, not a text link */}
-                <div className="flex items-center justify-between gap-4 border-b border-stone-100 px-5 py-4">
+                <div className="flex items-center justify-between gap-4 border-b border-noir-700 px-5 py-4">
                   <Link
                     href="/stores"
-                    className="inline-flex items-center gap-2 rounded-full bg-stone-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-stone-800 hover:shadow active:scale-[0.98]"
+                    className="inline-flex items-center gap-2 rounded-full bg-gilt-500 px-5 py-2.5 text-sm font-semibold text-accent-ink shadow-soft transition hover:bg-gilt-400 active:scale-[0.98]"
                   >
                     See all stores
                     <span aria-hidden="true">&rarr;</span>
                   </Link>
-                  <p className="truncate text-sm text-stone-500">
+                  <p className="truncate text-sm text-ivory-400">
                     {stores.length} stores &middot;{" "}
                     {stores.reduce((n, x) => n + x.productCount, 0).toLocaleString()}{" "}
                     products, checked daily
@@ -277,7 +336,7 @@ export default function SiteHeader({ categories, stores }: Props) {
 
                 <div className="grid grid-cols-12">
                   {/* left: category rail */}
-                  <div className="col-span-4 border-r border-stone-100 bg-stone-50/60 p-3 lg:col-span-3">
+                  <div className="col-span-4 border-r border-noir-700 bg-noir-900/40 p-3 lg:col-span-3">
                     <div className="max-h-[27rem] overflow-y-auto pr-1">
                       <RailItem
                         label="All stores"
@@ -285,7 +344,7 @@ export default function SiteHeader({ categories, stores }: Props) {
                         active={activeCategory === ALL}
                         onSelect={() => setActiveCategory(ALL)}
                       />
-                      <div className="my-2 border-t border-stone-200/70" />
+                      <div className="my-2 border-t border-noir-700" />
                       {categories.map((c) => (
                         <RailItem
                           key={c.slug}
@@ -301,13 +360,13 @@ export default function SiteHeader({ categories, stores }: Props) {
                   {/* right: stores in the selected category */}
                   <div className="col-span-8 p-6 lg:col-span-9">
                     <div className="mb-4 flex items-baseline justify-between gap-4">
-                      <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-ivory-400">
                         {activeCategoryName}
                       </h3>
                       {activeCategory !== ALL && (
                         <Link
                           href={`/category/${activeCategory}`} /* detail route is /category/[slug]; /categories/<slug> does not exist */
-                          className="shrink-0 text-sm font-medium text-stone-500 transition hover:text-stone-900"
+                          className="shrink-0 text-sm font-medium text-ivory-400 transition hover:text-gilt-400"
                         >
                           Browse category &rarr;
                         </Link>
@@ -315,7 +374,7 @@ export default function SiteHeader({ categories, stores }: Props) {
                     </div>
 
                     {activeStores.length === 0 ? (
-                      <p className="py-12 text-center text-sm text-stone-400">
+                      <p className="py-12 text-center text-sm text-ivory-400">
                         No stores in this category yet.
                       </p>
                     ) : (
@@ -336,33 +395,53 @@ export default function SiteHeader({ categories, stores }: Props) {
 
       {/* ---------------- mobile drawer ---------------- */}
       {mobileOpen && (
-        <div className="border-b border-stone-200 bg-white px-4 pb-6 pt-2 md:hidden">
-          <form action="/search" role="search" className="relative mb-4">
-            <input
-              type="search"
-              name="q"
-              placeholder="Search products"
-              aria-label="Search products"
-              className="w-full rounded-full border border-stone-200 bg-stone-50 px-5 py-3.5 text-[15px] outline-none focus:border-stone-300 focus:bg-white"
-            />
-          </form>
+        <div className="border-b border-gilt-500/20 bg-noir-900 px-4 pb-6 pt-2 md:hidden">
+          <div className="mb-4">
+            <SearchBar placeholder="Search products" />
+          </div>
 
-          <Link href="/stores" className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-stone-900 hover:bg-stone-50">
+          <Link href="/stores" className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-ivory-50 hover:bg-noir-800">
             Stores
           </Link>
           {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-stone-900 hover:bg-stone-50">
+            <Link key={item.href} href={item.href} className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-ivory-50 hover:bg-noir-800">
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/wishlist"
+            className="flex items-center justify-between rounded-2xl px-4 py-3 text-[15px] font-medium text-ivory-50 hover:bg-noir-800"
+          >
+            Wishlist
+            {count > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gilt-500 px-1.5 text-[11px] font-semibold text-accent-ink">
+                {count}
+              </span>
+            )}
+          </Link>
 
-          <div className="mt-4 flex gap-2 border-t border-stone-100 pt-4">
-            <Link href="/auth/login" className="flex-1 rounded-full border border-stone-200 py-3 text-center text-sm font-medium text-stone-700">
-              Log in
-            </Link>
-            <Link href="/auth/signup" className="flex-1 rounded-full bg-stone-900 py-3 text-center text-sm font-medium text-white">
-              Sign up
-            </Link>
+          <div className="mt-4 flex items-center gap-2 border-t border-noir-700 pt-4">
+            {loading ? (
+              <div className="h-11 flex-1 animate-pulse rounded-full bg-noir-700" />
+            ) : user ? (
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="flex-1 rounded-full border border-gilt-500/40 bg-noir-800 py-3 text-center text-sm font-medium text-gilt-400 disabled:opacity-60"
+              >
+                {signingOut ? "Logging out…" : "Log out"}
+              </button>
+            ) : (
+              <>
+                <Link href="/auth/login" className="flex-1 rounded-full border border-gilt-500/25 py-3 text-center text-sm font-medium text-ivory-100">
+                  Log in
+                </Link>
+                <Link href="/auth/signup" className="flex-1 rounded-full bg-gilt-500 py-3 text-center text-sm font-medium text-accent-ink">
+                  Sign up
+                </Link>
+              </>
+            )}
+            <ThemeToggle />
           </div>
         </div>
       )}
@@ -385,9 +464,9 @@ function StoreTile({ store }: { store: HeaderStore }) {
   return (
     <Link
       href={store.href}
-      className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition hover:border-stone-200 hover:bg-stone-50"
+      className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition hover:border-gilt-500/30 hover:bg-noir-700/60"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-stone-100 to-stone-200 text-[13px] font-semibold text-stone-500 ring-1 ring-inset ring-stone-900/5 transition group-hover:from-rose-50 group-hover:to-rose-100 group-hover:text-rose-500">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gilt-500/10 text-[13px] font-semibold text-gilt-400 ring-1 ring-inset ring-gilt-500/15 transition group-hover:bg-gilt-500/20">
         {store.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={store.logoUrl} alt="" className="h-full w-full object-contain" />
@@ -396,15 +475,15 @@ function StoreTile({ store }: { store: HeaderStore }) {
         )}
       </span>
       <span className="min-w-0">
-        <span className="block truncate text-sm font-medium text-stone-900">
+        <span className="block truncate text-sm font-medium text-ivory-50">
           {store.name}
         </span>
         {store.tagline ? (
-          <span className="block truncate text-xs text-stone-500">
+          <span className="block truncate text-xs text-ivory-400">
             {store.tagline}
           </span>
         ) : (
-          <span className="block text-xs text-stone-400 tabular-nums">
+          <span className="block text-xs text-ivory-400 tabular-nums">
             {store.productCount} products
           </span>
         )}
@@ -436,12 +515,12 @@ function RailItem({
       aria-current={active ? "true" : undefined}
       className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
         active
-          ? "bg-white font-medium text-stone-900 shadow-sm"
-          : "text-stone-600 hover:bg-white/70 hover:text-stone-900"
+          ? "bg-noir-700 font-medium text-ivory-50 shadow-soft"
+          : "text-ivory-300 hover:bg-noir-700/60 hover:text-ivory-50"
       }`}
     >
       <span className="truncate">{label}</span>
-      <span className="ml-3 shrink-0 text-xs tabular-nums text-stone-400">
+      <span className="ml-3 shrink-0 text-xs tabular-nums text-ivory-400">
         {count}
       </span>
     </button>

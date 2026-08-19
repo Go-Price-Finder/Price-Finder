@@ -16,11 +16,13 @@ import { getAllRealProducts, getPartners, slugifyRealCategory } from "@/lib/cata
  * compliance materialisation applies unchanged (the catalog only ever
  * holds compliance-filtered rows).
  *
- * KNOWN, DELIBERATE LOSSES vs the previous Header, flagged to the
- * operator at integration (their component, their design): signed-in
- * affordances (wishlist bell, account menu, sign-out) and the theme
- * toggle are not part of the delivered design; Log in / Sign up render
- * for everyone.
+ * 2026-08-19 second pass (operator ruling — both integration flags were
+ * their errors): signed-in affordances restored (wishlist with live
+ * count, account state with sign-out, theme toggle, live-suggestion
+ * SearchBar, back button) and the palette rebuilt on the site tokens so
+ * the header responds to both themes like every other surface. The one
+ * old-header element deliberately NOT restored is the notifications
+ * bell: it was a handler-less button — a dead control (§24 family).
  */
 export default async function Header() {
   const [partners, products] = await Promise.all([

@@ -3265,3 +3265,50 @@ on dark pages; (2) the delivered design has static Log in / Sign up and
 no auth-state affordances — signed-in users lose the wishlist bell,
 account menu and sign-out that the previous header carried, and the
 theme toggle is gone. Both revert in one commit if ruled against.
+
+### §32. Header second pass: affordances restored, palette rebuilt on tokens (2026-08-19, operator ruling — both §31 flags were the operator's errors, their words)
+
+**The full "what did the replaced component do that the new one doesn't"
+inventory, asked for in full rather than one item at a time:**
+1. Wishlist link with LIVE COUNT badge (desktop + mobile) — restored.
+2. Account state: loading skeleton / signed-in avatar-initial pill +
+   sign-out (signOutLocally + signOutAction) / signed-out CTA — restored;
+   Log in / Sign up render ONLY signed-out, per the ruling.
+3. ThemeToggle — restored (desktop cluster + mobile drawer).
+4. **The live-suggestion SearchBar** — the delivered header was a plain
+   GET form; the old header's SearchBar carries the lazy-Fuse suggestion
+   dropdown. Restored (an unnamed loss the inventory caught).
+5. Back button on non-home pages (router.back) — restored.
+6. Direct "Categories" nav link — NOT restored as a nav item: the
+   category rail + footer link now cover it; noted as a deliberate call,
+   reversible.
+7. **The old header's notifications bell — NOT restored, deliberately:
+   it was a button with NO handler.** A dead control (§24's family) had
+   been sitting in the old header all along; the inventory question
+   found it. It returns when notifications exist.
+
+**Palette:** every colour in the delivered file replaced with the site's
+token classes (noir/gilt/ivory) — structure, mega-menu behaviour, rail,
+monogram tiles and accessibility kept exactly as designed. The operator's
+own indictment held: the site is token-themed with LIGHT as default
+(noir-900 renders cream in light), so a hardcoded stone/white palette was
+wrong in both themes. **Theme responsiveness proven in a live browser,
+not assumed:** header background and menu card measured under both
+themes via computed styles — light `oklab(~1.0)/rgb(247,247,247)`, dark
+`oklab(0)/rgb(37,37,37)` — flipping with the toggle like every other
+surface. The open menu also verified live: rail (All stores 7 / Arts &
+Crafts 488 / Apparel 297 — the 297 confirming the §26 delist end-to-end),
+7 store tiles, "See all stores" -> /stores with token CTA colours.
+
+### §33. A link is a claim (2026-08-19, operator finding, recorded as ordered)
+
+The delivered header asserted /stores on the operator's say-so; the
+route did not exist at any path, and the only reason the most prominent
+button in the menu is not a 404 today is that the route list was
+CHECKED against the filesystem instead of assumed. The same check
+caught /login, /signup and /categories/<slug> — three more asserted
+routes that did not exist (auth lives under /auth/*, category detail at
+/category/<slug>). The nav-link case of the standing rule: a link is a
+claim, and the §23 verification method applies to hrefs exactly as it
+applies to copy. Standing practice: every nav destination is verified
+against the BUILT output before a header ships.

@@ -681,6 +681,9 @@ export type Database = {
           deep_link: string;
           variant_label: string | null;
           sort_order: number;
+          // Hand-edited for migration 0018 (gtin: nullable, 8-14 digit
+          // CHECK, partial non-unique index; behaviour-verified §14b).
+          gtin: string | null;
           search_vector: unknown;
           created_at: string;
           updated_at: string;
@@ -703,6 +706,7 @@ export type Database = {
           deep_link: string;
           variant_label?: string | null;
           sort_order: number;
+          gtin?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -724,6 +728,7 @@ export type Database = {
           deep_link?: string;
           variant_label?: string | null;
           sort_order?: number;
+          gtin?: string | null;
           created_at?: string;
           updated_at?: string;
         };

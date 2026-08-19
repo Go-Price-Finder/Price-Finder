@@ -99,7 +99,26 @@ type PartnerAwinMapping = {
    * mismatch against this file's own header comment / PARTNER_AWIN_NAMES
    * documentation for that same partner. */
   skipReason?: string;
+  /** Match keys to try, in order. Default ["id", "name"] — today's
+   * behaviour, unchanged for every partner that doesn't opt in.
+   *
+   * "gtin" is opt-in per partner because it is only as good as the
+   * partner's feed: aaawave's deep links carry `ued=` rather than `p=`,
+   * so extractAwinProductId returns null on BOTH sides and every row
+   * falls to name matching — which works today only because catalog and
+   * feed were imported one day apart and the titles are identical by
+   * construction. That equality decays the moment the merchant edits a
+   * title. GTIN is the durable key (migration 0018), and all 500 aaawave
+   * products carry one.
+   *
+   * Ordering matters and "gtin" is FIRST-CHOICE, not sole-primary: name
+   * stays armed behind it (operator ruling 2026-08-19) until the 08-25
+   * feed diff measures GTIN churn across imports. Only then is demoting
+   * or dropping name a decision with evidence behind it. */
+  matchStrategy?: ("gtin" | "id" | "name")[];
 };
+
+const DEFAULT_MATCH_STRATEGY: ("gtin" | "id" | "name")[] = ["id", "name"];
 
 const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
   // Confirmed via scripts/awin-status-report.ts's FEED_AUDIT_TARGETS.
@@ -112,7 +131,16 @@ const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
   // to this account as a joined member. Ships in the same change as the
   // tranche-1 catalog import per the sequencing rule: refresh config never
   // lands ahead of the catalog it refreshes.
-  { partnerId: "aaawave", advertiserName: "aaawave", verified: true },
+  {
+    partnerId: "aaawave",
+    advertiserName: "aaawave",
+    verified: true,
+    // GTIN first, name armed behind it (findings §19c/§20). This partner's
+    // deep links carry no `p=` id, so "id" would be a guaranteed miss —
+    // listed anyway so the strategy reads as the full preference order
+    // rather than implying ids don't exist for this feed shape.
+    matchStrategy: ["gtin", "id", "name"],
+  },
   // Name confirmed live 2026-08-03 (scripts/awin-status-report.ts JOINED
   // PROGRAMMES). Membership is Active and AWIN has no datafeed for this
   // advertiser at all today (0 of 21 active feeds in the DATAFEED LIST
@@ -190,6 +218,24 @@ function normalizeName(name: string): string {
  * type (e.g. `cread.php`, seen in scripts/import-partner.mjs's own
  * wrapping logic for partners whose source CSV gave a bare merchant URL)
  * degrades gracefully instead of every product silently going unmatched. */
+/** Feed columns that may carry a manufacturer identifier, in preference
+ * order — same candidate list and same 8-14 digit validation as
+ * scripts/import-partner.mjs, so the key on the feed side is the key that
+ * was captured on the catalog side. */
+const GTIN_COLUMNS = ["gtin", "ean", "upc", "barcode", "product_gtin"];
+
+/** A GTIN is usable as a match key only if it is 8-14 digits. Shape only,
+ * deliberately NOT a check-digit test: findings §19c measured a
+ * check-digit-VALID gtin sitting on the wrong product, so check-digit
+ * validation would have passed the exact row that most needed suspicion
+ * while lending it false authority. Shape rejects junk; the collision
+ * guard below is what prevents a false comparison pair. */
+function normalizeGtin(raw: string | undefined): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  return /^[0-9]{8,14}$/.test(trimmed) ? trimmed : null;
+}
+
 function extractAwinProductId(deepLink: string): string | null {
   const match = deepLink.match(/[?&]p=(\d+)/);
   return match ? match[1] : null;
@@ -272,6 +318,22 @@ export type PartnerRefreshResult = {
    * suggests. */
   matchedById: number;
   matchedByName: number;
+  /** Matched via the manufacturer GTIN — the durable cross-import key
+   * (migration 0018). Only ever non-zero for partners whose
+   * matchStrategy includes "gtin". */
+  matchedByGtin: number;
+  /** Gtins BANNED as match keys this run because they were ambiguous:
+   * two catalog products shared one gtin (…InCatalog), or the gtin
+   * appeared on more than one feed row (…InFeed). These are not errors
+   * and not failures — they are the guard working. Their rows fall
+   * through to the next strategy. A number climbing over time means the
+   * feed's identifier quality is degrading and deserves a look. */
+  gtinCollisionsInCatalog: number;
+  gtinCollisionsInFeed: number;
+  /** Gtins that survived the guard and were usable as keys — the honest
+   * denominator for "how much of this partner is joinable by identity".
+   * 0 when the strategy doesn't include gtin (not "no gtins exist"). */
+  gtinKeysUsable: number;
   /** Count of feed rows that matched a key (id or name) already claimed by
    * an earlier row in this same run. With id-based matching this should
    * normally be 0 — every SKU has a distinct id. A nonzero count here
@@ -332,6 +394,10 @@ function emptyPartnerResult(partnerId: string, feedId?: string): PartnerRefreshR
     upserted: 0,
     matchedById: 0,
     matchedByName: 0,
+    matchedByGtin: 0,
+    gtinCollisionsInCatalog: 0,
+    gtinCollisionsInFeed: 0,
+    gtinKeysUsable: 0,
     duplicateKeyCollisions: 0,
     errors: [],
     nameFallbackDiagnostics: [],
@@ -477,6 +543,55 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
     // (matchedByName) rather than silently mixed in with id matches.
     const byName = new Map(partnerProducts.map((p) => [normalizeName(p.name), p]));
 
+    // GTIN match key + COLLISION GUARD (the centrepiece — findings §19c).
+    //
+    // A GTIN identifies a PRODUCT, not an OFFER, and feeds carry genuine
+    // errors. Measured in F2639 on 2026-08-19: 15 gtins appear on more
+    // than one feed row, and one of them puts our $395.99 "AMD Ryzen 7
+    // 7800X3D + Cooler Master" bundle and a $24.99 "Pimoroni ToF Sensor"
+    // under the SAME identifier — which is check-digit VALID. A naive
+    // Map.set join has a coin-flip chance of pricing the bundle at
+    // $24.99. That is the "lie on the page" migration 0018's header names.
+    //
+    // So a gtin is only a usable key when it is unambiguous on BOTH
+    // sides: exactly one catalog product AND exactly one feed row. Any
+    // gtin failing either test is BANNED for this run and its rows fall
+    // through to the next strategy (name), or go unmatched. Banning is
+    // deliberately not "pick the first" or "pick the closest price" —
+    // both invent a decision the data doesn't support.
+    const gtinStrategyEnabled = (mapping.matchStrategy ?? DEFAULT_MATCH_STRATEGY).includes("gtin");
+    const byGtin = new Map<string, (typeof partnerProducts)[number]>();
+    const bannedGtins = new Set<string>();
+    if (gtinStrategyEnabled) {
+      for (const p of partnerProducts) {
+        const g = normalizeGtin(p.gtin);
+        if (!g) continue;
+        if (byGtin.has(g)) {
+          // Two catalog products under one gtin — ambiguous on our side.
+          bannedGtins.add(g);
+          result.gtinCollisionsInCatalog++;
+          continue;
+        }
+        byGtin.set(g, p);
+      }
+      // Ambiguous on the FEED side: count occurrences across the whole
+      // feed, not just rows we would have matched — a duplicate row we
+      // don't carry is exactly the one that would overwrite us.
+      const feedGtinCounts = new Map<string, number>();
+      for (const row of rows) {
+        const g = normalizeGtin(firstNonEmpty(row, GTIN_COLUMNS));
+        if (g) feedGtinCounts.set(g, (feedGtinCounts.get(g) ?? 0) + 1);
+      }
+      for (const [g, n] of feedGtinCounts) {
+        if (n > 1 && byGtin.has(g)) {
+          bannedGtins.add(g);
+          result.gtinCollisionsInFeed++;
+        }
+      }
+      for (const g of bannedGtins) byGtin.delete(g);
+      result.gtinKeysUsable = byGtin.size;
+    }
+
     const upsertByProductId = new Map<
       string,
       {
@@ -574,8 +689,61 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         }
       }
 
-      let staticProduct = feedProductId ? byId.get(feedProductId) : undefined;
-      let matchedVia: "id" | "name" | null = staticProduct ? "id" : null;
+      // Strategy-ordered matching. Default ["id","name"] reproduces the
+      // pre-2026-08-19 behaviour exactly for every partner that hasn't
+      // opted in, so this change is a no-op for canvas-vows, king-koil
+      // and tsar-bomba.
+      //
+      // The "id was extracted but isn't ours" rule below is preserved and
+      // deliberately NOT extended to gtin: an id that isn't ours means a
+      // SKU we don't carry, so guessing by name would be wrong. A gtin
+      // that isn't ours means the same, BUT a gtin that was BANNED means
+      // "this key is untrustworthy here" — a different statement — and
+      // those rows are allowed to continue to the next strategy.
+      const strategy = mapping.matchStrategy ?? DEFAULT_MATCH_STRATEGY;
+      const feedGtinRaw = normalizeGtin(firstNonEmpty(row, GTIN_COLUMNS));
+      const feedGtin = feedGtinRaw && !bannedGtins.has(feedGtinRaw) ? feedGtinRaw : null;
+
+      let staticProduct: (typeof partnerProducts)[number] | undefined;
+      let matchedVia: "gtin" | "id" | "name" | null = null;
+      for (const key of strategy) {
+        if (staticProduct) break;
+        if (key === "gtin") {
+          if (!feedGtin) continue;
+          const hit = byGtin.get(feedGtin);
+          if (hit) {
+            staticProduct = hit;
+            matchedVia = "gtin";
+          }
+          // No hit: this gtin isn't in our catalog. Fall through to the
+          // next strategy rather than stopping — unlike the id rule, a
+          // gtin miss doesn't imply "a SKU we don't carry", because only
+          // post-2026-08-19 imports carry gtins at all, so our side is
+          // sparse by construction rather than authoritative.
+          continue;
+        }
+        if (key === "id") {
+          if (feedProductId === null) continue;
+          const hit = byId.get(feedProductId);
+          if (hit) {
+            staticProduct = hit;
+            matchedVia = "id";
+          }
+          // An id WAS extracted but isn't ours -> stop. See the rule
+          // immediately below; this is the king-koil lesson.
+          break;
+        }
+        if (key === "name") {
+          // Preserved precondition: name is only consulted when the feed
+          // row carried no usable id at all.
+          if (feedProductId !== null) continue;
+          const hit = byName.get(normalizeName(feedName));
+          if (hit) {
+            staticProduct = hit;
+            matchedVia = "name";
+          }
+        }
+      }
 
       // IMPORTANT: only fall back to name-matching when the feed row itself
       // carried no usable id at all (feedProductId === null — a genuine
@@ -591,10 +759,6 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       // a perfectly valid, successfully-extracted aw_deep_link id that
       // simply wasn't present in the catalog snapshot. Those rows are
       // correctly left unmatched below, not guessed at.
-      if (!staticProduct && feedProductId === null) {
-        staticProduct = byName.get(normalizeName(feedName));
-        if (staticProduct) matchedVia = "name";
-      }
 
       if (feedProductId === null && result.nameFallbackDiagnostics.length < 3) {
         const columnsPresent: Record<string, string> = {};
@@ -620,6 +784,7 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       }
       result.matched++;
       if (matchedVia === "id") result.matchedById++;
+      else if (matchedVia === "gtin") result.matchedByGtin++;
       else result.matchedByName++;
 
       const price = parseFeedPrice(firstNonEmpty(row, PRICE_COLUMNS));

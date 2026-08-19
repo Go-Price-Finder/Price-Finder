@@ -89,6 +89,13 @@ type RawPartnerProduct = {
   image: string;
   images: string[];
   category: string;
+  /** Manufacturer GTIN/EAN/UPC when the source feed carried one, captured
+   * by scripts/import-partner.mjs (8-14 digits, validated at import). Only
+   * the partners imported after 2026-08-19 carry it; absent means "the feed
+   * had none", never "not applicable". Threaded through normalizeProduct so
+   * the refresh pipeline can use it as a match key without needing a second
+   * source of truth (findings 19c/20). */
+  gtin?: string;
   badge?: string;
   rating?: { stars: number; count: number };
   /** A real feed detail (e.g. color) that distinguishes this SKU from
@@ -134,6 +141,7 @@ function normalizeProduct(
     description: product.description,
     price: product.price,
     originalPrice: product.originalPrice,
+    gtin: product.gtin,
     image: imagesAllowed ? product.image : IMAGE_PENDING_PLACEHOLDER,
     images: imagesAllowed
       ? product.images

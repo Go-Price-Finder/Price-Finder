@@ -213,29 +213,56 @@ if (mode === "static") {
       ? "\nWatches (SELFTEST: thresholds forced to -1, every row-bearing table MUST fail):"
       : "\nWatches (live count vs threshold; cap is 1,000):"
   );
-  const rows = [["label", "table", "count", "maxRows", "status"]];
+  // A threshold may be fixed (maxRows) or DERIVED from another table's live
+  // count (maxRowsFrom: {table, multiplier}). Derived thresholds exist so a
+  // watch can encode a relational invariant — "current_prices holds at most
+  // one row per catalog product" — instead of a fixed number that silently
+  // stops meaning anything as the catalog grows.
+  const countOf = async (table) => {
+    let res = await supabase.from(table).select("*", { count: "exact", head: true });
+    if (res.error) {
+      await new Promise((r) => setTimeout(r, 1500));
+      res = await supabase.from(table).select("*", { count: "exact", head: true });
+    }
+    return res;
+  };
+  const rows = [["label", "table", "count", "maxRows", "basis", "status"]];
   for (const [label, w] of Object.entries(registry.watch)) {
-    const maxRows = selftest ? -1 : w.maxRows;
+    let maxRows = w.maxRows ?? null;
+    let basis = "fixed";
+    if (w.maxRowsFrom) {
+      const src = await countOf(w.maxRowsFrom.table);
+      if (src.error || src.count === null) {
+        failures.push(
+          `WATCH "${label}": derived threshold unavailable — count of ${w.maxRowsFrom.table} failed twice: ${src.error?.message ?? "null count"} (unknown is not zero)`
+        );
+        rows.push([label, w.table, "-", "ERR", `${w.maxRowsFrom.table}x${w.maxRowsFrom.multiplier}`, "FAIL"]);
+        continue;
+      }
+      maxRows = Math.ceil(src.count * w.maxRowsFrom.multiplier);
+      basis = `${w.maxRowsFrom.table}(${src.count})x${w.maxRowsFrom.multiplier}`;
+    }
+    if (maxRows === null) {
+      failures.push(`WATCH "${label}": no maxRows and no maxRowsFrom — the threshold means nothing.`);
+      rows.push([label, w.table, "-", "NONE", basis, "FAIL"]);
+      continue;
+    }
+    if (selftest) maxRows = -1;
     // One retry on transient failures — this runs inside the build gate,
     // and a single blip should not block a deploy; a persistent failure
     // should (unknown is not zero).
-    let res = await supabase.from(w.table).select("*", { count: "exact", head: true });
-    if (res.error) {
-      await new Promise((r) => setTimeout(r, 1500));
-      res = await supabase.from(w.table).select("*", { count: "exact", head: true });
-    }
-    const { count, error } = res;
+    const { count, error } = await countOf(w.table);
     if (error || count === null) {
       failures.push(`WATCH "${label}": count failed twice — ${error?.message ?? "null count"} (unknown is not zero)`);
-      rows.push([label, w.table, "ERR", String(maxRows), "FAIL"]);
+      rows.push([label, w.table, "ERR", String(maxRows), basis, "FAIL"]);
       continue;
     }
     const over = count > maxRows;
     if (over)
       failures.push(
-        `WATCH "${label}": ${w.table} has ${count} rows, threshold ${maxRows}. ${w.onCross}`
+        `WATCH "${label}": ${w.table} has ${count} rows, threshold ${maxRows} (${basis}). ${w.onCross}`
       );
-    rows.push([label, w.table, String(count), String(maxRows), over ? "FAIL" : "ok"]);
+    rows.push([label, w.table, String(count), String(maxRows), basis, over ? "FAIL" : "ok"]);
   }
   const widths = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
   for (const r of rows) console.log("  " + r.map((c, i) => c.padEnd(widths[i])).join("  "));

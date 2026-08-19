@@ -40,8 +40,11 @@
     },
     "current_prices-total": {
       "table": "current_prices",
-      "maxRows": 800,
-      "onCross": "No unpaged reader remains (all paged/count-based since §17 fixes), but crossing 800 means the override layer outgrew the audit's assumptions — re-run the §17 classification."
+      "maxRowsFrom": { "table": "catalog_products", "multiplier": 1.1 },
+      "_whyNotEightHundred": "The 800 truncation-guard was VOID as written and would have blocked every deploy after the 2026-08-19 11:00Z refresh, including the deploy that fixed it. All five current_prices sites are paged, .maybeSingle-bounded, or head:true counts (getEffectivePrice.ts:70 paged, :126 maybeSingle, refreshPrices.ts:682 paged, :707 upsert, refresh-prices/route.ts:103+115 counts) — no unpaged reader survives §18, so no read can truncate at 1,000 and 800 guarded nothing. Raising it to a bigger fixed number would only move the meaningless number, so the threshold now encodes a real invariant instead.",
+      "_whatItGuardsNow": "The orphan-override invariant. current_prices is keyed (product_id, retailer) and for real partners retailer IS the product_id's own partner prefix, so the table holds AT MOST one row per catalog product. A count materially above catalog_products therefore means override rows for products that no longer exist — the zombie class of findings §9x (38 such rows deleted 2026-08-18, invisible to MAX-based freshness). The 1.1 multiplier is headroom for the transient window between a product leaving the catalog and its override being cleaned.",
+      "_measuredPrediction": "Predicted 1,152 rows after the 2026-08-19 11:00Z refresh, measured in advance by replicating the matcher offline against live feed F2639 (scratch/predict-aaawave-match.ts): aaawave deep links carry ued=, not p=, so extractAwinProductId returns null on both sides and all 500 match by name; 500 matched, 500 priced. 652 + 500 = 1,152, against a derived threshold of ceil(1454 x 1.1) = 1,600.",
+      "onCross": "current_prices holds more rows than the catalog it overrides — orphan/zombie override rows (findings §9x). Identify override rows whose product_id is absent from catalog_products and decide deliberately whether to delete them; do NOT raise this multiplier to clear the light."
     },
     "catalog_products-total": {
       "table": "catalog_products",

@@ -66,6 +66,7 @@ import {
 import { CANVAS_VOWS_PRODUCTS, type CanvasVowsProduct } from "./canvas-vows-data";
 import { KING_KOIL_PRODUCTS, type KingKoilProduct } from "./king-koil-data";
 import { TSAR_BOMBA_PRODUCTS, type TsarBombaProduct } from "./tsar-bomba-data";
+import { AAAWAVE_PRODUCTS, type AaawaveProduct } from "./aaawave-data";
 // PARTNER_IMPORTS_MARKER — scripts/import-partner.mjs inserts new
 // `import { X_PRODUCTS, type XProduct } from "./x-data";` lines directly
 // above this comment. Don't remove the comment itself.
@@ -183,6 +184,10 @@ const TSAR_BOMBA_REAL_PRODUCTS = TSAR_BOMBA_PRODUCTS.map((p: TsarBombaProduct) =
   normalizeProduct(p, "tsar-bomba", "Tsar Bomba")
 );
 
+const AAAWAVE_REAL_PRODUCTS = AAAWAVE_PRODUCTS.map((p: AaawaveProduct) =>
+  normalizeProduct(p, "aaawave", "AAAwave")
+);
+
 const ALL_WIRED_PARTNERS: Partner[] = [
   {
     id: "brooklyn-delhi",
@@ -225,6 +230,15 @@ const ALL_WIRED_PARTNERS: Partner[] = [
     tagline: "Bold statement watches for men and women",
     href: "/tsar-bomba",
     products: TSAR_BOMBA_REAL_PRODUCTS,
+  },
+  {
+    id: "aaawave",
+    name: "AAAwave",
+    // Matches the partners DB row (migration 0020): condensed from the
+    // merchant's own AWIN programme description, not embellished.
+    tagline: "Computer components, storage, mini PCs and networking gear",
+    href: "/aaawave",
+    products: AAAWAVE_REAL_PRODUCTS,
   },
   // PARTNER_REGISTRY_MARKER — scripts/import-partner.mjs inserts new
   // `{ id, name, tagline, href, products }` entries directly above this

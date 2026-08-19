@@ -1,16 +1,18 @@
 export type RetailerId = "amazon" | "walmart" | "etsy" | "target" | "ebay";
 
-/** The 6 real AWIN partner ids (lib/partners.ts) — wishlists can reference
+/** The 7 real AWIN partner ids (lib/partners.ts) — wishlists can reference
  * either a legacy mock RetailerId or a real partner id, matching the
  * broadened `retailer` Postgres enum (see
- * supabase/migrations/0004_add_real_partner_retailers.sql). */
+ * supabase/migrations/0004_add_real_partner_retailers.sql; "aaawave"
+ * added by 0019). */
 export type RealPartnerRetailerId =
   | "brooklyn-delhi"
   | "evdance"
   | "golden-maple"
   | "canvas-vows"
   | "king-koil"
-  | "tsar-bomba";
+  | "tsar-bomba"
+  | "aaawave";
 
 export type WishlistRetailerId = RetailerId | RealPartnerRetailerId;
 

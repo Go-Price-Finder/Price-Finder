@@ -105,6 +105,13 @@ const PARTNER_AWIN_NAMES: PartnerAwinMapping[] = [
   { partnerId: "canvas-vows", advertiserName: "Canvas Vows", verified: true },
   { partnerId: "king-koil", advertiserName: "King Koil", verified: true },
   { partnerId: "tsar-bomba", advertiserName: "Tsarbomba", verified: true },
+  // AWIN advertiser directory programmeName is lowercase "aaawave"
+  // (advertiserId 43143; the merchant's own site styles it "AAAwave").
+  // Name confirmed live 2026-08-19 via the same API that served feed F2639
+  // to this account as a joined member. Ships in the same change as the
+  // tranche-1 catalog import per the sequencing rule: refresh config never
+  // lands ahead of the catalog it refreshes.
+  { partnerId: "aaawave", advertiserName: "aaawave", verified: true },
   // Name confirmed live 2026-08-03 (scripts/awin-status-report.ts JOINED
   // PROGRAMMES). Membership is Active and AWIN has no datafeed for this
   // advertiser at all today (0 of 21 active feeds in the DATAFEED LIST

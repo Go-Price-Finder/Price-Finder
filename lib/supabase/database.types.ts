@@ -23,7 +23,8 @@ export type Retailer =
   | "golden-maple"
   | "canvas-vows"
   | "king-koil"
-  | "tsar-bomba";
+  | "tsar-bomba"
+  | "aaawave";
 
 // No longer dormant as of 2026-08-15 — lib/cashback/syncAwinTransactions.ts
 // (the sync-cashback cron) now reads AWIN's Transactions API and writes both

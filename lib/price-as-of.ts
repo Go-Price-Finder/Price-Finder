@@ -62,6 +62,9 @@ const FEED_VINTAGE: Record<string, string> = {
   "awin:101819": "2026-08-02",
   "awin:F1320": "2026-07-25",
   "awin:F2615": "2026-07-25",
+  // Feed-list "Last Imported" 2026-08-18 22:52:56, read at tranche-1 import
+  // time (2026-08-19) — the feed's own vintage, not the import date.
+  "awin:F2639": "2026-08-18",
   "csv:brooklyn-delhi": "2026-07-25",
 };
 
@@ -73,6 +76,7 @@ const PARTNER_DEFAULT_FEED: Record<string, string> = {
   "golden-maple": "awin:F2615",
   "king-koil": "awin:101819",
   "tsar-bomba": "awin:113495",
+  aaawave: "awin:F2639",
 };
 
 /**

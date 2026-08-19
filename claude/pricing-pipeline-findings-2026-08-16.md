@@ -2199,6 +2199,98 @@ omission is a choice, not an accident.
 Apply order 0019 → confirm → 0020, as specified. The sequencing rule
 stands: session code entries land WITH the import, never before.
 
+### §15. Gate 0: the 0020 row exposed an unconditional homepage render — found empirically, fixed centrally (2026-08-19)
+
+The operator predicted the defect before authorizing the import: a
+partners DB row landing AHEAD of its catalog (0020 applied, zero
+products imported yet) might render on the homepage as a card linking
+to a route that doesn't exist. The four gate-0 answers, re-measured
+from the repo and live schema, confirmed it:
+
+1. **Which surfaces read `partners`:** three — the homepage OurPartners
+   grid, the homepage hero partner count, and the sitemap partner
+   entries. All flow through `getPartners()` in lib/catalog.ts.
+2. **Filter or unconditional:** UNCONDITIONAL. `getPartners()` returned
+   every row; nothing checked products or feed_status.
+3. **What /aaawave rendered:** Next's 404 — no route existed.
+4. **Revalidation window:** `revalidate: false` on the unstable_cache
+   wrapper — production only changes at deploy. BUT: warm builds reuse
+   .next/cache across builds, so a pre-0020 snapshot masked the defect
+   on the first test build (zero aaawave mentions — a vacuous zero).
+   Only a cold build (`rm -rf .next`) rendered the AAAwave card
+   pointing at the 404. **Exposure was nondeterministic per deploy**:
+   whichever catalog snapshot the build happened to reuse decided
+   whether the broken card shipped.
+
+**Fix (commit 442d662):** `getPartners()` now ends with
+`.filter((partner) => partner.products.length > 0)`. Chosen over a
+feed_status check because display should track browsable content, not
+pipeline metadata — a partner with products but a mis-set flag should
+still render, and vice versa. `getPartner(id)` stays deliberately
+unfiltered (a direct route with zero products is that route's own
+concern, and filtering there would have masked THIS import's staging).
+Verified: post-fix cold build = zero aaawave mentions with the 0020
+row present; equivalence suite passed.
+
+**New standing findings out of the same session:**
+- *A header is not data* (import-partner.mjs `resolveColumn`): the AWIN
+  Google-template feed carries a `sale_price` column that exists but is
+  empty in every row, and `sale_price` outranks `price` in the
+  candidate list. Header-presence matching mapped price→sale_price and
+  silently skipped ALL 500 tranche rows as "missing price" — the same
+  class as §9's sale_price finding, now on the import side. Fixed:
+  resolveColumn only accepts a candidate column with ≥1 non-empty
+  value.
+- *The compliance gate composes correctly with honest metadata*:
+  aaawave flipped to `status: "active"` (factually correct — joined
+  programme 43143, feed F2639 served to this account as a member) with
+  `imageUsagePermission: "pending"` because the AWIN dashboard terms
+  page (ui.awin.com/merchant-profile-terms/43143) is operator-side and
+  unchecked. The importer proceeded but downloaded NO images;
+  normalizeProduct's per-partner gate renders IMAGE_PENDING_PLACEHOLDER
+  for all 500, so the product-specific image paths emitted in
+  lib/aaawave-data.ts are unreachable until the operator confirms terms
+  and flips to "confirmed" (then images need a re-download pass).
+
+### §16. Crossing 1,000 catalog rows silently deleted 454 pages from the build — PostgREST max-rows (2026-08-19)
+
+The tranche took catalog_products from 954 to 1,454 rows.
+fetchCatalogRaw's unpaged select was capped at PostgREST's max-rows
+(1,000 on this project) — no error, no warning, 1,000 rows returned of
+1,454. The build generated EXACTLY 1,000 product pages: tsar-bomba 0
+(was 272), king-koil 0 (was 29), golden-maple 195 (was 348), and
+alphabetical partner_id order decided who survived (aaawave, first
+alphabetically, kept all 500 — the import looked perfect while it
+silently evicted older partners' pages).
+
+**Instruments that caught it vs. instruments that didn't:**
+- check-build-queries PASSED (13 collect / 0 render) — it counts
+  round trips, not rows. A correct instrument answering a different
+  question.
+- The equivalence suite (verify-catalog-migration.ts) CAUGHT it:
+  static=lib/partners.ts vs catalog=DB diverged, and the diffs summed
+  EXACTLY to the truncation: Apparel −272 (all of tsar-bomba) +
+  Arts & Crafts −153 + Home −29 = 454 = 1,454 − 1,000. The arithmetic
+  identified the mechanism before any code was read.
+- Per-partner built-page counts confirmed empirically: 0 tsar-bomba
+  HTML files in .next/server/app.
+
+**Fix:** fetchCatalogRaw now pages with .range() in PAGE_SIZE=1000
+chunks until a short page. The (partner_id, sort_order) ordering that
+already existed for display-order reasons is also what makes paging
+coherent (unique per row, so consecutive ranges never skip or
+duplicate). Residual window: pages are separate requests, so a cron
+write between two page reads can mix vintages within one build's fetch
+— far smaller than the per-page refetch the cache wrapper prevents,
+noted in the code.
+
+**Standing lesson:** this is the third silent-cap failure in two days
+(2MB cache item cap, header-not-data column mapping, now max-rows).
+None of them error; all of them degrade. Every external boundary with
+a default cap needs either a paging loop or a loud tripwire BEFORE the
+catalog grows again — the full aaawave feed (2,637 rows) and any Vevor
+import would each have crossed additional caps unannounced.
+
 ## Current state summary (all verified at `eac1881`, 2026-08-16)
 
 - refresh-prices cron: running daily, 200s, output unread — health unknown

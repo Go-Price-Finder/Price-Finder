@@ -10,13 +10,10 @@
  * fields showed an actual markdown — never fabricated), and one real
  * outbound affiliate/purchase link per product.
  *
- * Images: NOT downloaded — imageUsagePermission is "pending" in
- * lib/partner-compliance.json, so the import script skipped all image
- * downloads and normalizeProduct renders IMAGE_PENDING_PLACEHOLDER for
- * every product. The /images/aaawave/*.webp paths below are therefore
- * unreachable today; they become real only after the operator confirms
- * image terms (ui.awin.com/merchant-profile-terms/43143), flips the
- * status to "confirmed", and a re-download pass runs.
+ * Images: downloaded 2026-08-19 after imageUsagePermission was confirmed
+ * from the programme terms (findings §19) - resized to fit within
+ * 1600x1600 and converted to WebP by scripts/download-aaawave-images.ts,
+ * saved to public/images/aaawave/. 500 of 500 succeeded, 0 failures.
  */
 
 export type AaawaveProductCategory =

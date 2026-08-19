@@ -2572,3 +2572,72 @@ loop, registered as KEPT deliberately (it carries the 57014
 transient-retry the helper lacks, and its loop is proven by 1,454
 built pages from a 1,454-row table). Failure mode proven with a
 planted single-shot .range(0, 999): exit 1 naming file:line.
+
+### §19. A positive control only licenses an absence claim if it is drawn from the same population as the claim (2026-08-19)
+
+**The instance.** Asked to verify aaawave's image terms, I hand-rolled a
+PDF text extractor, searched it, and reported that "exclusive assets
+(banners, data feeds, links)" and thirteen related terms occur ZERO
+times in the programme terms. I ran what looks like the correct
+discipline: an earlier extraction pass had returned zero for
+*everything*, I noticed, rejected it as broken, rebuilt the extractor,
+and re-ran WITH positive controls (Commission 13, Prohibited 1,
+Comparison 4, "Authorized dealer" 1) before accepting any zero. The
+controls passed. The zeros were still false. The phrase is in the
+document, four lines below "Authorized dealer" in the same block.
+
+**Why the ritual did not save me.** The document embeds multiple subset
+fonts with per-glyph CMaps. My parser assumed ONE uniform glyph→char
+shift for the whole file, which happened to fit one subset. Confirmed
+empirically after the fact: **"Exclusive" is not present in the raw
+content streams at ANY single global offset** (searched -0x40..+0x40),
+and the file declares no plain /BaseFont or /ToUnicode entries — they
+are inside compressed object streams. Text set in the other subset
+decoded to nothing recoverable. Every control I chose — all four — sat
+in the subset my shift fitted. The lines that failed are exactly the
+ones carrying ligatures (ﬀ ﬁ ﬂ ﬃ) and a curly apostrophe, because
+those glyphs are what forced the other font in the first place.
+
+So the controls certified the extraction of a population that
+*excluded the failure mode by construction*. They could not have
+failed. A control that cannot fail is not a control — it is decoration
+that produces false confidence, which is worse than no control at all,
+because it converts "I didn't check" into "I checked and it's clean."
+
+**THE RULE (adopted, operator ruling — this is the durable half):**
+*A positive control only licenses an absence claim if it is drawn from
+the same population as the claim.* For extracted text specifically:
+any absence claim requires at least one control that exercises the
+suspect class — a ligature, a smart quote, a non-ASCII glyph, a line
+from a different visual style/font — not merely a term you know is in
+the document. Generalised: before accepting a zero, ask which
+population the control samples and whether the failure being ruled out
+could even appear in it. This is a level deeper than §16/§17's
+vacuous-zero rule: those say *verify keys are populated on both sides
+and run a positive control*; §19 says *the control must be capable of
+detecting the specific failure*, and picking probes that avoid it is
+the easy, invisible mistake.
+
+**Second, smaller lesson: use the real tool.** `pdftotext` was
+installed on this machine the whole time. I never checked — an earlier
+unrelated error ("pdftoppm is not installed") led me to assume the
+whole poppler suite was absent, and I wrote a parser instead of running
+`command -v pdftotext`. The operator's independent `pdftotext` output
+settled the question in one command. Standing consequence: the
+hand-rolled extractor is NOT to be trusted for any other document, and
+scratch/pdfextract*.py should not be reused — extract with pdftotext.
+
+**Verification of the correction (with the trustworthy tool):** file
+sha256 8e9a864b…2f55 confirmed identical to the operator's copy;
+`pdftotext -enc UTF-8` finds `Exclusive assets (banners, data feeds,
+links) available through Awin's dashboard.` Six terms I called absent
+are present (Exclusive, asset, banner, data feed, feed, dashboard);
+the remaining nine are genuinely zero and match the operator's own
+extraction exactly (image, photo, creative, logo, copyright, licen,
+intellectual property, permission, reproduce).
+
+**Consequence for the ruling:** the affirmative-grant leg holds, the
+image ruling is sound, imageUsagePermission flipped to "confirmed" and
+the 500-product image pass ran. Residual risk (authorized-dealer
+photography likely manufacturer-owned, no sublicensable rights
+established) recorded in the registry entry, reverts in one field edit.

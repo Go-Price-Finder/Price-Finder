@@ -96,7 +96,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/tomato-achaar.webp",
     images: ["/images/brooklyn-delhi/tomato-achaar.webp", "/images/brooklyn-delhi/tomato-achaar-2.webp", "/images/brooklyn-delhi/tomato-achaar-3.webp", "/images/brooklyn-delhi/tomato-achaar-4.webp"],
     category: "Food",
-    rating: { stars: 5, count: 40 },
   },
   {
     slug: "date-tamarind-chutney",
@@ -121,7 +120,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/mango-curry.webp",
     images: ["/images/brooklyn-delhi/mango-curry.webp", "/images/brooklyn-delhi/mango-curry-2.webp", "/images/brooklyn-delhi/mango-curry-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 4 },
   },
   {
     slug: "chickpea-tikka-masala",
@@ -134,7 +132,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/chickpea-tikka-masala.webp",
     images: ["/images/brooklyn-delhi/chickpea-tikka-masala.webp", "/images/brooklyn-delhi/chickpea-tikka-masala-2.webp", "/images/brooklyn-delhi/chickpea-tikka-masala-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 1 },
   },
   {
     slug: "sweet-potato-coconut-dal",
@@ -147,7 +144,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/sweet-potato-coconut-dal.webp",
     images: ["/images/brooklyn-delhi/sweet-potato-coconut-dal.webp", "/images/brooklyn-delhi/sweet-potato-coconut-dal-2.webp", "/images/brooklyn-delhi/sweet-potato-coconut-dal-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 2 },
   },
   {
     slug: "red-bean-rajma-masala",
@@ -160,7 +156,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/red-bean-rajma-masala.webp",
     images: ["/images/brooklyn-delhi/red-bean-rajma-masala.webp", "/images/brooklyn-delhi/red-bean-rajma-masala-2.webp"],
     category: "Food",
-    rating: { stars: 4.5, count: 3 },
   },
   {
     slug: "black-bean-butter-masala",
@@ -173,7 +168,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/black-bean-butter-masala.webp",
     images: ["/images/brooklyn-delhi/black-bean-butter-masala.webp", "/images/brooklyn-delhi/black-bean-butter-masala-2.webp", "/images/brooklyn-delhi/black-bean-butter-masala-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 1 },
   },
   {
     slug: "roasted-garlic-achaar",
@@ -186,7 +180,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/roasted-garlic-achaar.webp",
     images: ["/images/brooklyn-delhi/roasted-garlic-achaar.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-2.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-3.webp", "/images/brooklyn-delhi/roasted-garlic-achaar-4.webp"],
     category: "Food",
-    rating: { stars: 4.9, count: 31 },
   },
   {
     slug: "sweet-mango-chutney",
@@ -199,7 +192,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/sweet-mango-chutney.webp",
     images: ["/images/brooklyn-delhi/sweet-mango-chutney.webp", "/images/brooklyn-delhi/sweet-mango-chutney-2.webp", "/images/brooklyn-delhi/sweet-mango-chutney-3.webp", "/images/brooklyn-delhi/sweet-mango-chutney-4.jpg"],
     category: "Food",
-    rating: { stars: 5, count: 7 },
   },
   {
     slug: "spicy-mango-chutney",
@@ -212,7 +204,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/spicy-mango-chutney.webp",
     images: ["/images/brooklyn-delhi/spicy-mango-chutney.webp", "/images/brooklyn-delhi/spicy-mango-chutney-2.webp", "/images/brooklyn-delhi/spicy-mango-chutney-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 7 },
   },
   {
     slug: "tikka-masala",
@@ -225,7 +216,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/tikka-masala.webp",
     images: ["/images/brooklyn-delhi/tikka-masala.webp", "/images/brooklyn-delhi/tikka-masala-2.webp", "/images/brooklyn-delhi/tikka-masala-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 63 },
   },
   {
     slug: "cashew-butter-masala",
@@ -238,7 +228,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/cashew-butter-masala.webp",
     images: ["/images/brooklyn-delhi/cashew-butter-masala.webp", "/images/brooklyn-delhi/cashew-butter-masala-2.webp", "/images/brooklyn-delhi/cashew-butter-masala-3.webp"],
     category: "Food",
-    rating: { stars: 4.9, count: 13 },
   },
   {
     slug: "golden-coconut-curry",
@@ -251,7 +240,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/golden-coconut-curry.webp",
     images: ["/images/brooklyn-delhi/golden-coconut-curry.webp", "/images/brooklyn-delhi/golden-coconut-curry-2.webp", "/images/brooklyn-delhi/golden-coconut-curry-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 20 },
   },
   {
     slug: "coconut-cashew-korma",
@@ -264,7 +252,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/coconut-cashew-korma.webp",
     images: ["/images/brooklyn-delhi/coconut-cashew-korma.webp", "/images/brooklyn-delhi/coconut-cashew-korma-2.webp", "/images/brooklyn-delhi/coconut-cashew-korma-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 10 },
   },
   {
     slug: "chutney-trio-gift-set",
@@ -289,7 +276,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box.jpg",
     images: ["/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box.jpg", "/images/brooklyn-delhi/best-of-brooklyn-delhi-gift-box-2.webp"],
     category: "Food",
-    rating: { stars: 5, count: 3 },
   },
   {
     slug: "celebrations-gift-box",
@@ -303,7 +289,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/celebrations-gift-box.jpg",
     images: ["/images/brooklyn-delhi/celebrations-gift-box.jpg", "/images/brooklyn-delhi/celebrations-gift-box-2.jpg", "/images/brooklyn-delhi/celebrations-gift-box-3.webp", "/images/brooklyn-delhi/celebrations-gift-box-4.webp"],
     category: "Food",
-    rating: { stars: 5, count: 1 },
   },
   {
     slug: "cookbook-gift-set",
@@ -328,7 +313,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/spicy-sweet-trio-gift-set.webp",
     images: ["/images/brooklyn-delhi/spicy-sweet-trio-gift-set.webp", "/images/brooklyn-delhi/spicy-sweet-trio-gift-set-2.webp", "/images/brooklyn-delhi/spicy-sweet-trio-gift-set-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 3 },
   },
   {
     slug: "spicy-trio-gift-box",
@@ -341,7 +325,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/spicy-trio-gift-box.webp",
     images: ["/images/brooklyn-delhi/spicy-trio-gift-box.webp", "/images/brooklyn-delhi/spicy-trio-gift-box-2.webp", "/images/brooklyn-delhi/spicy-trio-gift-box-3.webp"],
     category: "Food",
-    rating: { stars: 5, count: 1 },
   },
   {
     slug: "vibrant-india-cookbook",
@@ -378,7 +361,6 @@ export const BROOKLYN_DELHI_PRODUCTS: BrooklynDelhiProduct[] = [
     image: "/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt.webp",
     images: ["/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt.webp", "/images/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt-2.webp"],
     category: "Clothing",
-    rating: { stars: 5, count: 1 },
   },
   {
     slug: "tomato-achaar-short-sleeve-unisex-t-shirt",

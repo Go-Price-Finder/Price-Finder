@@ -112,14 +112,44 @@ export function buildProductJsonLd(product: RealProduct) {
     },
     offers,
   };
-  if (product.rating) {
-    data.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: product.rating.stars,
-      reviewCount: product.rating.count,
-    };
-  }
+  // aggregateRating is DELIBERATELY NOT EMITTED (findings §29, operator
+  // ruling 2026-08-19). This site has no review system. The only rating
+  // data that ever existed was 18 hand-authored July values on one
+  // partner, and this block was asserting them to Google as
+  // AggregateRating ratingValue/reviewCount in Product structured data —
+  // a review-snippet manual-action category, not a taste question. The
+  // emission path is removed (not merely starved of data) so a future
+  // feed carrying a rating-shaped column cannot silently reintroduce the
+  // assertion. If a real review system ever exists, this is where its
+  // markup would go — with provenance, not before.
   return data;
+}
+
+
+/** Article structured data for editorial guides (route approved
+ * 2026-08-19). author/publisher are the ORGANIZATION, deliberately: no
+ * fabricated person-author, and no review/rating markup of any kind —
+ * the same rule that removed aggregateRating from products (§29).
+ * datePublished/dateModified come from the guide's own frontmatter
+ * (published/lastReviewed), which the operator maintains with the text. */
+export function buildArticleJsonLd(guide: {
+  slug: string;
+  title: string;
+  description: string;
+  published: string;
+  lastReviewed: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.title,
+    description: guide.description,
+    url: `${SITE_URL}/guides/${guide.slug}`,
+    datePublished: guide.published,
+    dateModified: guide.lastReviewed,
+    author: { "@type": "Organization", name: "Go Price Finder", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Go Price Finder", url: SITE_URL },
+  };
 }
 
 export type BreadcrumbItem = {

@@ -3312,3 +3312,79 @@ routes that did not exist (auth lives under /auth/*, category detail at
 claim, and the §23 verification method applies to hrefs exactly as it
 applies to copy. Standing practice: every nav destination is verified
 against the BUILT output before a header ships.
+
+### §26 ADDENDUM (2026-08-19, operator finding): TB8218's products row is LOAD-BEARING, and nobody had said so
+
+"Observations are records" was stated as the reason the 17
+price_history rows survive the delist. True but incomplete: the
+MECHANISM was never written down — price_history.product_id FKs the
+legacy public.products table, so **TB8218's products row (the 1,454th,
+against 1,453 mirrored) is what keeps those observations alive.** An
+outcome that is correct for an unstated reason is one orphan-cleanup
+pass away from being wrong. The direction is now encoded in the
+legacy-mirror tripwire itself (§34): a products row WITHOUT a catalog
+row is legitimate for delisted products with retained history and is
+reported as a note, never failed — whoever writes a cleanup script
+inherits that rule from the check's header, not from tribal memory.
+
+### §34. The FK nobody modelled: two product tables, one import wrote one of them (2026-08-19)
+
+**The failure (measured from refresh_runs, run of 11:00:08Z):** aaawave
+matched **500/1683** — with the collision-guard signature intact
+(matched_by_name=2) — and **upserted 0**: every price row rejected by
+`current_prices_product_id_fkey`, which references the LEGACY
+public.products table (migration 0006). The import synced
+catalog_products only; products still held the 954 pre-aaawave rows.
+The worst shape we have: the refresh reported matched=500 and looked
+healthy while writing nothing — the error WAS recorded loudly in
+refresh_runs.error_message and the run 500'd/withheld its healthcheck
+ping (the §9y contract worked), but nothing tied "unstorable" to
+"import incomplete."
+
+**The clearing (operator-authorized after independently measuring the
+population at exactly 500, aaawave only; every other partner fully
+mirrored):** scratch/sync-aaawave-products-table.ts upserted 500 rows —
+read-back 1,454 total / 500 aaawave — then a manual refresh invocation
+(the refreshPrices header's own post-change instruction): HTTP 200,
+ok:true, zero failures, **aaawave upserted=500, newRows=500**.
+current_prices 652 → **1,152, the registered prediction exactly**, one
+FK-fix later. The derived cap threshold proved itself in the same
+breath: 1152/1599 ok, where the void fixed-800 would now be blocking
+every deploy.
+
+**GTIN churn baseline, captured and persisted** (refresh_runs,
+21:39:16Z): matched_by_gtin **498**, matched_by_name **2**,
+gtin_collisions_in_feed **2**, gtin_collisions_in_catalog **0**,
+gtin_keys_usable **498**. Diff against this on 08-25. Run 1 (11:00Z)
+has the quartet NULL because the writer commit (c071627) landed at
+15:12Z — a deployment-timing fact, not a bug; the session's narrative
+clock had it hours earlier (handover §6 item 4: verify time from
+timestamps, never from the narrative).
+
+**The tripwire (in the blocking prebuild gate,
+check-compliance-materialization.ts):** any catalog_products row with
+no products row FAILS the build, naming the partner and count — the
+structural fact enforced is that every import must write BOTH tables or
+its prices are unstorable. Direction deliberately one-way: products
+orphans are notes, never failures (§26 addendum). Proven before
+trusted: selftest plants a missing id → FAIL naming it; clean run:
+catalog=1,453, products=1,454, missing=0, exactly one orphan (TB8218),
+PASS.
+
+**The real fix — recommendation (ruling requested, not implemented):**
+- **(a) importer writes both tables, tripwire guards — RECOMMENDED for
+  now.** Cheap (one importer addition mirroring the catalog sync), and
+  the tripwire already makes the failure impossible to ship silently.
+- **(b) repoint the FKs at catalog_products and retire the mirror — the
+  right end-state, NOT a one-line migration.** Three FKs hang off
+  products (current_prices 1,152 live rows, price_history 16,7xx,
+  wishlists), and the §26-addendum mechanism is the trap: repointing
+  price_history's FK at catalog_products would ORPHAN every delisted
+  product's history (TB8218's 17 rows violate the new FK on day one)
+  unless the policy changes — keep delisted rows in catalog_products
+  with a delisted flag, or drop the history FK entirely and accept
+  unreferenced observations. That is a data-retention policy decision
+  before it is a migration, plus a Cowork-drafted, second-read,
+  behaviour-tested migration across three tables. Worth doing when the
+  legacy products table is retired wholesale; not worth it to prevent a
+  recurrence the tripwire already prevents.

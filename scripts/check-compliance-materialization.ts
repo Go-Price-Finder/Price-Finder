@@ -27,6 +27,21 @@
  *      reported as a WARNING, not a failure — that is the benign
  *      direction (nothing is shown) and is the normal state mid-import.
  *
+ * D. LEGACY-MIRROR CHECK (findings §34): current_prices.product_id and
+ *    wishlists.product_id FK the LEGACY public.products table, while the
+ *    catalogue lives in catalog_products — so every import must write
+ *    BOTH tables or its prices are UNSTORABLE. Nothing enforced that,
+ *    and the failure mode was the worst shape we have: the 2026-08-19
+ *    11:00Z refresh reported matched=500 for aaawave and looked healthy
+ *    while every upsert was rejected on the FK. Any catalog_products row
+ *    with no products row FAILS the build, naming the partner and count.
+ *    DIRECTION IS DELIBERATE AND ONE-WAY: a products row WITHOUT a
+ *    catalog row is LEGITIMATE — that is exactly a delisted product
+ *    whose price_history must survive (price_history also FKs products;
+ *    TB8218's products row is what keeps its 17 observations alive,
+ *    §26/§34). Orphans are REPORTED as notes, never failed, and any
+ *    future cleanup script must read this paragraph first.
+ *
  * MODES: --build-gate skips loudly when Supabase credentials are absent
  * (the static half of the compliance story lives in the registry itself);
  * default requires them and exits 2 if missing.
@@ -143,6 +158,49 @@ async function main() {
     }
     if (verdicts.length === 0) verdicts.push("ok");
     rows.push([id, String(total), String(imagesAllowed), String(placeholders), String(live), verdicts.join(",")]);
+  }
+
+  // --- D. legacy-mirror check (see header) ---------------------------
+  async function allIds(table: "catalog_products" | "products"): Promise<Set<string>> {
+    const ids = new Set<string>();
+    const PAGE = 1000;
+    for (let from = 0; ; from += PAGE) {
+      const res = await supabase.from(table).select("id").order("id").range(from, from + PAGE - 1);
+      if (res.error) throw new Error(`${table} id fetch failed: ${res.error.message}`);
+      for (const r of res.data ?? []) ids.add(r.id);
+      if ((res.data?.length ?? 0) < PAGE) break;
+    }
+    return ids;
+  }
+  try {
+    const catalogIds = { ids: await allIds("catalog_products") };
+    const productIds = { ids: await allIds("products") };
+    if (selftest) catalogIds.ids.add("__selftest__:planted-missing-id");
+    const missingByPartner = new Map<string, number>();
+    for (const id of catalogIds.ids) {
+      if (!productIds.ids.has(id)) {
+        const partner = id.split(":")[0];
+        missingByPartner.set(partner, (missingByPartner.get(partner) ?? 0) + 1);
+      }
+    }
+    const orphans = [...productIds.ids].filter((id) => !catalogIds.ids.has(id));
+    console.log(
+      `Legacy mirror: catalog_products=${catalogIds.ids.size} products=${productIds.ids.size}; ` +
+        `catalog-without-products=${[...missingByPartner.values()].reduce((a, b) => a + b, 0)}; ` +
+        `products-without-catalog=${orphans.length} (legitimate for delisted-with-history)`
+    );
+    for (const [partner, n] of missingByPartner) {
+      failures.push(
+        `${partner}: ${n} catalog_products row(s) have NO public.products row — their prices are UNSTORABLE ` +
+          `(current_prices FKs products; the exact §34 failure: refresh matches, upsert rejects, nothing anywhere looks broken). ` +
+          `Sync this partner into products (see scratch/sync-aaawave-products-table.ts for the pattern).`
+      );
+    }
+    for (const id of orphans.slice(0, 5)) {
+      console.log(`  note: products orphan ${id} — legitimate if delisted with retained price_history (TB8218 pattern, §26); NOT a defect.`);
+    }
+  } catch (e) {
+    failures.push(`legacy-mirror check failed to run: ${e instanceof Error ? e.message : String(e)} (unknown is not zero)`);
   }
 
   const w = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));

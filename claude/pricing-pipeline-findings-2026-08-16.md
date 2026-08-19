@@ -2809,3 +2809,54 @@ Proven able to fail before being trusted: flipping aaawave to "pending"
 with the DB unchanged -> FAIL naming 500 rows serving unpermitted photos,
 and `npm run build` exits 1 with zero Next output; selftest with inverted
 expectations -> exit 1; restored -> PASS.
+
+### §22. Image retry pass: the population, the per-image outcomes, and 19 dead sources (2026-08-19)
+
+**Population first (operator condition 1):** the §21 checker's method,
+run across every partner's static data file. tsar-bomba's 10 are NOT
+the whole population — **canvas-vows has 9 products whose data file
+points at real image paths for files that never existed on disk**
+(never committed, confirmed absent from git history), a strictly WORSE
+variant: those pages have served broken 404 images since import
+(verified live: image URL 404, product page 200). All other partners
+clean: brooklyn-delhi 0, evdance 0, golden-maple 0, king-koil 0,
+aaawave 0, gallery images included. Two failure shapes, same class:
+the tsar importer recorded failure AS the placeholder (visible),
+the canvas importer recorded the intended path and lost the failure
+entirely (invisible). Population: 19.
+
+**Retry pass, per-image (operator condition 2 — no aggregates).**
+Sources re-derived from the live AWIN feeds by the refresh's own
+id-first/name-second discipline. Outcomes:
+- canvas-vows, all 9: source URL FOUND in feed 103552 by exact deep-link
+  id — every one FAILED HTTP 404 at cdn.shopify.com. Notably all eight
+  1st-anniversary variants advertise the SAME image URL (couch_3_…),
+  itself dead.
+- tsar-bomba, 6 of 10: source URL found (5 by name in live feed 113495,
+  1 by id in 113495, 1 by id in frozen 105368) — every one FAILED HTTP
+  404 at cdn.shopify.com, including a URL versioned ~2026-04.
+- tsar-bomba, 3 of 10: NOT PRESENT in either feed by id or name — the
+  known tsar linkrot/delisted class.
+
+**19/19 failure is suspiciously uniform, so per §19 a control from the
+same population ran before accepting it:** 8 image URLs for products
+whose images DID work at import, fetched through the identical code
+path — 8/8 HTTP 200 (4 per feed). The 404s are genuine upstream
+linkrot: the feeds advertise image URLs the merchant CDNs no longer
+serve for exactly these products. The retry pass cannot succeed from
+these sources; merchant-page scraping was considered and not attempted
+(the only URLs we hold are AWIN tracking links, and self-clicks are
+prohibited; guessing Shopify handles is speculation, not sourcing).
+
+**Fix within reach, applied:** the canvas-vows 9 now point at the
+pending placeholder in the data file (a placeholder beats a broken
+image; reversible per product) with the mandatory §21 second half —
+the 9 catalog_products rows re-synced, read-back verified 9/9.
+tsar-bomba's 10 already rendered the placeholder; unchanged.
+The materialisation checker now reports both partners as
+import-image-gap notes, DB and static in agreement, PASS.
+
+**Left for the operator:** whether these 19 (esp. the 3 absent from
+feeds entirely) should remain listed at all — they cannot receive
+price refreshes and their images are gone at the source. Delisting is
+beyond this session's authorized scope.

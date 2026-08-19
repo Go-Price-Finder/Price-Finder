@@ -130,8 +130,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 100,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317426&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -140,8 +143,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 110,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317427&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-2.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-2.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -150,8 +156,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 125,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317428&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-3.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-3.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -160,8 +169,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 145,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317429&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-4.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-4.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -170,8 +182,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 170,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317430&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-5.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-5.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -180,8 +195,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 199,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317431&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-6.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-6.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -190,8 +208,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 280,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317432&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-7.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-7.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -200,8 +221,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "A custom canvas perfect for your 1st anniversary. Instructions Step 1: Choose your canvas size from the drop down menu and the quantity you would like to order Step 2: Place the order by pressing “Add To Cart” and check out by going to your cart *Once your order is placed you will receive a Thank You email* Step 3: Please provide the customization details for your order. You can reply to the thank you email or you email us at support@canvasvows.com with the details. Once we receive your order along with the picture and the words for your design we will begin working on your design right away! Processing & Shipping Time Please see our current processing and shipping times here . What is included in your purchase? 1) A design using one of your pictures with your vows, poem, lyrics or other words. 2) Your design is printed onto a canvas at the size you select. Canvas Materials Only high end materials and strict quality controls are used in each and every canvas print. Canvases are safe for the whole family as only HP Latex inks are used. These inks are water based, solvent-free and odorless. Ready to hang: All canvases come with the needed hardware in order to hang it anywhere in the home. Canvas thickness: Standard .75″ wood frame (1.5″ also available)",
     price: 399,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317433&a=3002879&m=90193",
-    image: "/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-8.webp",
-    images: ["/images/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-8.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {
@@ -1930,8 +1954,11 @@ export const CANVAS_VOWS_PRODUCTS: CanvasVowsProduct[] = [
     description: "Create a meaningful custom star map. Use a special location using coordinates and the date of the special night. We'll use your coordinates to recreate the night sky of your special night. DETAILS Words: You can use your wedding vows, your first dance song from your wedding, another meaningful song or any other words you would like. Location: This design is made with the night sky of the exact location of your choosing. You can tell us the coordinates or give us an address and we can find out the coordinates for you. Date: Please let us know what the date is of your meaningful location. The night sky map will look exactly as the night sky did in that location on that specific night! Additional details: We can also write in additional details if you would like the date, address or other details written on the design. NOTE: Please write these details in the order notes during checkout. OPTIONS • Matte Print You can choose a matte print size. If you choose one of these sizes, your design will be printed on professional grade matte paper. It does not include a frame. There are hundreds of different frame styles, colors and sizes. We leave framing up to the professional framing stores. • Canvas Print If you choose a canvas size you will receive a fully wrapped canvas. The canvas is ready to hang straight out of the box. ---------------------------------------------------- HOW TO ORDER 1. Choose your size in the drop down menu. 2. Once your size is chosen you can place the order by clicking \"Add to cart\" 3. Message us on Etsy and let us know the details for your design. Or you can put the details in the order notes during checkout. 4. You will receive a proof of your design so you can make desired changes and approve the final design before it ships. ---------------------------------------------------- HANGING YOUR ARTWORK • Matte print will need to be framed or mounted once you receive it in order for it to hang on the wall. • Our canvases come ready to hang straight out of the box. ----------------------------------------------------- QUALITY • Our desire is for you to absolutely love your artwork. That is why we put an emphasis on craftsmanship. Our matte prints are professional grade print paper and our canvases are hand stretched onto a thick wooden frame. ----------------------------------------------------- CUSTOMER CARE AND SUPPORT • We understand the importance of having questions answered quickly and thoroughly. We do our best to have your questions answered with a 24 hour time frame. (Please note that we do not work on the weekends. If you reach out over the weekend, you will be answered first thing Monday morning) ----------------------------------------------------- PROCESSING AND SHIPPING Please see our current processing and shipping times here . Please visit some of my other work: https://www.CanvasVows.com https://www.instagram.com/canvasvows/ If you have any questions please do not hesitate to message me :)",
     price: 75,
     deepLink: "https://www.awin1.com/pclick.php?p=41668317606&a=3002879&m=90193",
-    image: "/images/canvas-vows/custom-star-map.webp",
-    images: ["/images/canvas-vows/custom-star-map.webp"],
+    // Source image is dead upstream (feed URL 404s at the merchant CDN,
+    // verified 2026-08-19 with passing controls — findings §22). Placeholder
+    // beats the broken 404 image these pages served since import.
+    image: "/images/_placeholders/image-pending.png",
+    images: ["/images/_placeholders/image-pending.png"],
     category: "Uncategorized",
   },
   {

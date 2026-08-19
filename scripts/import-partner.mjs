@@ -300,7 +300,7 @@ const userMapping = args.mapping
   ? JSON.parse(readFileSync(args.mapping, "utf-8"))
   : {};
 
-function resolveColumn(headers, field) {
+function resolveColumn(headers, field, rows) {
   if (userMapping[field]) {
     if (!headers.includes(userMapping[field])) {
       throw new Error(
@@ -313,7 +313,15 @@ function resolveColumn(headers, field) {
   const lowerHeaders = headers.map((h) => h.toLowerCase());
   for (const candidate of candidates) {
     const idx = lowerHeaders.indexOf(candidate.toLowerCase());
-    if (idx !== -1) return headers[idx];
+    if (idx === -1) continue;
+    // A header is not data: AWIN Google-template feeds carry columns that
+    // exist but are empty in every row (e.g. sale_price ahead of price).
+    // Matching on header presence alone maps the field to an empty column
+    // and silently drops every row downstream.
+    const column = headers[idx];
+    if (rows.some((row) => String(row[column] ?? "").trim() !== "")) {
+      return column;
+    }
   }
   return null; // optional fields (originalPrice, additionalImages) may legitimately be absent
 }
@@ -394,16 +402,17 @@ if (parsed.errors.length > 0) {
 }
 
 const headers = parsed.meta.fields ?? [];
+const csvRows = parsed.data;
 const columns = {
-  name: resolveColumn(headers, "name"),
-  description: resolveColumn(headers, "description"),
-  price: resolveColumn(headers, "price"),
-  originalPrice: resolveColumn(headers, "originalPrice"),
-  gtin: resolveColumn(headers, "gtin"),
-  category: resolveColumn(headers, "category"),
-  deepLink: resolveColumn(headers, "deepLink"),
-  image: resolveColumn(headers, "image"),
-  additionalImages: resolveColumn(headers, "additionalImages"),
+  name: resolveColumn(headers, "name", csvRows),
+  description: resolveColumn(headers, "description", csvRows),
+  price: resolveColumn(headers, "price", csvRows),
+  originalPrice: resolveColumn(headers, "originalPrice", csvRows),
+  gtin: resolveColumn(headers, "gtin", csvRows),
+  category: resolveColumn(headers, "category", csvRows),
+  deepLink: resolveColumn(headers, "deepLink", csvRows),
+  image: resolveColumn(headers, "image", csvRows),
+  additionalImages: resolveColumn(headers, "additionalImages", csvRows),
 };
 
 for (const required of ["name", "price", "deepLink", "image"]) {

@@ -27,7 +27,7 @@ const STEPS = [
       // lowest-price flag and shipping/fees — none of which exists yet
       // (the GTIN identity work that enables cross-store comparison is in
       // progress, findings §20). Describe what the site does TODAY.
-      "Every listing is a real price from a real store, refreshed daily and stamped with when it was last verified. Cross-store comparison of the same product is what we're building next.",
+      "Every listing is a real price from a real store, checked daily and stamped with when it was last verified. Cross-store comparison of the same product is what we're building next.",
   },
 ];
 

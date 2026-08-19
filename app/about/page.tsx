@@ -60,10 +60,13 @@ export default function AboutPage() {
             <h2 className={H2}>How it works</h2>
             <p>
               We track products from retail partners and record what they
-              cost over time. When you look at a product on Go Price Finder,
-              the goal is that you can see not just the price but the context
-              around it — how it has moved, and whether now is a sensible
-              moment to buy.
+              cost over time. When you look at a product here, you see what
+              it costs today, when we last checked it, and whether the store
+              has marked it down from its own list price. We&rsquo;re
+              recording those prices daily so that we can eventually show
+              you how they&rsquo;ve moved over time — that history is being
+              collected now, and the charts aren&rsquo;t live yet.
+              We&rsquo;d rather tell you that than imply we already have it.
             </p>
             <p>
               Every price on this site comes directly from a retailer&rsquo;s

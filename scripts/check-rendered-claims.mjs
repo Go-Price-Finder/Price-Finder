@@ -37,7 +37,10 @@ const BANNED = {
   "best price": "described a badge that exists nowhere (§23; remove when the comparison surface ships)",
   "scan the whole market": "we search our own partner catalog, not the market (§23)",
   subscribe: "the dead footer form — collected emails and discarded them (§23/§24)",
-  "tracking since launch": "the sparkline presented feed markdowns as observed price drops and claimed 'no changes yet' where changes were recorded (§25)",
+  "tracking since launch": "the sparkline presented feed markdowns as observed price drops and claimed 'no changes yet' where changes were recorded (§25/§27)",
+  "what it cost last month": "the /about claim the operator corrected on themselves: implied displayed price history before the charts exist (§26) — the replacement text says the history is being collected and the charts are not live yet",
+  "how it has moved": "same /about claim, as originally worded in the shipped sentence (§26)",
+  "refreshed daily": "displayed prices are static catalog prices (Option A gated); the daily job CHECKS them — 'refreshed' claimed the check updates the display (§27)",
 };
 // Route-scoped exceptions for LEGITIMATE uses: { "route.html": ["phrase"] }.
 // Every entry needs a reason. An exception without a reason is how banned

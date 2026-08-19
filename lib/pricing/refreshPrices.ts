@@ -108,8 +108,12 @@ type PartnerAwinMapping = {
    * falls to name matching — which works today only because catalog and
    * feed were imported one day apart and the titles are identical by
    * construction. That equality decays the moment the merchant edits a
-   * title. GTIN is the durable key (migration 0018), and all 500 aaawave
-   * products carry one.
+   * title — NOT hypothetical: Tsar Bomba renamed TB8220L to "Nucleus
+   * Femme 03" and name-matching could never find it in any feed again,
+   * on a product whose $1,200 price we still had exactly right (measured
+   * at the merchant storefront 2026-08-19, findings §26 — six days
+   * before the 08-25 diff, a free demonstration). GTIN is the durable
+   * key (migration 0018), and all 500 aaawave products carry one.
    *
    * Ordering matters and "gtin" is FIRST-CHOICE, not sole-primary: name
    * stays armed behind it (operator ruling 2026-08-19) until the 08-25

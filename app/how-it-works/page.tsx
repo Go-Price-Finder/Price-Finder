@@ -99,7 +99,7 @@ export default function HowItWorksPage() {
               </h2>
               <p className="mt-3 max-w-2xl text-balance leading-relaxed text-ivory-300">
                 Every product page shows a real price from the store that
-                sells it, refreshed daily and stamped with when it was last
+                sells it, checked daily and stamped with when it was last
                 verified. Showing the same product across multiple stores,
                 cheapest first, is what we&apos;re building next — comparing
                 stores instead of buying from the first one you find is

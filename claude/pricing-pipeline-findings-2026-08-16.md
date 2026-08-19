@@ -3020,3 +3020,80 @@ All 19 broken-image products remain listed per the ruling (absence
 from a feed is a fact about the feed — the 36-of-38 lesson); the
 delist decision on TB8218 is the operator's, now with the measurement
 in hand.
+
+### §26. TB8218 delisted; TB8220L renamed — name decay caught in the act (2026-08-19, operator rulings)
+
+**/about corrected at the operator's own instruction** — their words:
+"my error... I wrote it, and it fails the standard I have been enforcing
+on you all night." The sentence implying visible price history ("the
+context around it — how it has moved") is replaced with text that says
+exactly what is true: prices recorded daily, history being collected
+now, charts not live yet, "we'd rather tell you that than imply we
+already have it." Both phrasings banned in the rendered-claims tripwire.
+
+**TB8218 delisted** (the one product of the 19 whose merchant page could
+not confirm our price): the fixed SKU is gone and the model survives
+only inside a configurator spanning $259.96–$3,059.84, so our page
+asserted $830.99 for something nobody could buy at that price — a wrong
+price, not stale data, the one category not tolerated. Removed from the
+static file AND the catalog row deleted (both sides, §21 discipline);
+tsar-bomba 272 → 271, catalog 1,454 → 1,453. Its 17 price_history rows
+are KEPT — observations are records. current_prices/wishlists/clicks:
+zero references, verified before deletion.
+
+**TB8220L renamed to the merchant's current name, "Nucleus Femme 03"**
+(static file + catalog row, read-back verified). Recorded as its own
+finding per the ruling: **name decay caught in the act, in our own
+catalogue, on a product whose price we still have exactly right.** The
+merchant renamed the product; name-matching could never find it in any
+feed again; the price never drifted. This is the precise failure the
+GTIN work (§20) exists to prevent, demonstrated free of charge six days
+before the 08-25 diff. The instance is now cited inside
+lib/pricing/refreshPrices.ts's matchStrategy rationale, so the argument
+carries a real case, not an abstraction.
+
+### §27. THE RULE: a component that renders an inference must be checked against what its props can actually support (2026-08-19, operator ruling)
+
+PriceHistorySparkline is recorded as the most serious finding of the
+night, above the Subscribe form: a site whose single claim is that it
+does not fabricate observations was fabricating observations on its
+most-rendered component — presenting the feed's own markdown as a drop
+we watched happen, when we never saw the higher price. The tell, per
+the operator: its sibling caption was false in the OTHER direction
+("no price changes yet" where changes were recorded), meaning nobody
+had ever checked either branch against reality — both drifted
+independently. The component only ever held price and originalPrice —
+two numbers from one instant — and it rendered a claim about time.
+
+**Audit of every component rendering a derived or narrative claim:**
+- PriceHistorySparkline — THE instance, fixed (§25).
+- PriceAsOfLabel — HONEST: renders "Price as of <feed vintage>", which
+  is exactly what the displayed (static) price's data supports; where
+  the daily check corroborates an unchanged price it UNDERSTATES
+  recency, the safe direction. Renders nothing rather than guessing.
+- PriceHistoryChart — suppressed (returns null, mounts nothing);
+  no claim rendered. Restore condition unchanged (provenance-tagged
+  observed rows).
+- PriceAlertCTA ("Get notified when the price drops") — TRUE, alerts
+  live end-to-end.
+- Pagination / Hero stats / CountUpStat — counts computed from the real
+  catalog at build; support their claims.
+- Podium, PlaceholderPage, ProductImagePlaceholder — no textual claims.
+- **My own copy from earlier tonight failed the rule and is fixed:**
+  "Prices are refreshed daily" (WhyPriceFinder card, HowItWorks step 3,
+  /how-it-works deep-dive). Displayed prices are static catalog prices
+  (Option A stays gated); the daily job CHECKS them — the displayed
+  price only changes at re-import. "Refreshed" claimed the check
+  updates the display: the same claim-vs-data gap, written the same
+  night the standard was set. Now "checked daily", and "refreshed
+  daily" is a banned phrase.
+- **REPORTED FOR RULING, not fixed (catalog data):** brooklyn-delhi is
+  the only partner whose data file carries badges — hand-authored at
+  the July import: "New" x11, "Best Seller" x3, "Online Only" x3,
+  "Limited Stock" x1. These render on cards as if current, and
+  getBestSellers builds the site's Best Sellers pool from the three
+  July "Best Seller" labels of one partner. "Limited Stock" is a
+  month-old urgency claim nobody has re-verified — the worst of them.
+  Options: drop the time-sensitive badges (Limited Stock, New), keep
+  merchant-attributed ones only if re-verified, or drop all badges
+  until a provenance rule exists. Operator's call.

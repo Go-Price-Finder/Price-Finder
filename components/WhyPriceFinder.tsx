@@ -28,7 +28,12 @@ const VALUE_PROPS = [
     icon: StoreIcon,
     stat: "Checked every day",
     label:
-      "Prices are refreshed daily against each store's live feed, and every listing shows when it was last verified.",
+      // 'checked', not 'refreshed' (findings §27): the daily job verifies
+      // displayed prices against each store's live feed; the displayed
+      // price itself only changes at re-import. 'Refreshed' claimed the
+      // former updated the latter — the same claim-vs-data gap as the
+      // sparkline, in copy written the same night the standard was set.
+      "Prices are checked daily against each store's live feed, and every listing shows when it was last verified.",
   },
 ];
 

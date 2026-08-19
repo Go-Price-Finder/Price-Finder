@@ -257,16 +257,6 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
     category: "Men's Watches",
   },
   {
-    slug: "tsar-bomba-men-s-automatic-skeleton-watch-interchangeable-luxury-design-green-at",
-    name: "TSAR BOMBA Men's Automatic Skeleton Watch | Interchangeable Luxury Design | Green | Atomic TB8218 | Carbon Fiber",
-    description: "Unveil the art of modern horology with the TSAR BOMBA TB-8218, a flagship model from the prestigious W-Series. This Automatic Mechanical Watch is a masterpiece of transparency and technical prowess, designed for the individual who demands a bold, futuristic aesthetic.  The TB-8218 is defined by its iconic Tonneau Watch silhouette, a hallmark of elite luxury sport watches. Its standout feature is the intricate Skeleton Watch dial, which offers an unobstructed view of the high-precision self-winding mechanical movement in action. Without the need for batteries or quartz crystals, this watch captures the raw energy of your wrist's motion to keep time.  Crafted with premium materials, the watch features a high-clarity case and a scratch-resistant Sapphire Crystal surface, ensuring the skeletonized inner workings remain visible and protected for years. The minimalist design focuses on pure timekeeping, intentionally omitting calendar or chronograph complications to maintain a clean, high-impact visual experience.  Engineered for durability and comfort, the TB-8218 includes a high-grade, skin-friendly FKM rubber strap and offers reliable water resistance for daily wear. Whether you are a collector or a trendsetter, this men's automatic watch represents the pinnacle of Luxury Mechanical design.  Key Features & Keywords:  Movement: Reliable Automatic Winding (Self-Winding) Mechanical Movement.  Design: Iconic Tonneau Case with a fully Skeletonized dial.  Material: Ultra-clear construction with scratch-resistant Sapphire Crystal.  Style: High-end Transparent Watch for a futuristic Luxury Sport look.  Function: Pure mechanical timekeeping (No batteries required).  Invest in a timepiece that stands at the intersection of transparency and power|the TSAR BOMBA TB-8218 Automatic Skeleton Watch.",
-    price: 830.99,
-    deepLink: "https://www.awin1.com/pclick.php?p=43890232988&a=3002879&m=109230",
-    image: "/images/_placeholders/image-pending.png",
-    images: ["/images/_placeholders/image-pending.png"],
-    category: "Men's Watches",
-  },
-  {
     slug: "tsar-bomba-men-s-automatic-skeleton-watch-interchangeable-luxury-design-dynamic",
     name: "TSAR BOMBA Men's Automatic Skeleton Watch | Interchangeable Luxury Design | Dynamic Black | Atomic TB8218 | Fluororubber",
     description: "Unveil the art of modern horology with the TSAR BOMBA TB-8218, a flagship model from the prestigious W-Series. This Automatic Mechanical Watch is a masterpiece of transparency and technical prowess, designed for the individual who demands a bold, futuristic aesthetic.  The TB-8218 is defined by its iconic Tonneau Watch silhouette, a hallmark of elite luxury sport watches. Its standout feature is the intricate Skeleton Watch dial, which offers an unobstructed view of the high-precision self-winding mechanical movement in action. Without the need for batteries or quartz crystals, this watch captures the raw energy of your wrist's motion to keep time.  Crafted with premium materials, the watch features a high-clarity case and a scratch-resistant Sapphire Crystal surface, ensuring the skeletonized inner workings remain visible and protected for years. The minimalist design focuses on pure timekeeping, intentionally omitting calendar or chronograph complications to maintain a clean, high-impact visual experience.  Engineered for durability and comfort, the TB-8218 includes a high-grade, skin-friendly FKM rubber strap and offers reliable water resistance for daily wear. Whether you are a collector or a trendsetter, this men's automatic watch represents the pinnacle of Luxury Mechanical design.  Key Features & Keywords:  Movement: Reliable Automatic Winding (Self-Winding) Mechanical Movement.  Design: Iconic Tonneau Case with a fully Skeletonized dial.  Material: Ultra-clear construction with scratch-resistant Sapphire Crystal.  Style: High-end Transparent Watch for a futuristic Luxury Sport look.  Function: Pure mechanical timekeeping (No batteries required).  Invest in a timepiece that stands at the intersection of transparency and power|the TSAR BOMBA TB-8218 Automatic Skeleton Watch.",
@@ -1798,7 +1788,13 @@ export const TSAR_BOMBA_PRODUCTS: TsarBombaProduct[] = [
   },
   {
     slug: "tsar-bomba-women-s-quartz-watch-blue-35mm-sapphire-crystal-swiss-movement-5atm-w",
-    name: "Tsar Bomba Women's Quartz Watch | Blue | 35mm | Sapphire Crystal | Swiss Movement | 5ATM Water-Resistant | High End Watch for Women | TB8220L",
+    // Renamed 2026-08-19 to the merchant's CURRENT product name (was
+    // "Tsar Bomba Women's Quartz Watch | Blue | 35mm | Sapphire Crystal | Swi...").
+    // Name decay caught in the act — findings §26: the merchant renamed
+    // this product, which is why name-matching could never find it in any
+    // feed; the price (,200) is still exactly right. The precise failure
+    // the GTIN work (§20) exists to prevent.
+    name: "Nucleus Femme 03",
     description: "Discover the Tsar Bomba Nucleus Femme TB8220L, a premium women's automatic watch crafted for elegance and performance. With a 35mm full ceramic case and bezel, scratch-resistant sapphire crystal glass, and reliable Swiss 763 automatic movement, this women's timepiece offers precise timekeeping and refined style. Engineered with luminous hands and 5 ATM water resistance for everyday wear, it combines luxury watch design with durable materials. Available in multiple dial colors and backed by a 2-year international warranty.",
     price: 1200,
     deepLink: "https://www.awin1.com/pclick.php?p=43890233146&a=3002879&m=109230",

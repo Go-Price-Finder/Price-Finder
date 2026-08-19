@@ -44,6 +44,7 @@
  * fetchCatalogCached below.
  */
 
+import { gzipSync, gunzipSync } from "zlib";
 import { unstable_cache } from "next/cache";
 import { createPublicClient } from "./supabase/public";
 import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
@@ -169,29 +170,57 @@ async function fetchCatalogRaw(): Promise<{
   // round trip, which is what the guard counts.
   if (process.env.CATALOG_TRACE) console.log("__FETCH_CATALOG_HIT__");
   const supabase = createPublicClient();
-  const [productsRes, partnersRes] = await Promise.all([
+
+  // PAGED read — PostgREST caps every request at max-rows (1,000 on this
+  // project). The aaawave tranche-1 import (2026-08-19) took the table from
+  // 954 to 1,454 rows and the previous unpaged select silently truncated at
+  // 1,000: the build generated EXACTLY 1,000 product pages, dropping all of
+  // tsar-bomba (272) and king-koil (29) and half of golden-maple — 454 pages
+  // gone with no error anywhere (alphabetical partner_id order decided who
+  // survived). The loop below reads full pages until a short page, so it
+  // returns every row at any table size. The pages are separate requests,
+  // not one snapshot — a cron write landing between two page reads could mix
+  // vintages within ONE build's fetch, a much smaller window than the
+  // per-page refetching the unstable_cache wrapper already rules out.
+  //
+  // Ordered by (partner_id, sort_order) — migration 0010. Without this the
+  // read order is whatever Postgres returns, which had ALREADY diverged
+  // from the static arrays for golden-maple, canvas-vows and tsar-bomba
+  // (measured 2026-08-09) and was silently changing related-product
+  // selection on 476 pages. Anything that does .filter().slice(n) or has a
+  // non-total sort comparator inherits this order — getBestSellers'
+  // badged path does no sorting at all. The ordering is also what makes
+  // .range() pagination coherent: (partner_id, sort_order) is unique per
+  // row (0010's backfill invariant), so consecutive ranges never skip or
+  // duplicate.
+  const PAGE_SIZE = 1000;
+  const fetchProductsPage = async (from: number) =>
     supabase
       .from("catalog_products")
       .select(
         "id, partner_id, slug, name, description, price, original_price, image, images, category, parent_category, badge, rating_stars, rating_count, deep_link, variant_label"
       )
-      // Ordered by (partner_id, sort_order) — migration 0010. Without this the
-      // read order is whatever Postgres returns, which had ALREADY diverged
-      // from the static arrays for golden-maple, canvas-vows and tsar-bomba
-      // (measured 2026-08-09) and was silently changing related-product
-      // selection on 476 pages. Anything that does .filter().slice(n) or has a
-      // non-total sort comparator inherits this order — getBestSellers'
-      // badged path does no sorting at all.
       .order("partner_id")
-      .order("sort_order"),
+      .order("sort_order")
+      .range(from, from + PAGE_SIZE - 1);
+
+  const [firstPageRes, partnersRes] = await Promise.all([
+    fetchProductsPage(0),
     supabase
       .from("partners")
       .select("id, name, tagline, href, logo_url, display_order")
       .order("display_order"),
   ]);
-
-  if (productsRes.error) throw productsRes.error;
+  if (firstPageRes.error) throw firstPageRes.error;
   if (partnersRes.error) throw partnersRes.error;
+  const productRows = [...(firstPageRes.data ?? [])];
+  let lastPageLength = firstPageRes.data?.length ?? 0;
+  while (lastPageLength === PAGE_SIZE) {
+    const pageRes = await fetchProductsPage(productRows.length);
+    if (pageRes.error) throw pageRes.error;
+    productRows.push(...(pageRes.data ?? []));
+    lastPageLength = pageRes.data?.length ?? 0;
+  }
 
   const partnersById = new Map<string, PartnerMeta>();
   for (const p of partnersRes.data ?? []) {
@@ -219,7 +248,7 @@ async function fetchCatalogRaw(): Promise<{
   // unsorted array and no future refactor of the thin wrapper below can drop
   // it. Do not "simplify" this away to the DB ordering alone — see the
   // 2026-08-11 checkpoint in the Step 14 plan.
-  const products = (productsRes.data ?? [])
+  const products = productRows
     .map((row) => toRealProduct(row, partnersById.get(row.partner_id)?.name ?? row.partner_id))
     .sort(
       (a, b) =>
@@ -273,22 +302,62 @@ async function fetchCatalogRaw(): Promise<{
  * scripts/verify-catalog-migration.ts) need an incremental-cache stub
  * installed on `globalThis.__incrementalCache` before importing it.
  */
-const fetchCatalogCached = unstable_cache(fetchCatalogRaw, ["catalog-v1"], {
+/**
+ * The snapshot is stored GZIPPED inside the cache envelope. Next's data
+ * cache has a hardcoded 2MB per-item limit (not configurable, on Vercel or
+ * self-hosted); the aaawave tranche-1 import (2026-08-19) pushed the raw
+ * JSON snapshot to 2,342,582 bytes, at which point unstable_cache logged
+ * "items over 2MB can not be cached" and silently stopped storing — every
+ * page render refetched the whole catalog (314 refetches in one build),
+ * which resurrects both failure modes this wrapper exists to prevent (DB
+ * load and mid-build snapshot mixing). Gzip keeps the single-snapshot
+ * architecture intact: text-heavy catalog JSON compresses ~5x, so the cap
+ * is not reached until the catalog is several times its current size. The
+ * loud console.error below is the tripwire for when it IS approached —
+ * silent degradation is the failure mode being bought out here, so do not
+ * remove it. (Splitting the cache per partner was considered and rejected:
+ * items would be small, but a refresh cron landing mid-build could then
+ * ship partner A pre-refresh and partner B post-refresh — reintroducing
+ * the mixed-snapshot problem this wrapper's doc block rules out.)
+ */
+const CACHE_ITEM_LIMIT_BYTES = 2 * 1024 * 1024;
+async function fetchCatalogGzipped(): Promise<{ gz: string }> {
+  const raw = await fetchCatalogRaw();
+  const gz = gzipSync(Buffer.from(JSON.stringify(raw), "utf8"));
+  if (gz.length > CACHE_ITEM_LIMIT_BYTES * 0.9) {
+    console.error(
+      `[catalog] compressed snapshot is ${gz.length} bytes — within 10% of Next's 2MB ` +
+        `data-cache item limit. When it crosses the limit, caching silently stops and ` +
+        `every render refetches the catalog. Shrink the snapshot before that happens.`
+    );
+  }
+  return { gz: gz.toString("base64") };
+}
+
+// Key bumped catalog-v1 -> catalog-v2: the stored shape changed (raw JSON ->
+// gzip envelope), and a persisted v1 entry replayed into this code would
+// surface as a gunzip error, not a cache miss — see the shape-change warning
+// in the doc block above.
+const fetchCatalogCached = unstable_cache(fetchCatalogGzipped, ["catalog-v2"], {
   revalidate: false,
   tags: ["catalog"],
 });
 
 /**
- * Thin wrapper that restores the `Map` the rest of this module expects.
- * Deliberately holds no logic beyond the `Map` rebuild — everything that
- * shapes the data (including the load-bearing display-order re-sort) lives
- * inside the cached function so it is captured by the snapshot.
+ * Thin wrapper that inflates the gzip envelope and restores the `Map` the
+ * rest of this module expects. Deliberately holds no logic beyond that —
+ * everything that shapes the data (including the load-bearing
+ * display-order re-sort) lives inside the cached function so it is
+ * captured by the snapshot.
  */
 async function fetchCatalog(): Promise<{
   products: RealProduct[];
   partnersById: Map<string, PartnerMeta>;
 }> {
-  const { products, partnerEntries } = await fetchCatalogCached();
+  const { gz } = await fetchCatalogCached();
+  const { products, partnerEntries } = JSON.parse(
+    gunzipSync(Buffer.from(gz, "base64")).toString("utf8")
+  ) as Awaited<ReturnType<typeof fetchCatalogRaw>>;
   return { products, partnersById: new Map(partnerEntries) };
 }
 

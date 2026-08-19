@@ -6,6 +6,7 @@ import {
   getPopulatedCategoryPaths,
 } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
+import { getAllGuides } from "@/lib/guides";
 
 const SITE_URL = "https://gopricefinder.com";
 
@@ -28,6 +29,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/affiliate-disclosure`, changeFrequency: "yearly", priority: 0.2 },
     // Trust pages (2026-08-19).
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.4 },
+    // Editorial guides (route approved 2026-08-19): index plus one entry
+    // per guide, lastmod = the guide's own lastReviewed frontmatter.
+    { url: `${SITE_URL}/guides`, changeFrequency: "weekly", priority: 0.5 },
+    ...getAllGuides().map((g) => ({
+      url: `${SITE_URL}/guides/${g.slug}`,
+      lastModified: g.lastReviewed,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },

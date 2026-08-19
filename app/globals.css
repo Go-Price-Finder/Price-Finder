@@ -252,3 +252,47 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Editorial guide prose (content/guides/*.md rendered by marked — see
+   lib/guides.ts). Scoped under .guide-prose so markdown output matches
+   the site palette without a typography plugin. */
+.guide-prose h1 {
+  font-family: var(--font-display, inherit);
+  font-size: 1.875rem;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: rgb(250 248 242);
+}
+.guide-prose h2 {
+  font-family: var(--font-display, inherit);
+  font-size: 1.375rem;
+  font-weight: 500;
+  margin-top: 2.25rem;
+  color: rgb(250 248 242);
+}
+.guide-prose p {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: rgb(214 209 196);
+}
+.guide-prose strong {
+  color: rgb(240 236 226);
+  font-weight: 600;
+}
+.guide-prose a {
+  color: rgb(212 175 85);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.guide-prose a:hover {
+  color: rgb(226 195 120);
+}
+.guide-prose hr {
+  margin-top: 2.5rem;
+  border-color: rgb(212 175 85 / 0.2);
+}
+.guide-prose em {
+  color: rgb(226 221 208);
+}

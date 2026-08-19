@@ -13,6 +13,7 @@ const FOOTER_LINKS: { title: string; links: { label: string; href: string }[] }[
     title: "Shop",
     links: [
       { label: "New arrivals", href: "/trending" },
+      { label: "Buying guides", href: "/guides" },
       { label: "Categories", href: "/categories" },
       { label: "Deals", href: "/deals" },
     ],

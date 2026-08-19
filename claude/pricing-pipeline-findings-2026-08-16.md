@@ -3142,3 +3142,73 @@ point: THIS CLASS REGENERATES FROM ORDINARY LANGUAGE, faster than
 anyone can remember not to produce it, which is the strongest possible
 argument that the postbuild tripwire is infrastructure rather than a
 nicety.
+
+### §29. The ratings were being asserted to Google as AggregateRating — removed at all three layers (2026-08-19, operator ruling)
+
+The operator's question made this more serious than the badges, and the
+answer was yes: buildProductJsonLd emitted `aggregateRating:
+{ratingValue, reviewCount}` inside Product structured data for every
+rated product. **Measured BEFORE: 18 built pages (all brooklyn-delhi)
+asserting review scores and counts to Google** — e.g.
+best-of-brooklyn-delhi-gift-box: ratingValue 5, reviewCount 3 — from 18
+hand-authored, undated July values on a site with NO review system.
+Not a taste question: structured-data review markup without reviews is
+a review-snippet manual-action category.
+
+Removed at all three layers, deepest first: (1) the EMISSION PATH in
+lib/structured-data.ts is deleted, not merely starved of data, so a
+future feed carrying a rating-shaped column cannot silently reintroduce
+the assertion — §24's erasure lesson applied in reverse; (2) all 18
+rating lines removed from the static data file; (3) 18 DB rows
+rating_stars/rating_count nulled, read-back zero table-wide. Star
+display on cards/pages died with the data (conditional render).
+**Measured AFTER: 0 pages emit aggregateRating.**
+
+OPERATOR-SIDE: Search Console has no API credential in this session —
+check Enhancements -> Review snippets (and Product snippets) for any
+existing enhancement on the 18 brooklyn-delhi product URLs; if Google
+had picked the markup up, the next crawl of the now-clean pages clears
+it, but the check itself needs the dashboard.
+
+### §30. Guides shipped as approved; the tripwire split by severity (2026-08-19, operator rulings)
+
+**Guides route, exactly as proposed and approved:**
+content/guides/<slug>.md as source of truth (first guide committed
+byte-identical to delivery, sha256 39fb0055…43f — verified both sides);
+/guides index + /guides/[slug] via generateStaticParams; `marked`
+(build-time, no client JS), NO MDX; Article JSON-LD with
+datePublished/dateModified from published/lastReviewed, Organization
+author/publisher, no person-author, no review markup (§29's rule);
+sitemap: /guides + per-guide lastmod = lastReviewed. The markdown's own
+leading # is the page H1 — the template adds no second one, so the file
+renders as delivered. First guide LIVE:
+/guides/should-you-buy-pc-parts-now-or-wait.
+
+**Tripwire extension shipped IN THE SAME COMMIT** (operator:
+non-negotiable, and for the stated reason — a route rendering into
+guides/**.html while the check scans top-level *.html is a §19b gap by
+construction). Proven before trusting it: a temporary guide planted
+with a NEVER_APPEAR phrase failed the real `npm run build` at exit 1,
+naming guides/planted-proof.html and the phrase; deleted after.
+
+**Severity split (operator design):**
+- NEVER_ASSERT — false in our own voice, legitimate when editorial
+  prose quotes or refutes it. Enforced on chrome only. Classified here:
+  data collection in progress, in development, coming soon, checked
+  weekly, checked every week, side by side, best price, scan the whole
+  market, tracking since launch, what it cost last month, how it has
+  moved, refreshed daily, best seller, trending.
+- NEVER_APPEAR — must not exist on any surface, any framing.
+  Classified here: subscribe (a dead-control label; no editorial
+  context redeems a string whose site history is a control that lied).
+
+**Quote-context: the NARROW option was chosen, stating why.** Reliable
+quote/refutation detection over rendered HTML is more machinery than it
+is worth — a regex cannot tell quoting from asserting, and a wrong
+guess in either direction is worse than the gap. Per-guide allowlists
+were rejected per the ruling (an exception per article until the list
+is noise). So: guides are scanned against NEVER_APPEAR only, and
+editorial prose is reviewed by the §23 method at authoring time — a
+narrower check that is correct over a broader one that trains people to
+allowlist their way past it. The first guide's §23 pass matched the
+operator's own; approved and published as delivered.

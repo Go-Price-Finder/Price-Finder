@@ -35,7 +35,7 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="relative flex scroll-mt-20 snap-start flex-col justify-center overflow-hidden py-16 sm:py-24"
+      className="relative flex scroll-mt-20 snap-start flex-col justify-center overflow-hidden py-14 sm:py-20"
     >
       {/* The old Three.js background scene has been removed — this section
           is now a clean, transparent background (showing the global
@@ -62,7 +62,7 @@ export default function HowItWorks() {
           {STEPS.map((step, index) => (
             <div
               key={step.title}
-              className="group relative flex h-full flex-col items-center rounded-3xl border border-transparent px-6 py-8 text-center transition-all duration-300 hover:border-gilt-500/25 hover:bg-noir-800 hover:shadow-soft-lg"
+              className="group relative flex h-full flex-col items-center rounded-2xl border border-transparent px-6 py-8 text-center transition-all duration-300 hover:border-gilt-500/25 hover:bg-noir-800 hover:shadow-soft"
             >
               <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-gilt-500/10 text-gilt-400 shadow-soft transition-all duration-300 group-hover:scale-105 group-hover:bg-gilt-500 group-hover:text-accent-ink">
                 <step.icon className="h-7 w-7" />

@@ -355,7 +355,7 @@ export default function SiteHeader({ categories, stores }: Props) {
         {menuOpen && (
           <div className="absolute inset-x-0 top-full hidden md:block">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft-lg">
+              <div className="overflow-hidden rounded-2xl border border-gilt-500/25 bg-noir-800 shadow-soft-xl">
                 {/* See all stores -- a real button, not a text link */}
                 <div className="flex items-center justify-between gap-4 border-b border-noir-700 px-5 py-4">
                   <Link
@@ -502,7 +502,7 @@ function StoreTile({ store }: { store: HeaderStore }) {
   return (
     <Link
       href={store.href}
-      className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition hover:border-gilt-500/30 hover:bg-noir-700/60"
+      className="group flex items-center gap-2 rounded-2xl border border-transparent p-3 transition hover:border-gilt-500/30 hover:bg-noir-700/60"
     >
       {/* One footprint, two fills. A cleared logo renders on a LIGHT PLATE
           in BOTH themes — merchant marks are overwhelmingly dark artwork
@@ -512,7 +512,7 @@ function StoreTile({ store }: { store: HeaderStore }) {
           monogram keeps the accent-tinted fill. Identical h-11 w-11
           either way: swapping one for the other is not a layout change. */}
       <span
-        className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl text-[13px] font-semibold ring-1 ring-inset transition ${
+        className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-[13px] font-semibold ring-1 ring-inset transition ${
           store.logoUrl
             ? "bg-[#f4f4f2] ring-noir-950/10"
             : "bg-gilt-500/10 text-ivory-50 ring-gilt-500/15 group-hover:bg-gilt-500/20"

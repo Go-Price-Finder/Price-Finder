@@ -43,7 +43,7 @@ export default function ProductGallery({
   return (
     <div>
       <div
-        className="relative aspect-square w-full touch-pan-y overflow-hidden rounded-3xl border border-gilt-500/20 bg-noir-700 shadow-soft"
+        className="relative aspect-[4/3] w-full touch-pan-y overflow-hidden rounded-2xl border border-gilt-500/20 bg-[#f4f4f2] shadow-soft"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -54,7 +54,7 @@ export default function ProductGallery({
           fill
           priority
           sizes="(min-width: 1024px) 40vw, 100vw"
-          className="object-cover"
+          className="object-contain p-6"
         />
 
         {count > 1 && (
@@ -91,13 +91,13 @@ export default function ProductGallery({
               aria-label={`View photo ${i + 1} of ${count}`}
               aria-current={i === index}
               onClick={() => setIndex(i)}
-              className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${
+              className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-2xl border-2 transition-colors ${
                 i === index
                   ? "border-gilt-500"
                   : "border-transparent opacity-80 hover:border-gilt-500/30 hover:opacity-100"
               }`}
             >
-              <Image src={src} alt="" fill sizes="64px" className="object-cover" />
+              <Image src={src} alt="" fill sizes="64px" className="object-contain" />
             </button>
           ))}
         </div>

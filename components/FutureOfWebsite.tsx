@@ -3,8 +3,21 @@
  * UnderConstruction.tsx (a compact "here's what's next" badge list further
  * down the page): this is a short narrative read, meant to set
  * expectations early, before a visitor scrolls past a still-small catalog.
+ *
+ * The catalog size is PASSED IN, not described (§45). This paragraph used
+ * to say "a small, hand-picked group of partners" — a quantity nobody
+ * could check and one that quietly goes stale in the wrong direction as
+ * the catalog grows. The real numbers come from the same source Hero's
+ * stats do, computed in app/page.tsx, so the sentence cannot drift from
+ * the catalog it describes.
  */
-export default function FutureOfWebsite() {
+export default function FutureOfWebsite({
+  products,
+  partners,
+}: {
+  products: number;
+  partners: number;
+}) {
   return (
     <section className="mx-auto max-w-3xl px-5 py-14 text-center sm:px-8 sm:py-20">
       <span className="text-xs font-semibold uppercase tracking-widest text-gilt-400">
@@ -20,9 +33,9 @@ export default function FutureOfWebsite() {
           Go Price Finder started with a simple idea: one place to compare real
           prices from real stores, without the sponsored rankings and
           fabricated discounts that make so much of online shopping feel
-          untrustworthy. Right now that means a small, hand-picked group of
-          partners — but every product you see is real, and every price is
-          checked daily.
+          untrustworthy. Right now that means {products.toLocaleString()}{" "}
+          products from {partners} stores — but every product you see is
+          real, and every price is checked daily.
         </p>
         <p>
           As we grow, expect more stores, a wider range of categories, and

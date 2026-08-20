@@ -14,7 +14,7 @@ export default async function OurPartners() {
   if (partners.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
+    <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
       <div className="mb-8 text-center">
         <span className="text-xs font-semibold uppercase tracking-widest text-ivory-50">
           Our Partners
@@ -30,7 +30,7 @@ export default async function OurPartners() {
           <Link
             key={partner.id}
             href={partner.href}
-            className="group flex flex-col gap-4 rounded-3xl border border-gilt-500/25 bg-noir-800 p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-xl"
+            className="group flex flex-col gap-4 rounded-2xl border border-gilt-500/25 bg-noir-800 p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-soft"
           >
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gilt-500/15 font-display text-lg font-semibold text-ivory-50">

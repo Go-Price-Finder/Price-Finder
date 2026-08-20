@@ -88,7 +88,7 @@ export default function PriceAlertCTA({
   }
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-xl border border-gilt-500/25 bg-noir-800 px-4 py-3">
+    <div className="flex flex-col gap-1.5 rounded-2xl border border-gilt-500/25 bg-noir-800 px-4 py-3">
       <label className="flex items-center gap-1.5 text-sm font-medium text-ivory-100">
         <BellIcon className="h-4 w-4 shrink-0 text-gilt-400" />
         <span>Notify me when this drops below</span>

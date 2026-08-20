@@ -131,7 +131,7 @@ function PriceHistoryChartInner({
   // layout shift once data arrives.
   if (rows === null && !error) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-noir-600 bg-noir-800/50 px-3 py-4">
+      <div className="flex items-center gap-2 rounded-2xl border border-noir-600 bg-noir-800/50 px-3 py-4">
         <div className="h-4 w-4 animate-pulse rounded-full bg-ivory-400/30" />
         <span className="text-xs text-ivory-400">Loading price history…</span>
       </div>
@@ -140,7 +140,7 @@ function PriceHistoryChartInner({
 
   if (error || !rows || rows.length < MIN_POINTS_FOR_CHART) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-noir-600 bg-noir-800/50 px-3 py-3">
+      <div className="flex items-center gap-2 rounded-2xl border border-noir-600 bg-noir-800/50 px-3 py-3">
         <HistoryIcon className="h-4 w-4 shrink-0 text-ivory-400" />
         <span className="text-xs font-medium text-ivory-400">
           Price tracking just started for this item — check back soon for a full history chart.
@@ -173,7 +173,7 @@ function PriceHistoryChartInner({
   const atHistoricalLow = currentPrice <= low + 0.01;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-noir-600 bg-noir-800/50 p-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-noir-600 bg-noir-800/50 p-4">
       <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ivory-400">
         <HistoryIcon className="h-3.5 w-3.5" />
         Price history — last {LOOKBACK_DAYS} days

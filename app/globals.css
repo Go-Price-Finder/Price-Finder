@@ -131,7 +131,6 @@
      the light-theme equivalent of the dark theme's black+gold shadow.
      Ring tint follows the new gilt-500 (184, 57, 31). */
   --shadow-soft: 0 1px 3px rgba(23, 19, 15, 0.07), 0 0 0 1px rgba(184, 57, 31, 0.05);
-  --shadow-soft-lg: 0 6px 20px rgba(23, 19, 15, 0.10), 0 0 0 1px rgba(184, 57, 31, 0.07);
   --shadow-soft-xl: 0 12px 36px rgba(23, 19, 15, 0.14), 0 0 32px rgba(184, 57, 31, 0.09);
 
   --animate-marquee: marquee 32s linear infinite;
@@ -202,7 +201,6 @@
   --color-espresso-700: #1a0d05;
 
   --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.05);
-  --shadow-soft-lg: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 175, 55, 0.07);
   --shadow-soft-xl: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 32px rgba(212, 175, 55, 0.09);
 }
 

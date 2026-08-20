@@ -3995,3 +3995,124 @@ failed to bind with EADDRINUSE while curl cheerfully returned 200 from a
 STALE server on that port. Two different ways to measure the wrong
 thing, in one command. The freshness control now used: assert the served
 HTML contains the change under test before measuring it.
+
+### §45. The polish pass: audits first, and one honesty defect found by doing it (2026-08-20)
+
+Five items, each audited before it was changed, because a count you did
+not take is a count you will guess wrong.
+
+**(a) The as-of stamp was an apology.** It rendered as 11px dim grey text
+under the price on detail pages, and on product CARDS it did not exist at
+all — a price in a grid with no date on it is the same implied-currency
+defect §6 removed from detail pages, on the surface where most visitors
+meet a price first. It is now a stamp: accent-ringed pill, primary text
+colour, semibold, clock glyph, shared by both surfaces through one
+`PriceAsOfStamp` component so they cannot drift.
+
+The WORDING did not move, deliberately. "Price checked <date>" was the
+more confident-sounding phrase available and it would have been false:
+the date is the source feed's VINTAGE, not a moment we checked. Style got
+louder; the claim stayed where the evidence is. Confidence in
+presentation is free; confidence in wording has to be earned.
+
+**(b) Radius and shadow: the counts before collapsing.**
+
+Radius, 157 uses across 4 distinct values:
+`rounded-full` 100, `rounded-2xl` 27, `rounded-3xl` 22, `rounded-xl` 8.
+Collapsed to `rounded-2xl` (16px) for every box — chosen because it was
+already the most-used value and it is the shelf card's radius, which is
+now the first thing on the page. `rounded-full` is KEPT and that is a
+judgment call worth stating: a pill and a circular icon button are not
+competing box radii, they are a different shape, and collapsing them
+would turn every circular control into a rounded square. Two values
+remain, one of which is "circle".
+
+Shadow, 5 distinct values:
+`shadow-soft` 30, `shadow-soft-lg` 9, `shadow-soft-xl` 9, `shadow-lg` 1,
+`drop-shadow-[0_8px_24px_...]` 1. The `shadow-lg` was mine, imported with
+the shelf component — an off-system Tailwind default that had been in the
+tree for hours. Collapsed to `shadow-soft` for every in-flow surface,
+with `shadow-soft-xl` retained on exactly three genuinely floating
+panels: the modal, the search dropdown, and the header mega-menu. That is
+2, not 1, and the reason is that a dropdown with no scrim and no
+elevation reads as an inline panel rather than something above the page.
+Flagged as a decision the operator can overrule.
+
+`--shadow-soft-lg` was then DELETED from both themes. An unused token is
+how a collapsed scale un-collapses; removing it means the next person has
+to add a token deliberately rather than reach for one that is lying
+around. The Hero logo's `drop-shadow` is excluded and stays: it is a
+`filter` on an SVG glyph, not a surface elevation.
+
+**(c) Fixed aspect ratio, and the thing it exposed.** Product images ran
+at `aspect-square` with `object-cover` on cards and the detail gallery,
+against the shelf's `aspect-[4/3]` with `object-contain`. All product
+images are now 4/3 and contain-fitted, including the gallery thumbnails
+(48x64) and the wishlist thumbnails — a cropped thumbnail is a small lie
+about what you get when you click it.
+
+Contain-fitting exposed something cover was hiding: the source photos
+carry their own white backgrounds, so on a dark card each one floated as
+a hard white rectangle that did not fill its box. Verified by screenshot
+in both themes, not assumed. Fixed the same way the partner logos were
+fixed hours earlier — a light `#f4f4f2` plate behind every product image
+in BOTH themes. Same problem, same remedy, now applied consistently
+rather than twice by coincidence.
+
+**(d) Vague quantities: the grep, and what it actually found.** Scanning
+our own copy (partner product descriptions are merchant text, not our
+claims, and were excluded — the first pass drowned in QNAP spec sheets):
+exactly ONE genuine vague quantity survived in visible copy —
+FutureOfWebsite's "a small, hand-picked group of partners". Everything
+else was already exact, because the earlier honesty pass had replaced
+Hero's placeholders with real computed counts. That is the pass paying a
+dividend: a defect class removed once did not grow back.
+
+The one hit now reads "1,453 products from 7 stores", computed from the
+same source Hero's stats use and passed in as props, so the sentence
+cannot drift from the catalog it describes. "Every store we track" and
+"from all our partners" were LEFT ALONE: they are exact scope claims, not
+vague quantities, and swapping precise words for numbers where no number
+was missing is churn.
+
+**(e) Spacing rhythm.** Sections ran py-8 / py-12+16 / py-14+20 /
+py-16+24. Now one value — `py-14 sm:py-20` — for all five content
+sections, with the deal shelf at `py-10 sm:py-14` as a deliberate second
+tier, because it is a band under the navigation rather than a section
+with its own heading and body. Card padding was capped below the smallest
+section padding: `p-8 sm:p-10` auth panels became `p-6 sm:p-8`, and the
+off-scale `p-7` and `p-5` became `p-6` and `p-4`.
+
+The invariant, stated rather than eyeballed: section padding (40-80px) >
+card padding (16-32px) > in-card element gaps (4-24px). Checked
+mechanically for containers whose own gap met or exceeded their own
+padding — one violation, `p-3 gap-3` in the header store tile, now
+`gap-2`. The `gap-10`/`gap-14` values are page-level grid columns with no
+padding of their own, not in-card gaps, and are out of scope by
+construction.
+
+**THE THING THE POLISH PASS FOUND, which is the reason to do audits
+rather than tidying.** With the stamp now on cards, the deal shelf and
+the product card sat side by side on the homepage saying two different
+things about the SAME datum: the shelf card said "Checked Jul 25, 2026",
+the product card said "Price as of Aug 18, 2026". Both are fed the source
+feed's vintage. "Checked" asserts an action on that date that nobody
+performed; "Price as of" asserts the price's currency, which is what we
+hold. This is §27 exactly — the defect class this project exists to
+remove — and it shipped inside a component delivered with the wording
+marked non-negotiable.
+
+Changed to "Price as of", and flagged in-code as a DEVIATION for the
+operator's ruling. The reasoning: the non-negotiable list governed the
+markdown claim ("Marked down by the store", never "price drop"/"was"/
+"saved"), the change moves in the same conservative direction that list
+points, and the alternative was shipping two contradictory claims about
+one number on one page. If the operator wants "Checked" back, it is one
+line — but then PriceAsOfLabel should change too, and it should change
+because the datum changed, not because the surface did.
+
+**Gates, run after each item rather than once at the end.** After (a):
+contrast PASS, 748 nodes — up from 740, and the increase is the control
+that matters, because it proves the new stamps were MEASURED and not
+silently skipped. After (b)-(e) plus the plate and the wording fix:
+contrast PASS 748 both themes, claims PASS 21 chrome routes + 1 guide.

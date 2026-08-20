@@ -56,7 +56,7 @@ export default async function TrendingPage() {
 
         <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           {products.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
               <p className="text-sm text-ivory-300">
                 Nothing here yet.
               </p>

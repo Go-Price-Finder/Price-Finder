@@ -118,9 +118,9 @@ export default async function CategoriesPage() {
               return (
                 <details
                   key={dept.id}
-                  className="group overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft"
+                  className="group overflow-hidden rounded-2xl border border-gilt-500/25 bg-noir-800 shadow-soft"
                 >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
                     <span className="font-display text-xl font-semibold text-ivory-50">
                       {dept.name}
                     </span>

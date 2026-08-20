@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { RealProduct } from "@/lib/partners";
 import { StarIcon } from "./icons";
+import { PriceAsOfStamp } from "./PriceAsOfLabel";
+import { getPriceAsOf } from "@/lib/price-as-of";
 import PriceHistorySparkline from "./PriceHistorySparkline";
 import WishlistButton from "./WishlistButton";
 import type { WishlistRetailerId } from "@/lib/types";
@@ -52,13 +54,20 @@ export default function RealProductCard({
     typeof product.originalPrice === "number" &&
     product.originalPrice > product.price;
 
+  // The as-of stamp belongs on the CARD too, not only the detail page
+  // (§45). A price with no date on it is the same implied-currency defect
+  // §6 removed from detail pages, and the grid is where most visitors
+  // meet a price first. Same component as the detail page uses, so the
+  // two surfaces cannot drift.
+  const asOfIso = getPriceAsOf(product.partnerId, product.slug);
+
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft-xl">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft">
       {/* The image itself is the only thing inside the link — the badge and
           wishlist button are absolutely-positioned siblings, not
           descendants, since nesting a <button> inside an <a> is invalid
           HTML and would break their independent click handling. */}
-      <div className="relative aspect-square w-full overflow-hidden bg-noir-700 ring-1 ring-inset ring-gilt-500/25">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f4f2] ring-1 ring-inset ring-gilt-500/25">
         <Link href={product.href} aria-label={product.name} className="absolute inset-0 block">
           <Image
             src={product.image}
@@ -66,7 +75,7 @@ export default function RealProductCard({
             fill
             priority={priority}
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+            className="object-contain p-4 transition-transform duration-300 ease-out group-hover:scale-105"
           />
         </Link>
 
@@ -115,6 +124,14 @@ export default function RealProductCard({
               </span>
             )}
           </div>
+        </div>
+
+        {/* Reserved-height row, same discipline as the rating row below:
+            a partner with no known feed vintage renders no stamp, and
+            without the reserve its card would come out shorter than the
+            rest of the grid. */}
+        <div className="flex h-7 items-center text-ivory-50">
+          {asOfIso && <PriceAsOfStamp iso={asOfIso} />}
         </div>
 
         {/* Fixed-height row whether or not this product has a rating yet,

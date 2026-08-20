@@ -50,7 +50,7 @@ export default function AuthForm({
   }
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-3xl border border-gilt-500/20 bg-noir-800 p-8 shadow-soft-xl sm:p-10">
+    <div className="mx-auto w-full max-w-md rounded-2xl border border-gilt-500/20 bg-noir-800 p-6 shadow-soft sm:p-8">
       <h1 className="font-display text-2xl font-medium text-ivory-50">
         {isSignup ? "Create your account" : "Welcome back"}
       </h1>

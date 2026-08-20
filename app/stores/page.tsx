@@ -59,7 +59,7 @@ export default async function StoresPage() {
               <Link
                 key={partner.id}
                 href={partner.href}
-                className="group rounded-3xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gilt-400/40 hover:shadow-soft-lg"
+                className="group rounded-2xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gilt-400/40 hover:shadow-soft"
               >
                 <div className="flex items-center gap-4">
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gilt-500/10 font-display text-lg font-semibold text-gilt-400">

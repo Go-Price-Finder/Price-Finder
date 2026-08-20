@@ -55,7 +55,7 @@ export default function GuidesIndexPage() {
               <Link
                 key={guide.slug}
                 href={`/guides/${guide.slug}`}
-                className="group rounded-3xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-gilt-400/40 hover:shadow-soft-lg"
+                className="group rounded-2xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-gilt-400/40 hover:shadow-soft"
               >
                 <span className="text-xs font-semibold uppercase tracking-wide text-gilt-400">
                   {guide.category}

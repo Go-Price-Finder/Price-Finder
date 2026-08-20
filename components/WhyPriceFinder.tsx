@@ -64,7 +64,7 @@ export default function WhyPriceFinder() {
           {VALUE_PROPS.map(({ icon: Icon, stat, label }) => (
             <div
               key={label}
-              className="flex flex-col gap-3 rounded-3xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg"
+              className="flex flex-col gap-3 rounded-2xl border border-gilt-500/20 bg-noir-800/70 p-6 shadow-soft backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-soft"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gilt-500/10 text-gilt-400">
                 <Icon className="h-5 w-5" />

@@ -23,7 +23,7 @@ export default function WishlistPage() {
       <main className="flex-1">
         <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
           {!loading && user && (
-            <div className="mb-10 flex flex-col items-start gap-5 rounded-3xl border border-gilt-500/20 bg-noir-800 p-6 shadow-soft sm:flex-row sm:items-center sm:p-8">
+            <div className="mb-10 flex flex-col items-start gap-5 rounded-2xl border border-gilt-500/20 bg-noir-800 p-6 shadow-soft sm:flex-row sm:items-center sm:p-8">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gilt-500/15 font-display text-2xl font-medium text-gilt-400">
                 {user.email?.charAt(0).toUpperCase() ?? "?"}
               </div>
@@ -77,7 +77,7 @@ export default function WishlistPage() {
               ))}
             </div>
           ) : !user ? (
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/40 px-6 py-20 text-center">
+            <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/40 px-6 py-20 text-center">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-noir-800 text-clay-500 shadow-soft">
                 <HeartIcon className="h-6 w-6" />
               </span>
@@ -97,7 +97,7 @@ export default function WishlistPage() {
               </Link>
             </div>
           ) : items.length === 0 ? (
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/40 px-6 py-20 text-center">
+            <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/40 px-6 py-20 text-center">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-noir-800 text-clay-500 shadow-soft">
                 <HeartIcon className="h-6 w-6" />
               </span>
@@ -117,7 +117,7 @@ export default function WishlistPage() {
               </Link>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-gilt-500/25 bg-noir-800 shadow-soft">
+            <div className="overflow-hidden rounded-2xl border border-gilt-500/25 bg-noir-800 shadow-soft">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] border-collapse text-left">
                   <thead>
@@ -141,14 +141,14 @@ export default function WishlistPage() {
                         >
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
+                              <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-2xl">
                                 {item.product?.image_url ? (
                                   <Image
                                     src={item.product.image_url}
                                     alt={name}
                                     fill
-                                    sizes="56px"
-                                    className="object-cover"
+                                    sizes="64px"
+                                    className="object-contain"
                                   />
                                 ) : (
                                   <ProductImagePlaceholder compact />

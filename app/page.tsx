@@ -94,7 +94,7 @@ export default async function Home() {
           subtitle="The store's own list price against what it charges today — checked daily."
         />
         <Hero stats={heroStats} />
-        <FutureOfWebsite />
+        <FutureOfWebsite products={heroStats.products} partners={heroStats.partners} />
         <OurPartners />
         <WhyTrustPrices />
         <WhyPriceFinder />

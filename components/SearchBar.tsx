@@ -117,8 +117,8 @@ export default function SearchBar({
           isLarge ? "px-3 py-2.5 sm:px-4" : "px-2 py-1.5"
         } ${
           focused
-            ? "border-gilt-400 shadow-soft-lg ring-4 ring-gilt-500/20"
-            : "border-gilt-500/25 shadow-soft hover:shadow-soft-lg"
+            ? "border-gilt-400 shadow-soft ring-4 ring-gilt-500/20"
+            : "border-gilt-500/25 shadow-soft hover:shadow-soft"
         } ${className}`}
       >
         {showIcon && (

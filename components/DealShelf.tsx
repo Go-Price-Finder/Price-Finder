@@ -101,7 +101,7 @@ export default function DealShelf({
   return (
     <section
       aria-labelledby="deal-shelf-heading"
-      className="border-b border-gilt-500/20 py-8"
+      className="border-b border-gilt-500/20 py-10 sm:py-14"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-5 flex items-end justify-between gap-4">
@@ -180,11 +180,11 @@ function ShelfCard({ item }: { item: ShelfItem }) {
   return (
     <Link
       href={item.href}
-      className="group flex w-[248px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-gilt-500/20 bg-noir-800 transition hover:shadow-lg"
+      className="group flex w-[248px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-gilt-500/20 bg-noir-800 transition hover:border-gilt-500/45"
     >
       {/* Fixed aspect ratio on every card. Mixed ratios are the strongest
           "unfinished" signal a product shelf can give. */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-noir-700">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[#f4f4f2]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={item.image}
@@ -222,9 +222,20 @@ function ShelfCard({ item }: { item: ShelfItem }) {
           </span>
         )}
 
+        {/* DEVIATION from the delivered file, flagged for the operator
+            (§45). This said "Checked {date}". The value passed in is the
+            SOURCE FEED'S VINTAGE — the date the feed asserting this price
+            was produced — not a moment we performed a check. "Checked"
+            asserts an action on that date; "Price as of" asserts the
+            price's currency, which is the fact we hold. Every other
+            surface (PriceAsOfLabel, on detail pages and product cards)
+            already says "Price as of" for this exact datum, so leaving
+            this one as "Checked" would have shipped two different claims
+            about one number. Changed in the conservative direction, which
+            is the same direction as the shelf's own wording rule. */}
         {item.checkedAt && (
           <span className="type-meta text-ivory-300">
-            Checked {item.checkedAt}
+            Price as of {item.checkedAt}
           </span>
         )}
       </div>

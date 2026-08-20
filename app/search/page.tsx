@@ -38,13 +38,13 @@ export default async function SearchPage({
 
         <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           {!q ? (
-            <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
               <p className="text-sm text-ivory-300">
                 Type a product, category, or partner name above to search.
               </p>
             </div>
           ) : results.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
               <p className="text-sm text-ivory-300">
                 No products match “{q}” yet — we&rsquo;re still adding
                 partners and products.

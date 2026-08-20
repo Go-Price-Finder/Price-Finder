@@ -19,7 +19,7 @@ export default function PriceHistorySparkline({
   const hasDiscount = typeof originalPrice === "number" && originalPrice > price;
 
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-noir-600 bg-noir-800/50 px-2.5 py-2">
+    <div className="flex items-center gap-2 rounded-2xl border border-noir-600 bg-noir-800/50 px-2.5 py-2">
       <svg
         width="48"
         height="20"

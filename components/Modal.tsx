@@ -44,7 +44,7 @@ export default function Modal({
         onClick={onClose}
         aria-hidden
       />
-      <div className="relative w-full max-w-lg animate-fade-up rounded-3xl border border-gilt-500/25 bg-noir-800 p-6 shadow-soft-xl sm:p-7">
+      <div className="relative w-full max-w-lg animate-fade-up rounded-2xl border border-gilt-500/25 bg-noir-800 p-6 shadow-soft-xl sm:p-6">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <h2

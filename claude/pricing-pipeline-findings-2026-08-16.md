@@ -3664,3 +3664,85 @@ construction, so the div is redundant-but-harmless insurance rather
 than load-bearing. Recommend keeping it until the contrast tail is at
 zero (removing a paint layer mid-pass would confound the count), then
 deleting it as a separate change with its own before/after screenshot.
+
+### §39. The instrument was five-for-two, and the fifth erased two thirds of the "debt" (2026-08-19)
+
+**Trajectory: 368 → 209 → 196 → 192 → 133 → 55 → 46 → 8 → ZERO.**
+
+**STANDING RULE (operator, recorded):** *the first run of a new check is
+measuring the check until proven otherwise. Any number a new instrument
+produces gets explained before it gets acted on.* The contrast checker
+has now been wrong FIVE times against roughly two real defects in the
+code it measures — and every error was caught before anyone acted on
+it, which is the system working, not failing. The ratio is the finding:
+a new instrument's early failures are mostly its own.
+
+The five, for the record:
+1. Mis-anchored edit — `:root[data-theme="dark"]` matched inside a
+   COMMENT, writing dark values into the light block (368 phantom).
+2. Vacuous pass — 22 nodes where the same routes yield 724, from a
+   stale server serving a deleted `.next`. Fixed with a per-route
+   measurement floor.
+3. oklab-as-RGB — Tailwind v4 emits `oklab()`; the regex read its
+   components as RGB, so white measured near-black. The canvas fallback
+   FAILED SILENTLY. Replaced with explicit oklab/oklch→sRGB math.
+4. Ancestors-only background walk — never saw the `fixed -z-10`
+   backdrop, so dark text was measured against `body`. 192 → 133 with
+   no site change.
+5. **MID-TRANSITION SAMPLING — the largest.** The checker set the theme
+   and sampled 120ms later while `transition-all duration-200` was still
+   interpolating, so it recorded animation frames. Proof it was noise
+   and not the site: identical elements reported DIFFERENT colours
+   between runs (a /stores heading on `rgb(66,66,66)` in one run,
+   `rgb(81,81,81)` in the next), and the count wobbled 46/51/53/55 with
+   no code change. Fixed by injecting
+   `*{transition:none!important;animation:none!important}` before
+   sampling. **46 → 8, and reproducible: 8 twice in a row.** A
+   measurement that is not reproducible is not a measurement.
+
+A sixth, smaller: the 40-line display cap made before/after diffs
+lie — a 2-node delta looked like five appearing and five disappearing,
+purely from ordering. Cap removed; `CONTRAST_MAX` caps it only on request.
+
+**THE FONT QUESTION, answered as asked.** The operator required that a
+typeface change move contrast by zero, and that any movement be
+explained before being buried. Measured with transitions disabled, same
+build otherwise: **Plus Jakarta Sans 8, Montserrat 8 — zero movement**,
+each reproducible across two runs. The earlier apparent +5 was entirely
+failure #5.
+
+**THE LAST EIGHT, and why each needed a decision rather than a nudge:**
+- dark secondary token `#c3bcb0` → `#dcd6cd` (8.13 → 10.62 on cards).
+- partner + store monogram tiles: an accent on a tinted tile cannot
+  clear 10 in either theme (9.31 light / 8.58 dark), so the decorative
+  initial uses the heading token.
+- the How-it-works step badge: `bg-noir-950` is DELIBERATELY not
+  theme-overridden, so it is near-black in BOTH themes and **no text
+  token could serve it** — the light accent measured 1.46:1 on it. Fixed
+  by making the FILL theme-aware (`bg-noir-800`), giving 13.89 light /
+  14.44 dark. The lesson: when no text colour works, the surface is the
+  thing that is wrong.
+
+**GATE NOW BLOCKING** (`npm run check:design` = claims + contrast),
+wired the moment the count hit zero, per the operator's rule. Selftest
+still exits 1 on a planted node. 56 on-fill nodes clear the 4.5 minimum
+and sit below the 7 target — reported as notes, not failures, per the
+amended §3 row.
+
+### §40. Montserrat shipped; spec §2 amended for its metrics (2026-08-19)
+
+Kawsar's typeface call. Vendored `next/font/local` (§9q: a build-time
+gstatic fetch failed a production deploy), weights 400–800, latin
+variable woff2, 37,956 bytes. Spec §2 amended IN-REPO with the reason,
+because Montserrat is wider with a larger x-height and the original
+numbers do not transfer: display tracking −0.03 → **−0.035em**, h1
+−0.025 → **−0.03**, h2 −0.02 → **−0.025**, h3 −0.01 → **−0.015**,
+body-lg 18/1.7 → **17px/1.75**. Everything else unchanged. Guide prose
+mirrors the amended values.
+
+Header pill fix (operator item 4a): `whitespace-nowrap` and `shrink-0`
+went on the SHARED `ACCOUNT_PILL` class, not on the one pill that
+happened to wrap — a fix applied to a single instance is the same bug
+waiting at a narrower breakpoint. Verified at 660px, the narrowest
+viewport where both pills render: both 44px tall, identical radius,
+size and weight, `white-space: nowrap`, no wrap, no header overflow.

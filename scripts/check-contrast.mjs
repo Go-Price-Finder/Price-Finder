@@ -32,10 +32,11 @@
  * SELFTEST: CONTRAST_SELFTEST=1 node scripts/check-contrast.mjs
  *           — plants a low-contrast node on every route; MUST exit 1.
  *
- * Wired next to the claims tripwire (npm run check:design) rather than
- * into postbuild, because it needs a running server: postbuild runs
- * before anything is serving. `npm run check:design` starts `next start`,
- * runs claims + contrast, and stops it.
+ * BLOCKING as of 2026-08-19, the moment the count reached ZERO
+ * (operator rule: wire it in when it does). It is NOT in postbuild —
+ * postbuild runs before anything is serving — so it runs in
+ * `npm run check:design`, which starts a server, runs claims +
+ * contrast, and stops it. Run that before shipping visual work.
  */
 import { chromium } from "playwright";
 
@@ -301,8 +302,19 @@ for (const theme of ["light", "dark"]) {
       failures.push(`${route} [${theme}]: route did not load (HTTP ${res ? res.status() : "no response"}) — a route that cannot be measured is not a passing route.`);
       continue;
     }
+    // KILL TRANSITIONS BEFORE MEASURING (findings §39). The checker used
+    // to set the theme and sample 120ms later, while `transition-all
+    // duration-200` was still interpolating — so it recorded MID-FLIGHT
+    // colours. Proof: identical elements reported different values
+    // between runs (a /stores heading measured on rgb(66,66,66) in one
+    // run and rgb(81,81,81) in the next), which made the count wobble
+    // 46/51/53/55 and made a font swap look like it moved contrast.
+    // A measurement that is not reproducible is not a measurement.
+    await page.addStyleTag({
+      content: "*,*::before,*::after{transition:none!important;animation:none!important}",
+    });
     await page.evaluate((t) => document.documentElement.setAttribute("data-theme", t), theme);
-    await page.waitForTimeout(120);
+    await page.waitForTimeout(250);
     const nodes = await page.evaluate(collect, SELFTEST);
     // PER-ROUTE FLOOR ON THE MEASUREMENT ITSELF (findings §36): a global
     // "did we measure anything" guard is not enough. A stale server
@@ -376,7 +388,12 @@ if (measured === 0) {
   process.exit(2);
 }
 if (failures.length) {
-  const shown = failures.slice(0, 40);
+  // Full list by default: a truncated failure list makes before/after
+  // diffs unreliable (findings §39 — a 40-line cap made a 2-node delta
+  // look like five appearing and five disappearing, purely from
+  // ordering). CONTRAST_MAX caps it only if someone asks.
+  const cap = Number(process.env.CONTRAST_MAX ?? 0) || failures.length;
+  const shown = failures.slice(0, cap);
   console.error(`\nFAIL — ${failures.length} node(s) below floor:\n` + shown.map((f) => "- " + f).join("\n"));
   if (failures.length > shown.length) console.error(`  ...and ${failures.length - shown.length} more.`);
   process.exit(1);

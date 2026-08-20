@@ -159,8 +159,8 @@
    top of this file for why fonts specifically need "inline" mode while
    colors/shadows/animations specifically must NOT have it. */
 @theme inline {
-  --font-sans: var(--font-jakarta);
-  --font-display: var(--font-jakarta);
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-montserrat);
 }
 
 /* ---- DARK THEME (opt-in via data-theme="dark" on <html>) ----------- */
@@ -184,7 +184,7 @@
   --color-ivory-50: #faf8f3;
   --color-ivory-100: #f5f3ee;
   --color-ivory-200: #f5f3ee;
-  --color-ivory-300: #c3bcb0;
+  --color-ivory-300: #dcd6cd;
   --color-ivory-400: #b0a89c;
 
   --color-price-down: #3ecf8e;
@@ -279,11 +279,11 @@ body {
    ZERO tracking with generous leading — default Tailwind applies neither,
    which is most of why untouched Tailwind reads as unfinished.
    =================================================================== */
-.type-display { font-size: 52px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; }
-.type-h1      { font-size: 40px; line-height: 1.1;  font-weight: 700; letter-spacing: -0.025em; }
-.type-h2      { font-size: 30px; line-height: 1.2;  font-weight: 700; letter-spacing: -0.02em; }
-.type-h3      { font-size: 22px; line-height: 1.3;  font-weight: 600; letter-spacing: -0.01em; }
-.type-body-lg { font-size: 18px; line-height: 1.7;  font-weight: 400; letter-spacing: 0; }
+.type-display { font-size: 52px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; }
+.type-h1      { font-size: 40px; line-height: 1.1;  font-weight: 700; letter-spacing: -0.03em; }
+.type-h2      { font-size: 30px; line-height: 1.2;  font-weight: 700; letter-spacing: -0.025em; }
+.type-h3      { font-size: 22px; line-height: 1.3;  font-weight: 600; letter-spacing: -0.015em; }
+.type-body-lg { font-size: 17px; line-height: 1.75; font-weight: 400; letter-spacing: 0; }
 .type-body    { font-size: 16px; line-height: 1.6;  font-weight: 400; letter-spacing: 0; }
 .type-ui      { font-size: 15px; line-height: 1.4;  font-weight: 500; letter-spacing: 0; }
 .type-meta    { font-size: 13px; line-height: 1.45; font-weight: 500; letter-spacing: 0.01em; }
@@ -305,11 +305,11 @@ body {
    defect that motivated this spec (findings §36).
    =================================================================== */
 .guide-prose { max-width: 68ch; }
-.guide-prose h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; color: var(--color-ivory-50); }
-.guide-prose h2 { font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; margin-top: 2.5rem; color: var(--color-ivory-50); }
-.guide-prose h3 { font-size: 22px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin-top: 2rem; color: var(--color-ivory-50); }
+.guide-prose h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.03em; color: var(--color-ivory-50); }
+.guide-prose h2 { font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -0.025em; margin-top: 2.5rem; color: var(--color-ivory-50); }
+.guide-prose h3 { font-size: 22px; line-height: 1.3; font-weight: 600; letter-spacing: -0.015em; margin-top: 2rem; color: var(--color-ivory-50); }
 .guide-prose p,
-.guide-prose li { font-size: 18px; line-height: 1.7; font-weight: 400; letter-spacing: 0; margin-top: 1.15rem; color: var(--color-ivory-200); }
+.guide-prose li { font-size: 17px; line-height: 1.75; font-weight: 400; letter-spacing: 0; margin-top: 1.15rem; color: var(--color-ivory-200); }
 .guide-prose ul { margin-top: 1.15rem; padding-left: 1.25rem; list-style: disc; }
 .guide-prose strong { color: var(--color-ivory-50); font-weight: 600; }
 .guide-prose em { color: var(--color-ivory-200); }

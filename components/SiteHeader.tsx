@@ -189,7 +189,11 @@ export default function SiteHeader({ categories, stores }: Props) {
    * header row's control height (wishlist icon, flag, theme toggle,
    * mobile button all sit on it). Colours stay per-button. */
   const ACCOUNT_PILL =
-    "flex h-11 items-center rounded-full text-sm font-medium transition-all duration-200";
+    // whitespace-nowrap lives on the SHARED class, not on the one pill
+    // that happened to wrap ("Log out" broke to two lines): a fix applied
+    // to a single instance is the same bug waiting at a narrower
+    // breakpoint. Every pill using this class is immune by construction.
+    "flex h-11 shrink-0 items-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200";
 
   /** Wishlist link with live count — desktop and mobile share it. */
   function WishlistLink({ className = "" }: { className?: string }) {

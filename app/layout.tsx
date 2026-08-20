@@ -7,22 +7,20 @@ import "./globals.css";
 import Providers from "./providers";
 import CinematicBackground from "@/components/CinematicBackground";
 
-// Plus Jakarta Sans — typography-and-contrast-spec.md §1, weights
-// 400/500/600/700/800, display: "swap", system fallback stack.
-// DELIBERATELY NOT Inter (the spec's reasoning: Inter has become the
-// "generic modern web app" tell); this is the specified typeface, not a
-// safer default substituted for it.
+// MONTSERRAT — operator's call (Kawsar's, 2026-08-19), weights
+// 400/500/600/700/800. Replaces Plus Jakarta Sans.
 //
-// ONE DEVIATION FROM THE SPEC, stated rather than silent: the spec says
-// next/font/google, but findings §9q records that a build-time fetch
-// from fonts.gstatic.com FAILED a production deploy, which is why both
-// previous families are vendored. The same latin-subset variable woff2
-// Google serves is committed to app/fonts/ and loaded with
-// next/font/local — identical typeface and axes, no third-party network
-// call between a deploy and production.
-const jakarta = localFont({
-  src: "./fonts/plus-jakarta-sans-variable-latin.woff2",
-  variable: "--font-jakarta",
+// Same vendored delivery as every other family here, NOT
+// next/font/google: findings §9q records a build-time fetch from
+// fonts.gstatic.com FAILING a production deploy. The latin-subset
+// variable woff2 Google serves is committed to app/fonts/.
+//
+// Montserrat is wider with a larger x-height than Plus Jakarta Sans, so
+// the spec's tracking and body-lg numbers do NOT transfer unchanged —
+// see the amended table in claude/typography-and-contrast-spec.md §2.
+const montserrat = localFont({
+  src: "./fonts/montserrat-variable-latin.woff2",
+  variable: "--font-montserrat",
   display: "swap",
   weight: "400 800",
   fallback: ["ui-sans-serif", "system-ui", "Segoe UI", "Arial", "sans-serif"],
@@ -67,7 +65,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${jakarta.variable} h-full antialiased`}
+      className={`${montserrat.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

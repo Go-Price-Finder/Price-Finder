@@ -39,6 +39,22 @@ Fixed scale. Nothing on the site should use a size outside it.
 | `ui` | 15px / 1.4 | 500 | 0 | Buttons, nav, labels |
 | `meta` | 13px / 1.45 | 500 | 0.01em | Timestamps, counts, captions |
 
+**AMENDED 2026-08-19 for MONTSERRAT** (operator/Kawsar's typeface call,
+replacing Plus Jakarta Sans). Montserrat is wider with a larger
+x-height, so the original numbers do not transfer unchanged:
+
+| Token | Was | Now | Why |
+|---|---|---|---|
+| `display` tracking | -0.03em | **-0.035em** | Montserrat is naturally wide; without more negative tracking large headings read loose and dated |
+| `h1` tracking | -0.025em | **-0.03em** | same |
+| `h2` tracking | -0.02em | **-0.025em** | same |
+| `h3` tracking | -0.01em | **-0.015em** | same |
+| `body-lg` | 18px / 1.7 | **17px / 1.75** | Montserrat's large x-height makes 17px read as 18px did; the extra leading offsets the wider setting |
+
+Everything else in the scale is unchanged. Delivery is vendored
+`next/font/local`, NOT `next/font/google` — §9q records a build-time
+gstatic fetch failing a production deploy.
+
 Mobile: `display` → 36px, `h1` → 30px, `h2` → 24px. Everything else unchanged —
 body text should not shrink on mobile.
 

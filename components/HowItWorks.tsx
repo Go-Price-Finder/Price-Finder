@@ -66,7 +66,7 @@ export default function HowItWorks() {
             >
               <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-gilt-500/10 text-gilt-400 shadow-soft transition-all duration-300 group-hover:scale-105 group-hover:bg-gilt-500 group-hover:text-accent-ink">
                 <step.icon className="h-7 w-7" />
-                <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-noir-950 text-[11px] font-semibold text-gilt-400">
+                <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border border-gilt-500/25 bg-noir-800 text-[11px] font-semibold text-ivory-50">
                   {index + 1}
                 </span>
               </div>

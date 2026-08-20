@@ -3143,7 +3143,7 @@ anyone can remember not to produce it, which is the strongest possible
 argument that the postbuild tripwire is infrastructure rather than a
 nicety.
 
-### §29. The ratings were being asserted to Google as AggregateRating — removed at all three layers (2026-08-19, operator ruling)
+### §29. Fabricated ratings reached Google search for ~3 weeks — removed at all three layers, but NOT before it cost us (2026-08-19; amended 2026-08-20 with the Search Console outcome)
 
 The operator's question made this more serious than the badges, and the
 answer was yes: buildProductJsonLd emitted `aggregateRating:
@@ -3164,11 +3164,44 @@ rating_stars/rating_count nulled, read-back zero table-wide. Star
 display on cards/pages died with the data (conditional render).
 **Measured AFTER: 0 pages emit aggregateRating.**
 
-OPERATOR-SIDE: Search Console has no API credential in this session —
-check Enhancements -> Review snippets (and Product snippets) for any
-existing enhancement on the 18 brooklyn-delhi product URLs; if Google
-had picked the markup up, the next crawl of the now-clean pages clears
-it, but the check itself needs the dashboard.
+**AMENDED 2026-08-20 — SEARCH CONSOLE ANSWERED, AND THE ANSWER IS WORSE
+THAN THE ORIGINAL FRAMING.** The paragraph that stood here said the
+markup would be cleared "if Google had picked [it] up" — a conditional
+that read as "removed before it cost us anything." That is not what
+happened, and the operator was right to strike it: **a record that says
+we caught something in time, when we did not, is the same defect class
+as everything else removed today. It reads as a stronger safety claim
+than the evidence supports.**
+
+WHAT ACTUALLY HAPPENED (operator, from the Search Console dashboard):
+- **Google DID index the aggregateRating markup.** The Review snippets
+  report shows valid items appearing around **26 July**, peaking at
+  roughly **seven**, and sitting near **four** through mid-August.
+- So the fabricated ratings were live and **eligible to show star
+  ratings in Google search results for about three weeks**. This was
+  NOT caught before it reached anyone. It reached search.
+- **No manual action.** "No issues detected in the last 90 days";
+  Security & Manual Actions clean. A QUALITY failure, not a penalty —
+  which is luck about enforcement, not evidence the markup was
+  harmless.
+
+**ONE READING LEFT UNRESOLVED, recorded as unresolved rather than
+resolved in our favour:** the report's Valid counter shows **0** while
+its own chart shows **green bars**. Those two disagree, and a
+screenshot cannot settle which is current. Compounding it, the report's
+last update (**17 August**) PREDATES our removal (**19 August**), so it
+cannot reflect the fix in either direction yet. Do not read the 0 as
+"already cleared" and do not read the bars as "still live" — both
+readings are available and neither is established.
+
+**RE-CHECK, EARLY SEPTEMBER 2026 (owner: operator):** reopen
+Enhancements -> Review snippets and confirm the valid-item count has
+decayed toward zero after recrawl of the now-clean pages. **A count
+that has NOT moved means the markup did not fully come out — that is a
+finding, not a delay**, and it would mean something still emits
+aggregateRating despite `buildProductJsonLd` no longer having the code
+path (check other JSON-LD builders, any cached/ISR HTML, and the
+sitemap's crawl coverage before assuming Google is merely slow).
 
 ### §30. Guides shipped as approved; the tripwire split by severity (2026-08-19, operator rulings)
 

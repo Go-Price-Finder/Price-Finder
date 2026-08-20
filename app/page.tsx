@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import DealShelf, { type ShelfItem } from "@/components/DealShelf";
 import FutureOfWebsite from "@/components/FutureOfWebsite";
 import OurPartners from "@/components/OurPartners";
 import WhyTrustPrices from "@/components/WhyTrustPrices";
@@ -10,7 +9,6 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import { buildOrganizationJsonLd } from "@/lib/structured-data";
 import { getAllRealProducts, getPartners } from "@/lib/catalog";
-import { getPriceAsOf, formatAsOfDate } from "@/lib/price-as-of";
 
 export default async function Home() {
   // Computed here (a Server Component) rather than inside Hero (a "use
@@ -22,45 +20,25 @@ export default async function Home() {
     partners: (await getPartners()).length,
   };
 
-  // DEAL SHELF DATA — real markdowns only, ranked by MARKDOWN DEPTH.
+  // DEAL SHELF: BUILT, GATED, DELIBERATELY NOT MOUNTED (2026-08-20, §46).
   //
-  // Ranking chosen deliberately, because "first N rows" is a ranking
-  // nobody picked: the card's own claim is "Marked down by the store", so
-  // the only ordering that matches what the card asserts is the size of
-  // that markdown. Highest-price would rank by expense, which the card
-  // says nothing about, and feed order is not a ranking at all.
+  // components/DealShelf.tsx ships complete — token-mapped, keyboard and
+  // arrow behaviour verified on a real overflowing rail, wording locked by
+  // three regex entries in the claims tripwire. It is not rendered because
+  // it has no data source yet, and the reason matters:
   //
-  // MEASURED 2026-08-20: exactly ONE product of 1,453 carries a real
-  // markdown (originalPrice > price). originalPrice is only ever set when
-  // the source feed showed a genuine list price, and most feeds — aaawave's
-  // 500 included — leave that column empty. The shelf therefore renders
-  // one card today, and the component returns null rather than showing an
-  // empty band. Cap is 16 for when that changes.
-  const markedDown = (await getAllRealProducts())
-    .filter((p) => typeof p.originalPrice === "number" && p.originalPrice > p.price)
-    .sort((a, b) => {
-      const pa = (a.originalPrice! - a.price) / a.originalPrice!;
-      const pb = (b.originalPrice! - b.price) / b.originalPrice!;
-      return pb - pa;
-    })
-    .slice(0, 16);
-
-  const shelfItems: ShelfItem[] = markedDown.map((p) => {
-    const iso = getPriceAsOf(p.partnerId, p.slug);
-    return {
-      id: p.id,
-      href: p.href,
-      name: p.name,
-      image: p.image,
-      storeName: p.partnerName,
-      price: p.price,
-      originalPrice: p.originalPrice ?? null,
-      // Rendered verbatim by the card; never inferred. Null for a partner
-      // with no known feed vintage, in which case the card omits the line.
-      checkedAt: iso ? formatAsOfDate(iso) : null,
-      variant: "markdown",
-    };
-  });
+  //   original_price is NULL on 1,452 of 1,453 rows, and ZERO rows have it
+  //   populated-but-not-higher. That is a COVERAGE fact about our importer,
+  //   not a behavioural fact about our merchants. "One product is marked
+  //   down" and "we capture a compare-at price for one product" are
+  //   different claims that lead to different decisions, and only the
+  //   second one is supported.
+  //
+  // Mount this the moment compare-at coverage exists. Do not mount it to
+  // show one card: a shelf headed "Marked down right now" that renders a
+  // single item invites the reader to conclude nothing else is discounted,
+  // which is the same absence-as-negative-claim defect §46 removes from
+  // /about and the guides.
 
   return (
     <>
@@ -89,10 +67,6 @@ export default async function Home() {
           taxonomy browser), which the nav's "Categories" link now points
           to instead of this page's old #categories anchor. */}
       <main className="flex-1 scroll-smooth snap-y snap-proximity">
-        <DealShelf
-          items={shelfItems}
-          subtitle="The store's own list price against what it charges today — checked daily."
-        />
         <Hero stats={heroStats} />
         <FutureOfWebsite products={heroStats.products} partners={heroStats.partners} />
         <OurPartners />

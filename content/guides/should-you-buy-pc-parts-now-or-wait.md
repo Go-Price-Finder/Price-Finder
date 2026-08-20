@@ -125,8 +125,14 @@ parts argue for sooner and everything else argues for the usual patience.
 
 We track prices daily across the merchants in our catalogue, including
 components, storage, mini PCs and NAS gear. On any product page you can see
-what it costs today, when we last checked it, and whether the store has marked
-it down from its own list price.
+what it costs today, when we last checked it, and — when the store publishes a
+list price alongside it — whether it has been marked down from that.
+
+Most of our partners' feeds do not publish a list price at all. Where a card
+shows no markdown, that means we have no list price to compare against; it is
+not a statement that the item is at full price. We would rather show you
+nothing than infer a discount, or the absence of one, from data we do not
+have.
 
 We are recording those daily prices now so that we can eventually show you how
 each product's price has actually moved over time — which is the only real

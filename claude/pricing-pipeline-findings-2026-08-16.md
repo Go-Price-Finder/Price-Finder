@@ -4116,3 +4116,163 @@ contrast PASS, 748 nodes — up from 740, and the increase is the control
 that matters, because it proves the new stamps were MEASURED and not
 silently skipped. After (b)-(e) plus the plate and the wording fix:
 contrast PASS 748 both themes, claims PASS 21 chrome routes + 1 guide.
+
+### §46. Absence is not a negative: the compare-at investigation, and the claim it invalidated (2026-08-20)
+
+**The operator reframed the shelf finding and the reframing was the whole
+point.** §43 reported "one product of 1,453 is marked down". Measured
+directly, `original_price` is NULL on 1,452 rows and ZERO rows are
+populated-but-not-higher. That is not "one merchant is discounting". It
+is "we capture a compare-at price for one product" — a COVERAGE fact
+about our importer, not a behavioural fact about our merchants. The two
+lead to different decisions and only the second one was supported.
+
+**AN INSTRUMENT ERROR, CAUGHT BY A CONTROL, BEFORE IT BECAME A RULING.**
+The first pass at this let a heuristic pick each partner's feed
+("English, no vertical"). It returned an 8-row feed for a 500-product
+partner and a 1-row feed for a 72-product one, and every compare-at
+number computed from those feeds was meaningless. What caught it was
+comparing each feed's row count against the imported catalog count —
+an INDEPENDENTLY OBTAINED number, per the standing rule that a read
+must be checked against something other than itself. Feed ids are now
+pinned explicitly in `scripts/_audit-compareat.mjs`, with the catalog
+count carried alongside as a permanent control.
+
+**PER-PARTNER RESULT, against the correct live feeds:**
+
+| partner | feed | rows | compare-at column | populated | higher than price | do we map it? |
+|---|---|---|---|---|---|---|
+| aaawave | F2639 (Google) | 1,685 | `sale_price` header only | **0** | — | no (correctly skipped) |
+| evdance | F1320 (Google) | 71 | `sale_price` header only | **0** | — | no (correctly skipped) |
+| golden-maple | F2615 (Google) | 358 | `sale_price` header only | **0** | — | no (correctly skipped) |
+| canvas-vows | 103552 (classic) | 204 | `rrp_price` | **204 / 204** | **0** | YES |
+| tsar-bomba | 105368 (classic) | 189 | `rrp_price` | **189 / 189** | **0** | YES |
+| tsar-bomba | 113495 (US) | 234 | none | — | — | — |
+| king-koil | 101819 (classic) | 27 | none | — | — | — |
+| brooklyn-delhi | **no feed at all** | — | — | — | — | — |
+
+**Three things fall out of that table.**
+
+1. **`display_price` and `store_price` do not exist in any of our seven
+   feeds.** The hypothesis that AWIN classic feeds commonly expose them
+   alongside `search_price` is not borne out here. The complete set of
+   price-like headers is: Google template — `price`, `sale_price`,
+   `sale_price_effective_date`, `subscription_cost`; classic —
+   `search_price`, `rrp_price`, `delivery_cost`.
+
+2. **Where a compare-at column exists and is populated, we already read
+   it, and it says "no discount".** canvas-vows and tsar-bomba's Default
+   feed populate `rrp_price` on 100% of rows, and on 100% of rows it is
+   EQUAL to `search_price` — never higher, never lower. The importer maps
+   `rrp_price` and correctly declines to record a markdown. There is no
+   unread field here; the field is read and its answer is "the list price
+   is the price".
+
+3. **The three Google-template feeds are the "a header is not data"
+   finding again**, now confirmed on all three rather than just aaawave's
+   F2639: `sale_price` is present as a column and empty in every row, and
+   `resolveColumn` skips it precisely because it checks for data rather
+   than for a header.
+
+**So the fork resolves against fixing coverage.** The fields are not
+there to read. The shelf as designed has no data source, so it is HELD —
+component, token mapping, regex bans and the verified keyboard/arrow
+tests all retained, unmounted, with the reason written into
+`app/page.tsx` at the mount site rather than into a ticket.
+
+**A SEPARATE FINDING, and it is not small: brooklyn-delhi has no active
+AWIN feed at all.** No advertiser in the 624-row feed list matches. Its
+29 products came from an earlier import and cannot currently be
+refreshed — and it is the partner holding our single markdown. The one
+compare-at value in the entire catalog comes from a feed we can no
+longer see.
+
+**A LATENT DEFECT IN THE IMPORTER, worth stating as an invariant
+problem.** `import-partner.mjs` only records `originalPrice` when
+`rawOriginal > price`. Everything else is discarded, so the catalog
+cannot distinguish "the feed published no list price" from "the feed
+published a list price equal to the current price". Those are different
+facts: the second is a merchant telling us they are not discounting,
+which is real information we are throwing away. The operator's
+measurement that zero rows are populated-but-not-higher is therefore
+true BY CONSTRUCTION and could never have come out any other way — the
+output cannot represent that state. Recommended change (not made here,
+it needs a re-import): capture the raw compare-at value whenever
+present, and derive "is a markdown" at read time. That distinction is
+also a real input to the 25 August question.
+
+**THE PRIORITY ITEM: a claim that had become unsafe.**
+
+/about and the published guide both said the reader can see "whether the
+store has marked it down from its own list price". With no list price
+captured for 99.9% of rows, a card showing no markdown reads as "not
+discounted" when it means "we never captured a list price" — absence
+converted into a negative claim, in the copy whose whole job is to
+establish that we do not do that.
+
+Recommendation given and taken: **qualify now**, because fixing coverage
+is not available — there is nothing to fix. Fixed in four places, not
+the two named:
+
+- **/about** — now says the markdown appears "when the store publishes a
+  list price next to it", and states plainly that most partner feeds
+  publish none, "so a product with no markdown shown means we have no
+  list price to compare against, not that the store is charging full
+  price."
+- **The guide** — same qualification, plus the general principle: we
+  would rather show nothing than infer a discount, or the absence of
+  one, from data we do not have.
+- **/deals body copy and metadata** — "Every real product currently
+  priced below its original price" was a completeness claim over a field
+  we hold for 1 product in 1,453. Now scoped to what we can prove, and
+  says so.
+- **/deals EMPTY STATE** — "No active deals right now" was the purest
+  form of the defect and nobody had flagged it, because it is not
+  currently rendering. One import away from asserting that nothing in
+  the catalogue is discounted, on the evidence that no feed sent a list
+  price.
+
+**Where the same inference does NOT occur, checked rather than assumed.**
+Every other `originalPrice` consumer — seven partner detail pages,
+RealProductCard, PriceHistorySparkline — renders the markdown row
+conditionally and renders NOTHING when it is absent. Nothing asserts a
+negative. PriceHistorySparkline's else branch is "Price history charts
+are on the way", a statement about the future. And WhyPriceFinder
+already had the correct formulation before any of this: "A discount only
+shows when the store's own feed shows one — we never invent a
+strike-through price." That sentence was the model for the rewrites.
+
+**Two regex tripwires added**, with removal conditions documented, and
+PROVEN before being trusted: they catch all three old wordings and flag
+zero of the five honest strings now shipping, including the four
+replacements.
+
+**OPERATOR RULINGS RECORDED (2026-08-20).**
+
+- *Shadows stay at two values.* Deliberate scale, not drift: a dropdown
+  with no elevation and no scrim reads as an inline panel, which is a
+  worse defect than one extra shadow value.
+- *`rounded-full` retained.* A circular control is not a competing corner
+  radius.
+- *The "Checked" → "Price as of" change stands, and the operator claimed
+  the defect as theirs.* Worth recording precisely: the wording was
+  written into a file whose own header declares the wording
+  non-negotiable, on a value that is feed vintage rather than a moment
+  we checked. **The file's own rule caught its author.** That is the
+  strongest argument available for writing the rule into the artifact
+  instead of into a person's memory.
+- *The product-image plate is the same finding as the logo plate*, one
+  surface over, and they belong together: contain-fit exposes whatever
+  background the source image was shot on, and our catalogue is full of
+  white-background product photography that becomes a hard rectangle on
+  a dark card. Fixing it twice by coincidence would have been the
+  failure; it is now one remedy applied to one cause.
+- *The terms path was the operator's error, and they named it:*
+  `claude/terms/aaawave-43143-2026-02-13.md` is a PROJECT doc outside
+  the repo, which this session cannot see. Saying so beat working around
+  it. Future archive references will name the system they live in.
+
+**Gates:** claims PASS (21 chrome routes + 1 guide), contrast PASS at 732
+nodes both themes — down from 748, and the 16-node drop is the control
+confirming the shelf's text actually left the homepage rather than the
+run silently measuring a stale build.

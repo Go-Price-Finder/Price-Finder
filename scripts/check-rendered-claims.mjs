@@ -67,6 +67,18 @@ const NEVER_ASSERT = {
   "/\bprice drop\b(?!s)/": "the NOUN form asserts an observed event: a markdown is the store's list price vs its current price from ONE feed row at one instant, and we did not watch the price fall. The verb form (\"when the price drops\") is a true statement about alerts and is deliberately NOT banned. Reserved for when two observations exist (§43).",
   "/you save\s*\$/": "asserts the visitor would otherwise have paid the list price. \"products you save\" (wishlist) is untouched (§43).",
   "/\bwas \$/": "asserts a price we observed earlier; we observed one instant. Say 'Marked down by the store' (§43).",
+  // ABSENCE-AS-NEGATIVE-CLAIM (§46). original_price is NULL on 1,452 of
+  // 1,453 rows because most partner feeds publish no list price — not
+  // because those products are undiscounted. Any copy that treats a
+  // missing list price as evidence of "not discounted" converts a
+  // coverage gap into a claim about merchants. Both entries are REGEXES
+  // for the same reason as the §43 three: the honest, qualified wordings
+  // shipped alongside them use the same nouns.
+  // REMOVE both when compare-at coverage is real (see §46's per-partner
+  // table) — at that point the completeness claim becomes true and the
+  // empty state becomes meaningful.
+  "/no active deals/": "asserted that nothing is discounted when what we actually knew was that no feed published a list price (§46)",
+  "/every real product currently (marked down|priced below)/": "a completeness claim over a field we hold for 1 product in 1,453; 'every product that is marked down' is unknowable from feeds that send no list price (§46)",
   "what it cost last month": "the /about claim the operator corrected on themselves: implied displayed price history before the charts exist (§26)",
   "how it has moved": "same /about claim, as originally worded in the shipped sentence (§26)",
   "refreshed daily": "displayed prices are static catalog prices (Option A gated); the daily job CHECKS them — 'refreshed' claimed the check updates the display (§27)",

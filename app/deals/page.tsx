@@ -9,7 +9,7 @@ import { getFeaturedDeals } from "@/lib/catalog";
 export const metadata: Metadata = {
   title: "Deals — Go Price Finder",
   description:
-    "Every real product currently marked down across our partners, all in one place.",
+    "Real products whose store publishes a list price above what it charges today. Most partner feeds publish no list price, so this is not the whole catalogue.",
 };
 
 /**
@@ -48,18 +48,27 @@ export default async function DealsPage() {
           </h1>
           <span aria-hidden className="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-gilt-500" />
           <p className="mx-auto mt-3 max-w-2xl text-balance text-ivory-300">
-            Every real product currently priced below its original price —
-            genuine markdowns from our partners, never a fabricated
-            discount.
+            Products whose store publishes a list price above what it
+            charges today — genuine markdowns from our partners, never a
+            fabricated discount. Most of our partners&rsquo; feeds publish
+            no list price at all, so this page is not a complete picture of
+            what is discounted; it is everything we can prove.
           </p>
         </section>
 
         <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
           {deals.length === 0 ? (
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gilt-500/25 bg-noir-800/50 px-6 py-16 text-center">
+              {/* This used to say "No active deals right now", which is the
+                  purest form of the §46 defect: it converted "no partner
+                  feed published a list price" into "nothing is discounted".
+                  We cannot see whether these stores are discounting; we can
+                  only see whether they told us a list price. */}
               <p className="text-sm text-ivory-300">
-                No active deals right now — check back soon, or browse
-                everything that&apos;s trending.
+                No partner is currently publishing a list price above what
+                it charges, so we have nothing here we can prove. That is
+                not the same as nothing being discounted — most feeds send
+                us no list price at all.
               </p>
               <Link
                 href="/trending"

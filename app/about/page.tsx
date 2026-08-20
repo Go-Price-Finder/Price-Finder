@@ -61,8 +61,12 @@ export default function AboutPage() {
             <p>
               We track products from retail partners and record what they
               cost over time. When you look at a product here, you see what
-              it costs today, when we last checked it, and whether the store
-              has marked it down from its own list price. We&rsquo;re
+              it costs today, when we last checked it, and &mdash; when the
+              store publishes a list price next to it &mdash; whether it has
+              been marked down from that. Most of our partners&rsquo; feeds
+              do not publish one at all, so a product with no markdown shown
+              means we have no list price to compare against, not that the
+              store is charging full price. We&rsquo;re
               recording those prices daily so that we can eventually show
               you how they&rsquo;ve moved over time — that history is being
               collected now, and the charts aren&rsquo;t live yet.

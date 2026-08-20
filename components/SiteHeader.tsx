@@ -123,6 +123,31 @@ export default function SiteHeader({ categories, stores }: Props) {
     setMobileOpen(false);
   }, [pathname]);
 
+  // SCROLL TRAP FIX (operator item 1, 2026-08-19): with the mega menu
+  // open, the wheel used to scroll the page behind it. Lock page scroll
+  // while open, compensating for the scrollbar width so locking causes
+  // no layout shift (a shift on open would be a worse bug than the trap).
+  // The rail's own container carries overflow-y-auto +
+  // overscroll-contain, so it scrolls internally and its overscroll does
+  // not chain to the (locked) page. Decision, stated: while the menu is
+  // open the page does not scroll ANYWHERE — wheel outside the menu does
+  // nothing, and the existing click-outside/Escape handlers close it.
+  // The mobile drawer needs no lock: it renders IN FLOW (pushes content
+  // down rather than overlaying), so page scroll with the drawer open is
+  // ordinary document scrolling, not a trap.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    const prevOverflow = document.body.style.overflow;
+    const prevPadding = document.body.style.paddingRight;
+    document.body.style.overflow = "hidden";
+    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPadding;
+    };
+  }, [menuOpen]);
+
   // Close on Escape, and on click outside the header shell.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -157,6 +182,15 @@ export default function SiteHeader({ categories, stores }: Props) {
           ?.storeIds.map((id) => storeById.get(id))
           .filter((x): x is HeaderStore => Boolean(x)) ?? []);
 
+  /** ONE shared geometry for the account-row pills (operator item 2):
+   * Wishlist and Log out must share height, padding, radius, font size
+   * and weight — extracted here so the values cannot drift apart on the
+   * next edit, which is exactly what hand-matched values do. h-11 is the
+   * header row's control height (wishlist icon, flag, theme toggle,
+   * mobile button all sit on it). Colours stay per-button. */
+  const ACCOUNT_PILL =
+    "flex h-11 items-center rounded-full text-sm font-medium transition-all duration-200";
+
   /** Wishlist link with live count — desktop and mobile share it. */
   function WishlistLink({ className = "" }: { className?: string }) {
     return (
@@ -185,7 +219,7 @@ export default function SiteHeader({ categories, stores }: Props) {
               type="button"
               onClick={() => router.back()}
               aria-label="Go back"
-              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gilt-500/25 bg-noir-800 text-ivory-100 shadow-soft transition-all duration-200 hover:border-gilt-400 hover:text-gilt-400 sm:flex"
+              className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gilt-500/25 bg-noir-800 text-ivory-100 shadow-soft transition-all duration-200 hover:border-gilt-400 hover:text-gilt-400 sm:flex"
             >
               <ChevronRightIcon className="h-4 w-4 rotate-180" />
             </button>
@@ -207,14 +241,14 @@ export default function SiteHeader({ categories, stores }: Props) {
             <ThemeToggle />
 
             {loading ? (
-              <div className="hidden h-10 w-24 animate-pulse rounded-full bg-noir-700 sm:block" />
+              <div className="hidden h-11 w-24 animate-pulse rounded-full bg-noir-700 sm:block" />
             ) : user ? (
               <div className="hidden items-center gap-2 sm:flex">
                 <Link
                   href="/wishlist"
-                  className="flex items-center gap-2 rounded-full border border-ivory-100/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-ivory-50 transition-all duration-200 hover:border-gilt-400/40 hover:bg-gilt-500/10"
+                  className={`${ACCOUNT_PILL} gap-2 border border-ivory-100/10 pl-1.5 pr-4 text-ivory-50 hover:border-gilt-400/40 hover:bg-gilt-500/10`}
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gilt-500/15 text-xs font-semibold text-gilt-400">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gilt-500/15 text-xs font-semibold text-gilt-400">
                     {user.email?.charAt(0).toUpperCase() ?? "?"}
                   </span>
                   Wishlist
@@ -222,7 +256,7 @@ export default function SiteHeader({ categories, stores }: Props) {
                 <button
                   onClick={handleSignOut}
                   disabled={signingOut}
-                  className="rounded-full border border-gilt-500/40 bg-noir-800 px-4 py-2.5 text-sm font-medium text-gilt-400 transition-all duration-200 hover:border-gilt-400 hover:bg-gilt-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className={`${ACCOUNT_PILL} border border-gilt-500/40 bg-noir-800 px-4 text-gilt-400 hover:border-gilt-400 hover:bg-gilt-500/10 disabled:cursor-not-allowed disabled:opacity-60`}
                 >
                   {signingOut ? "Logging out…" : "Log out"}
                 </button>
@@ -231,13 +265,13 @@ export default function SiteHeader({ categories, stores }: Props) {
               <>
                 <Link
                   href="/auth/login"
-                  className="hidden rounded-full px-4 py-2.5 text-sm font-medium text-ivory-200 transition hover:bg-noir-700 hover:text-ivory-50 sm:inline-flex"
+                  className={`${ACCOUNT_PILL} hidden px-4 text-ivory-200 hover:bg-noir-700 hover:text-ivory-50 sm:flex`}
                 >
                   Log in
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="hidden rounded-full bg-gilt-500 px-5 py-2.5 text-sm font-medium text-accent-ink shadow-soft transition hover:bg-gilt-400 active:scale-[0.98] sm:inline-flex"
+                  className={`${ACCOUNT_PILL} hidden bg-gilt-500 px-5 text-accent-ink shadow-soft hover:bg-gilt-400 active:scale-[0.98] sm:flex`}
                 >
                   Sign up
                 </Link>
@@ -337,7 +371,7 @@ export default function SiteHeader({ categories, stores }: Props) {
                 <div className="grid grid-cols-12">
                   {/* left: category rail */}
                   <div className="col-span-4 border-r border-noir-700 bg-noir-900/40 p-3 lg:col-span-3">
-                    <div className="max-h-[27rem] overflow-y-auto pr-1">
+                    <div className="max-h-[27rem] overflow-y-auto overscroll-contain pr-1">
                       <RailItem
                         label="All stores"
                         count={stores.length}
@@ -466,7 +500,7 @@ function StoreTile({ store }: { store: HeaderStore }) {
       href={store.href}
       className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition hover:border-gilt-500/30 hover:bg-noir-700/60"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gilt-500/10 text-[13px] font-semibold text-gilt-400 ring-1 ring-inset ring-gilt-500/15 transition group-hover:bg-gilt-500/20">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gilt-500/10 text-[13px] font-semibold text-ivory-50 ring-1 ring-inset ring-gilt-500/15 transition group-hover:bg-gilt-500/20">
         {store.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={store.logoUrl} alt="" className="h-full w-full object-contain" />

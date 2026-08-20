@@ -71,9 +71,9 @@
      the primary color for the lightest hover state, 600 a deeper shade for
      contrast/pressed states. */
   --color-gilt-300: #e8998a;
-  --color-gilt-400: #f2703f;
-  --color-gilt-500: #b8391f;
-  --color-gilt-600: #7a2814;
+  --color-gilt-400: #5e1d0b;
+  --color-gilt-500: #6e2411;
+  --color-gilt-600: #6e2411;
 
   /* Text/icon color for content that sits ON TOP of a gilt-500 fill
      (badges, primary buttons — see components using `bg-gilt-500
@@ -91,11 +91,11 @@
      100/300/400 are interpolated between those two anchors, darkest-to-
      lightest matching how the token is used everywhere else in this file
      (50 = most prominent, 400 = faintest). */
-  --color-ivory-50: #22304f;
-  --color-ivory-100: #34405c;
-  --color-ivory-200: #5b6270;
-  --color-ivory-300: #838a96;
-  --color-ivory-400: #a7acb5;
+  --color-ivory-50: #1b2740;
+  --color-ivory-100: #1d1c15;
+  --color-ivory-200: #16150f;
+  --color-ivory-300: #3a3733;
+  --color-ivory-400: #5c5852;
 
   /* Price-direction indicators — green for a drop, red for an increase.
      price-down uses a forest green (rather than a teal-leaning green) to
@@ -111,7 +111,7 @@
      without visually competing with a CTA button on the same card. Uses a
      deep amber, distinct from both the gilt accent and the price-down/up
      indicators. */
-  --color-price-text: #d9720e;
+  --color-price-text: #5e1d0b;
 
   /* Footer accent — a soft cool-gray band (was golden-cream), distinct
      from the page's plain white so the footer still reads as a
@@ -159,8 +159,8 @@
    top of this file for why fonts specifically need "inline" mode while
    colors/shadows/animations specifically must NOT have it. */
 @theme inline {
-  --font-sans: var(--font-schibsted);
-  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-jakarta);
 }
 
 /* ---- DARK THEME (opt-in via data-theme="dark" on <html>) ----------- */
@@ -171,9 +171,9 @@
   --color-noir-600: #3a352e;
 
   --color-gilt-300: #e3cd8e;
-  --color-gilt-400: #d4af37;
+  --color-gilt-400: #e3cd8e;
   --color-gilt-500: #b8935f;
-  --color-gilt-600: #a3813f;
+  --color-gilt-600: #e3cd8e;
 
   /* Dark theme's gilt-500 stays a mid-brightness gold (unchanged, per the
      "don't recolor dark mode" instruction), so dark text on top of it
@@ -182,10 +182,10 @@
   --color-accent-ink: var(--color-noir-950);
 
   --color-ivory-50: #faf8f3;
-  --color-ivory-100: #f5f1e8;
-  --color-ivory-200: #ded6c8;
-  --color-ivory-300: #b0a89c;
-  --color-ivory-400: #a89a8e;
+  --color-ivory-100: #f5f3ee;
+  --color-ivory-200: #f5f3ee;
+  --color-ivory-300: #c3bcb0;
+  --color-ivory-400: #b0a89c;
 
   --color-price-down: #3ecf8e;
   --color-price-up: #e5484d;
@@ -195,7 +195,7 @@
      reserved for buttons, borders, and other bright accent uses) so price
      text never reads as the same light/bright yellow-gold as the rest of
      the accent system. */
-  --color-price-text: #9c7a3f;
+  --color-price-text: #e8d9a8;
 
   --color-espresso-900: #2a1810;
   --color-espresso-800: #3d2817;
@@ -219,7 +219,11 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
+  /* Single family now (spec §1: Plus Jakarta Sans for everything), so
+     font-display resolves to the same stack as font-sans. The class is
+     kept because ~200 call sites use it and it still marks display-role
+     text for any future pairing. */
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Hide scrollbar for horizontal product rails while keeping it scrollable */
@@ -253,46 +257,49 @@ body {
   }
 }
 
-/* Editorial guide prose (content/guides/*.md rendered by marked — see
-   lib/guides.ts). Scoped under .guide-prose so markdown output matches
-   the site palette without a typography plugin. */
-.guide-prose h1 {
-  font-family: var(--font-display, inherit);
-  font-size: 1.875rem;
-  line-height: 1.25;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: rgb(250 248 242);
+
+
+
+/* ===================================================================
+   TYPE SCALE — typography-and-contrast-spec.md §2. Fixed scale; nothing
+   on the site should use a size outside it. The two rules doing most of
+   the work: headings get NEGATIVE tracking with tight leading, body gets
+   ZERO tracking with generous leading — default Tailwind applies neither,
+   which is most of why untouched Tailwind reads as unfinished.
+   =================================================================== */
+.type-display { font-size: 52px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; }
+.type-h1      { font-size: 40px; line-height: 1.1;  font-weight: 700; letter-spacing: -0.025em; }
+.type-h2      { font-size: 30px; line-height: 1.2;  font-weight: 700; letter-spacing: -0.02em; }
+.type-h3      { font-size: 22px; line-height: 1.3;  font-weight: 600; letter-spacing: -0.01em; }
+.type-body-lg { font-size: 18px; line-height: 1.7;  font-weight: 400; letter-spacing: 0; }
+.type-body    { font-size: 16px; line-height: 1.6;  font-weight: 400; letter-spacing: 0; }
+.type-ui      { font-size: 15px; line-height: 1.4;  font-weight: 500; letter-spacing: 0; }
+.type-meta    { font-size: 13px; line-height: 1.45; font-weight: 500; letter-spacing: 0.01em; }
+
+/* Mobile: display/h1/h2 step down. Body deliberately does NOT shrink. */
+@media (max-width: 640px) {
+  .type-display { font-size: 36px; }
+  .type-h1      { font-size: 30px; }
+  .type-h2      { font-size: 24px; }
 }
-.guide-prose h2 {
-  font-family: var(--font-display, inherit);
-  font-size: 1.375rem;
-  font-weight: 500;
-  margin-top: 2.25rem;
-  color: rgb(250 248 242);
-}
-.guide-prose p {
-  margin-top: 1rem;
-  font-size: 0.95rem;
-  line-height: 1.75;
-  color: rgb(214 209 196);
-}
-.guide-prose strong {
-  color: rgb(240 236 226);
-  font-weight: 600;
-}
-.guide-prose a {
-  color: rgb(212 175 85);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.guide-prose a:hover {
-  color: rgb(226 195 120);
-}
-.guide-prose hr {
-  margin-top: 2.5rem;
-  border-color: rgb(212 175 85 / 0.2);
-}
-.guide-prose em {
-  color: rgb(226 221 208);
-}
+
+/* Every price, count and percentage (spec §1). */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ===================================================================
+   EDITORIAL PROSE — token-driven so it responds to BOTH themes. The
+   previous version hardcoded dark-theme rgb() values, which measured
+   1.52:1 body / 1.06:1 headings in LIGHT mode — near-invisible text, the
+   defect that motivated this spec (findings §36).
+   =================================================================== */
+.guide-prose { max-width: 68ch; }
+.guide-prose h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; color: var(--color-ivory-50); }
+.guide-prose h2 { font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; margin-top: 2.5rem; color: var(--color-ivory-50); }
+.guide-prose h3 { font-size: 22px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin-top: 2rem; color: var(--color-ivory-50); }
+.guide-prose p,
+.guide-prose li { font-size: 18px; line-height: 1.7; font-weight: 400; letter-spacing: 0; margin-top: 1.15rem; color: var(--color-ivory-200); }
+.guide-prose ul { margin-top: 1.15rem; padding-left: 1.25rem; list-style: disc; }
+.guide-prose strong { color: var(--color-ivory-50); font-weight: 600; }
+.guide-prose em { color: var(--color-ivory-200); }
+.guide-prose a { color: var(--color-gilt-600); text-decoration: underline; text-underline-offset: 4px; font-weight: 500; }
+.guide-prose hr { margin-top: 2.5rem; border-color: var(--color-noir-700); }

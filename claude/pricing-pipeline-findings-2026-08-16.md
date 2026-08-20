@@ -3442,3 +3442,66 @@ rows in ten hours — unlike the three feeds frozen at 2026-05-15.
 Recorded in the 08-25 diff prep: the aaawave diff is read against a
 feed KNOWN to move, so a feed_rows delta of ZERO on the 25th is itself
 a signal worth investigating, not background noise.
+
+### §36. Typography + contrast pass: the guide page measured 1.52:1 (2026-08-19)
+
+**The number that was wrong.** Guide page, light mode, BEFORE:
+editorial prose **1.52:1** (rgb(214,209,196) on white) and headings
+**1.06:1** — near-invisible, not "grey". Cause: the `.guide-prose` CSS
+I wrote for §30 hardcoded dark-theme rgb() values instead of tokens, so
+the light theme rendered near-white text on white. AFTER, same page and
+mode: prose **18.29:1**, h1/h2 **14.88:1**, prose links **10.92:1**,
+meta **7.06:1**, measure 704px at 18px under a 68ch cap.
+
+**Typeface:** Plus Jakarta Sans, weights 400–800, as specified — NOT
+Inter. ONE deviation, stated not silent: the spec says
+`next/font/google`, but §9q records a build-time fetch from
+fonts.gstatic.com failing a production deploy, which is why both prior
+families are vendored. The same latin-subset variable woff2 Google
+serves is committed to app/fonts/ and loaded via next/font/local.
+
+**Scale + floors:** all eight scale tokens implemented as classes
+(negative tracking + tight leading on headings, zero tracking +
+generous leading on body, mobile step-down for display/h1/h2 only);
+prose capped at 68ch; `.tnum` for tabular numerals. Every text token
+was CHOSEN BY MEASUREMENT against the floors on every surface it lands
+on, not by eye — light body #16150f (18.29 white / 17.07 card),
+secondary #3a3733 (11.84 / 10.38 footer band), meta #5c5852 (7.06),
+headings #1b2740 (14.88), accent text #5e1d0b (12.68), price numerals
+#5e1d0b.
+
+**REVERTED, with the reason:** the spec's dark-mode page (#1b1a17) and
+warmed card are "practical consequence" comfort guidance, not floors.
+Applying them LOWERED every dark ratio enough to break floors across
+the theme (measured). Pure black serves the floors better, so the dark
+surface scale stays; only the dark TEXT tokens changed.
+
+**THE INSTRUMENT AUDITED ITSELF THREE TIMES — that is the finding.**
+1. Its first run reported 368 failures caused by MY mis-anchored edit:
+   `s.index(':root[data-theme="dark"]')` matched that string inside a
+   header COMMENT, so dark values were written into the light block.
+2. Its second run PASSED on 22 nodes where the same routes had yielded
+   724 — a vacuous pass (§19 shape), because a stale `next start` was
+   serving a `.next` deleted mid-flight. Fixed with a PER-ROUTE
+   measurement floor: fewer than 8 text nodes on a route is a broken
+   measurement, not a clean route. A global "did we measure anything"
+   guard was not enough.
+3. It then reported 368 failures the site did NOT have, because
+   Tailwind v4 emits `oklab()` and my regex read oklab components as
+   RGB (white measured as near-black). A canvas fallback was tried and
+   FAILED SILENTLY — assigning oklab to fillStyle left the previous
+   value. Replaced with explicit oklab/oklch→sRGB math, in the file
+   where it can be read.
+
+**NOT DONE, stated with the number: 209 nodes still below floor** after
+the pass (down from 368; measured across 11 routes × 2 themes). They
+are components still using secondary/meta/accent tokens for body-role
+text — a mechanical conversion, not a design question. `npm run
+check:design` runs claims + contrast; contrast is deliberately NOT
+wired into the blocking build gate while it is red, because a gate that
+always fails trains people to skip it. Wire it the moment the count is
+zero. 20 further nodes are ACCEPTED in-file, listed not silenced: text
+on a saturated accent FILL, which cannot reach 10:1 without a near-black
+fill or near-white ink — a brand decision the spec has no row for.
+Proven able to fail: a planted low-contrast node is named with measured
+and required ratios, exit 1.

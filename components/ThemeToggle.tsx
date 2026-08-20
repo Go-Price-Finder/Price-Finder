@@ -38,7 +38,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       onClick={toggleTheme}
       aria-label={`Switch to ${switchingTo} theme`}
       title={`Switch to ${switchingTo} theme`}
-      className={`flex h-10 w-10 items-center justify-center rounded-full text-ivory-100 transition-colors hover:bg-noir-700 hover:text-ivory-50 ${className}`}
+      className={`flex h-11 w-11 items-center justify-center rounded-full text-ivory-100 transition-colors hover:bg-noir-700 hover:text-ivory-50 ${className}`}
     >
       {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
     </button>

@@ -117,7 +117,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
         >
           Find better deals.
           <br />
-          <span className="italic text-gilt-400">Shop smarter.</span>
+          <span className="italic text-ivory-50">Shop smarter.</span>
         </motion.h1>
 
         <motion.p

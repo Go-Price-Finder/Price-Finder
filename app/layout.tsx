@@ -7,34 +7,25 @@ import "./globals.css";
 import Providers from "./providers";
 import CinematicBackground from "@/components/CinematicBackground";
 
-// Replaces Inter — an editorial-house grotesk (built for a Scandinavian
-// news/media publisher) instead of the generic default, per the approved
-// visual-direction redesign. See PHASE1 design-direction discussion for
-// why this pairs with Fraunces specifically.
+// Plus Jakarta Sans — typography-and-contrast-spec.md §1, weights
+// 400/500/600/700/800, display: "swap", system fallback stack.
+// DELIBERATELY NOT Inter (the spec's reasoning: Inter has become the
+// "generic modern web app" tell); this is the specified typeface, not a
+// safer default substituted for it.
 //
-// Vendored in app/fonts/ (next/font/local), NOT next/font/google: the
-// google variant downloads the files from fonts.gstatic.com during
-// `next build`, which put a third-party network fetch between every
-// deploy and production — and it failed one (findings doc §9q,
-// 2026-08-17). Same latin-subset variable woff2 files Google served,
-// committed; runtime serving was already self-hosted either way. The
-// files carry the same axes the google config requested (Schibsted:
-// wght 400..900; Fraunces: opsz/wght/SOFT/WONK).
-const schibsted = localFont({
-  src: "./fonts/schibsted-grotesk-variable-latin.woff2",
-  variable: "--font-schibsted",
+// ONE DEVIATION FROM THE SPEC, stated rather than silent: the spec says
+// next/font/google, but findings §9q records that a build-time fetch
+// from fonts.gstatic.com FAILED a production deploy, which is why both
+// previous families are vendored. The same latin-subset variable woff2
+// Google serves is committed to app/fonts/ and loaded with
+// next/font/local — identical typeface and axes, no third-party network
+// call between a deploy and production.
+const jakarta = localFont({
+  src: "./fonts/plus-jakarta-sans-variable-latin.woff2",
+  variable: "--font-jakarta",
   display: "swap",
-  weight: "400 900",
-});
-
-const fraunces = localFont({
-  src: "./fonts/fraunces-variable-latin.woff2",
-  variable: "--font-fraunces",
-  display: "swap",
-  weight: "100 900",
-  // Serif fallback metrics — localFont defaults to Arial; next/font/google
-  // computed against a serif for this serif family.
-  adjustFontFallback: "Times New Roman",
+  weight: "400 800",
+  fallback: ["ui-sans-serif", "system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -76,7 +67,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${schibsted.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${jakarta.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

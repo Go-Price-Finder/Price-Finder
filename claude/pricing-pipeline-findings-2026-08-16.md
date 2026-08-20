@@ -3840,3 +3840,158 @@ through its MECHANISM (the canvas is what iOS reveals, and the canvas is
 now correctly painted) rather than by reproducing the gesture. If a real
 iPhone ever shows a white flash again, the cause is body's background —
 not a missing backdrop div — and §38 is the section to read.
+
+### §42. Real store logos: self-hosted, behind a trademark gate that is NOT the image gate (2026-08-20)
+
+**The operator's diagnosis was right and it is worth stating as a rule.**
+`logo_url` was NULL on every partner because the only logo source anyone
+had considered was AWIN's CDN, and hotlinking a network's asset host on
+production pages is fragile and outside our control. So logos are now
+acquired the same way product images are: downloaded from the
+merchant's OWN site, normalised, and served from our domain
+(`public/images/_logos/<partner>.webp`) by
+`scripts/fetch-partner-logos.mjs`.
+
+**The gate is new, and separate on purpose.** Permission to show a
+partner's PRODUCT PHOTOGRAPHY and permission to show their MARK are
+different permissions, and conflating them is how a compliance registry
+starts lying. `canShowRealImages()` was not reused. A new field
+`logoUsagePermission` and a new predicate `canShowRealLogo()` were
+added, and no partner inherits logo clearance from image clearance.
+
+**Ruling on aaawave: cleared.** The enumerated prohibitions in the AWIN
+programme terms for advertiser 43143 do not mention logos or marks —
+the same reasoning that cleared product images, and this time read with
+pdftotext rather than a hand-rolled extractor (§19). Set to
+`confirmed`, with the grounds written into `logoUsageNote` so the next
+reader sees the reasoning and not just the verdict.
+
+**Which partners we hold terms for: ONE.** aaawave, and the archive
+lives outside this repo because the operator instructed that the PDF
+not be committed — so `claude/terms/aaawave-43143-2026-02-13.md`, the
+path named in the brief, does not exist and was never created. For the
+other six live partners — brooklyn-delhi, evdance, golden-maple,
+canvas-vows, king-koil, tsar-bomba — **we hold no terms document at
+all.** Not "unreviewed": absent. They are `pending`, which is a
+stricter default than the evidence strictly forces, and that is
+deliberate: an unreviewed mark is not a cleared mark, and the cost of
+being wrong about someone's trademark is not symmetric with the cost of
+a monogram.
+
+**The fallback has an identical footprint.** A `pending` partner keeps
+the monogram tile at the same 44x44 with the same radius and ring, so
+there is no layout shift and no hole where a logo would be — the gate
+changes what is inside the tile, never the grid.
+
+**Normalisation, and how each requirement was verified rather than
+assumed:**
+- *Optical weight.* Every logo is contain-fitted onto a 256x256 canvas
+  with 30px padding, so a wide wordmark and a square glyph occupy the
+  same box. Verified on the acquired asset: 480x274 source with no
+  alpha in, 256x256 out.
+- *Light plate in BOTH themes.* The plate is `#f4f4f2`, composited into
+  the WebP itself and also set as the tile background, because a logo
+  drawn for white paper inverts badly on a dark surface. Verified
+  against the theme toggle, not by assumption.
+- *The plate must not cost a contrast failure.* The gate was run after:
+  740 nodes, PASS, both themes. The count was zero before and is zero
+  now.
+
+### §43. The deal shelf, and why three banned phrases had to be regexes (2026-08-20)
+
+**The shelf ships, mounted first inside `<main>`, directly below the
+navigation.** Props-driven, fed from real catalog rows where
+`originalPrice > price`. No auto-rotation and no timer of any kind:
+it is a shelf, not a slideshow.
+
+**The ranking is markdown depth, descending, and the reason is the
+copy.** "First N rows" is a ranking nobody chose. Of the two the
+operator offered, deepest-markdown is the one that matches what the
+card actually asserts — the card says "Marked down by the store", so
+ordering by the size of that markdown is the only ordering the card's
+own claim justifies. Ranking by price would sort by something the card
+does not talk about.
+
+**The number the operator needs to decide on: 1 of 1,453.** Exactly one
+product in the catalog carries a real markdown — brooklyn-delhi's
+Celebrations Gift Box, $95 to $63, 34%. The cap of 16 is therefore
+theoretical; the shelf renders a single card today. It is honest and it
+is real, and it is also a one-card shelf. Reported, not papered over:
+no filler, no placeholder cards, and `items.length === 0` still returns
+null rather than an empty frame.
+
+**Three phrases were added to NEVER_ASSERT as REGEXES, and the reason
+is a finding of its own.** Banning the bare substrings would have
+failed the build on HONEST copy:
+- "price drop" collides with the footer and PriceAlertCTA saying
+  "when the price drops" — a true statement about alerts that shipped.
+- "you save" collides with /privacy's "products you save" (the
+  wishlist).
+
+The false claim is the NOUN form — an asserted event — not the verb.
+So `check-rendered-claims.mjs` grew regex support (a key wrapped in
+slashes is compiled; anything else stays a substring) and the bans are
+the noun forms only. Verified both directions: zero honest strings
+flagged, and all four false samples caught. **The general lesson: a
+tripwire that fires on true copy gets disabled by the person it
+inconveniences.** Precision in a banned-phrase list is not pedantry, it
+is what keeps the list switched on.
+
+**The shelf caused a contrast regression and the gate caught it.** The
+price sits at 22px, which crosses the heading threshold, so
+`--color-price-text` measured 11.83:1 light / 10.89:1 dark against a
+12:1 floor. Retuned to `#571a09` (13.49 on white, 12.59 on card) and
+`#f2e4c2` (16.65 on page, 12.15 on card). Re-gated: PASS at 740 nodes.
+This is the gates-after-each-item rule earning its keep — the
+regression was attributable to the change that caused it, in the same
+sitting.
+
+### §44. A hidden browser pane fails in a way that looks exactly like a broken component (2026-08-20)
+
+**This is a §39-class instrument failure and it nearly went into the
+record as a product defect.**
+
+Verifying the shelf's keyboard access and arrow-disable behaviour needed
+an OVERFLOWING rail, and with one real card the rail cannot overflow —
+so the first probe proved nothing (both arrows correctly disabled, but
+only because there was nothing to scroll). A temporary build rendering
+ten cards produced genuine overflow, and then the arrows appeared
+**dead**: clicking right did not scroll, and the disabled states never
+updated even when the rail was scrolled directly.
+
+Every one of those observations was false, and they were false in a
+coherent, believable way. The evidence that broke it open:
+`scrollBy({behavior:"auto"})` moved the rail, but a scroll EVENT never
+fired, and `behavior:"smooth"` never advanced. Both of those depend on
+the rendering/animation loop. A `requestAnimationFrame` probe then never
+resolved at all, and the tool returned the actual cause: **the browser
+pane was hidden.** A hidden tab throttles rAF and does not paint, so
+synchronous scroll writes succeed while everything driven by frames
+silently does nothing.
+
+Re-run under Playwright — with the animation loop and scroll-event
+delivery proven by an explicit control BEFORE any assertion — all eight
+checks pass on the real ten-card render: left disabled at start, right
+enabled; arrow click scrolls; both enabled midway; a REAL ArrowRight
+keypress scrolls the focused rail (1056 to 1320); right disabled at the
+true end; left scrolls back; state recovers at start.
+
+**Three rules out of this:**
+1. *A verification surface that cannot animate cannot verify anything
+   animated.* Check the instrument's liveness with a control that fails
+   loudly (frames counted, events counted) before trusting a negative.
+2. *Synthetic KeyboardEvents never trigger native scrolling.* Testing
+   keyboard access by dispatching events tests nothing; it has to be a
+   real key press.
+3. *Faking DOM children to force overflow tests your fake, not the
+   component.* React reconciles them away and the resulting nonsense is
+   indistinguishable from a bug. Build the real thing, measure, revert.
+
+**And a fourth, from the same sitting:** the contrast gate defaults to
+`localhost:3000`. Run without `CONTRAST_BASE` it hit a port with nothing
+on it and reported "22 failing nodes / 0 measured" — caught only by its
+own §19 broken-measurer guard. Separately, `next start -p 5300` had
+failed to bind with EADDRINUSE while curl cheerfully returned 200 from a
+STALE server on that port. Two different ways to measure the wrong
+thing, in one command. The freshness control now used: assert the served
+HTML contains the change under test before measuring it.

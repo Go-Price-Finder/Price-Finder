@@ -111,7 +111,7 @@
      without visually competing with a CTA button on the same card. Uses a
      deep amber, distinct from both the gilt accent and the price-down/up
      indicators. */
-  --color-price-text: #5e1d0b;
+  --color-price-text: #571a09;
 
   /* Footer accent — a soft cool-gray band (was golden-cream), distinct
      from the page's plain white so the footer still reads as a
@@ -195,7 +195,7 @@
      reserved for buttons, borders, and other bright accent uses) so price
      text never reads as the same light/bright yellow-gold as the rest of
      the accent system. */
-  --color-price-text: #e8d9a8;
+  --color-price-text: #f2e4c2;
 
   --color-espresso-900: #0d0501;
   --color-espresso-800: #120802;

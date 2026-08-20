@@ -57,6 +57,16 @@ const NEVER_ASSERT = {
   "best price": "described a badge that exists nowhere (§23; remove when the comparison surface ships)",
   "scan the whole market": "we search our own partner catalog, not the market (§23)",
   "tracking since launch": "the sparkline presented feed markdowns as observed price drops and claimed 'no changes yet' where changes were recorded (§25/§27)",
+  // These three are REGEXES, not substrings, and the reason is a finding
+  // (§43). Banning the bare strings would fail the build on HONEST copy:
+  // the footer and PriceAlertCTA legitimately say "when the price
+  // drops" (a true statement about shipped alerts), and /privacy
+  // legitimately says "products you save" (wishlist saving). The false
+  // claim is the NOUN form — an asserted event — so that is what is
+  // banned, and the verb form is left alone.
+  "/\bprice drop\b(?!s)/": "the NOUN form asserts an observed event: a markdown is the store's list price vs its current price from ONE feed row at one instant, and we did not watch the price fall. The verb form (\"when the price drops\") is a true statement about alerts and is deliberately NOT banned. Reserved for when two observations exist (§43).",
+  "/you save\s*\$/": "asserts the visitor would otherwise have paid the list price. \"products you save\" (wishlist) is untouched (§43).",
+  "/\bwas \$/": "asserts a price we observed earlier; we observed one instant. Say 'Marked down by the store' (§43).",
   "what it cost last month": "the /about claim the operator corrected on themselves: implied displayed price history before the charts exist (§26)",
   "how it has moved": "same /about claim, as originally worded in the shipped sentence (§26)",
   "refreshed daily": "displayed prices are static catalog prices (Option A gated); the daily job CHECKS them — 'refreshed' claimed the check updates the display (§27)",
@@ -93,6 +103,17 @@ if (selftest) {
   neverAppear["memory"] = "SELFTEST — present in the first guide on purpose, this run MUST fail";
 }
 
+/** A key wrapped in /.../ is a REGEX; anything else is a substring.
+ * Needed because some false claims differ from true ones only
+ * grammatically — "price drop" (asserted event) vs "the price drops"
+ * (what our alerts actually do). See §43. */
+function matches(text, phrase) {
+  if (phrase.length > 2 && phrase.startsWith("/") && phrase.endsWith("/")) {
+    return new RegExp(phrase.slice(1, -1), "i").test(text);
+  }
+  return text.includes(phrase);
+}
+
 function extractText(file) {
   return readFileSync(file, "utf8")
     .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, " ")
@@ -114,7 +135,7 @@ for (const f of chromeFiles) {
   if (text.includes("go price finder")) control++;
   for (const [phrase, why] of Object.entries(neverAssert)) {
     if ((ALLOWLIST[f] ?? []).includes(phrase)) continue;
-    if (text.includes(phrase)) failures.push(`${f}: NEVER_ASSERT "${phrase}" — ${why}`);
+    if (matches(text, phrase)) failures.push(`${f}: NEVER_ASSERT "${phrase}" — ${why}`);
   }
   for (const [phrase, why] of Object.entries(neverAppear)) {
     if (text.includes(phrase)) failures.push(`${f}: NEVER_APPEAR "${phrase}" — ${why}`);

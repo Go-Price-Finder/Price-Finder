@@ -197,9 +197,9 @@
      the accent system. */
   --color-price-text: #e8d9a8;
 
-  --color-espresso-900: #2a1810;
-  --color-espresso-800: #3d2817;
-  --color-espresso-700: #4a3728;
+  --color-espresso-900: #0d0501;
+  --color-espresso-800: #120802;
+  --color-espresso-700: #1a0d05;
 
   --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.05);
   --shadow-soft-lg: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 175, 55, 0.07);

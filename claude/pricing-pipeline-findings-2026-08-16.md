@@ -3562,3 +3562,60 @@ printed 40), with the largest single cause the dark heading token
 (#faf8f3) landing on light surfaces — the footer band, whose dark-theme
 values were never adjusted. That is a small, targeted fix, not a
 site-wide sweep.
+
+### §37. The footer fix, the instrument artifact, and a real dark-mode fragility (2026-08-19)
+
+**Trajectory: 368 → 209 → 196 → 192 → 133 → 55.**
+
+**My footer diagnosis was half wrong, and checking first is what caught
+it.** I had reported the largest cause as "the dark heading token on
+light surfaces — the footer band". Measured before touching anything:
+the footer band accounted for **20** failing nodes, not the bulk. The
+dominant background was `rgb(81,81,81)`, a mid-grey that is not any
+token in either theme.
+
+**Chasing that grey found an INSTRUMENT ARTIFACT, not a site defect.**
+components/CinematicBackground renders `fixed inset-0 -z-10
+bg-noir-900` — the black the eye actually sees in dark mode. It is NOT
+an ancestor of any text node, so the checker's ancestors-only
+`effectiveBg` walk never saw it and measured dark text against `body`
+instead. Fixing the walk to recognise a fixed, viewport-covering
+backdrop as the base layer took the count **192 → 133 with no change to
+the site at all**. A third of the "debt" was the measurer.
+
+**The footer fix was still worth doing, and it was bigger than its node
+count suggested: 133 → 55 (78 nodes).** The dark band `#3d2817` failed
+its own text — meta 5.90 (floor 6), body 7.36 (floor 10). Deepened to
+`#120802`: meta 8.41, body 10.50, headings 18.64, and it still reads as
+a distinct warm closing band against the pure-black page. Cheaper than
+recolouring the text tokens, which would have degraded them everywhere
+else.
+
+**A REAL finding surfaced on the way, unrelated to contrast: `body`
+keeps `background-color: rgb(255,255,255)` in dark mode.** Verified
+with the actual ThemeToggle, not by setting the attribute by hand:
+after toggling, `--background` and `--color-noir-900` both resolve to
+`#000`, the fixed backdrop paints `rgb(0,0,0)` — and `body` computes
+white regardless. The site only LOOKS dark because that `-z-10` div
+covers it. Nothing visibly broken today, but it is fragile: anything
+that escapes or clips that stacking context (a print stylesheet, a
+portal, an element with its own compositing layer, overscroll rubber-
+banding) reveals white. Reported, not fixed — it is a base-layer change
+and this pass is deliberately scoped to type and contrast.
+
+**THE SPLIT MATTERS FOR HOW THE COUNT IS READ (operator instruction):**
+of the 55 remaining, **9 are light and 48 are dark**. The reported
+defect — light mode, the guide page Kawsar could not read — is
+**essentially resolved**. The count is no longer measuring the problem
+it was built to measure; it is now predominantly a dark-theme figure.
+That does not excuse it (a theme we ship is a theme we are responsible
+for, and "nobody complained about dark mode" is a claim about who
+noticed, not about whether it is right), but anyone reading "55" should
+know what it is counting.
+
+**Hardcoded-colour sweep, recorded as a number so a future reader does
+not assume the worse case: ONE real offender in the entire codebase**
+(`.guide-prose`). Everything else is 1 decorative non-text glow, 6
+literals in the themeless OG-image generator, and 1 inside a comment.
+The guide-prose incident is an isolated lapse, not evidence of a
+pattern.

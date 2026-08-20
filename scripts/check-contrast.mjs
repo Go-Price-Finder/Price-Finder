@@ -170,13 +170,36 @@ const collect = (selftest) => {
     while (n && n !== document.documentElement.parentElement) {
       const p = parse(getComputedStyle(n).backgroundColor);
       if (p && p.a > 0) {
+        if (n === document.body || n === document.documentElement) p.el = "base-eligible";
         layers.push(p);
         if (p.a >= 1) break;
       }
       n = n.parentElement;
     }
-    if (!layers.length) return [255, 255, 255];
+    // BASE LAYER — the fixed, full-viewport backdrop (findings §37).
+    // components/CinematicBackground renders `fixed inset-0 -z-10
+    // bg-noir-900`, which is what the eye actually sees behind the page.
+    // It is NOT an ancestor of any text node, so an ancestors-only walk
+    // measured dark-mode text against `body` (which stays WHITE — see
+    // §37) and invented ~40 failures that do not exist on screen. The
+    // checker was measuring a background nobody looks at.
+    const baseLayer = () => {
+      for (const el of document.querySelectorAll("body > div, body > *")) {
+        const cs = getComputedStyle(el);
+        if (cs.position !== "fixed") continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < window.innerWidth * 0.9 || r.height < window.innerHeight * 0.9) continue;
+        const p = parse(cs.backgroundColor);
+        if (p && p.a >= 1) return p.rgb;
+      }
+      return null;
+    };
+    if (!layers.length) return baseLayer() ?? [255, 255, 255];
+    // If the topmost opaque layer we found is the document body/html and a
+    // fixed backdrop covers the viewport, the backdrop is what renders.
+    const base = baseLayer();
     let out = layers[layers.length - 1].rgb;
+    if (base && layers[layers.length - 1].el === "base-eligible") out = base;
     for (let i = layers.length - 2; i >= 0; i--) {
       const { rgb, a } = layers[i];
       out = out.map((v, k) => rgb[k] * a + v * (1 - a));

@@ -56,7 +56,11 @@ const ROUTES = [
   "/aaawave/amd-ryzen-7-5800xt-8-core-16-thread-unlocked-desktop-processor-up-to-4-8ghz-am4",
 ];
 
-const FLOORS = { heading: 12, body: 10, meta: 6, placeholder: 4.5 };
+// 'on-fill' is spec §3's amended row (operator 2026-08-19): a label on a
+// saturated brand fill is a glanced role, not a read one — 4.5 minimum,
+// 7 target. Demanding 10 forced the brand to near-black.
+const FLOORS = { heading: 12, body: 10, meta: 6, placeholder: 4.5, "on-fill": 4.5 };
+const ON_FILL_TARGET = 7;
 
 /**
  * ACCEPTED, PENDING AN OPERATOR RULING — not silenced, listed.
@@ -232,10 +236,15 @@ const collect = (selftest) => {
     const fg = parse(cs.color);
     if (!fg) continue;
     const bg = effectiveBg(el);
+    // Saturated fill detection: chroma well above neutral means the text
+    // is sitting ON a brand fill, not on a page/card surface.
+    const chroma = Math.max(...bg) - Math.min(...bg);
+    const onFill = chroma >= 40;
     // Composite translucent text onto its own background — an opacity
     // hierarchy is measured as what it actually renders as.
     const eff = fg.a >= 1 ? fg.rgb : fg.rgb.map((v, k) => v * fg.a + bg[k] * (1 - fg.a));
     const r = ratio(eff, bg);
+    if (onFill && role !== "placeholder") role = "on-fill";
     const key = `${selectorFor(el)}|${cs.color}|${Math.round(r * 100)}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -256,6 +265,7 @@ const collect = (selftest) => {
 const browser = await chromium.launch();
 const failures = [];
 const accepted = [];
+const belowTarget = [];
 let measured = 0;
 let opacityUses = 0;
 
@@ -286,6 +296,11 @@ for (const theme of ["light", "dark"]) {
       measured++;
       if (n.opacityText) opacityUses++;
       const floor = FLOORS[n.role];
+      if (n.role === "on-fill" && n.ratio >= floor && n.ratio < ON_FILL_TARGET) {
+        belowTarget.push(
+          `${route} [${theme}] ${n.selector}: ${n.ratio}:1 — clears the 4.5 minimum, below the 7 target. color ${n.color} on ${n.bg}. "${n.sample}"`
+        );
+      }
       if (n.ratio < floor) {
         const line =
           `${route} [${theme}] ${n.selector} (${n.role}, ${n.size}px): ${n.ratio}:1 — required ${floor}:1. color ${n.color} on ${n.bg}. "${n.sample}"`;
@@ -303,6 +318,26 @@ for (const theme of ["light", "dark"]) {
 }
 await browser.close();
 
+// BREAKDOWN BY COMPONENT (operator ask 2026-08-19): a raw count cannot
+// tell ten components from eighty, and those are different problems.
+if (failures.length) {
+  const byComp = new Map();
+  for (const f of failures) {
+    const m = f.match(/\] ([^:]+?) \(/);
+    const comp = m ? m[1].split(" > ").pop().split(".").slice(0, 2).join(".") : "unknown";
+    byComp.set(comp, (byComp.get(comp) ?? 0) + 1);
+  }
+  const rows = [...byComp.entries()].sort((a, b) => b[1] - a[1]);
+  console.log(`
+BREAKDOWN — ${failures.length} failing nodes across ${rows.length} distinct element shapes:`);
+  for (const [comp, n] of rows.slice(0, 20)) console.log(`  ${String(n).padStart(4)}  ${comp}`);
+  if (rows.length > 20) console.log(`  ...and ${rows.length - 20} more shapes.`);
+}
+if (belowTarget.length) {
+  console.log(`
+${belowTarget.length} on-fill node(s) clear the 4.5 minimum but sit below the 7 target:`);
+  for (const b of belowTarget.slice(0, 6)) console.log("  - " + b);
+}
 if (accepted.length) {
   console.log(`
 ${accepted.length} node(s) ACCEPTED pending an operator ruling (listed, not silenced):`);

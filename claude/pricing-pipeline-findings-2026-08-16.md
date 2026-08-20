@@ -3505,3 +3505,60 @@ on a saturated accent FILL, which cannot reach 10:1 without a near-black
 fill or near-white ink — a brand decision the spec has no row for.
 Proven able to fail: a planted low-contrast node is named with measured
 and required ratios, exit 1.
+
+### §36b. Spec amended (accent-fill row), accent split into two tokens, hardcoded-colour sweep (2026-08-19)
+
+**Spec amended in-repo** (claude/typography-and-contrast-spec.md, so the
+file and the ruling cannot disagree): new §3 row **"Text on a saturated
+accent fill — 4.5:1 minimum, 7:1 target"**, with the operator's
+rationale recorded — a label on a brand fill is a glanced role, not a
+read one, and demanding 10:1 forces any saturated brand colour to
+near-black, which is exactly what the first pass did (#b8391f →
+#6e2411). Also recorded in the spec: the dark page surface is
+**deliberately #000000, NOT the #1B1A17 the guidance paragraph
+suggests**, with the measurement as the reason, so a future reader does
+not "fix" it back. The governing distinction, written down: §3's floors
+are REQUIREMENTS, the practical-consequence paragraph is GUIDANCE, and
+guidance that breaks a floor loses.
+
+**Accent split into two tokens, two jobs (all values measured):**
+- accent FILL (gilt-500) light **#a8321b** — 6.69:1 with white ink,
+  confirming the operator's figure; brand restored, #6e2411 not shipped.
+  Dark fill stays #b8935f — 6.49:1 with its dark ink.
+- accent TEXT (gilt-400) light **#5e1d0b** — 12.68:1 on white.
+- Dark accent text MEASURED FOR DARK, not inverted: **#ecd9a6**, 15.04
+  page / **10.98 card**. The operator's coral starting point #f0a58c was
+  measured and rejected: 10.47 on the page but **7.64 on cards**, and
+  cards are the binding surface. Measuring rather than taking the number
+  was the instruction and it changed the answer.
+
+**The 20 exception-listed nodes now pass on their merits** — the checker
+learned the role instead of keeping a list: an `on-fill` role is
+detected from the measured background's chroma (≥40 means text is on a
+brand fill, not a page/card), floored at 4.5 with 7 as a reported
+target. The ACCEPTED list is gone from the accent category.
+
+**Hardcoded-colour sweep (operator ask — "how many exist rather than
+discovering them one theme at a time"):** the answer is reassuring and
+worth the exact numbers. Themed surfaces are essentially clean —
+**1 literal in components/** (Hero.tsx `rgba(184,147,95,0.25)`, a
+decorative non-text glow), **6 in app/**, all inside
+`opengraph-image.tsx` (a static OG image with no theme, legitimately
+literal), and **1 in globals.css outside the token blocks — which is
+inside an explanatory comment, not a declaration**. So `.guide-prose`
+was effectively the ONLY real offender: one block, invisible in the
+theme nobody tested. Same shape as the compliance flag baked in at
+write time (§21) — correct in the state it was authored in, wrong in
+the state nobody looked at.
+
+**Operator recorded this as theirs:** approving the guides route without
+asking whether its prose styles were token-driven.
+
+**Count after this pass: 209 → 196 nodes below floor, across 36 distinct
+selectors** (route/theme collapsed) — so this is tens of components, not
+eighty. Concentrated: the top eleven shapes account for ~137 of the
+failures, and the sample is dark-dominant (48 dark : 9 light in the
+printed 40), with the largest single cause the dark heading token
+(#faf8f3) landing on light surfaces — the footer band, whose dark-theme
+values were never adjusted. That is a small, targeted fix, not a
+site-wide sweep.

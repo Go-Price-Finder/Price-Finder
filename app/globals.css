@@ -72,7 +72,7 @@
      contrast/pressed states. */
   --color-gilt-300: #e8998a;
   --color-gilt-400: #5e1d0b;
-  --color-gilt-500: #6e2411;
+  --color-gilt-500: #a8321b;
   --color-gilt-600: #6e2411;
 
   /* Text/icon color for content that sits ON TOP of a gilt-500 fill
@@ -171,9 +171,9 @@
   --color-noir-600: #3a352e;
 
   --color-gilt-300: #e3cd8e;
-  --color-gilt-400: #e3cd8e;
+  --color-gilt-400: #ecd9a6;
   --color-gilt-500: #b8935f;
-  --color-gilt-600: #e3cd8e;
+  --color-gilt-600: #ecd9a6;
 
   /* Dark theme's gilt-500 stays a mid-brightness gold (unchanged, per the
      "don't recolor dark mode" instruction), so dark text on top of it

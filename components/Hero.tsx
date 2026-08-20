@@ -87,7 +87,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
     >
       {/* The old Three.js marketplace-photo background scene has been
           removed — this section is now a clean, transparent background
-          (showing the global CinematicBackground through) ready for new,
+          (showing the page background through) ready for new,
           more subtle per-section animation. */}
 
       <div className="mx-auto max-w-6xl px-5 pb-14 pt-14 text-center sm:px-8 sm:pb-20 sm:pt-20">

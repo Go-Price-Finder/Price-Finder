@@ -5,7 +5,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 import Providers from "./providers";
-import CinematicBackground from "@/components/CinematicBackground";
 
 // MONTSERRAT — operator's call (Kawsar's, 2026-08-19), weights
 // 400/500/600/700/800. Replaces Plus Jakarta Sans.
@@ -71,7 +70,6 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col bg-noir-900 text-ivory-50">
-        <CinematicBackground />
         <Providers>{children}</Providers>
         {/* Vercel Analytics — page-view tracking site-wide. A no-op outside
             a Vercel deployment (no env vars needed), so it's safe to render

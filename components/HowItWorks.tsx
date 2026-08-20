@@ -39,7 +39,7 @@ export default function HowItWorks() {
     >
       {/* The old Three.js background scene has been removed — this section
           is now a clean, transparent background (showing the global
-          CinematicBackground through) ready for new, more subtle
+          page background through) ready for new, more subtle
           per-section animation. */}
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8">

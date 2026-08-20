@@ -3669,13 +3669,32 @@ deleting it as a separate change with its own before/after screenshot.
 
 **Trajectory: 368 → 209 → 196 → 192 → 133 → 55 → 46 → 8 → ZERO.**
 
-**STANDING RULE (operator, recorded):** *the first run of a new check is
-measuring the check until proven otherwise. Any number a new instrument
-produces gets explained before it gets acted on.* The contrast checker
-has now been wrong FIVE times against roughly two real defects in the
-code it measures — and every error was caught before anyone acted on
-it, which is the system working, not failing. The ratio is the finding:
-a new instrument's early failures are mostly its own.
+**STANDING RULE 1 — THE TEST THAT SETTLES IT (operator ruling: this
+outranks the rule below, because it is the one that is actionable):**
+*A measurement that is not reproducible across consecutive runs is not
+a measurement.* Run any new check twice before believing it once. The
+count wobbled **46 / 51 / 53 / 55 with no code change** — that was
+visible from the first run, and nobody caught it because no rule told
+them to look. Suspicion is a posture; two consecutive runs is a test.
+
+**STANDING RULE 2 — the posture (operator):** *the first run of a new
+check is measuring the check until proven otherwise. Any number a new
+instrument produces gets explained before it gets acted on.* The
+contrast checker has now been wrong FIVE times against roughly two real
+defects in the code it measures — and every error was caught before
+anyone acted on it, which is the system working, not failing. The ratio
+is the finding: a new instrument's early failures are mostly its own.
+
+**STANDING RULE 3 — STATE THE INVARIANT, NOT A TOLERANCE.** This is
+what actually cracked the case, and it was the operator's instruction,
+not a discovery: the useful demand was not "watch the number", it was
+*"a typeface change must move contrast by EXACTLY ZERO."* An invariant
+treats ANY delta as a defect; a threshold only catches magnitude. The
+delta here was FIVE nodes — no tolerance anyone would have set would
+have flagged it, and that delta is what exposed an instrument sampling
+mid-transition and, through it, two thirds of a "debt" that never
+existed. Rule: **where an invariant can be stated, state it instead of
+a tolerance. Most of what goes wrong is small.**
 
 The five, for the record:
 1. Mis-anchored edit — `:root[data-theme="dark"]` matched inside a
@@ -3746,3 +3765,45 @@ happened to wrap — a fix applied to a single instance is the same bug
 waiting at a narrower breakpoint. Verified at 660px, the narrowest
 viewport where both pills render: both 44px tall, identical radius,
 size and weight, `white-space: nowrap`, no wrap, no header overflow.
+
+### §41. CinematicBackground deleted — the propagation claim was tested by pixel, not read from the spec (2026-08-20)
+
+The operator's belief was that a body background propagates to the
+CANVAS (the area revealed by overscroll and by content shorter than the
+viewport), making the fixed `-z-10` div redundant for colour — and
+asked for verification before removal, with the reason written down
+either way so nobody deletes it later on an untested assumption.
+
+**Verified by PIXEL, deliberately not by reading the CSS spec** —
+`scratch/verify-canvas-propagation.mjs` (Playwright screenshot + sharp
+pixel sample): render the homepage, disable transitions (§39), hide
+main/footer so the document is SHORTER than the viewport, then sample a
+pixel in the exposed region. Rigor check included: the sample point is
+at y=700 while the body box ends at y=133, so it is **567px outside the
+body box** — genuinely canvas, not body.
+
+| state | theme | body background | canvas pixel |
+|---|---|---|---|
+| backdrop present (control) | light / dark | #fff / #000 | rgb(255,255,255) / rgb(0,0,0) |
+| backdrop stripped at runtime | light / dark | #fff / #000 | rgb(255,255,255) / rgb(0,0,0) |
+| **backdrop actually deleted** | light / dark | #fff / #000 | **rgb(255,255,255) / rgb(0,0,0)** |
+
+Identical in all three states: **the canvas is painted by the propagated
+body background**, so the div was a layer being maintained for a reason
+that no longer exists (it stopped being load-bearing the moment §38
+bound body's colour to the same token). Deleted, unmounted from
+app/layout.tsx, and two comments in Hero/HowItWorks that referenced it
+were updated so they do not become dangling references to a file that
+is gone.
+
+Post-deletion: build clean, contrast **still ZERO across 724 nodes,
+reproducible twice**. The deletion is its own change, so if overscroll
+behaviour ever regresses on a real iOS device, `git revert` restores
+exactly one layer and nothing else.
+
+**Caveat stated, since it is the one thing the test could not do:**
+desktop Chromium does not rubber-band, so overscroll was verified
+through its MECHANISM (the canvas is what iOS reveals, and the canvas is
+now correctly painted) rather than by reproducing the gesture. If a real
+iPhone ever shows a white flash again, the cause is body's background —
+not a missing backdrop div — and §38 is the section to read.

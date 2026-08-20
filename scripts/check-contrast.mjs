@@ -39,13 +39,25 @@
  * contrast, and stops it. Run that before shipping visual work.
  */
 import { chromium } from "playwright";
+import { readdirSync } from "node:fs";
 
 const BASE = process.env.CONTRAST_BASE ?? "http://localhost:3000";
 const SELFTEST = process.env.CONTRAST_SELFTEST === "1";
 
+// EVERY guide, enumerated from the source directory rather than listed
+// by hand (§47). The second guide shipped while this list still named
+// only the first, which would have put a whole live route outside the
+// contrast gate — a route rendering outside a check is a §19b gap by
+// construction, and the claims checker already walks this directory for
+// exactly that reason. Adding a guide now extends coverage automatically.
+const GUIDE_ROUTES = readdirSync("content/guides")
+  .filter((f) => f.endsWith(".md"))
+  .map((f) => `/guides/${f.replace(/\.md$/, "")}`)
+  .sort();
+
 const ROUTES = [
   "/",
-  "/guides/should-you-buy-pc-parts-now-or-wait",
+  ...GUIDE_ROUTES,
   "/guides",
   "/stores",
   "/deals",

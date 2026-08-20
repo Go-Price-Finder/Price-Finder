@@ -476,6 +476,24 @@ for (const [i, row] of parsed.data.entries()) {
     warnings.push(`row ${rowNum} ("${name}"): description is suspiciously short (${description.length} chars) — check the source feed, this may be a data gap rather than a real description`);
   }
 
+  // TWO FIELDS, DELIBERATELY (§47).
+  //
+  // listPrice is the compare-at value EXACTLY AS THE FEED PUBLISHED IT,
+  // retained whatever its relationship to price. originalPrice keeps its
+  // existing meaning — set only when the feed's own list price genuinely
+  // exceeds the sale price — so every existing consumer is unchanged.
+  //
+  // The reason for the split is that the old code discarded any
+  // compare-at value that did not exceed price, which destroyed the
+  // difference between:
+  //   "the merchant published no list price at all"        (listPrice undefined)
+  //   "the merchant published a list price equal to price" (listPrice === price)
+  // The second is a merchant telling us they are not discounting. That is
+  // real information, it is the entire subject of the §46 investigation,
+  // and we were throwing it away at the door. It also made any query for
+  // "rows populated but not higher" return zero BY CONSTRUCTION — a check
+  // incapable of failing, whose zero then read as reassurance.
+  const listPrice = rawOriginal != null ? rawOriginal : undefined;
   let originalPrice;
   if (rawOriginal != null && rawOriginal > price) {
     originalPrice = rawOriginal;
@@ -505,6 +523,7 @@ for (const [i, row] of parsed.data.entries()) {
     name,
     description: finalDescription,
     price,
+    listPrice,
     originalPrice,
     gtin,
     deepLink,
@@ -662,6 +681,7 @@ function productToTs(p) {
     `    description: ${tsQuote(p.description)},`,
     `    price: ${p.price},`,
   ];
+  if (p.listPrice != null) lines.push(`    listPrice: ${p.listPrice},`);
   if (p.originalPrice != null) lines.push(`    originalPrice: ${p.originalPrice},`);
   if (p.gtin != null) lines.push(`    gtin: ${tsQuote(p.gtin)},`);
   lines.push(`    deepLink: ${tsQuote(p.deepLink)},`);
@@ -696,6 +716,14 @@ export type ${pascalId}Product = {
   name: string;
   description: string;
   price: number;
+  /** The compare-at price EXACTLY as the feed published it, retained
+   * whatever its relationship to price. Absent means the merchant
+   * published no list price; equal to price means the merchant
+   * published one and it matches — two different facts the importer
+   * used to collapse into the same absence (findings §47). */
+  listPrice?: number;
+  /** Set ONLY when listPrice genuinely exceeds price. Unchanged
+   * semantics: this is what every markdown surface reads. */
   originalPrice?: number;
   /** Manufacturer GTIN/EAN/UPC when the source feed carried one — captured
    * for future cross-network identity (findings §13), unused today. */

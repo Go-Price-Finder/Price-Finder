@@ -84,6 +84,9 @@ type RawPartnerProduct = {
   name: string;
   description: string;
   price: number;
+  /** Compare-at price as published by the feed, whatever its relation
+   * to price — absent means the merchant published none (§47). */
+  listPrice?: number;
   originalPrice?: number;
   deepLink: string;
   image: string;
@@ -140,6 +143,7 @@ function normalizeProduct(
     name: product.name,
     description: product.description,
     price: product.price,
+    listPrice: product.listPrice,
     originalPrice: product.originalPrice,
     gtin: product.gtin,
     image: imagesAllowed ? product.image : IMAGE_PENDING_PLACEHOLDER,

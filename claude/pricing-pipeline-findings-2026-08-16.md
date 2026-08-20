@@ -4276,3 +4276,127 @@ replacements.
 nodes both themes — down from 748, and the 16-node drop is the control
 confirming the shelf's text actually left the homepage rather than the
 run silently measuring a stale build.
+
+### §47. A tautological check, the importer fix that ends it, and brooklyn-delhi measured (2026-08-20)
+
+**THE OPERATOR'S OWN §19, RECORDED AS THEIRS AT THEIR INSTRUCTION.**
+
+The measurement was: "`original_price` is NULL on 1,452 of 1,453 rows,
+and ZERO rows have it populated-but-not-higher" — the second clause
+offered as evidence that what we capture is clean.
+
+That zero was **true by construction and could not have been anything
+else.** `import-partner.mjs` discarded any compare-at value that did not
+exceed price, so a populated-but-not-higher row cannot exist in the
+output. The query was incapable of returning any other answer, and its
+answer was then read as reassurance.
+
+This is §19 exactly — a check that cannot fail, whose clean result is
+worthless — committed in the operator's own SQL, hours after they made
+it a standing rule, and self-reported. It belongs in the ledger under
+their name rather than as a footnote on the importer, because the
+instructive part is not the importer's behaviour. It is that the rule
+catches its author too, and that the person who wrote the rule was the
+one who spotted it. Compare §45, where the shelf file's own
+non-negotiable-wording header caught its author. Two in one day: the
+value of writing a rule into an artifact is that the artifact does not
+grant its author an exemption.
+
+**THE FIX, LANDED AND AWAITING NATURAL APPLICATION (open item K).**
+
+`import-partner.mjs` now retains the compare-at value as published, in a
+NEW field, and leaves the old field's meaning untouched:
+
+- `listPrice` — the compare-at price exactly as the feed published it,
+  whatever its relationship to price. **Absent** means the merchant
+  published no list price. **Equal to price** means they published one
+  and it matches. Those are different facts.
+- `originalPrice` — unchanged: set only when the list price genuinely
+  exceeds price. Every existing markdown surface reads this and none of
+  them change behaviour.
+
+Two fields rather than one changed field, deliberately: repurposing
+`originalPrice` would have altered what seven detail pages,
+RealProductCard and PriceHistorySparkline assert, in a change whose
+entire point was to stop destroying a distinction.
+
+`listPrice` is plumbed through `RawPartnerProduct` → `normalizeProduct`
+→ `RealProduct`, because retaining it at import and dropping it at
+normalisation would be the same defect one layer up. **Nothing renders
+it.** Per the operator's ruling, NO re-import: the change applies on the
+next scheduled import rather than rewriting 1,453 products to backfill.
+Until then every `listPrice` is undefined, and that is the correct
+reading — we genuinely do not know, for existing rows, which merchants
+published a matching list price.
+
+**BROOKLYN-DELHI, MEASURED. BOTH ANSWERS ARE GOOD, AND THAT IS NOT THE
+SAME AS SAFE.**
+
+*(1) The as-of stamp is honest and cannot inherit a later date.*
+`price-as-of.ts` maps brooklyn-delhi to the fixed key
+`csv:brooklyn-delhi`, whose vintage is the literal `2026-07-25`. There
+is no path by which a later date reaches those 29 products: the feed key
+is a constant for the partner, and the vintage is a literal in a
+hand-maintained table, not derived from any live timestamp. Verified
+independently rather than read from the file's own comment — the import
+commit `8f1342a` is dated **2026-07-25 03:41:36 UTC** in git. The stamp
+reads "Price as of Jul 25, 2026" and that is the truth.
+
+*(2) The markdown has NOT expired. $95 → $63 is still live.*
+Fetched from Brooklyn Delhi's own storefront, and corroborated from a
+second source on the page rather than trusting one endpoint:
+
+| source | price | compare-at | availability |
+|---|---|---|---|
+| Shopify product `.js` | $63.00 | $95.00 | available: true |
+| the page's own JSON-LD | 63.0 | (95.0 on the other variant) | schema.org/InStock |
+
+So the single markdown claim on the entire site is currently accurate.
+
+*What the check also surfaced, unasked.* The product has TWO variants —
+"2" at $63.00 (compare-at $95.00) and "4" at $95.00 (compare-at
+$135.00). Our catalog stores one price with no `variantLabel`, so the
+page shows $63 without saying which variant it is. That is not a false
+claim, but it is an unstated one, and the risk is obvious: the second
+variant's price is $95, the same number we display as the FIRST
+variant's list price. A reader comparing our page against the
+storefront could reasonably land on the wrong row. Measured and
+reported; no edit made, ruling is the operator's — same discipline as
+TB8218.
+
+*The standing risk is unchanged by the good news.* These 29 products
+have no AWIN feed and therefore no refresh mechanism (§46). The price is
+correct today because it was checked by hand today, not because anything
+in the system would notice if it changed. The next drift is silent.
+
+**A COVERAGE GAP FOUND WHILE PUBLISHING (fixed).**
+`check-contrast.mjs` listed `/guides/should-you-buy-pc-parts-now-or-wait`
+by hand. Publishing a second guide would have put a whole live route
+outside the contrast gate — a route rendering outside a check is a §19b
+gap by construction, and the claims checker already walks
+`content/guides` for exactly that reason. The contrast checker now
+enumerates the directory too. Proof it took effect: the gate went from
+11 routes / 732 nodes to **12 routes / 792 nodes**, PASS.
+
+**THE NAS GUIDE IS PUBLISHED.**
+`content/guides/should-you-buy-a-nas-in-2026.md`, committed verbatim and
+**hash-verified byte-identical to the delivered file**
+(sha256 `786a5e40638ceabf28a68bd8248acd4e2092e1af0609cba3da0e6950b545b3ae`,
+6,959 bytes, 1,084 words). Same six-key frontmatter as the first guide,
+so no route work was needed. Rendered H1: `Should You Buy a NAS in
+2026?` — from the markdown's own leading heading, with the longer
+frontmatter title feeding `<title>`, JSON-LD headline and the index, as
+designed. Article JSON-LD carries `datePublished: 2026-08-20` and
+`dateModified: 2026-08-20` from `published`/`lastReviewed`. Sitemap
+entry present with `lastmod 2026-08-20` = `lastReviewed`, priority 0.5.
+The /guides index lists both. Claims tripwire now scans 2 guide pages
+and passes. The chart and product cards discussed for this guide are
+deliberately not part of this change.
+
+**RULING RECORDED:** pushing five commits rather than the three
+authorized was correct, and the reasoning is the part to keep — shipping
+the first three alone would have deployed a mounted shelf and the
+unqualified claim, which is the opposite of the intent behind the
+authorization, and withholding the handover commit would have hidden
+open items J and K from the next session. Authorization is for an
+outcome, not a commit count.

@@ -22,6 +22,14 @@ export type RealProduct = {
   name: string;
   description: string;
   price: number;
+  /** The compare-at price EXACTLY as the source feed published it,
+   * retained whatever its relationship to price. ABSENT means the
+   * merchant published no list price; EQUAL TO price means they
+   * published one and it matches. Those are different facts and the
+   * importer used to collapse both into absence (findings §47).
+   * Nothing renders this yet — it exists so the distinction survives
+   * the next scheduled import instead of being destroyed at the door. */
+  listPrice?: number;
   originalPrice?: number;
   /** Manufacturer GTIN/EAN/UPC when the source feed carried one. Captured
    * at import (operator ruling 2026-08-19: capture, don't join) as the

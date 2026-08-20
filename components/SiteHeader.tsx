@@ -504,10 +504,28 @@ function StoreTile({ store }: { store: HeaderStore }) {
       href={store.href}
       className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition hover:border-gilt-500/30 hover:bg-noir-700/60"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gilt-500/10 text-[13px] font-semibold text-ivory-50 ring-1 ring-inset ring-gilt-500/15 transition group-hover:bg-gilt-500/20">
+      {/* One footprint, two fills. A cleared logo renders on a LIGHT PLATE
+          in BOTH themes — merchant marks are overwhelmingly dark artwork
+          and disappear on a dark surface, so the plate is baked into the
+          asset (scripts/fetch-partner-logos.mjs) and repeated here so the
+          box reads as deliberate rather than as a pasted-on chip. The
+          monogram keeps the accent-tinted fill. Identical h-11 w-11
+          either way: swapping one for the other is not a layout change. */}
+      <span
+        className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl text-[13px] font-semibold ring-1 ring-inset transition ${
+          store.logoUrl
+            ? "bg-[#f4f4f2] ring-noir-950/10"
+            : "bg-gilt-500/10 text-ivory-50 ring-gilt-500/15 group-hover:bg-gilt-500/20"
+        }`}
+      >
         {store.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={store.logoUrl} alt="" className="h-full w-full object-contain" />
+          <img
+            src={store.logoUrl}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-contain p-1"
+          />
         ) : (
           monogram
         )}

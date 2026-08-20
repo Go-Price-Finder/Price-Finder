@@ -44,6 +44,10 @@ export type PartnerComplianceEntry = {
   commissionBase?: CommissionBase;
   cookieDays?: number;
   imageUsagePermission?: "pending" | "confirmed" | "assessed-low-risk";
+  /** Trademark display, deliberately separate from image use — see
+   * canShowRealLogo below for why silence on images is not a grant here. */
+  logoUsagePermission?: "pending" | "confirmed" | "assessed-low-risk";
+  logoUsageNote?: string;
   imageUsageNote?: string;
   noPlagiarism?: boolean;
   noPlagiarismNote?: string;
@@ -180,6 +184,24 @@ export function isPartnerLive(partnerId: string): boolean {
  */
 export function canShowRealImages(partnerId: string): boolean {
   const permission = getComplianceEntry(partnerId)?.imageUsagePermission;
+  return permission === "confirmed" || permission === "assessed-low-risk";
+}
+
+/**
+ * True only when logoUsagePermission is explicitly "confirmed" or
+ * "assessed-low-risk" — an explicit allow-list for the same reason
+ * canShowRealImages uses one: an inverse check would treat any
+ * unrecognised or mistyped value as an implicit pass.
+ *
+ * DELIBERATELY SEPARATE FROM canShowRealImages (2026-08-20): a logo is a
+ * TRADEMARK, and displaying it is a stronger claim than displaying a
+ * product photo. Six partners are cleared for images on the strength of
+ * a silent AWIN Branding tab; silence is not a grant of trademark use,
+ * so they are `pending` here and render the monogram instead — at the
+ * identical footprint, so there is no layout change and no hole.
+ */
+export function canShowRealLogo(partnerId: string): boolean {
+  const permission = getComplianceEntry(partnerId)?.logoUsagePermission;
   return permission === "confirmed" || permission === "assessed-low-risk";
 }
 

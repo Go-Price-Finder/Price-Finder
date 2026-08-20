@@ -3,6 +3,7 @@ import SiteHeader, {
   type HeaderStore,
 } from "./SiteHeader";
 import { getAllRealProducts, getPartners, slugifyRealCategory } from "@/lib/catalog";
+import { canShowRealLogo } from "@/lib/partner-compliance";
 
 /**
  * Server wrapper for the operator-delivered SiteHeader (2026-08-19). This
@@ -35,7 +36,10 @@ export default async function Header() {
     name: partner.name,
     href: partner.href,
     tagline: partner.tagline || null,
-    logoUrl: partner.logo ?? null,
+    // Self-hosted logo, gated exactly like product images (§42). A
+    // partner whose logoUsagePermission is not cleared passes null and
+    // StoreTile renders its monogram at the identical footprint.
+    logoUrl: canShowRealLogo(partner.id) ? `/images/_logos/${partner.id}.webp` : null,
     productCount: partner.products.length,
   }));
 

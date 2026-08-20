@@ -34,7 +34,9 @@
       "imageUsageNote": "No branding guidelines in partner terms; content use is encouraged. Proceeding with attribution based on terms language and risk assessment — written confirmation from Malika has not been received yet.",
       "noBrandedPaidSearch": true,
       "noUnauthorizedCoupons": true,
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "evdance": {
       "network": "AWIN",
@@ -47,7 +49,9 @@
       },
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/67740) — every section (Branding, Publishers, PPC, Transactions, De-Duplication) is either unanswered or contains no image/content/branding usage language at all; Branding tab holds only generic program-overview marketing copy, not usage rules. This is genuine silence, not explicit permission — no restriction was found, but none was granted either. Proceeding assessed-low-risk on that basis, same treatment as Brooklyn Delhi. Revisit if EVDANCE ever publishes real terms.",
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "golden-maple": {
       "network": "AWIN",
@@ -60,7 +64,9 @@
       },
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/124092) — Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is governing law/terms-modification/notification only, no mention of images; Publishers/PPC/Transactions/De-Duplication questionnaires unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE/Canvas Vows/King Koil.",
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "aaawave": {
       "network": "AWIN",
@@ -83,7 +89,9 @@
       "comparisonEngineNote": "Terms list Comparison engine, Comparison shopping service (CSS) and Shopping directory among allowed partner types, and 'Who Should Join?' names 'Tech bloggers & comparison sites' first.",
       "imageUsagePermission": "confirmed",
       "imageUsageNote": "CONFIRMED 2026-08-19 from the programme terms themselves (AWIN programme terms, advertiser 43143, last updated 13 Feb 2026): the Program Perks section states \"Exclusive assets (banners, data feeds, links) available through Awin's dashboard.\" Our product imagery arrives inside the data feed served to this account as a joined member, so it is covered by that grant. Supporting grounds: the Prohibited Practices list is enumerated and specific (Trademark Bidding, URL Spoofing, Coupon Abuse, Email Spam, Cookie Stuffing/forced redirects) and does not mention imagery - five itemised concerns omitting a sixth is stronger than general silence; and comparison engines, comparison shopping services and shopping directories are named allowed partner types, with 'Tech bloggers & comparison sites' named first under 'Who Should Join?'. Verified genuinely absent from the terms (confirmed with pdftotext, not a hand-rolled parser): image, photo, creative, logo, copyright, licen, intellectual property, permission, reproduce - so nothing in the document restricts product-photo display.",
-      "imageUsageResidualRisk": "ACCEPTED, operator ruling 2026-08-19. AAAwave's own Program Perks section states it is an 'Authorized dealer' for Arduino, HPE, ASUSTOR, Cooler Master and Avermedia - so much of the feed photography is likely manufacturer-owned, and this document does not establish sublicensable rights. Accepted because it reverts in a single edit to imageUsagePermission (set it back to 'pending' and every aaawave page returns to the placeholder on the next build; no data loss, the downloaded files simply stop being referenced)."
+      "imageUsageResidualRisk": "ACCEPTED, operator ruling 2026-08-19. AAAwave's own Program Perks section states it is an 'Authorized dealer' for Arduino, HPE, ASUSTOR, Cooler Master and Avermedia - so much of the feed photography is likely manufacturer-owned, and this document does not establish sublicensable rights. Accepted because it reverts in a single edit to imageUsagePermission (set it back to 'pending' and every aaawave page returns to the placeholder on the next build; no data loss, the downloaded files simply stop being referenced).",
+      "logoUsagePermission": "confirmed",
+      "logoUsageNote": "CONFIRMED 2026-08-20 from the same programme terms (AWIN advertiser 43143, last updated 13 Feb 2026), re-extracted with pdftotext and positive controls passing. The case for the LOGO is stronger than the one for product images: (1) the Program Perks section affirmatively grants \"Exclusive assets (banners, data feeds, links) available through Awin's dashboard\" - a banner IS a logo-bearing brand asset; (2) the enumerated Prohibited Practices do not mention logos, and the ONLY trademark clause is scoped to paid search - \"Trademark Bidding: No bidding on AAAwave brand terms or misspellings in paid search ads\" - which restricts keyword bidding, not display of the mark; (3) the strings logo, wordmark, brand guideline and identity each occur ZERO times in the terms. Using a merchant mark to identify that merchant on a comparison page is also nominative use, and we are in fact an affiliate partner, so no endorsement is implied that is not true. Logo is SELF-HOSTED from aaawave.com (never the AWIN CDN) and normalised by scripts/fetch-partner-logos.mjs."
     },
     "dignity-lifts": {
       "network": "AWIN",
@@ -164,7 +172,9 @@
       "noCouponSiteBehaviorNote": "Coupon sites are not allowed in this affiliate program at all.",
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/90193) — Branding tab explicitly states 'No branding guidelines'; no restriction on product-photo display anywhere else in the terms (Publishers/PPC questionnaires unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "king-koil": {
       "network": "AWIN",
@@ -185,7 +195,9 @@
       "mustUseOfficialFeedNote": "Scraping the site for product data is explicitly prohibited — must use the provided product feed.",
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/115216) — Branding tab explicitly states 'No branding guidelines.'; no restriction on product-photo display anywhere else in the terms (General tab's substantive content is coupon/PPC/feed rules only, no mention of images; Publishers questionnaire unanswered). Genuine silence, not explicit permission — no restriction was found, but none was granted either. Same treatment as Brooklyn Delhi/EVDANCE.",
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "tsar-bomba": {
       "network": "AWIN",
@@ -200,7 +212,9 @@
       },
       "imageUsagePermission": "assessed-low-risk",
       "imageUsageNote": "Checked directly via AWIN's advertiser terms page (ui.awin.com/merchant-profile-terms/109230) — a clear, intentional grant, not silence: the program overview explicitly lists 'High-Converting Creative Assets: Access to professional imagery showcasing our unique quick-release technology' as an affiliate benefit, and separately names 'SEO-Driven Marketers & Review Sites: For high-intent traffic looking for premium watch alternatives' as a target partner type — both verified verbatim. Strongest basis of any partner reviewed so far.",
-      "comparisonEngineConfirmed": true
+      "comparisonEngineConfirmed": true,
+      "logoUsagePermission": "pending",
+      "logoUsageNote": "PENDING 2026-08-20 - deliberately stricter than this partner's imageUsagePermission, and the difference is the point. The AWIN Branding tab was checked for product-image use and found SILENT (no branding guidelines), which is absence of restriction, not a grant. A logo is a trademark: displaying it is a stronger claim than displaying a product photo, and we hold NO archived terms document for this partner - only session notes of a dashboard page. Until terms are obtained and read, this partner keeps its monogram, which renders at the identical footprint (no layout change, no hole)."
     },
     "cosabella": {
       "network": "AWIN",

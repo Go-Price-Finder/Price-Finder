@@ -3619,3 +3619,48 @@ not assume the worse case: ONE real offender in the entire codebase**
 literals in the themeless OG-image generator, and 1 inside a comment.
 The guide-prose incident is an isolated lapse, not evidence of a
 pattern.
+
+### §38. White body in dark mode: a transition pinned the stale colour (2026-08-19)
+
+**Live visible defect, not latent** (operator): iOS Safari exposes the
+body background on overscroll rubber-banding, so dark-mode iPhone users
+were seeing white flashes at the top and bottom of every scroll. The
+page only LOOKED dark because CinematicBackground's `-z-10` div covered
+the white body.
+
+**Root cause, isolated by measurement rather than reasoning.** The chain
+of eliminations is the useful part:
+1. `--background` resolved to `#000` in dark and body still computed
+   white — so the token was not the problem.
+2. body already carried the `bg-noir-900` utility, and a FRESH div with
+   that exact class computed `rgb(0,0,0)` on the same page — so the
+   utility was not the problem either. Same class, two different
+   results, which is impossible unless something was holding the value.
+3. Setting `transition: none` on body in the live page flipped it to
+   `rgb(0,0,0)` INSTANTLY. That was the answer: `transition:
+   background-color 0.25s ease` in the `body` rule never repainted after
+   a theme flip and pinned the stale colour indefinitely — 1,500ms after
+   the toggle it was still white.
+
+**Fix:** the `body` rule now sets only `font-family`. Background and text
+colour come from the `bg-noir-900 text-ivory-50` utilities already on
+`<body>` — the SAME mechanism the fixed backdrop uses, so the two
+cannot disagree, which is what the operator asked for. A warning against
+reintroducing a background-color transition without re-verifying a real
+toggle is in the rule.
+
+**Verified with a REAL ThemeToggle click, not attribute-setting** — the
+distinction that had already caught this session once: light
+body/backdrop both `rgb(255,255,255)`, dark both `rgb(0,0,0)`,
+round-trip back to light clean.
+
+**Does the backdrop still earn its place?** Partly. It is no longer
+needed to paint the page colour — body does that now, correctly, in
+both themes. It is still doing one thing body cannot: it is `fixed`, so
+it covers the viewport during overscroll and while the page is shorter
+than the viewport, and it sits at `-z-10` beneath transformed/stacking
+descendants. With body now painting the same token, the two agree by
+construction, so the div is redundant-but-harmless insurance rather
+than load-bearing. Recommend keeping it until the contrast tail is at
+zero (removing a paint layer mid-pass would confound the count), then
+deleting it as a separate change with its own before/after screenshot.

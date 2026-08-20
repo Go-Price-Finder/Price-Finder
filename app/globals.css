@@ -212,10 +212,22 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  /* Background and text colour come from the `bg-noir-900 text-ivory-50`
+     utilities already on <body> in app/layout.tsx — the SAME mechanism
+     the fixed backdrop uses, so the two cannot disagree (findings §38).
+     What used to be here — `background: var(--background)` plus
+     `transition: background-color 0.25s ease` — left body computing
+     WHITE in dark mode: measured, the transition never repainted after
+     the theme flip and pinned the stale value (setting
+     `transition: none` in the live page flipped body to rgb(0,0,0)
+     instantly, which is how it was isolated). The page only LOOKED dark
+     because the -z-10 backdrop covered it, and iOS Safari's overscroll
+     rubber-banding exposes the body colour — so dark-mode iPhone users
+     saw white flashes at the top and bottom of every scroll. A live
+     visible defect, not a latent one.
+     Do not reintroduce a background-color transition here without
+     re-verifying the dark toggle with a REAL click. */
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .font-display {

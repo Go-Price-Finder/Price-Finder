@@ -8,13 +8,19 @@ import { fetchCurrentPriceOverrides } from "@/lib/pricing/getEffectivePrice";
  * and bring the exact per-source label wording for approval before
  * anything renders to a visitor.
  *
- * WHY THE FLAG DEFAULTS OFF AND MUST STAY OFF UNTIL THE LABEL IS RULED
- * ON: every product page carries "Price as of <feed vintage>". That is
- * true of a catalog price and FALSE of a live-override price, whose real
- * observation time is current_prices.updated_at. Enabling this without a
- * source-aware label would convert a working honesty mechanism into a
- * false claim on ~89% of the catalogue — the §27 defect at the largest
- * scale available to us. The price and the label are ONE change.
+ * WHY THE FLAG IS OFF, AND THE REASON IS NOW SPECIFIC RATHER THAN
+ * CAUTIOUS (operator ruling 2026-08-21, §55): the label is ONE sentence
+ * for both sources — "Price as of {date}" — where the date is always the
+ * FEED VINTAGE behind that price. We cannot yet name that date for a
+ * live price, because current_prices carries no vintage column. So the
+ * flag stays off for a stated reason: WE CANNOT SAY WHAT DATE THE LIVE
+ * PRICE IS AS OF. Not because the wording is unsettled — it is settled —
+ * and not because of caching.
+ *
+ * updated_at is NOT a substitute. It records when we read the feed. A
+ * price read on the 20th from a feed exported on the 14th is a
+ * 14th-of-August price; stamping it "20 August" would overstate
+ * freshness by six days — the catalog overstatement inverted.
  *
  * WHERE THIS RUNS: called from fetchCatalog(), the UNCACHED wrapper —
  * deliberately outside `unstable_cache(..., { revalidate: false })`.
@@ -44,13 +50,16 @@ export async function applyLivePrices(
   return products.map((product) => {
     const override = overrides.get(product.id);
     if (!override) {
-      return { ...product, priceSource: "catalog" as const, priceObservedAt: null };
+      return { ...product, priceSource: "catalog" as const, priceFeedVintage: null };
     }
     return {
       ...product,
       price: override.price,
       priceSource: "live" as const,
-      priceObservedAt: override.updated_at,
+      // BLOCKED: current_prices has no feed-vintage column (§55). Once it
+      // does, this reads it. updated_at is deliberately NOT used — it is
+      // when WE read the feed, not when the merchant exported it.
+      priceFeedVintage: null,
     };
   });
 }

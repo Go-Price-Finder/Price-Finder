@@ -64,9 +64,17 @@ export type RealProduct = {
    * this: "Price as of <feed vintage>" is TRUE of a catalog price and
    * FALSE of a live one, so the price and the label are one change. */
   priceSource?: "catalog" | "live";
-  /** When a "live" price was actually observed upstream
-   * (current_prices.updated_at). Null/undefined for a catalog price. */
-  priceObservedAt?: string | null;
+  /** The FEED VINTAGE behind a "live" price — the merchant's own export
+   * timestamp for the feed that produced it, NOT our read time
+   * (operator ruling 2026-08-21, §55). A price we read on the 20th from
+   * a feed exported on the 14th is a 14th-of-August price; labelling it
+   * with our read time would overstate freshness by six days, which is
+   * the catalog overstatement inverted.
+   *
+   * NULL today for every live price, because current_prices does not
+   * carry the vintage yet. That absence is the blocker on ungating —
+   * not the label, not the caching. */
+  priceFeedVintage?: string | null;
   /** See RawPartnerProduct.variantLabel in lib/partners.ts. */
   variantLabel?: string;
 };

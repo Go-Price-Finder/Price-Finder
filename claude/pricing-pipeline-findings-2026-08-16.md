@@ -5591,3 +5591,112 @@ or a dynamic segment is a separate decision layered on top. Also: when
 enabled this adds one Supabase round trip per `fetchCatalog()` call, and
 `fetchCatalog` runs concurrently at build time —
 `scripts/check-build-queries.mjs` must be re-run as part of any enabling.
+
+### §55. One label, and the real blocker is a column on current_prices (2026-08-21)
+
+**OPERATOR RULING, and it is better than what I proposed.** One sentence
+for both sources — **"Price as of {date}"** — where the date is always
+the FEED VINTAGE behind that price, never our read time. What changes
+between a catalog price and a live one is which date fills the slot, not
+what the sentence claims.
+
+My proposed "Price checked {date}" is rejected, and the reasoning is
+worth keeping because it inverts the original defect: `updated_at`
+records when WE read the feed. **A price read on the 20th from a feed
+exported on the 14th is a 14th-of-August price.** "Price checked 20
+August" would overstate freshness by six days — the catalog
+overstatement turned inside out. I had reasoned that "as of" would
+UNDERSTATE what we know; the correction is that what we know is the
+vintage, not the read.
+
+**It also disposes of the static-generation worry from §54 without any
+work.** Because the label names a DATE rather than claiming currency, a
+stale build degrades honestly on its own: a date four days old simply
+reads as four days old. There is nothing to fix.
+
+---
+
+## THE BLOCKER, measured
+
+**`current_prices` carries no feed vintage.** Its columns are
+`product_id, retailer, price, original_price, source, updated_at`. So we
+cannot name the date a live price is as of, and that — not the wording,
+not the caching — is what keeps the flag off.
+
+**Is the value available at write time? YES, and it is already in hand.**
+`lib/pricing/refreshPrices.ts` fetches the AWIN feed list
+(`fetchFeedList`) and reads `feed_status` to choose feeds per partner. It
+downloads each feed from a feed-list row that carries that feed's own
+"Last Imported". It simply does not persist it.
+
+**Does it need a column? YES — and therefore a migration, so the
+second-reader rule applies (standing rule 1).** Proposed, for review
+rather than applied: add `feed_id text` and `feed_last_imported_at
+timestamptz` to `public.current_prices`. `refreshPrices` then sets both
+on the upsert, from the feed-list row it already holds for that partner.
+Mirrors `price_history` exactly, which is the point: two tables
+describing the same observation should describe it the same way.
+
+**Is the past recoverable? THE QUESTION BARELY APPLIES, and this is the
+good news.** `refresh_runs` logs `feed_id` and `feed_rows` per partner
+per run — the 2026-08-20 11:00:06Z run is fully logged — but **no
+vintage**, so the value behind existing rows is not reconstructable.
+
+But unlike `price_history`, **`current_prices` is a CURRENT-STATE table
+with no history to lose.** Every row is overwritten by the next refresh.
+So there is no permanent ambiguity here and no backfill to argue about:
+once the column exists and the writer sets it, **every live price
+carries a correct vintage after the next 11:00Z run.** The gap is one
+refresh, not nineteen days.
+
+**Interim behaviour, built and verified:** with `LIVE_PRICES=1` the live
+price applies ($139.95 to $149.95, the king-koil discrepancy resolving)
+and **zero stamps render**, because `resolveAsOfStamp` refuses to name a
+date it does not have. It deliberately does NOT fall back to the catalog
+vintage, which would be wrong in the other direction — that date
+describes the import, not this number. The failure mode is *no claim*,
+never a wrong one, and it is visible in the build output rather than
+hidden.
+
+---
+
+### §55b. Our daily history has been silently lossy for its entire existence
+
+Recorded at the operator's instruction, because the implication is larger
+than either incident.
+
+| date | rows | what happened |
+|---|---|---|
+| 2026-08-02 | 937 | king-koil 12 of 29 — caught mid catalog re-import (`87877a2`) |
+| 2026-08-19 | 500 | **exactly one BATCH_SIZE.** king-koil and tsar-bomba absent entirely; canvas-vows 51 of 204. **953 of 1,453 observations lost.** |
+
+**Two partial days in nineteen. Neither detected at the time.** The only
+signal 08-19 produced was a missed dead-man's-switch ping that nobody
+chased, because the route returned HTTP 200 with the errors buried in the
+response body — a success status on a run that lost two thirds of its
+work.
+
+The implication, stated plainly: **the daily price history has been
+lossy since the day it started, and we had no instrument capable of
+telling us.** Every conclusion drawn from it before 2026-08-21 inherits
+that. The second partial day was found only because an assertion was
+being built for the first — which means the true rate of loss over
+nineteen days is a lower bound, not a count.
+
+### §55c. STANDING RULE — an alarm that fires during normal operation is worse than no alarm
+
+My first design for the row-count assertion failed the cron on ANY
+per-partner population change. It would have returned HTTP 500 on every
+legitimate import day. I caught it before it shipped and split the
+severities — FATAL for a partial snapshot, SURFACED for a population
+move — but the rule generalises and belongs in the ledger on its own:
+
+**An alarm that fires during normal operation gets muted, and a muted
+alarm is worse than none — it converts an absent signal into a false
+sense of coverage.** This is the failure mode that kills monitoring
+systems everywhere, and it is the same shape as §19: a check whose output
+carries no information still looks like a check.
+
+The corollary for design: before adding an alarm, name the normal
+operations that will trip it. If the list is non-empty, the alarm is
+mis-specified, not the operations.

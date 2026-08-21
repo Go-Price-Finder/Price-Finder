@@ -132,7 +132,7 @@ export default async function KingKoilProductPage({
                 partnerId="king-koil"
                 slug={product.slug}
                 priceSource={product.priceSource}
-                priceObservedAt={product.priceObservedAt}
+                priceFeedVintage={product.priceFeedVintage}
               />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

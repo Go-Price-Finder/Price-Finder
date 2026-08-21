@@ -135,7 +135,7 @@ export default async function CanvasVowsProductPage({
                 partnerId="canvas-vows"
                 slug={product.slug}
                 priceSource={product.priceSource}
-                priceObservedAt={product.priceObservedAt}
+                priceFeedVintage={product.priceFeedVintage}
               />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">

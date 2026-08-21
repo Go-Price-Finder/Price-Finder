@@ -66,25 +66,26 @@ export function PriceAsOfStamp({
 }
 
 /**
- * PROPOSED per-source wording — NOT APPROVED, NOT REACHABLE (§54).
+ * ONE LABEL, BOTH SOURCES (operator ruling 2026-08-21, §55).
  *
- * Only used when a product carries priceSource === "live", which only
- * happens when LIVE_PRICES=1, which is off everywhere. Shipped in this
- * state deliberately: the operator's ruling is that the price and the
- * label are ONE change, and the wording is their call in the same way
- * the /about text was. Until it is ruled on, every visitor sees the
- * approved catalog wording below and nothing else.
+ * "Price as of {date}" — for a catalog price and a live price alike.
+ * What changes between them is which date fills the slot, not what the
+ * sentence claims. There is no second wording to approve.
  *
- * The distinction being drawn:
- *   CATALOG price — the number came from an imported feed. What we can
- *   honestly say is when that feed's data was current: its vintage.
- *   LIVE price — the number came from current_prices, written by the
- *   refresh job when it actually read the merchant's feed. Here we have
- *   a real observation timestamp, so we can say something stronger, and
- *   saying only "as of <feed vintage>" would UNDERSTATE it.
+ * THE DATE IS ALWAYS THE FEED VINTAGE — the merchant's own export
+ * timestamp for the feed behind that price — never our read time. This
+ * is why "Price checked", which this file proposed, was rejected:
+ * `current_prices.updated_at` records when WE read the feed. A price
+ * read on the 20th from a feed exported on the 14th is a
+ * 14th-of-August price, and "Price checked 20 August" would overstate
+ * freshness by six days — the catalog overstatement inverted.
+ *
+ * A consequence worth stating, because it disposes of the
+ * static-generation worry from §54: because this label names a DATE
+ * rather than claiming currency, a stale build degrades honestly on its
+ * own. A date four days old simply reads as four days old.
  */
-const PROPOSED_LIVE_LABEL = "Price checked";
-const APPROVED_CATALOG_LABEL = "Price as of";
+const AS_OF_LABEL = "Price as of";
 
 /**
  * The ONE place that decides which stamp a product gets. Both surfaces
@@ -93,36 +94,44 @@ const APPROVED_CATALOG_LABEL = "Price as of";
  * stamp on the other is worse than either alone.
  *
  * Caught during the §54 build: the flagged merge changed the PRICE on
- * the page while the label kept saying "Price as of <feed vintage>",
- * reproducing precisely the defect the flag exists to prevent. Wiring
- * every call site is part of the change, not a follow-up.
+ * the page while the label kept its catalog date, reproducing precisely
+ * the defect the flag exists to prevent, at 260-stamp scale, inside the
+ * change meant to prevent it. Keep this as the single decision point.
  */
 export function resolveAsOfStamp(product: {
   partnerId: string;
   slug: string;
   priceSource?: "catalog" | "live";
-  priceObservedAt?: string | null;
+  priceFeedVintage?: string | null;
 }): { iso: string; label: string } | null {
-  if (product.priceSource === "live" && product.priceObservedAt) {
-    return { iso: product.priceObservedAt.slice(0, 10), label: PROPOSED_LIVE_LABEL };
+  if (product.priceSource === "live") {
+    // A live price MUST carry the vintage of the feed that produced it.
+    // Falling back to the catalog vintage here would be wrong in the
+    // other direction: that date describes the IMPORT, not this number.
+    // With no vintage we cannot name a date, so we render no stamp —
+    // and the flag stays off precisely so this branch is unreachable
+    // until current_prices carries the column (§55).
+    return product.priceFeedVintage
+      ? { iso: product.priceFeedVintage.slice(0, 10), label: AS_OF_LABEL }
+      : null;
   }
   const iso = getPriceAsOf(product.partnerId, product.slug);
-  return iso ? { iso, label: APPROVED_CATALOG_LABEL } : null;
+  return iso ? { iso, label: AS_OF_LABEL } : null;
 }
 
 export default function PriceAsOfLabel({
   partnerId,
   slug,
   priceSource,
-  priceObservedAt,
+  priceFeedVintage,
 }: {
   partnerId: string;
   slug: string;
   /** Present only when the live-price merge ran (LIVE_PRICES=1). */
   priceSource?: "catalog" | "live";
-  priceObservedAt?: string | null;
+  priceFeedVintage?: string | null;
 }) {
-  const stamp = resolveAsOfStamp({ partnerId, slug, priceSource, priceObservedAt });
+  const stamp = resolveAsOfStamp({ partnerId, slug, priceSource, priceFeedVintage });
   if (!stamp) return null;
   return (
     <p className="mt-3 text-ivory-50">

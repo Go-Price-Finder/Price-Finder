@@ -1,0 +1,98 @@
+{
+  "count": 23,
+  "applied": [
+    {
+      "name": "add_real_partner_retailers",
+      "version": "20260731184947"
+    },
+    {
+      "name": "add_price_history",
+      "version": "20260802033040"
+    },
+    {
+      "name": "add_current_prices",
+      "version": "20260802043038"
+    },
+    {
+      "name": "add_current_prices_fk",
+      "version": "20260802043121"
+    },
+    {
+      "name": "add_cashback_ledger",
+      "version": "20260802045127"
+    },
+    {
+      "name": "add_catalog_products",
+      "version": "20260803205014"
+    },
+    {
+      "name": "add_partner_display_order",
+      "version": "20260810235118"
+    },
+    {
+      "name": "add_catalog_product_sort_order",
+      "version": "20260811032330"
+    },
+    {
+      "name": "add_affiliate_clicks",
+      "version": "20260815103053"
+    },
+    {
+      "name": "add_affiliate_clicks_click_id_default",
+      "version": "20260815103152"
+    },
+    {
+      "name": "add_cashback_claims_awin_transaction_id",
+      "version": "20260815104722"
+    },
+    {
+      "name": "add_spin_results",
+      "version": "20260815110617"
+    },
+    {
+      "name": "replay_parity_fk_and_click_id_default",
+      "version": "20260815122813"
+    },
+    {
+      "name": "add_migration_auditor_role",
+      "version": "20260815123651"
+    },
+    {
+      "name": "0015_price_history_provenance",
+      "version": "20260817025132"
+    },
+    {
+      "name": "0016_feed_status",
+      "version": "20260817032948"
+    },
+    {
+      "name": "0017_refresh_runs",
+      "version": "20260818203937"
+    },
+    {
+      "name": "0018_catalog_products_gtin",
+      "version": "20260819001304"
+    },
+    {
+      "name": "0019_retailer_enum_aaawave",
+      "version": "20260819004917"
+    },
+    {
+      "name": "0020_partners_aaawave",
+      "version": "20260819004933"
+    },
+    {
+      "name": "0021_feed_status_aaawave",
+      "version": "20260819013523"
+    },
+    {
+      "name": "0022_refresh_runs_gtin_counters",
+      "version": "20260819150510"
+    },
+    {
+      "name": "0023_current_prices_feed_provenance",
+      "version": "20260821030557"
+    }
+  ],
+  "generatedFrom": "supabase_migrations.schema_migrations"
+}

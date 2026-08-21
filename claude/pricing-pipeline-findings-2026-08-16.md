@@ -5700,3 +5700,135 @@ carries no information still looks like a check.
 The corollary for design: before adding an alarm, name the normal
 operations that will trip it. If the list is non-empty, the alarm is
 mis-specified, not the operations.
+
+### §57. Migration drift: recovered exactly, and the gate that was designed six days ago and never built (2026-08-21)
+
+**THE DRIFT IS BIGGER THAN EIGHT, IN BOTH DIRECTIONS.** The repo held 14
+files; the database has **23** applied. The gap is not 0015–0022:
+
+| | count | |
+|---|---|---|
+| applied with no repo file | **12** | 0015–0023 (9) **plus three nobody had noticed** |
+| repo files with no applied record | **3** | 0001–0003, which predate migration tracking |
+
+The three unnoticed ones — `add_current_prices_fk`,
+`add_affiliate_clicks_click_id_default`, `add_migration_auditor_role` —
+were applied between numbered migrations and never named in any
+handover. A count-based comparison would have found 14 ≠ 23 and told you
+nothing about which, or that three of the files are legitimately
+unmatched.
+
+---
+
+## RECOVERY: the answer to the recommendation is "recover", decisively
+
+`supabase_migrations.schema_migrations` has a **`statements` array that
+retains the full applied text, comments included** — verified on every
+row, 96 to 4,836 bytes each. So recovery is not a reconstruction: it is
+the exact text that ran. Regenerating DDL from the live schema would
+produce a file that yields the same schema while discarding every
+comment and every stated reason, which on this project is most of the
+value — migration 0015's comment alone explains why its columns are
+nullable and what `legacy_pre_provenance` means.
+
+**RECOVERED AND HASH-VERIFIED, five files:**
+
+| file | bytes | md5 verified against DB |
+|---|---|---|
+| `0015_price_history_provenance.sql` | 3,720 | `827b1b58…` ✓ |
+| `0016_feed_status.sql` | 2,791 | `fdf6c718…` ✓ |
+| `0006a_add_current_prices_fk.sql` | 159 | `60c6fee1…` ✓ |
+| `0011a_add_affiliate_clicks_click_id_default.sql` | 96 | `39c6cfbb…` ✓ |
+| `0014a_add_migration_auditor_role.sql` | 914 | `86d3325c…` ✓ |
+
+**Method, because it matters more than the result.** The defect being
+repaired is that the repo does not match the database; retyping SQL out
+of a query result re-introduces exactly that divergence at a smaller
+scale, and one mistyped character in a migration is invisible until
+someone rebuilds. So the text was emitted from Postgres as base64,
+decoded to disk mechanically, and each file's md5 compared against a
+hash **computed by the database**. Not "transcribed carefully" —
+verified byte-identical.
+
+The `a`-suffix names (`0006a`, `0011a`, `0014a`) place the three
+unnumbered migrations in their real applied order without renumbering
+anything that already exists.
+
+**WHAT WAS DELIBERATELY NOT RECOVERED, and why.** 0017–0023 are still
+missing, and I could have taken them from the database in one command.
+I did not:
+
+- 0017, 0018, 0019, 0020 retain their authored headers — recovery would
+  be lossless for these four.
+- **0021, 0022 and 0023 are DDL ONLY.** 0023 proves the gap exactly: the
+  authored file is 3,359 bytes, the applied statements are **497**. The
+  entire reasoning header — the render contract, the NULL semantics, the
+  no-backfill argument — was never applied and is not in the database.
+
+Committing DDL-only versions would turn the gate green while leaving the
+repo poorer than the artifacts that exist, and a green gate removes the
+pressure to commit the real files. That is rule 5g wearing a different
+costume: **do not silence an alarm with an inferior artifact.** The
+operator holds these files; they are the better source.
+
+---
+
+## THE GATE
+
+**`scripts/check-migration-drift.mjs`, wired into `prebuild`. It fails
+today, by design** — the repo genuinely cannot rebuild the schema, which
+is the condition the gate exists to surface. It names all seven missing
+files and the recovery command.
+
+**IDENTITIES, NOT COUNTS — a deliberate deviation from the brief.** A
+count check is weaker twice over: it passes if someone commits a file
+with the wrong name, and it would fail *forever* here for a legitimate
+reason, since 0001–0003 predate tracking and can never have an applied
+record. The gate matches normalized names (both `0015_x` and bare `x`
+conventions are present in the data) and carries the three baseline
+files in an explicit `PRE_TRACKING_BASELINE` map with reasons.
+
+**THE CHECK IS SPLIT, AND THE HALVES COMPOSE.** `supabase_migrations` is
+not exposed through PostgREST and the build has no direct Postgres
+connection, so a build-time gate cannot query the database:
+
+- **this gate**, every build, no credential: *files == manifest*
+- **CI**, with the auditor credential: *manifest == database*
+
+Together: files == database. Running only the first half is circular — a
+manifest never re-derived from the database drifts with the directory it
+describes — and the failure message says so rather than leaving the next
+reader to discover it.
+
+**AND THE CI HALF WAS ALREADY DESIGNED, SIX DAYS AGO.** The recovered
+`0014a_add_migration_auditor_role.sql` creates a least-privilege
+`migration_auditor` role, granted SELECT on exactly
+`supabase_migrations.schema_migrations` and revoked from everything else,
+with a header that says it is "for the CI migration-history check" and
+that its password is set by a human and held in GitHub Actions secrets,
+never read by an AI session. **The role exists. The check was never
+built.** So the credential path for the CI half is already in place and
+was deliberately designed to be unavailable to sessions like this one —
+which is why this half stops at the manifest.
+
+---
+
+### §57b. STANDING RULE — the tool that applies a migration must also write it
+
+Recorded as a process failure rather than a fix, at the operator's
+instruction.
+
+Applying DDL through the MCP tool is convenient and **silently skips the
+step that writes the file.** Nothing failed, nothing warned, and the
+divergence accumulated across twelve migrations and three weeks. The
+convenience is precisely the hazard: a workflow that succeeds while
+leaving half the work undone will be repeated, because it feels finished.
+
+**The rule: a migration lands in the repo FIRST and is applied SECOND —
+or the tool that applies it also writes it. Never applied-only.**
+
+The general form, which is the same shape as §48 and §50b: **when one
+action has two halves and only one of them is enforced by a tool, the
+unenforced half is optional in practice no matter what the process
+document says.** The fix is never "remember"; it is to make the enforced
+half fail without the other.

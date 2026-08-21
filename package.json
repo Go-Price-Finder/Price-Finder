@@ -7,9 +7,9 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --env-file-if-exists=.env.local scripts/check-postgrest-caps.mjs --build-gate && npx tsx --env-file-if-exists=.env.local scripts/check-compliance-materialization.ts --build-gate && node scripts/check-merged-slugs.mjs",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/check-postgrest-caps.mjs --build-gate && npx tsx --env-file-if-exists=.env.local scripts/check-compliance-materialization.ts --build-gate",
     "build": "next build",
-    "postbuild": "node scripts/check-rendered-claims.mjs && node scripts/check-hand-enumerations.mjs",
+    "postbuild": "node scripts/check-rendered-claims.mjs && node scripts/check-hand-enumerations.mjs && node scripts/check-merged-slugs.mjs",
     "start": "next start",
     "lint": "eslint",
     "check:contrast": "node scripts/check-contrast.mjs",

@@ -7,6 +7,7 @@ import {
 } from "@/lib/catalog";
 import { paginate } from "@/lib/pagination";
 import { getAllGuides } from "@/lib/guides";
+import mergedSlugs from "@/lib/merged-slugs.json";
 
 const SITE_URL = "https://gopricefinder.com";
 
@@ -81,6 +82,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
+  // NEVER ADVERTISE A URL THAT REDIRECTS (findings §50 addendum).
+  //
+  // The site renders partner products from `catalog_products`, not from
+  // the static lib/<partner>-data.ts files — those are the import
+  // artifact (migration 0008). So a product removed from the static data
+  // but still present in the table keeps generating a page AND a sitemap
+  // entry, even though next.config.ts now 308s that URL. Three king-koil
+  // URLs shipped exactly that way: advertised to crawlers, returning a
+  // redirect. Handing Google a "page with redirect" for every entry is
+  // the opposite of what the redirects were added to achieve.
+  //
+  // Filtering here rather than fixing the three rows is deliberate: it is
+  // correct for ANY future merge, it needs no database change, and it
+  // cannot fall out of step because it reads the same map next.config.ts
+  // does. scripts/check-merged-slugs.mjs asserts the result against the
+  // RENDERED sitemap on every build.
+  const redirected = new Set(mergedSlugs.map((r) => `${SITE_URL}${r.from}`));
+
   return [
     ...staticPages,
     ...departmentPages,
@@ -88,5 +107,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...partnerPages,
     ...partnerPaginationPages,
     ...productPages,
-  ];
+  ].filter((entry) => !redirected.has(entry.url));
 }

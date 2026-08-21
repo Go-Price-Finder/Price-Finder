@@ -4737,6 +4737,56 @@ Classify and print the evidence; do not pick. Rule 5a keeps earning its
 place, and the pattern across all of them is the same: **the first
 output of a new instrument is fiction until a control says otherwise.**
 
+### §50b. My own gate read the wrong source of truth, and production proved it (2026-08-20)
+
+**The collapse shipped with a defect the gate should have caught, and
+the gate missed it for the exact reason it exists.**
+
+Verified on production after deploy: `/king-koil` served **29** products
+and the sitemap listed **29** king-koil URLs, against **26** in the
+static data. The three unnameable products were still being rendered and
+still advertised to crawlers — while `next.config.ts` returned **308**
+for those same URLs. A sitemap entry that redirects is a "page with
+redirect" in Search Console: precisely the opposite of what the
+redirects were added to achieve, on a site already struggling to get
+indexed.
+
+**Root cause: the site renders from `catalog_products`, not from
+`lib/<partner>-data.ts`.** Migration 0008 moved the read; the static
+files are the IMPORT ARTIFACT. Deleting a product from the static file
+removes nothing from the live site. The canvas-vows collapse worked on
+production only because the 162 DATABASE rows were deleted too — the
+file edit was cosmetic.
+
+**`check-merged-slugs.mjs` validated `from` slugs against the static
+files, found them absent, and passed.** It was checking intent, not
+behaviour — **rule 5f, violated by the gate written hours earlier to
+enforce rule 5e.** The second time in two days one of my gates read
+source instead of output, and the first time it reached production.
+
+Rewritten to validate against `.next/server/app/sitemap.xml.body`:
+every `from` must be ABSENT from the rendered sitemap, every `to` must
+be present. Run against the shipped build it **failed on exactly the
+three real URLs and nothing else** — a stronger demonstration than any
+selftest, because the bug was real and already live.
+
+**Fixed without touching the database**, which matters because deleting
+those three rows is not authorized. `app/sitemap.ts` now filters out any
+URL present in `lib/merged-slugs.json`. That is the correct behaviour
+for ANY future merge, needs no DB change, and cannot drift because it
+reads the same map `next.config.ts` does. Sitemap 1,431 → 1,428.
+
+**Still outstanding and deliberately not fixed:** `catalog_products`
+holds 29 king-koil rows against 26 in the static data. Three pages are
+generated and immediately shadowed by their own redirect — wasteful,
+harmless, and awaiting the ruling that authorization explicitly withheld.
+
+**The general lesson, third instance:** *a check is only as good as the
+artifact it reads.* Static files, source code and config all describe
+intent. The rendered sitemap, the built HTML and the live response
+describe behaviour. Every gate in this repo should now name which one it
+reads, and it should be the second.
+
 ### §51. Nineteen days of price history we already had, and what it actually says (2026-08-20)
 
 **THE FINDING IS NOT "WE FOUND SOME DATA."** `price_history` holds

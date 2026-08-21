@@ -39,35 +39,78 @@
  * contrast, and stops it. Run that before shipping visual work.
  */
 import { chromium } from "playwright";
-import { readdirSync } from "node:fs";
+import { readdirSync, existsSync } from "node:fs";
+import { join } from "node:path";
 
 const BASE = process.env.CONTRAST_BASE ?? "http://localhost:3000";
 const SELFTEST = process.env.CONTRAST_SELFTEST === "1";
 
-// EVERY guide, enumerated from the source directory rather than listed
-// by hand (§47). The second guide shipped while this list still named
-// only the first, which would have put a whole live route outside the
-// contrast gate — a route rendering outside a check is a §19b gap by
-// construction, and the claims checker already walks this directory for
-// exactly that reason. Adding a guide now extends coverage automatically.
+// ROUTES ARE ENUMERATED FROM THE BUILD OUTPUT, NEVER HAND-LISTED (§48).
+//
+// This list used to be twelve routes typed by hand. Publishing a second
+// guide put a whole live route outside the gate while the gate reported
+// PASS — invisible by construction, because a check that enumerates by
+// hand is a check with an expiry date nobody wrote down. The same trap
+// covered /privacy, /terms, /wishlist, /contact,
+// /affiliate-disclosure and six of the seven partner pages, and would
+// have covered every future page and every future partner.
+//
+// Now: every statically rendered top-level route in .next/server/app,
+// plus one product detail page per partner directory as a sample of the
+// ~1,450 product pages (measuring all of them would cost hours to say
+// the same thing — the product template is one component). Adding a
+// page, a guide or a partner extends coverage with no edit here.
+const BUILD_APP_DIR = ".next/server/app";
+if (!existsSync(BUILD_APP_DIR)) {
+  console.error(
+    `FAIL: ${BUILD_APP_DIR} not found. This checker enumerates routes from the build output, ` +
+      `so with no build there is nothing to enumerate and a PASS would be vacuous. Run next build first.`
+  );
+  process.exit(2);
+}
+
+/** Top-level statically rendered routes. "index" is "/"; _not-found is
+ * not a page anyone visits. */
+const TOP_LEVEL = readdirSync(BUILD_APP_DIR)
+  .filter((f) => f.endsWith(".html"))
+  .map((f) => f.replace(/\.html$/, ""))
+  .filter((n) => n !== "_not-found")
+  .map((n) => (n === "index" ? "/" : `/${n}`))
+  .sort();
+
+/** Guides, from the source directory (the claims checker walks the same
+ * directory, for the same reason). */
 const GUIDE_ROUTES = readdirSync("content/guides")
   .filter((f) => f.endsWith(".md"))
   .map((f) => `/guides/${f.replace(/\.md$/, "")}`)
   .sort();
 
-const ROUTES = [
-  "/",
-  ...GUIDE_ROUTES,
-  "/guides",
-  "/stores",
-  "/deals",
-  "/trending",
-  "/about",
-  "/how-it-works",
-  "/categories",
-  "/aaawave",
-  "/aaawave/amd-ryzen-7-5800xt-8-core-16-thread-unlocked-desktop-processor-up-to-4-8ghz-am4",
-];
+/** One product detail page per partner, discovered from the build output
+ * rather than named: any subdirectory that both has a top-level page of
+ * its own and contains prerendered child pages is a partner index. */
+const PRODUCT_SAMPLES = [];
+for (const entry of readdirSync(BUILD_APP_DIR, { withFileTypes: true })) {
+  if (!entry.isDirectory()) continue;
+  const route = `/${entry.name}`;
+  if (!TOP_LEVEL.includes(route)) continue;
+  let children = [];
+  try {
+    children = readdirSync(join(BUILD_APP_DIR, entry.name))
+      .filter((f) => f.endsWith(".html"))
+      .sort();
+  } catch {
+    continue;
+  }
+  if (children.length > 0) {
+    PRODUCT_SAMPLES.push(`${route}/${children[0].replace(/\.html$/, "")}`);
+  }
+}
+
+const ROUTES = [...new Set([...TOP_LEVEL, ...GUIDE_ROUTES, ...PRODUCT_SAMPLES])];
+if (ROUTES.length < 15) {
+  console.error(`FAIL: only ${ROUTES.length} routes enumerated — the build output looks wrong, not small.`);
+  process.exit(2);
+}
 
 // 'on-fill' is spec §3's amended row (operator 2026-08-19): a label on a
 // saturated brand fill is a glanced role, not a read one — 4.5 minimum,

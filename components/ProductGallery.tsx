@@ -75,7 +75,16 @@ export default function ProductGallery({
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
-            <span className="absolute bottom-3 right-3 rounded-full bg-noir-950/80 px-3 py-1 text-xs font-medium text-ivory-50 backdrop-blur-sm">
+            {/* bg-noir-800/text-ivory-100, matching the arrow controls
+                above — NOT bg-noir-950. --color-noir-950 is the one token
+                in the scale that is defined once and never flipped for
+                dark mode (#17130f in both), so pairing it with ivory-50
+                (which DOES flip, to #1b2740 in light) put dark navy text
+                on near-black at 1.45:1 against a 6:1 floor, on every
+                partner product page with more than one image. Live and
+                unseen until the contrast gate stopped enumerating routes
+                by hand (§48). */}
+            <span className="absolute bottom-3 right-3 rounded-full bg-noir-800/90 px-3 py-1 text-xs font-medium text-ivory-100 backdrop-blur-sm">
               {index + 1} of {count}
             </span>
           </>

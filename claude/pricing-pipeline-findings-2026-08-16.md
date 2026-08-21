@@ -4400,3 +4400,170 @@ unqualified claim, which is the opposite of the intent behind the
 authorization, and withholding the handover commit would have hidden
 open items J and K from the next session. Authorization is for an
 outcome, not a commit count.
+
+### §48. Variants: the population, and the hand-enumeration sweep that found a live defect (2026-08-20)
+
+---
+
+## PART 1 — VARIANTS. It is not a handful of gift boxes, and it is not aaawave.
+
+**The question:** we do not model variants at all. One catalog row carries
+one price under a title that may cover several purchasable options.
+
+**Do the feeds expose variant grouping? NO. Not one of the seven.**
+
+| partner | feed | `item_group_id` | other candidates | verdict |
+|---|---|---|---|---|
+| aaawave | F2639 Google | present, **0 rows populated** | `mpn` 1,677/1,676 distinct | identifier, not grouping |
+| evdance | F1320 Google | present, **0 rows populated** | `mpn` 71/59 distinct | no usable grouping |
+| golden-maple | F2615 Google | present, **0 rows populated** | `mpn` 339/321 distinct | no usable grouping |
+| canvas-vows | 103552 classic | absent | `model_number` 204 rows, **2 distinct** | category label |
+| king-koil | 101819 classic | absent | `mpn` unique per row | identifier |
+| tsar-bomba | 105368/113495 | absent | `model_number` 189 rows, **7 distinct** | mangled number |
+| brooklyn-delhi | none exists | — | — | unmeasurable (§46) |
+
+`item_group_id` is present as a HEADER on all three Google-template feeds
+and populated on ZERO rows — the "a header is not data" finding for the
+third time, now confirmed across every Google feed we take. The
+colour/size/material/pattern axis columns are likewise header-only.
+
+**THE INSTRUMENT WAS WRONG FIRST, AND THE WAY IT WAS WRONG IS WORTH
+KEEPING.** The first version auto-picked "the column with the most rows
+in multi-row groups" as the grouping key. That rule selects precisely the
+most useless column. It chose canvas-vows' `model_number`, whose value is
+the literal string `"personalized canvas"` on all 204 rows, and
+tsar-bomba's, whose value is `"7.17701e+11"` — a number the feed mangled
+into scientific notation — grouping 18 unrelated watches. It was about to
+report *"204 of 204 canvas-vows products are variants with a 786% price
+spread."* The rewrite does not auto-pick; it CLASSIFIES every candidate
+by group shape and prints the evidence.
+
+**THE REAL MEASUREMENT, taken on our own catalog rather than through a
+join, so it does not depend on match rates at all.** The concern is about
+the TITLE, so the measurement is titles:
+
+| partner | products | distinct titles | share a title | % | meaningful spread |
+|---|---|---|---|---|---|
+| aaawave | 500 | **500** | 0 | 0% | 0 |
+| brooklyn-delhi | 29 | 29 | 0 | 0% | 0 |
+| **canvas-vows** | 204 | **42** | **191** | **93.6%** | **191** |
+| evdance | 72 | 72 | 0 | 0% | 0 |
+| golden-maple | 348 | 348 | 0 | 0% | 0 |
+| **king-koil** | 29 | **1** | **29** | **100%** | **29** |
+| tsar-bomba | 271 | 262 | 14 | 5.2% | **0** |
+| **TOTAL** | **1,453** | — | **234** | **16.1%** | **220** |
+
+**234 of 1,453 products (16.1%) share their displayed title with another
+product; 220 of those sit in a group with a meaningful price gap. 220 of
+the 234 are two partners.**
+
+- **king-koil is total. 29 products, ONE title.** Every product is
+  "King Koil Luxury Air Mattress with High Speed Built-in Pump", priced
+  $79.95–$179.95. The feed sends 27 rows with the identical
+  `product_name`, no grouping column, and a `custom_1` that has 27 values
+  and 1 distinct. The /king-koil page today is 29 visually identical
+  cards at nine different prices with nothing to distinguish them. This
+  is live.
+- **canvas-vows is 93.6%.** 42 titles across 204 products. Worst groups:
+  11× "Relax Soak And Unwind Wall Art" $45–$399; 10× "Sound Wave Canvas"
+  $49.95–$399; 9× "Photo Word Art Canvas" $100–$399. Personalised
+  canvases in different sizes, flattened to one title each.
+- **aaawave is CLEAN — 500 of 500 titles distinct.** The partner the
+  capacity-variant worry was about, and the one we built the GTIN join
+  for, has no title collisions at all. So does golden-maple (348/348) and
+  evdance (72/72).
+- **tsar-bomba's 14 are not a pricing problem**: every shared-title group
+  has a $0 spread — duplicate listings at identical prices, a de-dup
+  question, not a misleading-price question.
+
+**The gift box is a different mechanism and should not be lumped in.**
+brooklyn-delhi has zero title collisions. Its ambiguity is a SHOPIFY
+variant inside one product page (variant "2" $63 / variant "4" $95), not
+two catalog rows sharing a title. Two different defects that happen to
+look alike from the outside.
+
+**A SEPARATE FINDING, unasked: 224 of our 271 tsar-bomba products are
+absent from the current live feeds.** Our stored `aw_product_id`s
+(43890232966…) do not appear in either current feed, whose ids are in an
+entirely different range (41882883891…). Only 47 of 271 match. This is
+not a join bug — it was verified by looking the raw ids up directly. Read
+alongside §46's brooklyn-delhi finding, two of seven partners now have
+catalogs we cannot refresh from their current feeds.
+
+**Nothing was changed.** No `variantLabel`, no gift-box edit, no importer
+change. The fix is a different conversation, as instructed.
+
+---
+
+## PART 2 — THE HAND-ENUMERATION SWEEP.
+
+**THE RULE, recorded as standing: a check that enumerates by hand is a
+check with an expiry date nobody wrote down.**
+
+**Audit of every instrument:**
+
+| instrument | enumerates | verdict |
+|---|---|---|
+| `check-rendered-claims.mjs` | `readdirSync` app output + walks `content/guides` | already dynamic ✓ |
+| `check-postgrest-caps.mjs` | recursive walk from `SCAN_DIRS` | dynamic, but SCAN_DIRS is a hand list of 4 dirs |
+| `check-compliance-materialization.ts` | iterates `PARTNERS` + registry | already dynamic ✓ |
+| `check-build-queries.mjs` | `readdirSync` | already dynamic ✓ |
+| `verify-catalog-migration.ts` | iterates `PARTNERS` | already dynamic ✓ |
+| `check-contrast.mjs` | **12 routes typed by hand** | **the live instance** |
+| `app/sitemap.ts` | hand-listed static pages + dynamic mappers | complete today, silent if a page is added |
+| `lib/price-as-of.ts` | hand-maintained partner→feed map | complete today (all 7), already documented debt |
+| `scripts/stage1-live-catalog-audit.ts` | 3 partners hand-listed | historical one-off, not a gate — left alone |
+
+**THE CONVERSION FOUND A REAL, LIVE DEFECT IMMEDIATELY.**
+`check-contrast.mjs` now enumerates from the build output: every static
+top-level route, every guide, and one product detail page per partner
+directory. It went from **12 routes / 792 nodes to 29 routes / 1,952
+nodes** — and the first run FAILED:
+
+> `/brooklyn-delhi/achaar-short-sleeve-unisex-t-shirt [light]
+> span.absolute.bottom-3 (meta, 12px): 1.45:1 — required 6:1.
+> color rgb(27,39,64) on rgb(67,64,60). "1 of 2"`
+
+Root cause: `--color-noir-950` is the ONE token in the scale defined once
+and never flipped for dark mode (`#17130f` in both themes), while
+`--color-ivory-50` does flip (`#1b2740` light / `#faf8f3` dark). The
+gallery's image counter paired them, so in LIGHT mode it rendered dark
+navy on near-black. Live on every partner product page with more than one
+image. It survived because the old hand-list sampled exactly one aaawave
+product page, and that product has a single image.
+
+Fixed by matching the sibling arrow controls in the same component
+(`bg-noir-800/90 text-ivory-100`, both of which flip correctly). Verified
+it is the only such pairing in the codebase. Re-gated: **PASS, 1,952
+nodes, 29 routes, both themes.**
+
+Routes previously outside the contrast gate and now inside it:
+`/privacy`, `/terms`, `/wishlist`, `/contact`, `/affiliate-disclosure`,
+six of the seven partner pages, both guides, and a product page per
+partner. Still outside: `/search` and `/category/[…]` (dynamic, not
+prerendered as top-level HTML) — stated rather than left implicit.
+
+**NEW BLOCKING GATE: `scripts/check-hand-enumerations.mjs`**, wired into
+`postbuild`. Two lists genuinely cannot be derived because they carry
+policy judgement, so rather than convert them it asserts they are
+COMPLETE:
+
+1. Every static route in `app/` is in the RENDERED sitemap, or in an
+   explicit `SITEMAP_EXCLUSIONS` map with a reason (`/search`,
+   `/wishlist` — both correctly excluded).
+2. Every top-level directory containing source is in
+   `check-postgrest-caps.mjs`'s `SCAN_DIRS`, or in `NOT_SOURCE` with a
+   reason.
+
+**This gate was itself wrong on its first run, in exactly the way it
+exists to prevent.** Version one grepped `app/sitemap.ts`'s SOURCE for
+`${SITE_URL}/route` and reported all seven partner pages as missing —
+they are emitted by a `getPartners()` mapper and every one is in the real
+output. Two false gaps, nearly reported. Rewritten to compare against
+`.next/server/app/sitemap.xml.body`, the rendered artifact. **A check that
+reads intent instead of output invents its own failures.**
+
+Proven before trusted, per rule 5b: PASS normally (21 routes vs 1,597
+sitemap urls), and `HAND_ENUM_SELFTEST=1` fails with exactly one
+failure — not a cascade of false positives, which is the other way a
+selftest can lie.

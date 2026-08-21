@@ -30,6 +30,13 @@ export type CurrentPriceRow = {
   price: number;
   original_price: number | null;
   updated_at: string;
+  /** Feed provenance (migration 0023, §56). feed_last_imported_at is the
+   * MERCHANT'S export timestamp — the date the as-of label names — and is
+   * NOT updated_at, which records when we read the feed. NULL means the
+   * vintage is unknown for this row, in which case the label renders
+   * nothing rather than naming a date it cannot support. */
+  feed_id: string | null;
+  feed_last_imported_at: string | null;
 };
 
 /** Fetch every row in current_prices as a Map keyed by `product_id` alone.
@@ -68,7 +75,7 @@ export async function fetchCurrentPriceOverrides(): Promise<
   const rows = await fetchAllRows<CurrentPriceRow>((from, to) =>
     supabase
       .from("current_prices")
-      .select("product_id, retailer, price, original_price, updated_at")
+      .select("product_id, retailer, price, original_price, updated_at, feed_id, feed_last_imported_at")
       .gte("updated_at", cutoff)
       .order("product_id")
       .order("retailer")

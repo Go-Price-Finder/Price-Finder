@@ -180,8 +180,24 @@ type FeedListRow = {
   Vertical: string;
   "Feed ID": string;
   "Feed Name": string;
+  /** The merchant's own feed export timestamp, as AWIN reports it. This
+   * is the date the as-of label names (findings §55/§56) — never our read
+   * time. Present in the CSV all along; simply never read until now. */
+  "Last Imported": string;
   URL: string;
 };
+
+/** AWIN publishes these as local-ish strings. Parse defensively and
+ * return null rather than a plausible-looking wrong instant: a bad
+ * vintage is worse than no vintage, because no vintage renders no stamp
+ * while a wrong one renders a confident false date. */
+function parseFeedStamp(raw: string | undefined): string | null {
+  const v = String(raw ?? "").trim();
+  if (!v) return null;
+  const iso = v.includes("T") ? v : v.replace(" ", "T") + (/[+Z]/.test(v) ? "" : "Z");
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
 
 async function fetchFeedList(feedListUrl: string): Promise<FeedListRow[]> {
   const res = await fetch(feedListUrl);
@@ -523,6 +539,11 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
       continue;
     }
 
+    // One parse per feed, not per product. Reported in the run log so a
+    // feed that stops carrying a timestamp is visible rather than
+    // quietly writing NULLs.
+    const feedVintage = parseFeedStamp(chosen["Last Imported"]);
+
     let rows: Record<string, string>[];
     try {
       rows = await downloadAndParseFeed(chosen.URL);
@@ -618,6 +639,9 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         price: number;
         original_price: number | null;
         updated_at: string;
+        /** Feed provenance, migration 0023 (§56). */
+        feed_id: string;
+        feed_last_imported_at: string | null;
       }
     >();
 
@@ -858,6 +882,20 @@ export async function refreshPrices(): Promise<RefreshPricesResult> {
         // when the value is unchanged. The route's freshness control
         // depends on this stamp.
         updated_at: new Date().toISOString(),
+        // FEED PROVENANCE (migration 0023, findings §56). The vintage of
+        // the feed this price was read from — the merchant's own export
+        // timestamp, taken from the same feed-list row whose URL we just
+        // downloaded. NOT updated_at: that is when WE read the feed, and
+        // a price read on the 20th from a feed exported on the 14th is a
+        // 14th-of-August price. Stamping our read time would overstate
+        // freshness by the age of the feed.
+        //
+        // NULL if AWIN reported no parseable timestamp. A live price with
+        // a NULL vintage renders NO as-of stamp (resolveAsOfStamp) —
+        // never the catalog vintage, which describes the import rather
+        // than this number.
+        feed_id: statusFeed.feed_id,
+        feed_last_imported_at: feedVintage,
       });
     }
 

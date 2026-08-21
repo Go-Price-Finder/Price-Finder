@@ -274,6 +274,14 @@ export type Database = {
         ];
       };
       current_prices: {
+        // Feed provenance added by migration 0023 (applied 2026-08-21).
+        // Both NULLABLE: NULL means the vintage is UNKNOWN for that row,
+        // never "no feed" and never "not refreshed". feed_last_imported_at
+        // is the MERCHANT'S export timestamp — the date the as-of label
+        // names — not updated_at, which is when we read the feed.
+        // feed_last_checked_at is deliberately NOT mirrored from
+        // price_history: it plays no part in the label, and an unused
+        // column invites someone to populate it and then read it.
         Row: {
           product_id: string;
           retailer: Retailer;
@@ -281,6 +289,8 @@ export type Database = {
           original_price: number | null;
           source: string;
           updated_at: string;
+          feed_id: string | null;
+          feed_last_imported_at: string | null;
         };
         Insert: {
           product_id: string;
@@ -289,6 +299,8 @@ export type Database = {
           original_price?: number | null;
           source?: string;
           updated_at?: string;
+          feed_id?: string | null;
+          feed_last_imported_at?: string | null;
         };
         Update: {
           product_id?: string;
@@ -297,6 +309,8 @@ export type Database = {
           original_price?: number | null;
           source?: string;
           updated_at?: string;
+          feed_id?: string | null;
+          feed_last_imported_at?: string | null;
         };
         Relationships: [
           {

@@ -56,10 +56,11 @@ export async function applyLivePrices(
       ...product,
       price: override.price,
       priceSource: "live" as const,
-      // BLOCKED: current_prices has no feed-vintage column (§55). Once it
-      // does, this reads it. updated_at is deliberately NOT used — it is
-      // when WE read the feed, not when the merchant exported it.
-      priceFeedVintage: null,
+      // The MERCHANT'S feed export timestamp (migration 0023, §56), not
+      // updated_at — that is when WE read the feed, and a price read on
+      // the 20th from a feed exported on the 14th is a 14th-of-August
+      // price. NULL here renders no stamp rather than a wrong date.
+      priceFeedVintage: override.feed_last_imported_at,
     };
   });
 }

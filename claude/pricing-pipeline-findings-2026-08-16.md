@@ -4860,6 +4860,23 @@ than the page. That is the single most useful sentence in this finding.
 
 ---
 
+**THE "OSCILLATION" WAS THE APPARATUS ROUND-TRIPPING, PROVEN.** Nine
+evdance products moved on 17 August and moved again on 18 August, and
+all nine "ended where they started" — the classic signature of a
+promotional price that reverts. It is not that. Measured directly:
+
+- 26 changed on 08-17 (source legacy_pre_provenance -> live_override)
+- 9 changed again on 08-18
+- **9 of 9 returned to EXACTLY their 16 August price**
+- **8 of those 9 did so on a `catalog_fallback` source**
+
+So the sequence is: the pipeline started reading a live price, then fell
+back to the catalog price — which is the number it had been reading all
+along. A round trip of our own plumbing, indistinguishable from a
+merchant running a one-day sale unless you look at `price_source`. Had
+this shipped as a chart, we would have drawn nine one-day promotions
+that never happened.
+
 ## WHAT THIS CHANGES
 
 1. **The 25 August diff is no longer our first measurement.** It is the

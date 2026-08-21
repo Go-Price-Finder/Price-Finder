@@ -36,7 +36,7 @@ export const KING_KOIL_CATEGORIES: KingKoilProductCategory[] = [
 export const KING_KOIL_PRODUCTS: KingKoilProduct[
 ] = [
   {
-    slug: "king-koil-luxury-air-mattress-twin-13in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 13\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 99.95,
@@ -46,7 +46,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-twin-16in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-2",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 16\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 109.95,
@@ -56,7 +56,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-twin-20in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-3",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 20\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 119.95,
@@ -66,7 +66,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-queen-13in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-4",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Queen, 13\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 129.95,
@@ -76,7 +76,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-queen-20in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-6",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Queen, 20\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 139.95,
@@ -86,7 +86,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-20in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-7",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 20\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 179.95,
@@ -96,7 +96,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-16in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-8",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 16\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 169.95,
@@ -106,7 +106,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-20in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-9",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 20\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 139.95,
@@ -116,7 +116,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-16in-beige",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-10",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 16\", Beige",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 129.95,
@@ -126,7 +126,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-twin-20in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-11",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 20\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 119.95,
@@ -136,7 +136,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-twin-20in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-12",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 20\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 119.95,
@@ -146,7 +146,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-twin-16in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-13",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Twin, 16\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 119.95,
@@ -156,7 +156,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-20in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-15",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 20\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 139.95,
@@ -166,7 +166,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-20in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-16",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 20\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 139.95,
@@ -176,7 +176,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-16in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-17",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 16\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 129.95,
@@ -186,7 +186,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-16in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-18",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 16\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 129.95,
@@ -196,7 +196,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-full-13in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-19",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Full, 13\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 119.95,
@@ -206,7 +206,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-queen-20in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-20",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Queen, 20\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 149.95,
@@ -216,7 +216,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-queen-20in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-21",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Queen, 20\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 149.95,
@@ -226,7 +226,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-queen-13in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-23",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Queen, 13\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 129.95,
@@ -236,7 +236,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-20in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-24",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 20\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 179.95,
@@ -246,7 +246,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-20in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-25",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 20\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 179.95,
@@ -256,7 +256,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-16in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-26",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 16\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 169.95,
@@ -266,7 +266,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-california-king-16in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-27",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — California King, 16\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 169.95,
@@ -276,7 +276,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-kids-13in-black",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-28",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Kids, 13\", Black",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 79.95,
@@ -286,7 +286,7 @@ export const KING_KOIL_PRODUCTS: KingKoilProduct[
     category: "Mattresses",
   },
   {
-    slug: "king-koil-luxury-air-mattress-kids-13in-blue",
+    slug: "king-koil-luxury-air-mattress-with-high-speed-built-in-pump-29",
     name: "King Koil Luxury Air Mattress with High Speed Built-in Pump — Kids, 13\", Blue",
     description: "Coil Beam - King Koil Airbeds were designed with you in mind. Enhanced Coil Technology provides the support you and your guests need for a sound night's sleep. Air filled coils and internal layering naturally support the body, keeping the spine aligned as you sleep. The state-of-the-art coils also maintain the inflatable bed's shape and firmness over time.. Layers - Utilizing high-quality, puncture resistant material prevents normal wear and tear that can sink an average air mattress. The durable PVC combined with soft flocked top create a waterproof, extremely durable airbed, meant to withstand the test of time.. Built-In Pump - With our proprietary built-in high-speed pump, you can easily maintain and adjust the blow up beds firmness level. Featuring separate inflation and deflation valves, the built-in high speed pump will do the work for you, and get you resting faster. Fully inflate or deflate the queen size air mattress in just 90 seconds. That's twice as fast as the average competing bed! Pump specs: 120V/210W",
     price: 79.95,

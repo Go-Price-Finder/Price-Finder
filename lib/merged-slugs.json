@@ -1,148 +1,18 @@
 [
   {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-13in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-2",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-3",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-4",
-    "to": "/king-koil/king-koil-luxury-air-mattress-queen-13in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-6",
-    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-7",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-8",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-9",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-10",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-beige",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-11",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-12",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-13",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-15",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-16",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-17",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-18",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-19",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-13in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-20",
-    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-21",
-    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-23",
-    "to": "/king-koil/king-koil-luxury-air-mattress-queen-13in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-24",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-25",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-26",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-27",
-    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-28",
-    "to": "/king-koil/king-koil-luxury-air-mattress-kids-13in-black",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
-    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-29",
-    "to": "/king-koil/king-koil-luxury-air-mattress-kids-13in-blue",
-    "why": "renamed: enriched with the merchant's own variant name"
-  },
-  {
     "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-5",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
-    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+    "to": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-15",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling (Full, 20\\\", Black)"
   },
   {
     "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-14",
-    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-beige",
-    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+    "to": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-2",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling (Twin, 16\\\", Beige)"
   },
   {
     "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-22",
-    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
-    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+    "to": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-15",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling (Full, 20\\\", Black)"
   },
   {
     "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-2",

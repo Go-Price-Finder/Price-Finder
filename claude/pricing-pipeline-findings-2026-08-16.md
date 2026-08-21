@@ -4737,6 +4737,151 @@ Classify and print the evidence; do not pick. Rule 5a keeps earning its
 place, and the pattern across all of them is the same: **the first
 output of a new instrument is fiction until a control says otherwise.**
 
+### §51. Nineteen days of price history we already had, and what it actually says (2026-08-20)
+
+**THE FINDING IS NOT "WE FOUND SOME DATA."** `price_history` holds
+**18,154 observations from 2026-08-02 to 2026-08-20** — nineteen days,
+all seven partners, recorded daily by a job built for exactly this
+purpose. We spent three weeks describing the 25 August feed diff as our
+*first* measurement of price movement while the answer accumulated every
+night in a table nobody queried. The operator found it. Neither of us
+looked, and the reason is worth naming: we kept asking "can we measure
+movement?" and never asked "are we already measuring it?"
+
+Coverage, measured:
+
+| partner | products | observations | days | first | last |
+|---|---|---|---|---|---|
+| golden-maple | 348 | 6,612 | 19.0 avg | 08-02 | 08-20 |
+| tsar-bomba | 272 | 4,895 | 18.0 | 08-02 | 08-20 |
+| canvas-vows | 204 | 3,723 | 18.3 | 08-02 | 08-20 |
+| evdance | 72 | 1,368 | 19.0 | 08-02 | 08-20 |
+| brooklyn-delhi | 29 | 551 | 19.0 | 08-02 | 08-20 |
+| king-koil | 29 | 505 | 17.4 | 08-02 | 08-20 |
+| aaawave | 500 | 500 | 1.0 | 08-20 | 08-20 |
+
+brooklyn-delhi is the sharp one: **551 observations of products whose
+feed no longer exists (§46).** We cannot refresh the catalog price, but
+we have been recording the same price nightly for nineteen days. The
+history says, correctly, that nothing has moved — because nothing can.
+
+---
+
+## THE MOVEMENT REPORT — and the headline does not survive contact with provenance
+
+Raw movement reproduces the operator's figures exactly: evdance 26/72
+(36.1%), king-koil 6/29 (20.7%), golden-maple 2/348, everyone else zero.
+**All movement in nineteen days occurs on FIVE DAYS, and it is
+synchronised per partner** — which was the first thing that looked wrong.
+Twenty-six products do not independently reprice on the same Monday.
+
+They did not. `price_history.price_source` records how each observation
+was obtained, and it **flips from `legacy_pre_provenance` to
+`live_override` on exactly 2026-08-17** — the same day as evdance's and
+golden-maple's entire movement.
+
+Every change event, classified by whether the SOURCE also changed:
+
+| partner | date | source transition | events | verdict |
+|---|---|---|---|---|
+| evdance | 08-17 | legacy → **live_override** | 26 | **CONFOUNDED** |
+| evdance | 08-18 | live_override → **catalog_fallback** | 8 | **CONFOUNDED** |
+| evdance | 08-18 | live_override → live_override | 1 | real |
+| golden-maple | 08-17 | legacy → **live_override** | 2 | **CONFOUNDED** |
+| king-koil | 08-03 | legacy → legacy | 5 | real |
+| king-koil | 08-20 | live_override → live_override | 2 | real |
+
+**36 of 44 change events coincide with a change in how the price was
+obtained. Only 8 are observed with the measurement apparatus held
+still.**
+
+Stated precisely, because the distinction matters: a source transition
+does not *prove* the merchant's price held steady. It means the
+observation **cannot distinguish** a merchant repricing from us starting
+to read a different number, so it cannot be offered as evidence of
+merchant behaviour. Confounded, not disproven.
+
+**So the defensible figure is not 26 of 72. It is 1 of 72.**
+
+| partner | raw movers | movers with the source held constant |
+|---|---|---|
+| evdance | 26 (36.1%) | **1** |
+| king-koil | 6 (20.7%) | **5** |
+| golden-maple | 2 | **0** |
+
+This is the §27 defect class pointed at our own analysis: a change in the
+measuring apparatus recorded as a change in the world. The most exciting
+number in the dataset was an artifact of our own pipeline, and it would
+have been the headline.
+
+---
+
+## THE EIGHT REAL OBSERVATIONS
+
+**evdance — one product, and it is a genuine drop.**
+EVDANCE Level 2 EV Charger NEMA 14-50 NACS 40A: **$369.95 → $339.95
+(−8.1%) on 18 August**, source stable either side.
+
+**king-koil — five products, seven events, and they do NOT move
+together.** Five changed on 3 August, but the directions and magnitudes
+have nothing in common: −25.0%, −22.2%, −6.7%, +6.3%, **+125.1%**. A
+sitewide reprice looks like one number applied to everything; this looks
+like a per-variant correction batch on the day after our first
+observation.
+
+| variant | date | from | to | % |
+|---|---|---|---|---|
+| Twin 20" Black | 08-03 | $159.95 | $119.95 | −25.0 |
+| Queen 20" Beige | 08-03 | $179.95 | $139.95 | −22.2 |
+| *(the unnameable `-5`)* | 08-03 | $149.95 | $139.95 | −6.7 |
+| California King 16" Beige | 08-03 | $159.95 | $169.95 | +6.3 |
+| California King 20" Beige | 08-03 | $79.95 | $179.95 | **+125.1** |
+| Queen 20" Beige | 08-20 | $139.95 | $149.95 | +7.1 |
+| Twin 16" Black | 08-20 | $119.95 | $109.95 | −8.3 |
+
+**The +125.1% is almost certainly a correction, not a price rise.**
+$79.95 is the Kids-13" price; a California King listed at it on 2 August
+and at $179.95 from 3 August reads as a bad row being fixed. Flagged as
+suspect rather than reported as a merchant raising a price 125%.
+
+**AND THE TWO MERCHANT DISCREPANCIES FROM §47 ARE EXACTLY THE TWO
+20 AUGUST EVENTS.** Reported then as "our catalog disagrees with the
+merchant":
+
+| variant | our catalog | merchant (checked by hand) | our own history, 08-20 |
+|---|---|---|---|
+| Queen 20" Beige | $139.95 | $149.95 | $139.95 → **$149.95** |
+| Twin 16" Black | $119.95 | $109.95 | $119.95 → **$109.95** |
+
+**Our price history caught both, on the day they happened, and the
+displayed catalog price is what is stale.** The history is not a
+prospective asset waiting for enough data — it is already more current
+than the page. That is the single most useful sentence in this finding.
+
+---
+
+## WHAT THIS CHANGES
+
+1. **The 25 August diff is no longer our first measurement.** It is the
+   twenty-fourth day of one. It should be interpreted against this
+   baseline, not as a starting point.
+2. **`price_source` must be carried into any movement claim.** A change
+   whose source also changed is not evidence. Any future chart or "price
+   dropped" assertion has to filter on source stability or it will ship
+   the confound to visitors — which is precisely the sparkline defect of
+   §25, one layer deeper.
+3. **`feed_last_imported_at` is NULL on every price_history row.** The
+   provenance columns from migration 0022 are declared but unpopulated
+   here, so feed vintage cannot yet be used to separate "the feed
+   refreshed" from "the merchant repriced". That is the next
+   instrumentation gap, and it is the one that would settle the 36
+   confounded events.
+4. **Nineteen days is enough to say something and not enough to say
+   much.** Eight real changes across 1,288 products in three weeks. The
+   honest summary is that this catalogue is mostly static, that
+   king-koil is the only partner with repeated genuine movement, and
+   that we now have the instrument to know when that stops being true.
+
 ### §50. The collapse: verified against the authority, and blocked by the gate that exists for this (2026-08-20)
 
 **THE VERIFICATION CHANGED THE RULING'S INPUT, WHICH IS WHY IT WAS
@@ -4853,3 +4998,49 @@ both gates are committed but NOT pushed: shipping a catalog whose mirror
 disagrees with it is the defect this project has spent two days
 removing, and the gate blocking the build is the same gate written to
 prevent exactly this. It did its job on the person who wired it in.
+
+
+**AMENDED 2026-08-20 after the operator's rulings and §51.**
+
+- **Slugs are NOT renamed.** `catalog_products.id` is
+  `partner_id || ':' || slug`, and `price_history` hangs off that id.
+  Renaming 26 slugs would have changed 26 primary keys and orphaned
+  their history — including five of the six king-koil movers, which
+  §51 shows is the only repeated genuine price movement in the entire
+  catalogue. The duplicate-content defect was identical TITLES,
+  descriptions and categories on 29 pages; ugly-but-stable URLs were
+  never the problem. Titles enriched, slugs untouched, and the redirect
+  map drops from 191 to **165**.
+- **RULING 3, RECORDED AS THE OPERATOR ASKED: their instruction was
+  overturned by evidence, and they said so themselves.** The brief said
+  to drop the six bare-numeric mpns because "we cannot identify them".
+  The verification they ordered showed the merchant names all six.
+  Their words: *"your keeping the six bare numerics was right and I was
+  wrong… Deleting six nameable pages on a premise your own verification
+  had just falsified would have been the error."* The rule that produced
+  the good outcome is theirs too — verify against the authority before
+  changing anything — and it worked by overturning the person who wrote
+  it.
+- **The canvas-vows deletion was executed and it was safe, which was
+  checked and not assumed.** `price_history` and `current_prices` FK
+  against `products`, NOT `catalog_products`, and nothing references
+  `catalog_products` at all — so deleting from it cannot cascade. Had
+  the FK pointed the other way, `ON DELETE CASCADE` would have silently
+  destroyed 3,723 observations. Verified before the delete ran.
+- **The 162 rows to delete were derived TWICE, independently.** Once
+  from the static data files, once by running the same rule
+  (`row_number() over (partition by lower(trim(name)) order by price,
+  slug)`) inside Postgres against its own rows. Both produced 42
+  survivors and 162 deletions, and the 42 slugs were diffed and are
+  IDENTICAL. Executed: canvas-vows 204 → 42. Confirmed after:
+  price_history 18,154 unchanged (canvas-vows' 3,723 intact per the
+  TB8218 principle), products 1,454 unchanged, current_prices 1,152
+  unchanged.
+- **26 king-koil titles updated in place, slugs untouched.**
+- **king-koil `catalog_products` remains at 29 against 26 in the static
+  data** — the 3 unnameable rows were NOT deleted, because the
+  authorization was explicitly limited to the 162. Their pages are gone
+  and redirected; their rows stay. Recorded as a known, deliberate
+  discrepancy rather than silently reconciled.
+- Build passes every gate: caps, compliance materialization, merged
+  slugs, rendered claims, hand-enumerations. Sitemap 1,597 → 1,431.

@@ -4567,3 +4567,172 @@ Proven before trusted, per rule 5b: PASS normally (21 routes vs 1,597
 sitemap urls), and `HAND_ENUM_SELFTEST=1` fails with exactly one
 failure — not a cascade of false positives, which is the other way a
 selftest can lie.
+
+### §49. The duplicate-title population, and the two partners fall on OPPOSITE sides of the fork (2026-08-20)
+
+**The operator verified king-koil directly and it is worse than §48
+reported.** All 29 rows share name, description AND category. Only price
+and a numeric slug suffix differ — `…built-in-pump`, `-2`, `-14`, …
+`-29`. Two rows are both $79.95 and identical in every stored field. We
+serve 29 near-identical pages distinguished only by a number in the URL:
+a user problem and a duplicate-content problem, live, and a plausible
+contributor to Search Console's "Discovered – currently not indexed",
+because that is exactly what Google does with this pattern.
+
+The brief set a fork: if a differentiating column exists, enrichment at
+import is bounded work; if none exists, we are importing rows we cannot
+tell apart. **The two partners land on opposite sides of it.**
+
+---
+
+**KING-KOIL (feed 101819) — A DIFFERENTIATOR EXISTS.**
+
+Of 26 columns, 11 are constant across all 27 rows — including
+`product_name`, `description`, `category_name`, `brand_name`,
+`merchant_category` and `custom_1`, which confirms the operator's
+finding at the source rather than in our catalog. Ten columns vary. Two
+of them carry real information:
+
+**1. `mpn` — structured, and it decodes.** 27 distinct values in the form
+`KK<height><size><colour><sku>`:
+
+| segment | values | meaning |
+|---|---|---|
+| `KK13` / `KK16` / `KK20` | 3 | mattress height in inches |
+| `C1` `C2` `C4` `C5` `I6` | 5 | Twin, Queen, California King, Full, Kid |
+| `BG` `BK` `BU` | 3 | Beige, Black, Blue |
+
+**21 of 27 rows decode, into 21 DISTINCT labels** — no collisions —
+e.g. `KK13I6BK29323` → `13" Kid Black`, `KK20C4BU29512` →
+`20" California King Blue`.
+
+The decode was not asserted from the pattern alone; it was **checked
+against `merchant_image_url`, an independent field**: 17 rows have a
+filename confirming both size and colour (`13_kid_black.jpg`,
+`16_full_black.jpg`, `20_queen_blue.webp`), 4 contradict, 0 lack
+evidence. Every one of the 4 contradictions is the merchant REUSING a
+generic photo — `20_cal_king_black.jpg` serves a Beige and two Blue
+variants; `29171_main.jpg` serves two different variants. So the image
+field is the unreliable one, not the mpn. Stated rather than smoothed
+over: the decode is corroborated for 17, plausible for 4, and the
+corroborating field is known-dirty in exactly those 4.
+
+**6 rows do not decode** — bare numeric mpns `29170`, `29171`, `29172`,
+`29190`, `29191`, `29192`, at $119.95/$149.95/$179.95 twice over. They
+look like a second series, and that is a guess, so it stays a guess.
+
+**2. `merchant_deep_link` — 1 distinct PATH, 27 distinct URLs.** Every
+row is `?variant=<id>` on the SAME Shopify product page,
+`/products/king-koil-luxury-air-mattress`. **The merchant models all 27
+as variants of ONE product.** We model them as 29 products. That gap is
+the whole defect, stated in the merchant's own data.
+
+So enrichment is possible and bounded: 21 of 27 from mpn alone, the
+other 6 needing a second source (the variant ids resolve on the
+storefront, which is a fetch, not an inference).
+
+---
+
+**CANVAS-VOWS (feed 103552) — NO DIFFERENTIATOR EXISTS. Saying it
+plainly, as instructed.**
+
+29 title groups cover 191 of 204 rows. Across ALL 29 groups:
+
+| property | result |
+|---|---|
+| groups where every row shares ONE merchant URL | **29 / 29** |
+| groups where every row shares ONE image | **29 / 29** |
+| groups where every row shares ONE description | **29 / 29** |
+| groups with any `?variant=` parameter | **0 / 29** |
+| non-identifier, non-price columns that differentiate ANY group | **NONE** |
+
+The only fields that vary within a group are `aw_product_id`,
+`merchant_product_id`, `aw_deep_link`, `search_price`, `rrp_price` and
+`commission_group` — three identifiers, the price, the price again, and
+a number derived from the price. The largest group, 11 rows of "Relax
+Soak And Unwind Wall Art" at $45–$399, points every single row at
+`http://www.canvasvows.com/products/relax-soak-and-unwind`.
+
+**So all 11 of our pages send the visitor to the identical merchant
+page, and nothing in the feed says which one they clicked.** We cannot
+tell these rows apart and neither can the reader.
+
+**The tempting inference, and why it is refused.** A $45/$60/$70/$80/
+$100/$125/$170/$199 ladder under one canvas title is obviously sizes.
+But the feed does not say so anywhere — no size column, no dimension in
+the title, no variant id, nothing. Deriving "18×24" from a price would
+be manufacturing a product attribute out of a number, which is the same
+move as manufacturing a rating out of nothing (§29). It is not available
+to us.
+
+Per the brief, the honest options here — one representative row per
+title, or delisting the partner — are the operator's call. Nothing was
+changed: no re-import, no title edits, no delisting.
+
+---
+
+**Scope, for the ruling:** 220 products sit in title groups with a real
+price gap. **29 are king-koil (enrichable). 191 are canvas-vows (not
+enrichable from the feed).** The bounded-enrichment path covers 29 of
+the 220, not 233.
+
+---
+
+### §49b. PORTFOLIO: how much of what we display is actually alive
+
+Recorded as ONE fact rather than two notes, because it answers one
+question.
+
+| partner | products | refresh mechanism |
+|---|---|---|
+| brooklyn-delhi | 29 | **none** — no advertiser row in the 624-advertiser AWIN feed list (§46) |
+| tsar-bomba | 271, of which **224** | **none** — stored `aw_product_id`s absent from both live feeds; current feed ids are in an entirely different range (§48) |
+| **total** | **253** | **17.4% of the 1,453-product catalogue** |
+
+253 products display a price that can only go stale. They are honestly
+stamped — the as-of label on brooklyn-delhi reads Jul 25 2026 and is
+correct — but honestly stamped and never updated is a decaying asset,
+and the decay is silent: no job will notice, because no job can reach
+them.
+
+It also compounds §49: king-koil and canvas-vows are refreshable but
+undifferentiated; brooklyn-delhi and 224 tsar-bomba rows are
+differentiated but unrefreshable. Of 1,453 products, the ones that are
+both distinguishable AND refreshable are the aaawave/evdance/golden-maple
+core plus 47 tsar-bomba rows.
+
+Belongs beside the 08-25 feed diff (handover item D), which asks the same
+question from the acquisition side: what we add on 08-25 should be judged
+partly on whether it replaces coverage that is already dead.
+
+---
+
+### §49c. Two rulings recorded
+
+**The hand-list did not merely fail to cover a route — it selected a
+sample that could not exhibit the bug.** Worth stating precisely,
+because "we forgot to add the route" understates it. `check-contrast`
+sampled exactly one aaawave product page; that product has ONE image; the
+gallery counter only renders when a product has more than one. So the
+hand-list's chosen sample was structurally incapable of showing the
+defect, and would have stayed incapable however many times it ran. This
+is the §19 lesson in a new costume: a control drawn from the wrong
+population licenses nothing, and here the "population" was a single
+sample nobody had checked for the property under test.
+
+**Rule 5f outranks 5e, and the handover has been reordered.** Compare
+against OUTPUT, never against intent, is the better half of the pair: a
+check reading source is reading a CLAIM about behaviour; a check reading
+output is reading behaviour. The hand-enumeration gate's own first
+version grepped `sitemap.ts` and reported seven partner pages missing
+that were in the rendered output all along — the rule caught its own
+enforcer within minutes of being written.
+
+**And the instrument lesson again, fifth or sixth time this session.**
+The first variant instrument was about to report "204 of 204 canvas-vows
+products are variants with a 786% spread" because it auto-selected the
+column with the most multi-row groups — precisely the worst column,
+since a near-constant field maximises that statistic by definition.
+Classify and print the evidence; do not pick. Rule 5a keeps earning its
+place, and the pattern across all of them is the same: **the first
+output of a new instrument is fiction until a control says otherwise.**

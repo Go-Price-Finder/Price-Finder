@@ -5379,3 +5379,160 @@ plumbing, which is done and already trusted for alerts. It is that
 ungating without a source-aware as-of label converts a working honesty
 mechanism into a false one on most of the catalogue. Those two changes
 are one change.
+
+### §53. Provenance landed. 2026-08-21 is day one of trustworthy history (2026-08-21)
+
+**THE SENTENCE THAT MUST TRAVEL WITH THE NUMBER, at the operator's
+instruction, because the wrong reading is the easy one:**
+
+> **Three unambiguous changes in nineteen days is NOT evidence that our
+> merchants do not reprice. It is evidence that our instrument could not
+> distinguish repricing from its own behaviour.**
+
+Anyone who reads "3 in 19 days" without that attached will conclude the
+catalogue is static and act on it. The correct conclusion is narrower and
+duller: for sixteen of nineteen days we recorded prices without recording
+where they came from, so most of what looks like movement is
+unattributable in either direction. Absence of measurable movement is not
+measured absence of movement.
+
+---
+
+## The 08-02 contamination has a documented cause, found in git
+
+§52 called the king-koil 08-03 cohort a first-run artifact from a partial
+snapshot. The actual mechanism is stronger and is in the history:
+
+**commit `87877a2`, 2026-08-02 — "Refresh King Koil and Tsar Bomba
+catalogs from fresh AWIN feeds"** — 38 price lines changed, the file
+going from 31 products to 29.
+
+So the five "price changes" on 08-03 are **our own catalog re-import**,
+landing the same day as the first snapshot. The 08-02 job caught 12 rows
+of a catalog mid-refresh; 08-03 caught the refreshed state. The +125%
+row's 08-02 value of $79.95 came from the pre-refresh catalog. Confirmed
+a data error by operator ruling, and **not to be reported as movement
+anywhere.**
+
+## A SECOND partial day, worse, and nobody knew
+
+Looking for the first, the assertion's own logic surfaced another:
+
+| date | rows | shape |
+|---|---|---|
+| 2026-08-18 | 954 | complete |
+| **2026-08-19** | **500** | brooklyn-delhi 29, canvas-vows **51 of 204**, evdance 72, golden-maple 348. **king-koil and tsar-bomba absent entirely.** |
+| 2026-08-20 | 1,453 | complete |
+
+29 + 51 + 72 + 348 = **exactly 500**, which is `BATCH_SIZE`. The first
+batch landed and every subsequent batch failed. **953 of 1,453
+observations were lost on 19 August** and the only signal was a missed
+dead-man's-switch ping, because the route returned HTTP 200 with the
+errors buried in the response body.
+
+Two partial days in nineteen. Neither noticed at the time. This is what
+the operator's assertion was ordered for, and it found its second case
+before it was even deployed.
+
+---
+
+## WHAT WAS BUILT
+
+**1. `scripts/sync-feed-status.mjs` — the link that never existed.**
+Reads AWIN's feed list and writes `feed_last_imported_at`,
+`feed_last_checked_at` and `feed_status_read_at` into `feed_status`.
+Run: 956 feeds read, **8 of 9 rows written**, 1 skipped (the
+`none:brooklyn-delhi` sentinel, which legitimately has no feed).
+
+The four that were NULL — the four current feeds, the only ones that
+could move — now carry a vintage:
+
+| partner | feed | was | now |
+|---|---|---|---|
+| king-koil | 101819 | NULL | **2026-08-20T12:14:36Z** |
+| tsar-bomba | 113495 | NULL | 2026-08-12T06:45:42Z |
+| golden-maple | F2615 | NULL | 2026-08-21T01:46:40Z |
+| evdance | F1320 | NULL | 2026-08-21T01:50:13Z |
+
+**king-koil's feed refreshed at 12:14Z on 20 August — which is exactly
+when the two corroborated king-koil moves appeared.** That is not a
+confound, it is the mechanism: a feed refresh is how a merchant's new
+price reaches us. We now record it, so next time the explanation is in
+the row rather than reconstructed two days later.
+
+**2. `snapshotPrices` stamps every row.** `feed_id`,
+`feed_last_imported_at` and `feed_last_checked_at` are resolved per
+product via a new `getSourceFeedStatusId()` in `lib/price-as-of.ts`,
+which reuses the existing tsar-bomba two-feed split rather than
+re-deriving it. **NULL now means "we do not know which feed or when" —
+never "the feed did not refresh."** Absence of a record is not a record
+of absence.
+
+Verified before writing, by dry run: 1,288 rows, **every row carries a
+feed_id**, 1,259 carry a vintage, and the 29 without are brooklyn-delhi,
+correctly, because it has no feed. Then run for real:
+
+| date | rows | with feed_id | with vintage | distinct feeds |
+|---|---|---|---|---|
+| 2026-08-19 | 500 | 0 | 0 | 0 |
+| 2026-08-20 | 1,453 | 0 | 0 | 0 |
+| **2026-08-21** | **1,288** | **1,288** | **1,259** | **8** |
+
+**3. The per-partner row-count assertion, at TWO severities — and the
+split is a correction I made to my own first design.**
+
+My first version failed the cron on *any* population change. That would
+have returned 500 on every legitimate import day, and an alarm that
+fires on normal operation is an alarm someone turns off. Split instead:
+
+- **FATAL** — a partner's row count is short of what the catalog holds.
+  That is a partial snapshot and is always a defect. The route now
+  returns **500** and skips the dead-man's-switch ping. This is the
+  08-02 and 08-19 failure shape.
+- **SURFACED, NOT FATAL** — the count moved against yesterday. A real
+  import does this. Reported in the response and consumed by the
+  movement report, which must not attribute movement to merchants across
+  a boundary where the population changed.
+
+Both behaved correctly on their first real run. Today's snapshot had
+**no fatal failures**, and surfaced exactly the two population changes
+the collapse caused: canvas-vows 204→42 and king-koil 29→26.
+
+The two new `feed_status` reads were caught by the caps gate as
+unbounded and are registered with the bound named (one row per tracked
+feed, 9 today, watched on the whole table). Rule 8 working on the person
+adding the read.
+
+---
+
+## BACKFILL: A PROPERTY, NOT A REGRET
+
+Stated as the operator asked, as a fact about the data rather than an
+apology:
+
+**`feed_status` is current-state. One row per feed, no temporal
+dimension. Nothing anywhere recorded its value on any past day.**
+Stamping the 18,154 existing `price_history` rows from today's value
+would fabricate a measurement — inventing a vintage for an observation
+whose vintage was never captured. **Those rows are permanently ambiguous
+on feed vintage.** 15 of the 19 days also predate `price_source`
+entirely, so for those we do not know the source either.
+
+**The first day of trustworthy history is 2026-08-21.** Everything
+before it is a record of prices we displayed, not a record of prices
+merchants set.
+
+*(Note on dates: this session's stated date was 2026-08-20, but real UTC
+rolled over during the work — the snapshot above is stamped 08-21 and
+the clock read 02:22Z. The 23 August deadline is therefore two days out,
+not three.)*
+
+---
+
+## SEQUENCING: LANDED, AND IT DOES NOT STRADDLE THE 25th
+
+The hard rule was: land by end of 23 August or freeze until after the
+25th, and do not split the difference. **It is landed on 21 August** —
+both links, plus the assertion. The 25th is now clean: the provenance
+cliff is at 08-21, four days before, so a diff run on the 25th sits
+entirely inside the instrumented era.

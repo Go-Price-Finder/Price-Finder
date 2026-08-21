@@ -124,6 +124,35 @@ function getSourceFeed(partnerId: string, slug: string): string | null {
   return PARTNER_DEFAULT_FEED[partnerId] ?? null;
 }
 
+/**
+ * The `feed_status.feed_id` for a product's source feed, or null.
+ *
+ * Bridges this module's internal key space ("awin:113495",
+ * "csv:brooklyn-delhi") to the feed_status table's own ids ("113495",
+ * "none:brooklyn-delhi"), so the snapshot job can stamp each
+ * price_history row with the vintage of the feed that produced it
+ * (findings §53).
+ *
+ * Deliberately reuses getSourceFeed rather than re-deriving: tsar-bomba
+ * draws from two feeds and the per-product split lives in
+ * TSAR_BOMBA_DEFAULT_FEED_SLUGS above. A second implementation of that
+ * split is a second thing to keep in step.
+ *
+ * The caller MUST treat an id absent from feed_status as unknown and
+ * write NULL — never as "no refresh happened". Absence of a record is
+ * not a record of absence, which is the whole lesson of §46.
+ */
+export function getSourceFeedStatusId(
+  partnerId: string,
+  slug: string
+): string | null {
+  const key = getSourceFeed(partnerId, slug);
+  if (!key) return null;
+  if (key.startsWith("awin:")) return key.slice("awin:".length);
+  if (key.startsWith("csv:")) return `none:${key.slice("csv:".length)}`;
+  return key;
+}
+
 /** "2026-05-15" -> "May 15, 2026". Fixed locale + UTC so SSG output is
  * deterministic regardless of build machine settings. */
 export function formatAsOfDate(iso: string): string {

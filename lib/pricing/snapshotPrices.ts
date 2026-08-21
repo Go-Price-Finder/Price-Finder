@@ -5,6 +5,7 @@ import {
   type CurrentPriceRow,
 } from "@/lib/pricing/getEffectivePrice";
 import type { WishlistRetailerId } from "@/lib/types";
+import { getSourceFeedStatusId } from "@/lib/price-as-of";
 
 export type SnapshotPricesResult = {
   /** Total real products found in the static catalog at run time. */
@@ -12,6 +13,31 @@ export type SnapshotPricesResult = {
   /** Rows successfully written (or already up to date) in price_history. */
   written: number;
   errors: { productId: string; message: string }[];
+  /** Feed provenance actually stamped this run (findings §53). */
+  provenance: { withFeedVintage: number; withoutFeedVintage: number };
+  /** Per-partner coverage. FAILS LOUDLY — the route returns 500 and the
+   * dead-man's-switch ping is skipped. Absent on 2026-08-02 is why five
+   * king-koil catalog-refresh artifacts spent two days looking like
+   * merchant repricing (findings §52/§53). */
+  coverage: {
+    ok: boolean;
+    previousDate: string | null;
+    perPartner: { partner: string; today: number; previous: number | null }[];
+    /** FATAL: we wrote fewer rows than the catalog holds. Always a defect. */
+    failures: string[];
+    /** NOT fatal: the partner's population moved against yesterday. A real
+     * import legitimately does this, so it must not 500 the cron — but any
+     * movement measured ACROSS this boundary is not attributable to
+     * merchants, so it is surfaced and the movement report excludes it. */
+    populationChanges: string[];
+  };
+};
+
+/** What feed_status knows about one feed, at snapshot time. */
+export type FeedVintage = {
+  feedId: string;
+  lastImportedAt: string | null;
+  lastCheckedAt: string | null;
 };
 
 /**
@@ -49,7 +75,8 @@ export type SnapshotPricesResult = {
  * (both paths merge via the same fetchCurrentPriceOverrides map). */
 export function buildSnapshotRow(
   product: RealProduct,
-  override: CurrentPriceRow | undefined
+  override: CurrentPriceRow | undefined,
+  vintage: FeedVintage | null
 ) {
   return {
     product_id: product.id,
@@ -67,9 +94,16 @@ export function buildSnapshotRow(
     price_source: override ? ("live_override" as const) : ("catalog_fallback" as const),
     observed_at: override ? override.updated_at : null,
     catalog_price_at_snapshot: product.price,
-    feed_id: null,
-    feed_last_imported_at: null,
-    feed_last_checked_at: null,
+    // Feed provenance (findings §53). Stamped from feed_status, which
+    // scripts/sync-feed-status.mjs refreshes from the AWIN feed list
+    // BEFORE this job runs. NULL means we genuinely do not know which
+    // feed produced this price or when it was imported — never "the
+    // feed did not refresh". The 18,154 rows written before this landed
+    // are permanently NULL here and cannot be backfilled: feed_status is
+    // current-state and nothing recorded its value on any past day.
+    feed_id: vintage?.feedId ?? null,
+    feed_last_imported_at: vintage?.lastImportedAt ?? null,
+    feed_last_checked_at: vintage?.lastCheckedAt ?? null,
   };
 }
 
@@ -83,10 +117,40 @@ export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   const products = getAllRealProducts();
   const overrides = await fetchCurrentPriceOverrides();
 
+  // Feed vintage per feed, from feed_status (findings §53). Read once;
+  // nine rows. A feed absent here, or present with a NULL import stamp,
+  // yields NULL on the row — "unknown", never "unchanged".
+  const { data: feedRows, error: feedErr } = await supabase
+    .from("feed_status")
+    .select("feed_id, feed_last_imported_at, feed_last_checked_at");
+  const vintages = new Map<string, FeedVintage>();
+  for (const f of feedRows ?? []) {
+    vintages.set(f.feed_id, {
+      feedId: f.feed_id,
+      lastImportedAt: f.feed_last_imported_at,
+      lastCheckedAt: f.feed_last_checked_at,
+    });
+  }
+
   const result: SnapshotPricesResult = {
     attempted: products.length,
     written: 0,
     errors: [],
+    provenance: { withFeedVintage: 0, withoutFeedVintage: 0 },
+    coverage: { ok: true, previousDate: null, perPartner: [], failures: [], populationChanges: [] },
+  };
+  if (feedErr) {
+    // Not fatal — rows are still worth recording — but it must be visible,
+    // and it suppresses the dead-man's-switch ping via errors[].
+    result.errors.push({ productId: "(feed_status)", message: `feed vintage unavailable: ${feedErr.message}` });
+  }
+
+  const rowFor = (product: RealProduct) => {
+    const feedId = getSourceFeedStatusId(product.partnerId, product.slug);
+    const vintage = feedId ? vintages.get(feedId) ?? null : null;
+    if (vintage?.lastImportedAt) result.provenance.withFeedVintage++;
+    else result.provenance.withoutFeedVintage++;
+    return buildSnapshotRow(product, overrides.get(product.id), vintage);
   };
 
   // Batched to keep each request body reasonable — 957 products today,
@@ -94,9 +158,7 @@ export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   // low thousands.
   const BATCH_SIZE = 500;
   for (let i = 0; i < products.length; i += BATCH_SIZE) {
-    const batch = products
-      .slice(i, i + BATCH_SIZE)
-      .map((product) => buildSnapshotRow(product, overrides.get(product.id)));
+    const batch = products.slice(i, i + BATCH_SIZE).map(rowFor);
 
     const { error } = await supabase
       .from("price_history")
@@ -112,5 +174,103 @@ export async function snapshotPrices(): Promise<SnapshotPricesResult> {
     result.written += batch.length;
   }
 
+  await assertPerPartnerCoverage(supabase, products, result);
   return result;
+}
+
+/**
+ * PER-PARTNER ROW-COUNT ASSERTION (findings §53). Fails loudly.
+ *
+ * On 2026-08-02 this job recorded 12 king-koil rows; from 08-03 it
+ * recorded 29. Nothing noticed. Five products then showed a price change
+ * on 08-03 that was our own catalog re-import (commit 87877a2, "Refresh
+ * King Koil and Tsar Bomba catalogs from fresh AWIN feeds"), and those
+ * five spent eighteen days in the record looking like merchant
+ * repricing. A single count comparison would have flagged it the next
+ * morning.
+ *
+ * TWO CHECKS, DELIBERATELY DIFFERENT SEVERITIES:
+ *
+ *   FATAL — today's row count for a partner is less than the catalog
+ *   holds. That is a partial snapshot and is always a defect. Returns
+ *   500 and skips the dead-man's-switch ping.
+ *
+ *   SURFACED, NOT FATAL — the partner's count moved against yesterday.
+ *   A real import legitimately does this, and 500-ing the cron on every
+ *   import day would train whoever reads the alert to ignore it. It is
+ *   reported in the response and consumed by the movement report, which
+ *   must not attribute movement to merchants across a boundary where the
+ *   population changed. That distinction is the whole lesson: the
+ *   2026-08-02 failure was a PARTIAL snapshot (fatal), while the
+ *   2026-08-20 collapse was a deliberate population change (not fatal,
+ *   but it invalidates comparisons across it).
+ *
+ * Counts, never fetches (standing rule 6): every read here is
+ * `head: true` with an exact count, so it is immune to the PostgREST
+ * 1,000-row cap.
+ */
+async function assertPerPartnerCoverage(
+  supabase: ReturnType<typeof createAdminClient>,
+  products: RealProduct[],
+  result: SnapshotPricesResult
+): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data: prevRow } = await supabase
+    .from("price_history")
+    .select("recorded_date")
+    .lt("recorded_date", today)
+    .order("recorded_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const previousDate: string | null = prevRow?.recorded_date ?? null;
+  result.coverage.previousDate = previousDate;
+
+  const partners = [...new Set(products.map((p) => p.partnerId))].sort();
+
+  for (const partner of partners) {
+    const expected = products.filter((p) => p.partnerId === partner).length;
+
+    const { count: todayCount } = await supabase
+      .from("price_history")
+      .select("product_id", { count: "exact", head: true })
+      .eq("recorded_date", today)
+      .like("product_id", `${partner}:%`);
+
+    let previousCount: number | null = null;
+    if (previousDate) {
+      const { count } = await supabase
+        .from("price_history")
+        .select("product_id", { count: "exact", head: true })
+        .eq("recorded_date", previousDate)
+        .like("product_id", `${partner}:%`);
+      previousCount = count ?? null;
+    }
+
+    result.coverage.perPartner.push({
+      partner,
+      today: todayCount ?? 0,
+      previous: previousCount,
+    });
+
+    // 1. Today must match what we set out to write. A shortfall is a
+    //    partial snapshot — the 2026-08-02 failure shape exactly.
+    if ((todayCount ?? 0) !== expected) {
+      result.coverage.failures.push(
+        `${partner}: wrote ${todayCount ?? 0} rows today but the catalog holds ${expected} — partial snapshot, do not compare this day to any other.`
+      );
+    }
+    // 2. A move against yesterday means the population changed. NOT an
+    //    error — a real import does this, and 500-ing the cron on every
+    //    import day would train someone to ignore the alarm. Surfaced
+    //    instead, and consumed by the movement report, which must not
+    //    measure movement across a boundary where the population moved.
+    if (previousCount !== null && previousCount !== (todayCount ?? 0)) {
+      result.coverage.populationChanges.push(
+        `${partner}: ${previousCount} rows on ${previousDate} vs ${todayCount ?? 0} today — population changed; movement across this boundary is not attributable to merchants.`
+      );
+    }
+  }
+
+  result.coverage.ok = result.coverage.failures.length === 0;
 }

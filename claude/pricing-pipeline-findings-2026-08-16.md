@@ -5111,3 +5111,271 @@ prevent exactly this. It did its job on the person who wired it in.
   discrepancy rather than silently reconciled.
 - Build passes every gate: caps, compliance materialization, merged
   slugs, rendered claims, hand-enumerations. Sitemap 1,597 → 1,431.
+
+### §52. Provenance: what it takes, what is unrecoverable, and the king-koil six reduced to two (2026-08-20)
+
+**THE OPERATOR'S CORRECTION, RECORDED AS THEIRS AND IN THEIR TERMS:**
+
+> I counted distinct prices and announced a strategic conclusion without
+> asking how the price was obtained. Second time today I drew a
+> conclusion from this table family without interrogating the
+> measurement — the compare-at check was the first. Same failure, same
+> afternoon.
+
+Both instances are in the ledger under their name: §47 (the tautological
+compare-at query) and this one. The pattern connecting them is not
+carelessness, it is that **a table of numbers invites you to compute
+before you ask what produced the numbers** — and this table family
+answers the question the whole product rests on, which makes it the most
+tempting place to skip that step.
+
+---
+
+## 1. `feed_last_imported_at` — what it takes
+
+**Does it need a migration? NO.** `price_history` already has `feed_id`,
+`feed_last_imported_at` and `feed_last_checked_at` (migration 0015). The
+writer, `lib/pricing/snapshotPrices.ts`, sets all three to explicit
+NULL, with a comment saying they are "the eventual honest source…
+written as explicit NULLs until feed persistence lands". Measured:
+**0 of 18,154 rows have any of them populated.**
+
+**Is the value available at write time? NOT TODAY, and the gap is one
+step further back than it looks.** The snapshot job reads the static
+catalog plus `current_prices` overrides. It never touches AWIN. The
+obvious fix — join `feed_status` at write time — does not work yet,
+because **`feed_status.feed_last_imported_at` is itself NULL for 4 of 9
+feeds, and they are exactly the wrong four**: evdance F1320,
+golden-maple F2615, king-koil 101819, tsar-bomba 113495 — every
+partner with a *current* feed, which is every partner that could
+plausibly move. The three populated ones (canvas-vows 103552,
+tsar-bomba 105368, aaawave F2639) are frozen or one-shot.
+
+So the real chain is two links, not one:
+
+1. Something must populate `feed_status.feed_last_imported_at` from the
+   AWIN feed list's own "Last Imported" column. That value is available —
+   `scripts/_audit-compareat.mjs` reads it today — so this is a small
+   scheduled job, not new infrastructure.
+2. `snapshotPrices` then joins `feed_status` by partner→feed and writes
+   the three columns instead of NULL.
+
+Neither step needs DDL. Step 1 is the one that does not exist.
+
+**Can existing rows be backfilled? NO — and this is the answer worth
+having.** `feed_status` is a CURRENT-STATE table: one row per feed, no
+temporal dimension, no history. There is no record anywhere of what
+`feed_last_imported_at` was on 17 August. Backfilling from `feed_status`
+would stamp all 18,154 historical rows with today's value — a
+fabrication, and precisely the defect class this project exists to
+remove. **The 18,154 existing observations are permanently ambiguous
+with respect to feed vintage.**
+
+One narrow exception, offered and then dismissed: for the two feeds
+frozen at 2026-05-15 (canvas-vows 103552, tsar-bomba 105368) the vintage
+genuinely did not change over the window, so those rows *could* be
+stamped honestly. Those are also the two partners with **zero**
+movement, so it buys nothing analytically and adds a special case. Not
+worth doing.
+
+**So: the first day of trustworthy history is the first snapshot after
+step 1 and step 2 both land. Not 08-20. Everything before it is a
+record of prices we displayed, not a record of prices merchants set.**
+The operator asked to be told this rather than let the record look
+continuous. It is not continuous.
+
+---
+
+## 2. THE PROVENANCE CLIFF IS DATED, AND IT IS NOT A COINCIDENCE
+
+`price_source` by first appearance:
+
+| value | rows | window | days |
+|---|---|---|---|
+| `legacy_pre_provenance` | 14,293 | 08-02 → 08-16 | 15 |
+| `catalog_fallback` | 984 | 08-17 → 08-20 | 4 |
+| `live_override` | 2,877 | 08-17 → 08-20 | 4 |
+
+**Provenance recording began on 2026-08-17 — the exact day of evdance's
+26 "moves" and golden-maple's 2.** Fifteen of nineteen days predate it,
+which means for 08-02 → 08-16 we do not merely lack the feed vintage,
+**we do not know the price source at all.**
+
+That matters for my own previous correction. I called 8 events
+"source-stable". Five of those (king-koil, 08-03) sit inside the
+pre-provenance window, where both sides are labelled
+`legacy_pre_provenance` — which says *we were not recording*, not *it did
+not change*. My classification was too generous to itself.
+
+---
+
+## 3. KING-KOIL, EVERY OBSERVATION — and five of the six do not survive
+
+Full daily series for all six movers, 08-02 → 08-20:
+
+| variant | 08-02 | 08-03 | …through 08-18 | 08-20 |
+|---|---|---|---|---|
+| Twin 20" Black | 159.95 | **119.95** | flat | 119.95 |
+| Queen 20" Beige | 179.95 | **139.95** | flat | **149.95** |
+| Cal King 20" Beige | **79.95** | **179.95** | flat | 179.95 |
+| Cal King 16" Beige | 159.95 | **169.95** | flat | 169.95 |
+| *(deleted `-5`)* | 149.95 | **139.95** | flat | 139.95 |
+| Twin 16" Black | *(absent)* | 119.95 | flat | **109.95** |
+
+**Every 08-03 move is a single step off the 08-02 value, followed by
+seventeen flat days.** Five products repricing once, simultaneously, on
+the second day of observation and never again is not merchant behaviour.
+
+**And the reason is measurable: 08-02 was a PARTIAL snapshot, for
+king-koil only.** Rows recorded on the first day: 937 total, of which
+**king-koil 12** — against 29 from 08-03 onward. evdance (72) and
+golden-maple (348) were complete from day one. So five of the twelve
+king-koil products captured on the first run changed on the second run,
+a 42% change rate that then falls to zero for seventeen days.
+
+The clincher is the +125%: **Cal King 20" Beige at $79.95 on 08-02.
+$79.95 is the Kids-13" price.** A California King was never $79.95. That
+is a bad row in a partial first snapshot, not a merchant mispricing —
+though it cannot be *proven* either way, because we do not retain the
+feed as it stood that day, which is the same gap as §52.1.
+
+**Revised, and this is the honest number:**
+
+| tier | events | what it is |
+|---|---|---|
+| **Unambiguous** | **3** | provenance-era, source recorded and identical either side |
+| Contaminated | 5 | king-koil 08-03 — pre-provenance AND off a 12-of-29 partial first snapshot |
+| Confounded | 36 | 08-17/08-18, coincident with the provenance rollout |
+
+**The three that survive everything:**
+
+1. EVDANCE Level 2 EV Charger NEMA 14-50 NACS 40A — **$369.95 → $339.95
+   (−8.1%), 18 August**
+2. King Koil Queen 20" Beige — **$139.95 → $149.95 (+7.1%), 20 August**
+3. King Koil Twin 16" Black — **$119.95 → $109.95 (−8.3%), 20 August**
+
+**Two of the three are independently corroborated.** The king-koil pair
+are the same two discrepancies found by hand against the merchant's
+storefront in §47, and the merchant's live variant prices are **$149.95**
+and **$109.95** — matching our history exactly, against a catalog page
+still showing the old number.
+
+So: three unambiguous price movements, in nineteen days, across 1,288
+products. That is the real evidence base, and it is thin — but two of the
+three are corroborated by an independent source, which is more than the
+36 can say.
+
+**A useful counter-observation, because it cuts the other way.** The
+deleted `-5` row flipped `live_override → catalog_fallback` on 18 August
+**with no price change at all**. So a source flip does not automatically
+move the recorded price — which means the 36 confounded events were not
+inevitable artifacts of the rollout. They are genuine differences
+between the override value and the catalog value, surfacing on the day
+we started applying one. That is still not merchant movement, but it is
+not noise either: it is a measurement of how far our catalog had drifted
+from `current_prices`.
+
+---
+
+## 4. IS THE 25 AUGUST DIFF STILL THE RIGHT INSTRUMENT? NO — AND RUNNING IT AS PLANNED WOULD WASTE IT
+
+The single-day diff was designed for a world where we believed we had no
+history. We have nineteen days. Three things follow:
+
+**(a) For the NEW partners (Alorair, Vevor) the diff is still exactly
+right.** We have no history for them at all, so a first-import diff is
+the only instrument available and its purpose is unchanged.
+
+**(b) For the SEVEN EXISTING partners it is now the weaker instrument.**
+A one-day delta cannot distinguish a merchant reprice from a feed
+refresh from a source flip — the three failure modes this session
+found — whereas a 24-day series with `price_source` can at least
+separate the third. Running a bare diff on the 25th produces one more
+ambiguous data point and invites exactly the conclusion the operator
+just retracted.
+
+**(c) The sequencing matters more than the instrument.** If the
+provenance work from §52.1 lands between now and the 25th, it will
+create **a second cliff**: a new `price_source` value, or feed columns
+going from NULL to populated, on whatever day it ships. Any diff
+straddling that date is confounded by construction — the same trap as
+08-17, walked into with full knowledge.
+
+**What to run on the 25th instead:**
+
+1. **Land §52.1 first, or explicitly after the 25th — not across it.**
+   This is the actual recommendation. If it lands before, the 25th is
+   the first interpretable day and worth marking. If it cannot, freeze
+   the pipeline through the 25th so the diff measures merchants rather
+   than us.
+2. **Replace the single-day diff with a windowed movement report** for
+   existing partners: per product, the full series, every change
+   annotated with whether `price_source` held constant, and a headline
+   that counts ONLY source-stable changes. That is this section's query
+   set, parameterised — a few hours, not new infrastructure.
+3. **Keep the acquisition diff for Alorair and Vevor**, unchanged, and
+   report it separately so a new-partner import is never averaged in with
+   an existing-partner series.
+4. **Add one control that does not exist today: a per-day row-count
+   check per partner.** The king-koil 12-of-29 partial snapshot went
+   unnoticed for nineteen days and produced five false "price changes".
+   A one-line assertion — every partner's row count is constant
+   day-to-day, or the day is flagged — would have caught it on 3 August.
+
+---
+
+## 5. UNGATING `withLivePrice` — SCOPE ONLY, NOT AUTHORIZED, NOT BUILT
+
+**What exists.** `withLivePrice(product)` and
+`getAllRealProductsWithLivePrices()` are written, working, and already in
+production use — by `checkPriceDrops` (alerts) and by `snapshotPrices`
+(the history). Both apply a **read-side TTL**: an override whose
+`updated_at` is older than the freshness cutoff is NOT applied and the
+product falls back to its catalog price. So the "uncorroborated old
+observation presented as live" failure is already designed out.
+
+**What ungating means, concretely.** Nothing is gated by a flag — the
+functions are simply not called from any render path. Grep confirms zero
+usages in `app/` or `components/`. Ungating = having the catalog read
+path (`lib/catalog.ts`) merge overrides the same way the alert path
+already does.
+
+**What would change on the page.**
+- Product cards and detail pages would show the `current_prices` value
+  where one exists and is fresh, instead of the catalog value. Measured
+  scope: **1,152 override rows against 1,288 products (89%)**.
+- The two king-koil discrepancies would disappear on the spot — the page
+  would show $149.95 and $109.95, matching the merchant.
+- The as-of stamp becomes **wrong for those products**. It currently says
+  "Price as of <feed vintage>", which is true of a catalog price and
+  false of a live-override price whose real timestamp is
+  `current_prices.updated_at`. This is the biggest single consequence and
+  it is a claims problem, not a rendering one: shipping live prices under
+  a feed-vintage stamp would be a §27 defect on 89% of the catalogue.
+- `/deals` and any markdown surface would recompute against the live
+  price, so the set of products showing a markdown could change.
+
+**What could go wrong.**
+1. **The as-of label silently lies** (above). Any ungating must ship
+   *with* a per-source label, not after it.
+2. **`updated_at` is set on INSERT only** — the writer's own comment says
+   the upsert's ON CONFLICT path does not touch it. So the TTL can
+   expire a row whose price was re-confirmed today, dropping a good
+   override. The TTL is protective but its input is understated.
+3. **Static-generation cost.** The catalog read path is used at build
+   time for ~1,288 product pages; adding an override fetch is one query
+   if batched through `getAllRealProductsWithLivePrices()`, and 1,288 if
+   someone reaches for `withLivePrice()` per page. The batch function
+   exists precisely for this and its header says so.
+4. **Price displayed ≠ price snapshotted** would end, which is good, but
+   it means `catalog_price_at_snapshot` becomes the only remaining record
+   of what the page used to show.
+5. **136 products have no override row** (1,288 − 1,152), so the page
+   would mix live and catalog prices with no visible distinction unless
+   the label distinguishes them.
+
+**My assessment, unrequested but relevant:** the blocker is not the
+plumbing, which is done and already trusted for alerts. It is that
+ungating without a source-aware as-of label converts a working honesty
+mechanism into a false one on most of the catalogue. Those two changes
+are one change.

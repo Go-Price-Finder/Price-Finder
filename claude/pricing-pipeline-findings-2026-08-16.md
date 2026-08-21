@@ -4736,3 +4736,120 @@ since a near-constant field maximises that statistic by definition.
 Classify and print the evidence; do not pick. Rule 5a keeps earning its
 place, and the pattern across all of them is the same: **the first
 output of a new instrument is fiction until a control says otherwise.**
+
+### §50. The collapse: verified against the authority, and blocked by the gate that exists for this (2026-08-20)
+
+**THE VERIFICATION CHANGED THE RULING'S INPUT, WHICH IS WHY IT WAS
+ORDERED.** The operator required the mpn decode be confirmed against the
+merchant before any enrichment. It was, and by something better than the
+three or four spot-checks asked for: every feed row carries a distinct
+`?variant=` id on the merchant's own product page, and Shopify publishes
+**every** variant name at one endpoint. So all rows were checked, not a
+sample.
+
+Result: **21 of 21 decodable rows CONFIRMED, 0 contradicted** — and the
+height matched too, which the decode had predicted but nothing had
+tested. The merchant declares options `["Color","Size","Height"]` with
+titles like `Beige / Twin / 13"`. Critically, **all five rows whose
+IMAGE had contradicted the decode were confirmed by the merchant**,
+which settles that the image field was the dirty one, exactly as §49
+argued but could not prove.
+
+**AND IT OVERTURNED THE PREMISE OF THE DROP INSTRUCTION.** The brief
+said to drop the six bare-numeric mpns because "we cannot identify
+them". The merchant identifies all six:
+
+| mpn | merchant's own name |
+|---|---|
+| 29191 | Beige / Twin / 20" |
+| 29190 | Beige / Queen / 20" |
+| 29192 | Beige / California King / 20" |
+| 29171 | Black / Twin / 20" |
+| 29170 | Black / Queen / 20" |
+| 29172 | Black / California King / 20" |
+
+Every one is a 20" variant — not a guessed "second series", a published
+name. Since the instruction's stated reason had evaporated, dropping
+them would have deleted six pages we CAN name, on a premise known to be
+false. They were kept and named from the authority.
+
+**The real unnameable set is 3, and it is a different 3.** Measured on
+OUR catalog rather than the feed: of 29 king-koil products, **26 resolve
+to a merchant variant name, in 26 distinct labels with zero
+collisions**; 3 do not, because their `aw_product_id` is absent from the
+current feed entirely. Those 3 are the drop set.
+
+**Enrichment therefore uses the merchant's words, not our pattern.**
+Slugs and titles are built from the merchant's own option values —
+`king-koil-luxury-air-mattress-twin-13in-beige` — so the decode ends up
+as corroboration rather than as the source of truth. That is a better
+outcome than the brief asked for and it costs nothing.
+
+**A CONSEQUENCE THE BRIEF DID NOT COVER: enriching a slug is a URL
+change.** Renaming 26 slugs orphans 26 indexed URLs just as surely as
+deleting them. The redirect map is therefore **191**, not the 168 the
+brief estimated:
+
+| | count |
+|---|---|
+| king-koil RENAMES (old slug → enriched slug) | 26 |
+| king-koil DROPS (unnameable → same-price sibling) | 3 |
+| canvas-vows DROPS (duplicate title → lowest-priced row) | 162 |
+| **total permanent redirects** | **191** |
+
+Pre-change report, as required: **165 of 165 dropped slugs were present
+in the rendered sitemap**, and all 42 canvas-vows survivors are too — so
+every redirect lands on a page Google already knows. Map validated
+before anything was written: 162 unique sources → 29 distinct survivors,
+**no orphans, no chains, no self-redirects, no duplicate sources**, and
+the kept-is-lowest invariant holds for all 162. Group sizes 1–10; 13
+survivors are singleton titles that were never duplicated.
+
+**canvas-vows collapse:** 204 → 42, keeping the lowest-priced row per
+title group, tie-broken on slug so the choice is reproducible rather
+than incidental. 204 = 42 + 162 balances exactly.
+
+**The measurement afterwards landed where the operator predicted.**
+234 of 1,453 → **14 of 1,288 (1.1%), all tsar-bomba, all $0 spread** —
+a de-dup question, not a misleading-price one. aaawave, brooklyn-delhi,
+canvas-vows, evdance, golden-maple and king-koil now have zero
+duplicate titles.
+
+**A NEW BLOCKING GATE, because a redirect map is exactly the shape that
+rots.** `scripts/check-merged-slugs.mjs` (prebuild) re-derives its
+validation from the CURRENT data files every build: every `from` must no
+longer exist as a product (or the redirect shadows a live page), every
+`to` must exist (or we 301 into a 404), no chains, no self-redirects, no
+duplicate sources. Proven before trusted: PASS on 191 against 68 live
+URLs; `MERGED_SLUGS_SELFTEST=1` exits 1.
+
+---
+
+**THE BUILD IS BLOCKED, AND THE THING BLOCKING IT IS RIGHT.**
+
+`check-compliance-materialization` fails prebuild:
+
+> canvas-vows: 9 stored rows hold the pending placeholder but the
+> current registry + static data expect 2.
+
+This is §21 landing on its author. The collapse changed the STATIC data;
+`catalog_products` in Supabase still holds the old rows. Measured
+directly rather than inferred:
+
+| partner | stored rows | static data now |
+|---|---|---|
+| canvas-vows | **204** | 42 |
+| king-koil | **29** | 26 |
+
+So 165 orphan rows, plus 26 king-koil rows whose slug no longer matches.
+Reconciling them is a **database deletion**, which sits on the
+NOT-AUTHORIZED list, and the authorization given covered pages and
+redirects — it did not mention the mirror. It also touches rows that
+`current_prices` reaches through the legacy `products` table (§34), so
+it is not a casual delete.
+
+Stopped there and reported. The static-data change, the redirects and
+both gates are committed but NOT pushed: shipping a catalog whose mirror
+disagrees with it is the defect this project has spent two days
+removing, and the gate blocking the build is the same gate written to
+prevent exactly this. It did its job on the person who wired it in.

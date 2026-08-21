@@ -1,0 +1,957 @@
+[
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-13in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-2",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-3",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-4",
+    "to": "/king-koil/king-koil-luxury-air-mattress-queen-13in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-6",
+    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-7",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-8",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-9",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-10",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-beige",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-11",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-12",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-20in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-13",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-15",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-16",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-17",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-18",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-16in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-19",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-13in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-20",
+    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-21",
+    "to": "/king-koil/king-koil-luxury-air-mattress-queen-20in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-23",
+    "to": "/king-koil/king-koil-luxury-air-mattress-queen-13in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-24",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-25",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-20in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-26",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-27",
+    "to": "/king-koil/king-koil-luxury-air-mattress-california-king-16in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-28",
+    "to": "/king-koil/king-koil-luxury-air-mattress-kids-13in-black",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-29",
+    "to": "/king-koil/king-koil-luxury-air-mattress-kids-13in-blue",
+    "why": "renamed: enriched with the merchant's own variant name"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-5",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-14",
+    "to": "/king-koil/king-koil-luxury-air-mattress-twin-16in-beige",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+  },
+  {
+    "from": "/king-koil/king-koil-luxury-air-mattress-with-high-speed-built-in-pump-22",
+    "to": "/king-koil/king-koil-luxury-air-mattress-full-20in-beige",
+    "why": "dropped: aw_product_id absent from the current feed, variant unnameable; merged into a same-price sibling"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-2",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-3",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-4",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-5",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-6",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-7",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-8",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas-9",
+    "to": "/canvas-vows/photo-word-art-canvas-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-2",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-3",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-4",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-5",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-6",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-7",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas-8",
+    "to": "/canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-2",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-3",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-4",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-5",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-6",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-7",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas-8",
+    "to": "/canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-2",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-3",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-4",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-5",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-6",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-7",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-8",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-9",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas-10",
+    "to": "/canvas-vows/sound-wave-canvas-a-personalized-design-using-your-voice-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-2",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-3",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-4",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-5",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-6",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-7",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas-8",
+    "to": "/canvas-vows/big-family-name-sign-a-personalized-family-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/it-was-always-you-canvas-artwork-2",
+    "to": "/canvas-vows/it-was-always-you-canvas-artwork",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/it-was-always-you-canvas-artwork-3",
+    "to": "/canvas-vows/it-was-always-you-canvas-artwork",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/it-was-always-you-canvas-artwork-4",
+    "to": "/canvas-vows/it-was-always-you-canvas-artwork",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases-2",
+    "to": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases-3",
+    "to": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases-4",
+    "to": "/canvas-vows/eat-drink-and-be-merry-home-decor-canvases",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-2",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-3",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-4",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-5",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-6",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-7",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song-8",
+    "to": "/canvas-vows/first-dance-lyrics-on-canvas-a-custom-made-canvas-with-your-wedding-song",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-2",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-3",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-4",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-5",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-6",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-7",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas-8",
+    "to": "/canvas-vows/big-home-canvas-a-beautiful-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/i-love-you-more-canvas-wall-art-2",
+    "to": "/canvas-vows/i-love-you-more-canvas-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/i-love-you-more-canvas-wall-art-3",
+    "to": "/canvas-vows/i-love-you-more-canvas-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/i-love-you-more-canvas-wall-art-4",
+    "to": "/canvas-vows/i-love-you-more-canvas-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-2",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-3",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-4",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-5",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-6",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-7",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-home-decor-canvas-8",
+    "to": "/canvas-vows/coffee-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-2",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-3",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-4",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-5",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-6",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-7",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/family-home-decor-canvas-8",
+    "to": "/canvas-vows/family-home-decor-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/his-and-her-vows-on-canvas-personalized-wall-art-2",
+    "to": "/canvas-vows/his-and-her-vows-on-canvas-personalized-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/his-and-her-vows-on-canvas-personalized-wall-art-3",
+    "to": "/canvas-vows/his-and-her-vows-on-canvas-personalized-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/mr-and-mrs-vows-on-canvas-personalized-wall-art-2",
+    "to": "/canvas-vows/mr-and-mrs-vows-on-canvas-personalized-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/mr-and-mrs-vows-on-canvas-personalized-wall-art-3",
+    "to": "/canvas-vows/mr-and-mrs-vows-on-canvas-personalized-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-2",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-3",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-4",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-5",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-6",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-7",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas-8",
+    "to": "/canvas-vows/first-wedding-anniversary-gift-your-wedding-vows-on-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-2",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-3",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-4",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-5",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-6",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-7",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics-8",
+    "to": "/canvas-vows/first-dance-song-canvas-a-design-covering-the-entire-canvas-with-lyrics",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-2",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-4",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-3",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-5",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-6",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-7",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-8",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-9",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-10",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/relax-soak-and-unwind-wall-art-11",
+    "to": "/canvas-vows/relax-soak-and-unwind-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/american-flag-canvas-2",
+    "to": "/canvas-vows/american-flag-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-blue-line-flag-personalized-canvas-2",
+    "to": "/canvas-vows/thin-blue-line-flag-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-blue-line-flag-personalized-canvas-3",
+    "to": "/canvas-vows/thin-blue-line-flag-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-blue-line-flag-personalized-canvas-4",
+    "to": "/canvas-vows/thin-blue-line-flag-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter-2",
+    "to": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter-3",
+    "to": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter-4",
+    "to": "/canvas-vows/thin-red-line-a-personalized-gift-for-firefighter",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-2",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-3",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-4",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-5",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-6",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-7",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas-8",
+    "to": "/canvas-vows/lyrics-in-a-heart-canvas-personalized-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-2",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-3",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-4",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-5",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-6",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-7",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/baby-s-heartbeat-soundwave-canvas-8",
+    "to": "/canvas-vows/baby-s-heartbeat-soundwave-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-2",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-3",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-4",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-5",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-6",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-7",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/love-arrow-canvas-8",
+    "to": "/canvas-vows/love-arrow-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-2",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-3",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-4",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-5",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-6",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-7",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/last-name-canvas-a-personalized-family-sign-8",
+    "to": "/canvas-vows/last-name-canvas-a-personalized-family-sign",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-2",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-3",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-4",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-5",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-6",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-7",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/established-sign-canvas-8",
+    "to": "/canvas-vows/established-sign-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-2",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-3",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-4",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-5",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-6",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-7",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/custom-ultrasound-canvas-8",
+    "to": "/canvas-vows/custom-ultrasound-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-2",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-3",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-4",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-5",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-6",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-7",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/coffee-sign-farmhouse-style-8",
+    "to": "/canvas-vows/coffee-sign-farmhouse-style",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/his-and-hers-wall-art-2",
+    "to": "/canvas-vows/his-and-hers-wall-art",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/triptych-song-lyrics-canvas-2",
+    "to": "/canvas-vows/triptych-song-lyrics-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  },
+  {
+    "from": "/canvas-vows/triptych-song-lyrics-canvas-3",
+    "to": "/canvas-vows/triptych-song-lyrics-canvas",
+    "why": "dropped: undifferentiated duplicate title; merged into the lowest-priced row of its group"
+  }
+]

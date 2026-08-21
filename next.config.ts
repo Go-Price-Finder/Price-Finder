@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import mergedSlugs from "./lib/merged-slugs.json";
 
 const nextConfig: NextConfig = {
   images: {
@@ -43,6 +44,27 @@ const nextConfig: NextConfig = {
   // resolves in one hop.
   async redirects() {
     return [
+      // MERGED PRODUCT SLUGS (findings §50). 191 permanent redirects,
+      // machine-generated into lib/merged-slugs.json by the collapse, so
+      // the map cannot drift from the data files it describes:
+      //   26 king-koil RENAMES — the slug now carries the merchant's own
+      //      variant name, so the old indexed URL must not 404.
+      //    3 king-koil DROPS — aw_product_id absent from the current
+      //      feed, variant unnameable; merged into a same-price sibling.
+      //  162 canvas-vows DROPS — undifferentiated duplicate titles that
+      //      all pointed at ONE merchant URL; merged into the
+      //      lowest-priced row of each title group.
+      // 301 rather than delete: these are indexed URLs, and handing
+      // Google a wall of 404s from a site already struggling to get
+      // indexed discards whatever signal they carry. Validated at
+      // generation time for orphans, chains, self-redirects and slug
+      // collisions — see scripts/check-merged-slugs.mjs, which re-runs
+      // that validation on every build.
+      ...mergedSlugs.map((r) => ({
+        source: r.from,
+        destination: r.to,
+        permanent: true,
+      })),
       {
         source: "/category/food-kitchen",
         destination: "/category/grocery-food",

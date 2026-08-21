@@ -126,7 +126,12 @@ export default async function EvdanceProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="evdance" slug={product.slug} />
+              <PriceAsOfLabel
+                partnerId="evdance"
+                slug={product.slug}
+                priceSource={product.priceSource}
+                priceObservedAt={product.priceObservedAt}
+              />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 {isDiscontinuedAtRetailer(product.id) ? (

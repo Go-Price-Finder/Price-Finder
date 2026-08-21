@@ -129,7 +129,12 @@ export default async function AaawaveProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="aaawave" slug={product.slug} />
+              <PriceAsOfLabel
+                partnerId="aaawave"
+                slug={product.slug}
+                priceSource={product.priceSource}
+                priceObservedAt={product.priceObservedAt}
+              />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 {isDiscontinuedAtRetailer(product.id) ? (

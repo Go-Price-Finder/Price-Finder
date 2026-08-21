@@ -125,7 +125,12 @@ export default async function BrooklynDelhiProductPage({
                 />
               </div>
 
-              <PriceAsOfLabel partnerId="brooklyn-delhi" slug={product.slug} />
+              <PriceAsOfLabel
+                partnerId="brooklyn-delhi"
+                slug={product.slug}
+                priceSource={product.priceSource}
+                priceObservedAt={product.priceObservedAt}
+              />
 
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <a

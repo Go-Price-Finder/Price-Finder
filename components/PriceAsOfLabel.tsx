@@ -48,29 +48,85 @@ function ClockGlyph() {
 /** Shared presentation so the detail page and the product card carry the
  * SAME stamp. Two components drifting apart is how a trust signal starts
  * reading as decoration on one surface and a warning on the other. */
-export function PriceAsOfStamp({ iso }: { iso: string }) {
+export function PriceAsOfStamp({
+  iso,
+  label = "Price as of",
+}: {
+  iso: string;
+  label?: string;
+}) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-gilt-500/10 px-2.5 py-1 ring-1 ring-inset ring-gilt-500/25">
       <ClockGlyph />
       <span className="type-meta font-semibold tabular-nums">
-        Price as of {formatAsOfDate(iso)}
+        {label} {formatAsOfDate(iso)}
       </span>
     </span>
   );
 }
 
+/**
+ * PROPOSED per-source wording — NOT APPROVED, NOT REACHABLE (§54).
+ *
+ * Only used when a product carries priceSource === "live", which only
+ * happens when LIVE_PRICES=1, which is off everywhere. Shipped in this
+ * state deliberately: the operator's ruling is that the price and the
+ * label are ONE change, and the wording is their call in the same way
+ * the /about text was. Until it is ruled on, every visitor sees the
+ * approved catalog wording below and nothing else.
+ *
+ * The distinction being drawn:
+ *   CATALOG price — the number came from an imported feed. What we can
+ *   honestly say is when that feed's data was current: its vintage.
+ *   LIVE price — the number came from current_prices, written by the
+ *   refresh job when it actually read the merchant's feed. Here we have
+ *   a real observation timestamp, so we can say something stronger, and
+ *   saying only "as of <feed vintage>" would UNDERSTATE it.
+ */
+const PROPOSED_LIVE_LABEL = "Price checked";
+const APPROVED_CATALOG_LABEL = "Price as of";
+
+/**
+ * The ONE place that decides which stamp a product gets. Both surfaces
+ * call it — the detail page via PriceAsOfLabel, the grid card directly —
+ * because a live price with a catalog stamp on one surface and a live
+ * stamp on the other is worse than either alone.
+ *
+ * Caught during the §54 build: the flagged merge changed the PRICE on
+ * the page while the label kept saying "Price as of <feed vintage>",
+ * reproducing precisely the defect the flag exists to prevent. Wiring
+ * every call site is part of the change, not a follow-up.
+ */
+export function resolveAsOfStamp(product: {
+  partnerId: string;
+  slug: string;
+  priceSource?: "catalog" | "live";
+  priceObservedAt?: string | null;
+}): { iso: string; label: string } | null {
+  if (product.priceSource === "live" && product.priceObservedAt) {
+    return { iso: product.priceObservedAt.slice(0, 10), label: PROPOSED_LIVE_LABEL };
+  }
+  const iso = getPriceAsOf(product.partnerId, product.slug);
+  return iso ? { iso, label: APPROVED_CATALOG_LABEL } : null;
+}
+
 export default function PriceAsOfLabel({
   partnerId,
   slug,
+  priceSource,
+  priceObservedAt,
 }: {
   partnerId: string;
   slug: string;
+  /** Present only when the live-price merge ran (LIVE_PRICES=1). */
+  priceSource?: "catalog" | "live";
+  priceObservedAt?: string | null;
 }) {
-  const iso = getPriceAsOf(partnerId, slug);
-  if (!iso) return null;
+  const stamp = resolveAsOfStamp({ partnerId, slug, priceSource, priceObservedAt });
+  if (!stamp) return null;
   return (
     <p className="mt-3 text-ivory-50">
-      <PriceAsOfStamp iso={iso} />
+      <PriceAsOfStamp iso={stamp.iso} label={stamp.label} />
     </p>
   );
 }

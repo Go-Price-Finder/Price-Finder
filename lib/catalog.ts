@@ -46,6 +46,7 @@
 
 import { gzipSync, gunzipSync } from "zlib";
 import { unstable_cache } from "next/cache";
+import { applyLivePrices } from "@/lib/pricing/applyLivePrices";
 import { createPublicClient } from "./supabase/public";
 import { mapProductToCategory, type CategoryMapping } from "./category-mapper";
 import { requiresPerSkuFeatureCheck } from "./partner-compliance";
@@ -378,7 +379,12 @@ async function fetchCatalog(): Promise<{
   const { products, partnerEntries } = JSON.parse(
     gunzipSync(Buffer.from(gz, "base64")).toString("utf8")
   ) as Awaited<ReturnType<typeof fetchCatalogRaw>>;
-  return { products, partnersById: new Map(partnerEntries) };
+  // Live-price merge — OFF by default and a no-op returning the same
+  // array when disabled (findings §54). Applied HERE, outside
+  // fetchCatalogCached, because merging inside an indefinite
+  // `revalidate: false` cache would freeze the live price at cache fill.
+  const merged = await applyLivePrices(products);
+  return { products: merged, partnersById: new Map(partnerEntries) };
 }
 
 export async function getAllRealProducts(): Promise<RealProduct[]> {

@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { RealProduct } from "@/lib/partners";
 import { StarIcon } from "./icons";
-import { PriceAsOfStamp } from "./PriceAsOfLabel";
-import { getPriceAsOf } from "@/lib/price-as-of";
+import { PriceAsOfStamp, resolveAsOfStamp } from "./PriceAsOfLabel";
 import PriceHistorySparkline from "./PriceHistorySparkline";
 import WishlistButton from "./WishlistButton";
 import type { WishlistRetailerId } from "@/lib/types";
@@ -59,7 +58,7 @@ export default function RealProductCard({
   // §6 removed from detail pages, and the grid is where most visitors
   // meet a price first. Same component as the detail page uses, so the
   // two surfaces cannot drift.
-  const asOfIso = getPriceAsOf(product.partnerId, product.slug);
+  const asOf = resolveAsOfStamp(product);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gilt-500/25 bg-noir-800 shadow-soft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-soft">
@@ -131,7 +130,7 @@ export default function RealProductCard({
             without the reserve its card would come out shorter than the
             rest of the grid. */}
         <div className="flex h-7 items-center text-ivory-50">
-          {asOfIso && <PriceAsOfStamp iso={asOfIso} />}
+          {asOf && <PriceAsOfStamp iso={asOf.iso} label={asOf.label} />}
         </div>
 
         {/* Fixed-height row whether or not this product has a rating yet,

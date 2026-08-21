@@ -57,6 +57,16 @@ export type RealProduct = {
   deepLink: string;
   /** Path to this product's own detail page on Price Finder. */
   href: string;
+  /** Where the DISPLAYED price came from (findings §54). "catalog" is the
+   * imported feed price; "live" is a fresh current_prices override. Set
+   * only when the live-price merge is enabled — undefined means the merge
+   * did not run, which is today's shipped state. The as-of label reads
+   * this: "Price as of <feed vintage>" is TRUE of a catalog price and
+   * FALSE of a live one, so the price and the label are one change. */
+  priceSource?: "catalog" | "live";
+  /** When a "live" price was actually observed upstream
+   * (current_prices.updated_at). Null/undefined for a catalog price. */
+  priceObservedAt?: string | null;
   /** See RawPartnerProduct.variantLabel in lib/partners.ts. */
   variantLabel?: string;
 };

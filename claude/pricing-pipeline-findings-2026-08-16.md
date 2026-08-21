@@ -5536,3 +5536,58 @@ The hard rule was: land by end of 23 August or freeze until after the
 both links, plus the assertion. The 25th is now clean: the provenance
 cliff is at 08-21, four days before, so a diff run on the 25th sits
 entirely inside the instrumented era.
+
+### §54. Live prices: built, flagged off, and the label caught the trap mid-build (2026-08-21)
+
+**Operator ruling:** build it behind a flag, do not ship it, bring the
+exact per-source label wording for approval before anything renders.
+Their reasoning, which is the ruling: *the label and the price are one
+change, not two.*
+
+**Built.** `lib/pricing/applyLivePrices.ts` merges `current_prices` into
+the catalog when `LIVE_PRICES=1`, setting `priceSource` and
+`priceObservedAt` on each product. Applied in `fetchCatalog()` — the
+UNCACHED wrapper — deliberately, because merging inside
+`unstable_cache(..., { revalidate: false })` would freeze the live price
+at cache fill, which is the opposite of live.
+
+**THE TRAP SPRANG DURING THE BUILD, WHICH IS THE FINDING.** First
+flagged build: the PRICE changed on the page ($139.95 → $149.95,
+resolving the king-koil discrepancy) while the label still read "Price as
+of <feed vintage>" — **0 live stamps, 260 catalog stamps.** I had added
+the props and not wired the seven call sites, so the flag reproduced
+precisely the defect it exists to prevent, at full scale, in my own
+build. Fixed by extracting `resolveAsOfStamp()` as the ONE place that
+decides, used by both the detail page and the grid card. Re-verified:
+260 live stamps, 0 catalog stamps.
+
+**Verified in both directions, because a flag nobody has switched is a
+claim:**
+
+| | price shown | stamp |
+|---|---|---|
+| `LIVE_PRICES` unset (shipped) | $139.95 (stale) | "Price as of…" ×260, live ×0 |
+| `LIVE_PRICES=1` | **$149.95** (matches merchant) | "Price checked…" ×260, catalog ×0 |
+
+**PROPOSED WORDING — NOT APPROVED, NOT REACHABLE.** In code as
+`PROPOSED_LIVE_LABEL`, only reachable when the flag is on, which it is
+nowhere:
+
+- **Catalog price** — `"Price as of {feed vintage}"`. Unchanged and
+  already approved. True: it describes when that feed's data was current.
+- **Live price** — proposed `"Price checked {observed date}"`. The date
+  is `current_prices.updated_at`, a real observation made when the
+  refresh job read the merchant's feed. "Checked" was deliberately
+  REJECTED for the catalog case in §45 because a feed vintage is not a
+  check — but here it is one, and "as of" would understate what we know.
+  Alternatives for the operator: "Price observed {date}", "Last checked
+  {date}", or keeping "Price as of {date}" against the observation date.
+
+**A CONSTRAINT BIGGER THAN THE LABEL, found while building.** Partner and
+product pages are statically generated. A live price merged at build time
+is frozen in the emitted HTML until the next build, so **ungating alone
+buys build-frequency freshness, not live freshness.** ISR (`revalidate`)
+or a dynamic segment is a separate decision layered on top. Also: when
+enabled this adds one Supabase round trip per `fetchCatalog()` call, and
+`fetchCatalog` runs concurrently at build time —
+`scripts/check-build-queries.mjs` must be re-run as part of any enabling.

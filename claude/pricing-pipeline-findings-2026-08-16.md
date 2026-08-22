@@ -5953,3 +5953,70 @@ NULL for four days while we drew conclusions from that table.
 mistaken for the capability.** The only reliable distinction is a check
 that fails while the capability is absent — which is precisely what was
 missing in both cases, and what now exists for both.
+
+### §60. The chart, restored under its own suppression condition — and the agreement test caught a real defect first (2026-08-22)
+
+**IT WAS NOT A MISSING FEATURE. It was a suppressed one**, switched off on
+2026-08-16 for exactly the defect this session spent days chasing, with a
+written restore condition:
+
+> price_history rows must carry provenance distinguishing observed
+> merchant prices from display-price snapshots and catalog-rewrite
+> artifacts … the chart must read only observed rows (or rows after a
+> recorded cutover date).
+
+Both clauses now hold, and the parenthetical is the operator's
+pre-21-August exclusion arriving at the same answer independently, six
+days apart. The incident record also already named `pump-7` showing
+"Lowest $79.95" against a current $179.95 — **the same +125% row §52
+re-derived from scratch five days later.** The diagnosis existed; nobody
+read it. §58b again.
+
+**SHIP CONDITION 3 FOUND A REAL DEFECT BEFORE THE CHART RENDERED
+ANYTHING.** The stamp/last-point agreement check, run across the full
+catalog, failed **500 of 988** — every aaawave product, stamp saying
+2026-08-21 while the last plotted point said 2026-08-20.
+
+Root cause: **two sources for one fact.** `refreshPrices` reads the AWIN
+feed list LIVE at 11:00Z; `snapshotPrices` read `feed_status`, a cached
+copy from whenever it was last synced. aaawave re-exported in between.
+The label and the chart would have disagreed about the same price on the
+same page, next to a buy button.
+
+Fixed by making provenance travel WITH the price: a snapshot of a
+`current_prices` override now inherits that row's vintage, exactly as
+`observed_at` already inherits `updated_at`. `feed_status` remains the
+source only for catalog-fallback rows, which have no override to inherit
+from. Re-run: **988/988 agree.**
+
+**Two more of my own bugs, caught by fixtures before anything rendered:**
+- `empty()` rebuilt a fresh object on early return and **discarded the
+  conflicts it had just detected** — on the one path where a conflict is
+  guaranteed. An alarm computed and then dropped is worse than one never
+  written: the code looks like it reports.
+- Gate A counted distinct *dates* rather than distinct *exports*, so five
+  exports in two days failed gate A instead of gate B — letting one gate
+  do the other's job and silently weakening the pair the operator
+  specified.
+
+**Design, as ruled:** unit is the feed vintage (§59); NULL vintages
+excluded outright, never plotted at the read date; same vintage with two
+prices is an alarm that plots neither; Gate A ≥5 vintages AND Gate B ≥21
+day span, both inside a bounded 90-day window; date axis with the line
+broken at >2× the product's own median interval; y-axis never tighter
+than ±5% of median; caption counts exports, never days. An ineligible
+product renders **nothing** — no frame, no skeleton, no placeholder, and
+no loading state either, since a skeleton promises a chart before we know
+one is warranted.
+
+**Amendment I proposed and built:** Gate B measured inside the 90-day
+window. Unbounded, a feed frozen since May that resumes would satisfy a
+113-day span on its fifth new export and render an axis where 108 days
+are empty and every real point compresses into the last 4% of the width —
+the auto-fit failure, on the other axis.
+
+**97 products (7.5%) are permanently ineligible:** brooklyn-delhi's 29
+have no feed, and 68 sit on feeds frozen since 2026-05-15 that can only
+ever yield one vintage. brooklyn-delhi therefore serves as a **permanent**
+positive control for the NULL-vintage exclusion — one that cannot
+evaporate between build and verify the way the live-price TTL row did.

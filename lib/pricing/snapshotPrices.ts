@@ -146,11 +146,37 @@ export async function snapshotPrices(): Promise<SnapshotPricesResult> {
   }
 
   const rowFor = (product: RealProduct) => {
+    const override = overrides.get(product.id);
+    // PROVENANCE TRAVELS WITH THE PRICE (findings §60). If this row's
+    // price came from a current_prices override, its vintage is the one
+    // recorded ON THAT ROW — not whatever feed_status happens to hold
+    // now. Exactly as observed_at already comes from override.updated_at.
+    //
+    // Reading feed_status here instead was a real defect, caught by the
+    // stamp/last-point agreement check before the chart shipped: two
+    // sources for one fact. refreshPrices reads the AWIN feed list LIVE
+    // at 11:00Z; feed_status is a cached copy from whenever it was last
+    // synced. aaawave re-exported in between, so 500 products had a stamp
+    // saying 2026-08-21 and a last plotted point saying 2026-08-20 — the
+    // label and the chart disagreeing about the same price on the same
+    // page.
+    //
+    // feed_status remains the source ONLY for catalog_fallback rows,
+    // which have no override to inherit from.
     const feedId = getSourceFeedStatusId(product.partnerId, product.slug);
-    const vintage = feedId ? vintages.get(feedId) ?? null : null;
+    const vintage: FeedVintage | null =
+      override && override.feed_last_imported_at
+        ? {
+            feedId: override.feed_id ?? feedId ?? "",
+            lastImportedAt: override.feed_last_imported_at,
+            lastCheckedAt: null,
+          }
+        : feedId
+          ? vintages.get(feedId) ?? null
+          : null;
     if (vintage?.lastImportedAt) result.provenance.withFeedVintage++;
     else result.provenance.withoutFeedVintage++;
-    return buildSnapshotRow(product, overrides.get(product.id), vintage);
+    return buildSnapshotRow(product, override, vintage);
   };
 
   // Batched to keep each request body reasonable — 957 products today,

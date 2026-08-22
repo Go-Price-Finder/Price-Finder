@@ -13,7 +13,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * watch the price fall. So the label is "Marked down by the store" and never
  * "price drop", "dropped", "was", or "saved" — those assert an observation over
  * time that we did not make. This is the exact defect removed from
- * PriceHistorySparkline; do not reintroduce it here, on a bigger surface.
+ * PriceHistorySparkline (record:
+ * claude/pricing-pipeline-findings-2026-08-16.md §25 — the old caption
+ * presented the FEED'S OWN markdown as a drop we had watched); do not
+ * reintroduce it here, on a bigger surface.
  *
  * When observed movement exists, pass variant="movement" per item. The card
  * shape does not change; only the claim gets stronger, because by then it is

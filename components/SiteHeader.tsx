@@ -84,10 +84,13 @@ type Props = {
 
 const NAV = [
   // "Gift cards" DROPPED per the operator's own sequencing rule
-  // (2026-08-19, ruling upheld): no Rakuten credentials are wired, no
-  // Giftcards.com feed is available, and lib/partner-compliance.json has
-  // no giftcards.com entry (terms never reviewed), so no page with genuine
-  // content can be built today — and a nav item promises a section exists.
+  // (2026-08-19, ruling upheld; record: claude/handover-2026-08-19.md,
+  // standing rule 3 — never ship navigation to a section that does not
+  // exist, because a nav item IS a claim that it does): no Rakuten
+  // credentials are wired, no Giftcards.com feed is available, and
+  // lib/partner-compliance.json has no giftcards.com entry (terms never
+  // reviewed), so no page with genuine content can be built today — and
+  // a nav item promises a section exists.
   // REINSTATE when all three exist, in the SAME commit as a real
   // /gift-cards page: { label: "Gift cards", href: "/gift-cards" },
   { label: "Deals", href: "/deals" },

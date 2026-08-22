@@ -48,11 +48,28 @@
  */
 export const PROVENANCE_CUTOVER_DATE = "2026-08-21";
 
-/** The furthest back any series looks. Bounds the x-axis so a feed that
- * was frozen for months and then resumes cannot set the scale with one
- * ancient point and compress every recent observation into the last few
- * percent of the width — the auto-fit failure, on the other axis. */
-export const SERIES_WINDOW_DAYS = 90;
+/**
+ * TWO WINDOWS, TWO NAMES, DELIBERATELY EQUAL TODAY (operator ruling
+ * 2026-08-22). They answer different questions and only happen to want
+ * the same number right now:
+ *
+ *   GATE_WINDOW_DAYS    — how far back ELIGIBILITY is measured.
+ *   DISPLAY_WINDOW_DAYS — how far back the AXIS is drawn.
+ *
+ * Neither references the other, on purpose. As one constant, someone
+ * eventually widens it to show more history and silently loosens the
+ * eligibility gates, or tightens it for legibility and silently locks
+ * products out — and the coupling would be invisible because there is
+ * only one name to change.
+ *
+ * FIRST DATE EITHER BINDS: 2026-11-19. That is 90 days after the
+ * provenance cutover, and the first day any product can have history
+ * older than the window. The display policy for long-history products
+ * gets decided deliberately before then, not inherited from whatever
+ * these constants happen to be.
+ */
+export const GATE_WINDOW_DAYS = 90;
+export const DISPLAY_WINDOW_DAYS = 90;
 
 /** A price_history row, in the only shape this module cares about. */
 export type ProvenancedRow = {

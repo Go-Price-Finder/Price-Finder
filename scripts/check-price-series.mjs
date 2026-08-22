@@ -127,7 +127,7 @@ console.log("FIXTURES");
   );
   const s = buildPriceSeries(rows, TODAY);
   check("a flat but gated series IS eligible", s.eligible);
-  check("  ...caption counts EXPORTS, not days", /Unchanged across 5 feed exports/.test(seriesCaption(s)), seriesCaption(s));
+  check("  ...caption counts EXPORTS, not days", /Unchanged across 5 feed exports/.test(seriesCaption(s, 90)), seriesCaption(s, 90));
 }
 
 console.log(`\nfixtures: ${failures.length === 0 ? "ALL PASS" : failures.length + " FAILED"}`);

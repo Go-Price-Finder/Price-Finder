@@ -41,6 +41,14 @@ import { fetchCurrentPriceOverrides } from "@/lib/pricing/getEffectivePrice";
 /**
  * SHIPPED 2026-08-22, ON BY DEFAULT. `LIVE_PRICES=0` is the kill switch.
  *
+ * RECORD (§62): claude/pricing-pipeline-findings-2026-08-16.md §55 (the
+ * gated build and what it measured) and §58 (shipping it, and the defect
+ * found on the way — this merged a live price while leaving the as-of
+ * label reading a hardcoded null, so the price moved and the stamp did
+ * not, on 26 pages). Flipping this to 0 re-freezes every page at its
+ * build-time price; that is the intended emergency behaviour, not a
+ * neutral default.
+ *
  * Inverted from opt-in once the blocker cleared: current_prices carries
  * the feed vintage (migration 0023), refreshPrices writes it, and
  * resolveAsOfStamp names it. The reason for shipping is a correctness

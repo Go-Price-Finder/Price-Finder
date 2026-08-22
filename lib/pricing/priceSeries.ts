@@ -1,7 +1,8 @@
 import {
   isObservedRow,
   vintageDate,
-  SERIES_WINDOW_DAYS,
+  GATE_WINDOW_DAYS,
+  DISPLAY_WINDOW_DAYS,
   type ProvenancedRow,
 } from "@/lib/pricing/provenance";
 
@@ -85,9 +86,11 @@ export function buildPriceSeries(
     eligible: false, ineligibleReason: reason, conflicts,
   });
 
-  const windowStart = new Date(Date.parse(today) - SERIES_WINDOW_DAYS * 86_400_000)
-    .toISOString()
-    .slice(0, 10);
+  // Eligibility and display are bounded separately (see provenance.ts).
+  // Equal today; the code must not assume they stay equal.
+  const gateStart = new Date(Date.parse(today) - GATE_WINDOW_DAYS * 86_400_000).toISOString().slice(0, 10);
+  const displayStart = new Date(Date.parse(today) - DISPLAY_WINDOW_DAYS * 86_400_000).toISOString().slice(0, 10);
+  const windowStart = gateStart < displayStart ? gateStart : displayStart;
 
   // 1. Observed rows only, inside the bounded window.
   const observed = rows.filter(
@@ -183,17 +186,29 @@ export function buildPriceSeries(
   };
 }
 
-/** The caption, in the merchant's own units. Counts EXPORTS, never days —
- * saying "unchanged for 14 days" when the feed exported four times would
- * assert ten confirmations nobody made (§59). */
-export function seriesCaption(series: PriceSeries): string {
+/**
+ * The caption, in the merchant's own units. Counts EXPORTS, never days —
+ * "unchanged for 14 days" when the feed exported four times would assert
+ * ten confirmations nobody made (§59).
+ *
+ * IT MAY NEVER CHARACTERISE DATA OUTSIDE THE WINDOW (operator ruling
+ * 2026-08-22). Everything it says is scoped to the points actually
+ * plotted, which are bounded by DISPLAY_WINDOW_DAYS. If canvas-vows
+ * resumes exporting after 99 frozen days, this must not say "unchanged
+ * since May" — we did not watch it since May, we watched the window. The
+ * first plotted date is the earliest thing this sentence is allowed to
+ * name, and it is stated as "in the last N days" rather than as an
+ * open-ended claim.
+ */
+export function seriesCaption(series: PriceSeries, windowDays: number): string {
   const changed = new Set(series.points.map((p) => p.price)).size > 1;
   const first = series.points[0]?.date;
   const exports = `${series.vintageCount} feed export${series.vintageCount === 1 ? "" : "s"}`;
   const gaps = series.gapCount
     ? ` ${series.gapCount} gap${series.gapCount === 1 ? "" : "s"} where no export was recorded.`
     : "";
+  const scope = `in the last ${windowDays} days (from ${first})`;
   return changed
-    ? `Across ${exports} since ${first}.${gaps}`
-    : `Unchanged across ${exports} since ${first}.${gaps}`;
+    ? `Across ${exports} ${scope}.${gaps}`
+    : `Unchanged across ${exports} ${scope}.${gaps}`;
 }

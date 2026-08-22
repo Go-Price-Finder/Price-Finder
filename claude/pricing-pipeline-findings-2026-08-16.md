@@ -6020,3 +6020,166 @@ have no feed, and 68 sit on feeds frozen since 2026-05-15 that can only
 ever yield one vintage. brooklyn-delhi therefore serves as a **permanent**
 positive control for the NULL-vintage exclusion — one that cannot
 evaporate between build and verify the way the live-price TTL row did.
+
+### §61. Three standing rules, and a numbering collision to fix (2026-08-22)
+
+**NUMBERING COLLISION, FLAGGED NOT SILENTLY RESOLVED.** The operator
+issued three rules as §60/§61/§62. This ledger already had a §60 — the
+chart restoration, written the same day. Renumbering either side after
+the fact would break every existing cross-reference, so the operator's
+rules are recorded here as **§61/§62/§63** and ALSO as standing rules
+10/11/12 in the handover, with the operator's original numbers kept in
+the text. Anything citing "§60" means the chart. If the operator prefers
+their numbers to win, the change is one commit — but it should be a
+decision, not a drift.
+
+**§61 (operator's §60) — prefer a STRUCTURAL positive control to a
+transient one.** A control that exists because of how the system is
+built cannot quietly stop controlling. brooklyn-delhi is the model: no
+AWIN feed exists for it, so all 29 products have a permanently NULL feed
+vintage and permanently exercise the exclusion branch. A control chosen
+because "this product happens to be stale today" evaporates the moment
+someone fixes the staleness, and the test keeps passing while testing
+nothing.
+
+**§62 (operator's §61) — every flag, kill-switch and suppression carries
+a pointer to its incident record AT ITS DEFINITION SITE.** Not in a
+commit message, not in a doc someone might find. The reader deciding
+whether to flip it is looking at the line, and the reason it exists is
+the only thing that can stop them.
+
+**§63 (operator's §62) — provenance travels WITH the value.** Not
+alongside it, not derivable from it. The 500/988 stamp-vs-chart
+disagreement had exactly one cause: two sources for one fact. Fixed by
+making the price carry its own vintage from `current_prices` through to
+the label, rather than having each surface look the vintage up.
+
+### §64. The §62 flag audit — 8 gated constructs, 4 without a usable pointer (2026-08-22)
+
+The operator expected the chart was not the only one. It was not, but
+the shortfall was not missing *reasoning* — every site had a paragraph
+explaining itself. The shortfall was that four of them named no
+**resolvable record**: a date, or a defect described in prose, with
+nothing a reader could go and look up.
+
+| # | Site | Kind | Pointer before | Action |
+|---|------|------|----------------|--------|
+| 1 | `components/PriceHistoryChart.tsx:51` | env flag, OFF | incident file + §60 | — |
+| 2 | `lib/pricing/applyLivePrices.ts:51` | kill switch, ON | prose only, no id | **added** §55/§58 |
+| 3 | `app/page.tsx:23` | component not mounted | §46 | — |
+| 4 | `components/SiteHeader.tsx:85` | nav item suppressed | bare date | **added** handover rule 3 |
+| 5 | `scripts/check-rendered-claims.mjs:56` | banned phrases w/ removal conditions | §23 per entry | — |
+| 6 | `lib/pricing/freshness.ts:17` | read-side TTL suppressing prices | §9r/§9s | — |
+| 7 | `components/DealShelf.tsx` | wording constraint | prose only, no id | **added** §25 |
+| 8 | `components/PriceHistorySparkline.tsx:44` | copy coupled to flag #1 | §25 for its own fix | **added** the coupling |
+
+**#8 is the one worth keeping.** The sparkline says "Price history charts
+are on the way." That sentence is only true while flag #1 is on its way.
+Nothing connected the two: the flag could be abandoned and the promise
+would stand indefinitely, technically un-false and actually a lie. It is
+now annotated at both ends. A flag audit that only looks at flags misses
+the copy that depends on them.
+
+### §65. Staleness horizon — MEASUREMENT (2026-08-22)
+
+Brief: measure, do not implement. Script:
+`scripts/_measure-staleness-horizon.mjs` (underscore-prefixed, not a
+gate, not wired into any build).
+
+**Method note.** Measured through the site's own decision path —
+`getEffectivePrice`'s read-side TTL to choose live-vs-catalog, then
+`resolveAsOfStamp` to choose the date — not against
+`current_prices.updated_at`, which is a *different* question that would
+have looked like this one. Reference date 2026-08-22.
+
+**Population: 1,288, not 1,285.** Every `catalog_products` row is live
+(no active flag, no filter in `fetchCatalog`). All 1,288 carry a stamp;
+none display a price with no date at all.
+
+**Part 1 — age of the displayed price's vintage**
+
+| bucket | products | share | live | catalog | partners |
+|---|---|---|---|---|---|
+| 0–2 | 899 | 69.8% | 899 | 0 | aaawave, evdance, golden-maple, king-koil |
+| 3–7 | 0 | — | | | |
+| 8–14 | 21 | 1.6% | 21 | 0 | tsar-bomba |
+| 15–30 | 300 | 23.3% | 0 | 300 | brooklyn-delhi, evdance, golden-maple, tsar-bomba |
+| 31–60 | 0 | — | | | |
+| 61–90 | 0 | — | | | |
+| 90+ | 68 | 5.3% | 68 | 0 | canvas-vows (42), tsar-bomba (26) |
+
+**Part 2 — products that lose their displayed price at each threshold**
+
+| threshold | suppressed | share |
+|---|---|---|
+| > 30 days | 68 | 5.3% |
+| > 45 days | 68 | 5.3% |
+| > 60 days | 68 | 5.3% |
+| > 90 days | 68 | 5.3% |
+
+**THE THRESHOLD IS CURRENTLY UNDECIDABLE FROM THE DATA, AND THAT IS THE
+HEADLINE.** Every value from 31 to 98 days suppresses exactly the same 68
+products, because the distribution is not a distribution — it is three
+spikes (0–2, 15–30, 99) with nothing between. Choosing 30 and choosing 90
+are the same decision today and completely different decisions later.
+Two consequences:
+
+- Picking the number now costs nothing and buys the policy before the
+  gap fills in. Picking it later means picking it under pressure, with
+  live pages on both sides of whatever line gets drawn.
+- Any "ship it and see what it does" framing is worthless here. The data
+  cannot distinguish the options.
+
+Note also that all 68 are on the **live** path. The live-price merge did
+not rescue them and was never going to: canvas-vows (feed 103552) and
+tsar-bomba's Default feed (105368) are frozen AT AWIN since 2026-05-15,
+so `refreshPrices` faithfully re-stamps a 99-day-old vintage every day.
+That is the pipeline working correctly. A daily-updating `updated_at`
+against a frozen `feed_last_imported_at` is exactly the shape §63 exists
+to keep visible.
+
+**Part 3 — the 90+ bucket against the merchants' own storefronts**
+
+Five products, checked on the merchant's own domain. No AWIN tracking
+link was followed; destinations were resolved from the catalog and the
+merchants' own site search.
+
+| product | we display | merchant | verdict |
+|---|---|---|---|
+| canvas-vows/american-flag-canvas | $59.00 | $59.00 | **unchanged** |
+| canvas-vows/1st-anniversary-gift-a-personalized-word-art-canvas | $100.00 | $109.00 | **CHANGED — we are 8.3% low** |
+| canvas-vows/2nd-anniversary-gift-a-personalized-word-art-canvas | $100.00 | from $109.00 | **CHANGED — we are 8.3% low** |
+| tsar-bomba/atomic-interchangeable-automatic-watch-zirconia-diamond-venus | $980.99 | — | **UNKNOWN** |
+| tsar-bomba/atomic-interchangeable-calendar-watch-zirconia-diamond-venus | $630.99 | — | **UNKNOWN** |
+
+So the answer to "unchanged or unknown" is **both, in the same bucket,
+and we cannot tell which from inside our own data.** One of three
+canvas-vows products is still exactly right at 99 days old; two are
+underpriced by $9 against the merchant's own floor — we advertise below
+what the customer will be charged, which is the worse direction.
+
+The two tsar-bomba rows are UNKNOWN in a stronger sense than "we didn't
+check". Our product names ("Atomic-Interchangeable Automatic Watch
+Zirconia Diamond Venus") are feed-level variant descriptions; the
+storefront organises by model code (TB8214, TB8218, TB8218D). Nothing we
+store maps a product to its merchant page — `deep_link` carries only an
+AWIN `p=` id. For these 26 products we cannot verify a price even by
+hand, which makes "price unknown" the only defensible reading and makes
+the mapping gap a finding in its own right, separate from staleness.
+
+**A false alarm caught before it reached the report.** WebFetch's
+markdown rendering showed EVERY tsar-bomba Atomic product as
+"Unavailable", which read as 26 live pages linking to sold-out stock. A
+rendered check (browser pane, JSON-LD + DOM) showed a working "Add to
+cart" and a mix of `InStock`/`OutOfStock` across variants — the
+"Unavailable" was an artifact of the text extractor. The same check
+found the extractor reporting $739.99 where the page's own JSON-LD said
+$830.99, so **WebFetch prices from tsarbomba.com are not trustworthy at
+all**, and only the canvas-vows figures above are load-bearing. §44's
+rule again on a different instrument: verify the measuring tool before
+its output becomes a finding.
+
+**Not implemented, per the brief.** The operator's proposed shape —
+suppress the number entirely above a threshold — is not built, and the
+ruling is theirs. Recorded for that ruling: on the 5 checked, suppression
+removes a wrong price twice and removes a *correct* price once.

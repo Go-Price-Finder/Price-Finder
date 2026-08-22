@@ -48,7 +48,15 @@ export default function PriceHistorySparkline({
           changes yet" was false for products where the daily refresh has
           recorded real changes. This card only knows price/originalPrice,
           so it now claims exactly what those fields support: a store
-          markdown, and a true statement about what is coming. */}
+          markdown, and a true statement about what is coming.
+
+          COUPLED TO A FLAG THAT IS OFF (§62). "Charts are on the way" is
+          only true while PriceHistoryChart is actually on its way; that
+          component is gated by NEXT_PUBLIC_PRICE_HISTORY_CHART, OFF, per
+          claude/incident-2026-08-16-price-history-chart.md. If that flag
+          is abandoned rather than flipped, this sentence becomes a
+          standing promise nobody is keeping — delete it then, do not
+          leave it. */}
       <span className="text-xs font-medium text-ivory-400">
         {hasDiscount
           ? `Marked down by the store: $${originalPrice} → $${price}`

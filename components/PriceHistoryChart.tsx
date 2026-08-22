@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getCreateClient } from "@/lib/supabase/lazy-client";
 import { formatPrice } from "@/lib/format-price";
 import { buildPriceSeries, seriesCaption, type PriceSeries } from "@/lib/pricing/priceSeries";
-import { SERIES_WINDOW_DAYS, type ProvenancedRow } from "@/lib/pricing/provenance";
+import { DISPLAY_WINDOW_DAYS, type ProvenancedRow } from "@/lib/pricing/provenance";
 import type { WishlistRetailerId } from "@/lib/types";
 
 /**
@@ -79,7 +79,7 @@ function PriceHistoryChartInner({
       .then((createClient) => {
         const supabase = createClient();
         const since = new Date();
-        since.setDate(since.getDate() - SERIES_WINDOW_DAYS);
+        since.setDate(since.getDate() - DISPLAY_WINDOW_DAYS);
         // Bounded by (product_id, retailer) over a 90-day window, and the
         // table's PK is (product_id, retailer, recorded_date) — at most
         // one row per day, so <= 90 rows regardless of table size.
@@ -160,12 +160,12 @@ function Chart({ series }: { series: PriceSeries }) {
 
   return (
     <figure className="flex flex-col gap-2 rounded-2xl border border-gilt-500/20 bg-noir-800 p-4">
-      <figcaption className="type-meta text-ivory-300">{seriesCaption(series)}</figcaption>
+      <figcaption className="type-meta text-ivory-300">{seriesCaption(series, DISPLAY_WINDOW_DAYS)}</figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="h-auto w-full"
         role="img"
-        aria-label={`Price history: ${seriesCaption(series)} Range ${formatPrice(yMin)} to ${formatPrice(yMax)}.`}
+        aria-label={`Price history: ${seriesCaption(series, DISPLAY_WINDOW_DAYS)} Range ${formatPrice(yMin)} to ${formatPrice(yMax)}.`}
       >
         {/* y bounds, labelled, so the reader can see the scale is not fitted to the noise */}
         {[yMax, yMin].map((v, i) => (
@@ -185,6 +185,14 @@ function Chart({ series }: { series: PriceSeries }) {
           </circle>
         ))}
         <text x={PAD_L} y={H - 6} className="fill-ivory-400 text-[10px]">{fmt(points[0].date)}</text>
+        {/* THE WINDOW IS LABELLED, NOT IMPLIED (operator ruling
+            2026-08-22). A reader must not be able to mistake "the last 90
+            days" for "all history" — the axis bounds what we are showing,
+            and an unlabelled axis lets the chart imply completeness it
+            does not have. */}
+        <text x={(PAD_L + W - PAD_R) / 2} y={H - 6} textAnchor="middle" className="fill-ivory-400 text-[10px]">
+          last {DISPLAY_WINDOW_DAYS} days
+        </text>
         <text x={W - PAD_R} y={H - 6} textAnchor="end" className="fill-ivory-400 text-[10px]">
           {fmt(points[points.length - 1].date)}
         </text>

@@ -1,4 +1,4 @@
-import { formatAsOfDate, getPriceAsOf } from "@/lib/price-as-of";
+import { formatAsOfDate } from "@/lib/price-as-of";
 
 /**
  * The honesty label under every displayed price: when this price was last
@@ -12,9 +12,18 @@ import { formatAsOfDate, getPriceAsOf } from "@/lib/price-as-of";
  * Server component, zero client JS. Renders nothing for an unknown
  * partner rather than guessing a date.
  *
- * Takes the product slug because as-of is a property of the SOURCE FEED,
- * not the partner — tsar-bomba draws from two feeds with vintages 79 days
- * apart (see lib/price-as-of.ts).
+ * NO FALLBACK VINTAGE, AS OF 2026-08-22 (§76). Until today, a product
+ * without a live vintage fell back to FEED_VINTAGE — a hand-maintained
+ * constant in lib/price-as-of.ts, frozen at import time. That constant
+ * had read "2026-07-25" for ~298 products whose feeds had exported six
+ * hours earlier, because it only changes when a human edits a file.
+ *
+ * §59 says a record of when we LOOKED is not a record of when it
+ * CHANGED. A hardcoded literal is neither: it is a record of when
+ * someone last edited a file. Migration 0023 already wrote the correct
+ * rule one layer down — "A live price with NULL here renders no stamp --
+ * never fall back to the catalog vintage" — and this is that rule
+ * finally applied at the layer above it.
  *
  * PROMINENCE (2026-08-20, §45). This used to render as 11px dim grey text
  * tucked under the price — visually an apology for the price rather than
@@ -104,19 +113,18 @@ export function resolveAsOfStamp(product: {
   priceSource?: "catalog" | "live";
   priceFeedVintage?: string | null;
 }): { iso: string; label: string } | null {
-  if (product.priceSource === "live") {
-    // A live price MUST carry the vintage of the feed that produced it.
-    // Falling back to the catalog vintage here would be wrong in the
-    // other direction: that date describes the IMPORT, not this number.
-    // With no vintage we cannot name a date, so we render no stamp —
-    // and the flag stays off precisely so this branch is unreachable
-    // until current_prices carries the column (§55).
-    return product.priceFeedVintage
-      ? { iso: product.priceFeedVintage.slice(0, 10), label: AS_OF_LABEL }
-      : null;
-  }
-  const iso = getPriceAsOf(product.partnerId, product.slug);
-  return iso ? { iso, label: AS_OF_LABEL } : null;
+  // ONE SOURCE, NO FALLBACK. A stamp requires a real feed vintage that
+  // travelled with the price (§63). Anything else renders nothing.
+  //
+  // `partnerId` and `slug` are retained in the signature deliberately:
+  // every caller already passes them, and keeping them makes the
+  // no-fallback decision visible AT the point where the old fallback
+  // used to happen rather than silently absent from the call sites.
+  // They are not read. If a future change wants them, it wants a
+  // fallback, and it must reopen §76 first.
+  return product.priceFeedVintage
+    ? { iso: product.priceFeedVintage.slice(0, 10), label: AS_OF_LABEL }
+    : null;
 }
 
 export default function PriceAsOfLabel({

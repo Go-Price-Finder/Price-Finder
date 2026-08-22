@@ -6667,3 +6667,138 @@ reachability at import time would pass tsar-bomba's 224 today if AWIN
 still redirects them. The gate must check the id against the CURRENT
 feed as well as the destination against the storefront — two assertions,
 because there are two layers and they fail independently.
+
+### §76. FEED_VINTAGE deleted — a file's mtime rendered as a merchant fact (2026-08-22)
+
+**The two-day fuse.** `FEED_VINTAGE` read `"2026-07-25"` for three feeds.
+That crosses 30 days on **24 August**. Had the staleness rule shipped as
+ruled, ~298 products with feeds that exported *this morning* would have
+had their prices suppressed the day after tomorrow, for a reason
+involving no merchant at all.
+
+The threshold was derived from purpose, cross-checked against evidence,
+and confirmed by an exhaustive price comparison. Every step was sound.
+It was pointed at a hardcoded literal a human last edited a month ago.
+
+**§59 says a record of when we LOOKED is not a record of when it
+CHANGED. A hardcoded literal is neither — it is a record of when someone
+last edited a file.** We rendered "Price as of Jul 25, 2026" for products
+whose feed exported six hours earlier.
+
+**We had already written the correct rule one layer down.** Migration
+0023's column comment: *"A live price with NULL here renders no stamp --
+never fall back to the catalog vintage."* FEED_VINTAGE was that rule
+being violated one layer above where we wrote it. We ruled correctly and
+then did not go looking for existing violations of the rule we had just
+made.
+
+**What shipped.** `FEED_VINTAGE` and `getPriceAsOf()` are deleted.
+`resolveAsOfStamp` has exactly one source: a real feed vintage that
+travelled with the price (§63). No default, no fallback, no
+"approximately", no import date. A product without provenance renders
+nothing.
+
+`partnerId`/`slug` stay in the signature and are not read — deliberately,
+so the no-fallback decision is visible AT the point the fallback used to
+happen rather than silently absent from seven call sites.
+
+**Measured effect, database and rendered HTML, in agreement:**
+
+| partner | pages | with stamp | bare |
+|---|---|---|---|
+| aaawave | 500 | 500 | 0 |
+| golden-maple | 348 | 321 | **27** |
+| tsar-bomba | 271 | 47 | **224** |
+| evdance | 72 | 52 | **20** |
+| canvas-vows | 42 | 42 | 0 |
+| brooklyn-delhi | 29 | 0 | **29** |
+| king-koil | 26 | 26 | 0 |
+| **total** | **1,288** | **988** | **300** |
+
+Verified in the emitted HTML per affected partner, counting the
+PriceAsOfLabel wrapper (`class="mt-3 text-ivory-50"`) rather than the
+string "Price as of" — the raw string appears in related-product cards
+AND twice per page in the RSC flight payload, which is exactly how a
+previous sweep talked itself into "0 pages without a stamp". Positive
+control: a stamped evdance product still renders **Aug 22, 2026**, its
+feed's actual export date this morning.
+
+**THE NO-STAMP BRANCH IS NOW LIVE.** Built, ruled on, and never exercised
+because the golden-maple control expired before verification could reach
+it. It has ~298 production instances as of this commit. It has stopped
+being a branch we reason about.
+
+**Gate: `scripts/check-as-of-stamp.mjs`, wired into prebuild.** Six
+fixtures (including the exact call the 298 products made), a source
+tripwire rejecting any date literal in the two modules that decide the
+stamp, a self-test proving the tripwire fires on three real
+reintroduction shapes and stays quiet on two honest ones, and an
+assertion that comment-stripping is load-bearing — the docs deliberately
+quote the deleted dates, so without it the tripwire would pass for the
+wrong reason.
+
+### §77. A test's denominator is part of its result (2026-08-22)
+
+Standing rule, operator:
+
+> A test's denominator is part of its result. Reporting a pass rate
+> without naming why the denominator is not the whole population hides
+> whatever was excluded — and what gets excluded is usually the
+> population carrying the defect.
+
+The stamp/series agreement test reported **988 of 988** and both readers
+took it for completeness. The catalog is **1,288**. The missing 300 were
+exactly the FEED_VINTAGE population — outside the check because a
+constant has no provenance to agree or disagree with. The test was not
+wrong; it was incomplete in a way its own result concealed.
+
+Neither of us asked why it was not 1,288. That question was free and
+available for two days.
+
+`check-stamp-series-agreement.mjs` now prints the whole-catalog count,
+the compared count, and the gap **with its reason**, every run:
+
+```
+catalog_products (the whole population):             1288
+products with an observed vintage in price_history:  1259
+of those, also carrying a live stamp vintage:        988
+stamp date == last plotted point date:               988/988
+NOT COMPARED, and why:                               300
+   no feed vintage anywhere -> renders NO stamp (§76)
+```
+
+Recorded as handover rule 18.
+
+### §78. When two healthy systems are connected, the failure lives in the join (2026-08-22)
+
+Standing rule, operator:
+
+> When two healthy systems are connected, the failure lives in the join.
+> Monitoring each endpoint proves nothing about the connection between
+> them. An alarm must watch the join.
+
+Every live feed exported today. The catalog is served and current. And
+224 tsar-bomba products sat on a hand-maintained constant because the id
+space between them moved. A feed-watching alarm would have been silent
+on all 300 — correctly, by its own definition, which is what makes it
+the wrong alarm.
+
+**Consequence for the 14-day alarm (revised ruling 3).** Two conditions,
+not one:
+
+1. *feed silence* — no new export in 14 days. One alert per feed.
+2. *join coverage* — per feed, the share of that partner's catalog
+   carrying a fresh `current_prices` row. **Warn above 20% uncovered**
+   for any partner that HAS a feed.
+
+**brooklyn-delhi is an explicit exemption with a named reason, not a
+tuned tolerance:** it has no AWIN feed at all, so 100% of its 29 products
+are structurally uncoverable and always will be. Exempt by name in the
+config, with that sentence attached. A threshold quietly raised to 100%
+to accommodate it would have silenced every real failure too.
+
+Today's join coverage: aaawave 0%, canvas-vows 0%, king-koil 0%,
+golden-maple 8%, evdance 28% (**warns**), tsar-bomba 83% (**warns**),
+brooklyn-delhi 100% (exempt).
+
+Recorded as handover rule 19.

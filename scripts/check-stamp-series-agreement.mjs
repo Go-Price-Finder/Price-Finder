@@ -81,9 +81,26 @@ for (const [productId, lastPoint] of hist) {
   else disagreements.push({ productId, stamp: s, lastPoint });
 }
 
-console.log(`products with an observed vintage in price_history: ${hist.size}`);
+// THE DENOMINATOR IS PART OF THE RESULT (§77). This check reported
+// "988 of 988" for two days and both readers took it for completeness.
+// The catalog is 1,288. The missing 300 were the products displaying a
+// hardcoded FEED_VINTAGE — silently outside the check, because a
+// constant has no provenance to agree or disagree with, and they were
+// exactly the population carrying the defect.
+//
+// So the denominator is now stated against the whole catalog, with the
+// gap named, every run. A pass rate whose denominator is unexplained
+// hides whatever was excluded.
+const { count: catalogTotal } = await supabase
+  .from("catalog_products").select("*", { count: "exact", head: true });
+
+console.log(`catalog_products (the whole population):             ${catalogTotal}`);
+console.log(`products with an observed vintage in price_history:  ${hist.size}`);
 console.log(`of those, also carrying a live stamp vintage:        ${checked}`);
 console.log(`stamp date == last plotted point date:               ${agree}/${checked}`);
+console.log(`NOT COMPARED, and why:                               ${catalogTotal - checked}`);
+console.log(`   no feed vintage anywhere -> renders NO stamp (§76), so`);
+console.log(`   there is nothing for the chart to disagree with.`);
 
 if (checked === 0) {
   console.error("\nFAIL: zero products were actually compared — that is not a clean result, it is a vacuous one (§19).");

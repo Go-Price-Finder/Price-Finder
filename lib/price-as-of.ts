@@ -1,72 +1,35 @@
 /**
- * "Price as of" dates for displayed (catalog) prices — PER-FEED model.
+ * FEED → PARTNER MAPPING. This module used to own the "Price as of" DATE
+ * as well; it does not any more.
  *
- * ⚠️ DEBT — INTERIM IMPLEMENTATION, DELETED BY COWORK'S STEP 2. This
- * hand-maintained module (FEED_VINTAGE, PARTNER_DEFAULT_FEED, and
- * especially TSAR_BOMBA_DEFAULT_FEED_SLUGS) is superseded by the
- * feed_status table Cowork specced 2026-08-17 (per-feed rows, seven
- * total). It shipped anyway because a live 79-day freshness overclaim on
- * 26 pages outweighed mechanism purity — correct output today over a
- * better mechanism tomorrow. When Step 2 lands, this file's data moves to
- * feed_status and the label reads from there; do not extend this file.
+ * WHAT WAS DELETED, 2026-08-22 (§76), and why it must not come back.
  *
- * AS-OF IS A PROPERTY OF THE FEED, NOT THE PARTNER (operator decision,
- * 2026-08-17). A partner can draw from multiple feeds with different
- * vintages — tsar-bomba's catalog is 246 products from the US feed
- * (113495, current at the 2026-08-02 refresh) plus 26 from the Default
- * feed (105368, frozen at AWIN since 2026-05-15). The first version of
- * this file used one date per partner and labelled all 272 "Aug 2, 2026"
- * — a 79-day freshness overclaim on 26 live pages, the same offence
- * PriceHistoryChart was suppressed for. Per-feed is also the model the
- * future offers table needs, so this is not throwaway structure.
+ * `FEED_VINTAGE` was a hand-maintained Record<feedId, isoDate> and
+ * `getPriceAsOf()` returned it as the displayed stamp for any product
+ * without a live price. Its own header said "UPDATE THE AFFECTED FEED'S
+ * VINTAGE IN THE SAME COMMIT as any catalog price refresh". Nobody did,
+ * because nothing enforced it and nothing could see that it had not
+ * happened.
  *
- * THE DATE IS THE PRICE DATA'S VINTAGE: when the displayed number was
- * last current at its source. For a feed frozen upstream, that is the
- * freeze date regardless of when we imported it (canvas-vows: imported
- * Jul 29 from a feed serving a May-15 snapshot → May 15). For an import
- * from a then-current feed, it is the import/refresh date. It is NOT the
- * feed's own last-import timestamp today — displayed prices come from
- * catalog_products, refreshed only by explicit imports, so dating labels
- * off live feed metadata would overclaim wherever the feed outruns the
- * catalog (king-koil: feed imports daily, catalog verified 2026-08-02).
- * If live-price display ships (Option A — chosen, not shipped; findings
- * doc §6), the honest source becomes per-feed Last Imported and the
- * VINTAGE values here get replaced, but the per-feed SHAPE stays.
+ * The measured result on 2026-08-22: ~298 products (23% of the catalog)
+ * displayed "Price as of Jul 25, 2026" while their feeds — F1320, F2615,
+ * F2639 — had exported that same morning. The date was not stale data.
+ * It was the mtime of a TypeScript file rendered as a merchant fact.
  *
- * Derivations (git history + AWIN feed metadata, 2026-08-17):
- * - awin:103552 (canvas-vows sole feed): frozen 2026-05-15; import
- *   4f6f302 (Jul 29) copied a May-15 snapshot. Census 2026-08-16: 93 of
- *   194 title-matched prices no longer match any live variant.
- * - awin:105368 (tsar-bomba Default feed): frozen 2026-05-15; the 87877a2
- *   refresh (Aug 2) merged its May-15 snapshot for the 26 products below.
- * - awin:113495 (tsar-bomba US feed): current at the 87877a2 refresh →
- *   2026-08-02.
- * - awin:101819 (king-koil): current at the 87877a2 refresh → 2026-08-02.
- * - awin:F1320 (evdance) / awin:F2615 (golden-maple): current at import
- *   14dc4cf → 2026-07-25.
- * - csv:brooklyn-delhi (no AWIN feed exists): import 8f1342a →
- *   2026-07-25.
+ * It also concealed a second defect. The stamp/chart agreement test
+ * reported 988 of 988 and was read as complete; the catalog is 1,288.
+ * The missing 300 were exactly this population, silently outside the
+ * check because a constant has no provenance to agree or disagree with.
  *
- * Hand-maintained. UPDATE THE AFFECTED FEED'S VINTAGE IN THE SAME COMMIT
- * as any catalog price refresh/re-import — a stale entry here recreates
- * the exact dishonesty this label exists to end. If a re-import changes
- * which feed a product came from, update TSAR_BOMBA_DEFAULT_FEED_SLUGS
- * (or its successor mapping) in the same commit.
+ * THE REPLACEMENT IS NOTHING. A product with no real vintage renders no
+ * stamp (resolveAsOfStamp). Do not reintroduce a default, a fallback, an
+ * "approximately", or an import date. scripts/check-rendered-claims.mjs
+ * enforces the absence.
+ *
+ * WHAT SURVIVES here is only the feed→partner mapping, which is still
+ * needed so snapshotPrices can stamp each price_history row with the id
+ * of the feed that produced it. That is provenance, not a date.
  */
-
-/** Price-data vintage per source feed (ISO date). */
-const FEED_VINTAGE: Record<string, string> = {
-  "awin:103552": "2026-05-15",
-  "awin:105368": "2026-05-15",
-  "awin:113495": "2026-08-02",
-  "awin:101819": "2026-08-02",
-  "awin:F1320": "2026-07-25",
-  "awin:F2615": "2026-07-25",
-  // Feed-list "Last Imported" 2026-08-18 22:52:56, read at tranche-1 import
-  // time (2026-08-19) — the feed's own vintage, not the import date.
-  "awin:F2639": "2026-08-18",
-  "csv:brooklyn-delhi": "2026-07-25",
-};
 
 /** Which feed a partner's products come from, unless overridden below. */
 const PARTNER_DEFAULT_FEED: Record<string, string> = {
@@ -165,7 +128,3 @@ export function formatAsOfDate(iso: string): string {
   });
 }
 
-export function getPriceAsOf(partnerId: string, slug: string): string | null {
-  const feed = getSourceFeed(partnerId, slug);
-  return feed ? (FEED_VINTAGE[feed] ?? null) : null;
-}

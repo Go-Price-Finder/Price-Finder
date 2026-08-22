@@ -8,14 +8,13 @@ import { fetchCurrentPriceOverrides } from "@/lib/pricing/getEffectivePrice";
  * and bring the exact per-source label wording for approval before
  * anything renders to a visitor.
  *
- * WHY THE FLAG IS OFF, AND THE REASON IS NOW SPECIFIC RATHER THAN
- * CAUTIOUS (operator ruling 2026-08-21, §55): the label is ONE sentence
- * for both sources — "Price as of {date}" — where the date is always the
- * FEED VINTAGE behind that price. We cannot yet name that date for a
- * live price, because current_prices carries no vintage column. So the
- * flag stays off for a stated reason: WE CANNOT SAY WHAT DATE THE LIVE
- * PRICE IS AS OF. Not because the wording is unsettled — it is settled —
- * and not because of caching.
+ * THE LABEL AND THE PRICE ARE ONE CHANGE, and both shipped together
+ * (operator ruling, §55/§59). One sentence for both sources — "Price as
+ * of {date}" — where the date is ALWAYS the FEED VINTAGE behind that
+ * price. Enabling the price without a source-aware label would have
+ * converted a working honesty mechanism into a false claim on most of
+ * the catalogue; that is why the flag existed and why it could only be
+ * flipped once current_prices could name the date.
  *
  * updated_at is NOT a substitute. It records when we read the feed. A
  * price read on the 20th from a feed exported on the 14th is a
@@ -39,7 +38,17 @@ import { fetchCurrentPriceOverrides } from "@/lib/pricing/getEffectivePrice";
  * at build time, so this is not free; scripts/check-build-queries.mjs
  * should be re-run and its threshold revisited as part of enabling.
  */
-export const LIVE_PRICES_ENABLED = process.env.LIVE_PRICES === "1";
+/**
+ * SHIPPED 2026-08-22, ON BY DEFAULT. `LIVE_PRICES=0` is the kill switch.
+ *
+ * Inverted from opt-in once the blocker cleared: current_prices carries
+ * the feed vintage (migration 0023), refreshPrices writes it, and
+ * resolveAsOfStamp names it. The reason for shipping is a correctness
+ * problem, not a feature: our pages were staler than our own database —
+ * two king-koil variants displayed prices the merchant had already
+ * changed, and our own history had recorded the change on the day.
+ */
+export const LIVE_PRICES_ENABLED = process.env.LIVE_PRICES !== "0";
 
 export async function applyLivePrices(
   products: RealProduct[]

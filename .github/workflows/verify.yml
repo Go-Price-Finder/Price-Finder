@@ -61,6 +61,23 @@ jobs:
       # Both vars are NEXT_PUBLIC_* and are already inlined into the client
       # bundle, so CI gains nothing a browser visitor does not already have.
       # NEVER add SUPABASE_SERVICE_ROLE_KEY here — it bypasses RLS entirely.
+      # MIGRATION DRIFT, the half the build cannot do (findings §57/§58).
+      # `npm run build` asserts files == manifest. This asserts manifest ==
+      # database, and only the two together prove the repo can rebuild the
+      # schema. It lives here because it needs the least-privilege
+      # migration_auditor role — SELECT on exactly
+      # supabase_migrations.schema_migrations — whose password is set by a
+      # human and held as a secret, deliberately out of reach of the Vercel
+      # build and of AI sessions.
+      #
+      # If the secret is unset the script EXITS 2 rather than skipping: a
+      # check that passes when it cannot run reports coverage it does not
+      # have. Run before Build so a drifted schema fails fast.
+      - name: Migration manifest matches the database
+        run: node scripts/check-migration-manifest.mjs
+        env:
+          MIGRATION_AUDITOR_URL: ${{ secrets.MIGRATION_AUDITOR_URL }}
+
       - name: Build
         run: npm run build
         env:

@@ -5832,3 +5832,124 @@ action has two halves and only one of them is enforced by a tool, the
 unenforced half is optional in practice no matter what the process
 document says.** The fix is never "remember"; it is to make the enforced
 half fail without the other.
+
+### §58. The seven files, the CI half, and what a six-day gap actually means (2026-08-21)
+
+**ALL SEVEN VERIFIED, TWO WAYS.** Hashes and byte counts match the
+operator's manifest on six of seven; 0020's stated suffix differs by one
+character (`a80e711` vs the file's `b80e711`) while its prefix and byte
+count match exactly — a typo in the message, not a wrong file, and the
+SQL comparison settles it independently.
+
+**Executable SQL compared against what the database actually applied,
+per instruction: IDENTICAL on all seven.** Comments differ by design;
+not one statement does.
+
+| migration | normalized SQL |
+|---|---|
+| 0017_refresh_runs | 890 chars, identical |
+| 0018_catalog_products_gtin | 281, identical |
+| 0019_retailer_enum_aaawave | 61, identical |
+| 0020_partners_aaawave | 194, identical |
+| 0021_feed_status_aaawave | 708, identical |
+| 0022_refresh_runs_gtin_counters | 195, identical |
+| 0023_current_prices_feed_provenance | 487, identical |
+
+The comparison could not use a line-based `--` filter: **0023's own
+column comment contains the string "-- never fall back to the catalog
+vintage" inside a quoted literal**, and a naive stripper would truncate
+that statement and then report a mismatch it had caused itself. The
+stripper respects single-quoted strings with `''` escaping and `$$`
+dollar-quoting (0014a uses a `DO $$` block).
+
+**Gate green on identity: 26 files against 23 applied, 3 pre-tracking
+baseline files excused.** Selftest still exits 1. Full build passes every
+gate — caps, compliance materialization, migration drift, rendered
+claims, hand-enumerations, merged slugs.
+
+**One thing deleted rather than registered.** The caps gate flagged
+`scripts/_recover-migrations.mjs` as a new unbounded read. That script
+never worked — PostgREST does not expose `supabase_migrations`, so it
+failed on every invocation — and registering it would have preserved a
+false promise in the failure message of another gate. Deleted, and the
+drift gate's recovery guidance now describes the method that actually
+worked: privileged query → base64 → decode → md5 verified against a hash
+computed by the database. With the caveat that some migrations retain
+only their DDL, so **the authored file is preferred where one exists.**
+
+---
+
+## THE ORPHANS ARE GONE, AND THE NUMBER IS NOW HONEST
+
+162 orphaned canvas-vows rows deleted from `current_prices`, on a
+**derived predicate** — `left join catalog_products … where c.id is
+null` — rather than a hardcoded list, so the delete could not select a
+row the reasoning did not cover. Verified before running: exactly 162,
+zero still in the catalog, zero carrying a vintage.
+
+| | before | after |
+|---|---|---|
+| current_prices | 1,152 | **990** |
+| with a vintage | 988 | **988** |
+| without | 164 | **2** |
+
+`products` 1,454 and `price_history` untouched. The two remaining are
+golden-maple products today's feed did not match, and NULL there means
+exactly what the column was added to mean: **we do not know.**
+
+---
+
+## THE CI HALF EXISTS NOW
+
+`scripts/check-migration-manifest.mjs`, wired into `.github/workflows/
+verify.yml` ahead of Build, using the `migration_auditor` role.
+
+- build: *files == manifest*
+- CI: *manifest == database*
+- together: **the repo can rebuild the schema** — which neither half
+  proves alone, and which is the property actually wanted.
+
+**A missing credential FAILS, it does not skip.** If
+`MIGRATION_AUDITOR_URL` is unset the script exits 2 and says why. A check
+that passes when it cannot run reports coverage it does not have — §19,
+and rule 5g.
+
+**Its selftest caught my own wrong expectation.** I asserted the fixture
+would produce two failures; it produced one, because the fixture I wrote
+was internally consistent so the count check correctly stayed silent. The
+selftest failed itself before the code could be trusted. Rewritten with a
+fixture that triggers all four failure modes exactly once, so the
+expected number is derived from the cases rather than guessed.
+
+---
+
+### §58b. Preparation leaves traces that look like completion
+
+The operator's framing, and it is sharper than rule 5h as written.
+
+The `migration_auditor` role was created on **15 August** — a
+least-privilege role, `SELECT` granted on exactly one table, every other
+privilege explicitly revoked, with a header stating it is "for the CI
+migration-history check" and that its password is human-set and held in
+Actions secrets. Someone did the **harder** part: reasoning about
+privilege, scoping a grant, thinking about who may read what. Then the
+easier part — writing the check — was never done, and **six days later
+nobody knew.**
+
+This is not carelessness. It is a specific and dangerous shape:
+
+> **Preparation leaves traces that look like completion.**
+
+A provisioned role, a created column, a declared type, an added
+dependency — each is real work that shows up in the repo and in the
+schema, and each *reads* as though the thing it enables exists. The
+artifacts of preparing are indistinguishable, to a later reader, from the
+artifacts of finishing. Migration 0015 has the same shape: it added
+`feed_id` and `feed_last_imported_at` to `price_history` on 17 August
+with the comment "Inert until 4.1-4.3 ship" — and they stayed inert and
+NULL for four days while we drew conclusions from that table.
+
+**The general rule: an artifact that ENABLES a capability must not be
+mistaken for the capability.** The only reliable distinction is a check
+that fails while the capability is absent — which is precisely what was
+missing in both cases, and what now exists for both.

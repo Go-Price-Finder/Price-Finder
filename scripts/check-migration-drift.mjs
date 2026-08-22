@@ -112,8 +112,13 @@ if (missing.length || unexplained.length) {
   for (const m of missing) console.error("  - " + m);
   for (const u of unexplained) console.error("  - " + u);
   console.error(
-    "\nRecover applied text with:  node --env-file=.env.local scripts/_recover-migrations.mjs <name>\n" +
-      "Supabase retains the full statement text, comments included, so recovery is exact rather than regenerated.\n" +
+    "\nRECOVERY: supabase_migrations.schema_migrations retains the FULL applied text, comments included, so a\n" +
+      "lost migration is recovered exactly rather than regenerated from the live schema. It is NOT reachable\n" +
+      "through PostgREST — query it with a privileged connection, emit the text as base64, decode to disk, and\n" +
+      "verify the file's md5 against a hash computed BY THE DATABASE. Retyping SQL out of a query result\n" +
+      "re-introduces the very divergence being repaired (§57).\n" +
+      "CAVEAT: for some migrations only the DDL was applied, not the authored header — 0023 is 497 applied\n" +
+      "bytes against a 3,359-byte authored file. Prefer the authored file where one exists.\n" +
       "NOTE: this gate compares files against the MANIFEST. If a migration was applied and the manifest\n" +
       "was never regenerated, this passes while the repo is still behind — the CI half (manifest vs live\n" +
       "database, using the migration_auditor role) is what closes that gap."

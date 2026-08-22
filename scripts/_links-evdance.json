@@ -1,0 +1,366 @@
+{
+  "resolved": [],
+  "unmatched": [
+    {
+      "slug": "evdance-50a-tesla-ev-charging-extension-cable-cord-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-50a-tesla-ev-charging-extension-cable-cord-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-ccs1-to-nacs-adapter-250kw",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2-nema-5-15-plug-j1772-portable-ev-charger-12a-16a-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-1-2nema-5-15-plug-nacs-portable-ev-charger-12a-16a-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-flux-level-2-nema-14-50-40a-tesla-portable-ev-charger-wifi-enabled-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-home-level-2-ev-charger-j1772-wall-mounted-hardwired-in-50a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-home-level-2-ev-charger-nacs-wall-mounted-hardwired-in-50a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-home-level-2-ev-charger-nema-14-50-j1772-wall-mounted-plug-in-32a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-home-level-2-ev-charger-nema-14-50-j1772-wall-mounted-plug-in-40a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-home-level-2-ev-charger-nema-14-50-nacs-tesla-wall-mounted-plug-in-32a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-21-40ft-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-21-40ft-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-32a-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-32a-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-30ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-40a-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-50a-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-32a-50a-21-40-ft-50a-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-40a-21-30-40-ft-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-40a-21-30-40-ft-30ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-40a-21-30-40-ft-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-50a-21-40-ft-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-j1772-ev-extension-cord-50a-21-40-ft-40ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-1-2-ev-charger-nema-6-20-j1772-portable-dual-plug-in-12-16a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-1-2-ev-charger-nema-6-20-nacs-portable-dual-plug-in-12-16a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-ev-charger-nema-14-50-j1772-portable-plug-in-40a",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-ev-charger-nema-14-50-nacs-wall-mounted-plug-in-40a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-10-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-j1772-portable-ev-charger-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-etl-listed-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-30-24a-nacs-portable-ev-charger-etl-certification-standard-safety-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-black-etl-listed",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-black-standard-safety",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-32a-j1772-portable-ev-charger-etl-certification-silver-standard-safety",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-32a-tesla-nacs-portable-ev-charger-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-40a-j1772-portable-ev-charger-plug-play",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-level-2-nema-14-50-40a-j1772-portable-ev-charger-wifi-enabled",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-mini-tesla-nacs-to-j1772-charging-adapter-max-80-amp-250v-black",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-mini-tesla-nacs-to-j1772-charging-adapter-max-80-amp-250v-white",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-nacs-to-ccs-pulse-fusion-adapter-with-interlock-500a-compatible-with-tesla-superchargers",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-nexus-reach-tesla-ev-charging-extension-cords-40a-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-sae-j1772-to-tesla-charging-adapter-80-amp-240v",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-tesla-ev-charging-extension-cords-32a-21ft",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-tesla-nacs-to-j1772-charging-adapter-with-security-lock-black",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-tesla-nacs-to-j1772-charging-adapter-with-security-lock-white",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-tire-inflator-portable-air-compressor-150psi-dual-power",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-u40-level-2-ev-charger-nema-14-50-j1772-wall-mounted-40a-etl-certification",
+      "pid": null,
+      "inFeed": false
+    },
+    {
+      "slug": "evdance-v2l-adapter-for-hyundai-ioniq-5-ioniq-6-kia-ev6-15-amp",
+      "pid": null,
+      "inFeed": false
+    }
+  ],
+  "paths": []
+}

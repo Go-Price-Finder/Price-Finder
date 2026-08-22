@@ -38,6 +38,25 @@ const cp = new Map();
   for (const r of rows) cp.set(r.product_id, r);
 }
 
+
+// POST-REMOVAL PROJECTION (operator ruling 2026-08-22): confirm the
+// suppression rule's scope AFTER the cleanup rather than assuming it.
+import { readFileSync as _rf } from "node:fs";
+const removeSlugs = new Set();
+if (process.env.SIMULATE_REMOVAL) {
+  for (const f of ["canvas-vows", "tsar-bomba-default"]) {
+    for (const [slug] of JSON.parse(_rf(`scripts/_h-${f}.json`, "utf8")).pairs) removeSlugs.add(slug);
+  }
+  if (process.env.SIMULATE_REMOVAL === "all") {
+    for (const f of ["tsar-bomba", "evdance", "golden-maple"]) {
+      const v = JSON.parse(_rf(`scripts/_verdict-${f}.json`, "utf8"));
+      for (const [slug] of [...v.DIFFERENT, ...v.NOTHING]) removeSlugs.add(slug);
+    }
+  }
+  console.log(`SIMULATING REMOVAL OF ${removeSlugs.size} products (mode: ${process.env.SIMULATE_REMOVAL})
+`);
+}
+
 const BUCKETS = [[0,2],[3,7],[8,14],[15,30],[31,60],[61,90],[91,Infinity]];
 const label = ([a,b]) => (b === Infinity ? "90+" : `${a}-${b}`);
 const rows = [];
@@ -51,6 +70,7 @@ for (const p of products) {
     priceSource: fresh ? "live" : "catalog",
     priceFeedVintage: fresh ? o.feed_last_imported_at : null,
   });
+  if (removeSlugs.has(p.slug)) continue;
   if (!stamp) { noStamp++; continue; }
   const age = Math.round((Date.parse(`${TODAY}T00:00:00Z`) - Date.parse(`${stamp.iso}T00:00:00Z`)) / 86400000);
   rows.push({ ...p, iso: stamp.iso, age, source: fresh ? "live" : "catalog" });

@@ -6336,3 +6336,173 @@ the instrument is being asked the right question. That is a distinct
 failure from §44's and it needs its own guard: when a check produces a
 dramatic number, re-derive it by a second method before reporting, not
 just re-run the controls.
+
+### §69. Full-catalog deep-link resolution — 1,288 links, exhaustive (2026-08-22)
+
+Operator brief: three-way test per link, 113495 first, report per partner
+before characterising or removing anything. Nothing removed.
+
+**Method.** Links are never followed (handover rule 15). Destinations come
+from two places depending on the link form, both local:
+
+- `cread.php?…&ued=<encoded>` — aaawave, golden-maple, evdance,
+  brooklyn-delhi. The destination is IN the URL; decoded locally, zero
+  requests to AWIN.
+- `pclick.php?p=<id>` — canvas-vows, king-koil, tsar-bomba. No destination
+  in the URL; resolved against the feed's own `merchant_deep_link`
+  (classic feeds) keyed by `aw_product_id`.
+
+Destinations are then scored against each merchant's `products.json` —
+their own structured index of every published handle and variant — with
+every absence re-checked against the live URL. Pagination termination is
+asserted, not assumed.
+
+**IDENTITY RULE.** A Shopify variant id is globally unique and stable. If
+the advertised variant id still exists under the advertised handle, the
+customer lands on exactly the item advertised, so a handle *rename* alone
+is not "a different product". Applied consistently to all eight cohorts.
+
+| cohort | links | KEEP | REMOVE | rate |
+|---|---|---|---|---|
+| aaawave | 500 | 500 | **0** | 0.0% |
+| golden-maple | 348 | 342 | **6** | 1.7% |
+| tsar-bomba 113495 | 245 | 226 | **19** | 7.8% |
+| evdance | 72 | 57 | **15** | 20.8% |
+| canvas-vows | 42 | 40 | **2** | 4.8% |
+| brooklyn-delhi | 29 | 29 | **0** | 0.0% |
+| king-koil | 26 | 26 | **0** | 0.0% |
+| tsar-bomba Default | 26 | 1 | **25** | 96.2% |
+| **total** | **1,288** | **1,221** | **67** | **5.2%** |
+
+**113495 DOES NOT FAIL AT DEFAULT'S RATE.** The operator asked to rule on
+a number rather than discover it in a diff: it is **19, not 245**. 7.8%
+against Default's 96.2%. The Default feed is a dead feed; 113495 is a
+live feed with ordinary catalogue churn. Treating them as one partner
+would have cut 245 good products.
+
+**Two failure modes, and the second is the ugly one.**
+
+1. *Handle gone* — the merchant deleted the product. Shopify does not
+   serve a 404 for these: it **redirects to the homepage, which returns
+   HTTP 200**. Verified rendered: `artgoldenmaple.com/products/
+   executioner-of-the-four-chaos-gods` lands on `/` with the title
+   "404 Not Found". The visitor is dumped on a homepage with no
+   explanation of what they clicked.
+2. *Variant gone* — the product lives, the advertised variant does not,
+   and Shopify silently serves the default variant instead. Verified
+   rendered on an evdance link: the requested variant id is ignored and
+   the page shows $199.95–$329.99 where we advertise one specific price.
+   The visitor is not told they are looking at a different item.
+
+Neither mode produces an error a monitoring check would notice. Both
+return 200.
+
+**Also recorded, not acted on:** all 500 aaawave links resolve to
+`ccaqx5-0s.myshopify.com` — an unbranded Shopify subdomain rather than a
+merchant domain. Every link works, so it is not a removal candidate, but
+we are sending visitors to a URL that looks like nothing.
+
+### §70. The two methods disagreed, and one of them was wrong (2026-08-22)
+
+Handover rule 16 was written yesterday: when a check produces a dramatic
+number, re-derive it by a SECOND METHOD before reporting. It fired on the
+first use, and it caught a real error.
+
+| cohort | per-page browser check | products.json check |
+|---|---|---|
+| tsar-bomba 113495 | 19 remove | **6 remove** |
+| tsar-bomba Default | 25 remove | **7 remove** |
+| evdance | 15 remove | 13 remove |
+| golden-maple | (not run) | **0 remove** |
+
+**Root cause: "HTTP 200 after following redirects" is not proof of a live
+product.** The products.json method re-checked each absent handle against
+the live URL and treated a 200 as a rename to be rescued. Shopify
+redirects a deleted product handle all the way to `/`, and the homepage
+returns 200 — so every deleted product was scored as a working link.
+golden-maple's true 6 removals were reported as 0.
+
+The fix is a rescue that requires BOTH conditions, not one: the final URL
+must still match `/products/<handle>`, AND the advertised variant must
+exist on the destination it landed on. With that, both methods agree
+exactly on every cohort.
+
+**The generalisable shape, and it is not the same as §68's.** §68 was
+"controls green does not mean the method is right" — the controls proved
+the instrument could tell 200 from 404, and it could; it was asked the
+wrong question. This one is narrower and worth its own line:
+
+> A redirect that lands on a 200 has not necessarily succeeded. Assert
+> what you landed ON, never merely that you landed. For a link check the
+> destination's identity is the finding; the status code is not.
+
+Recorded as handover rule 17.
+
+### §71. Search Console is not available, and the substitute cannot answer the question (2026-08-22)
+
+The ruling asked for Search Console impressions/clicks/inbound links on
+the 68 removal candidates, to split 301 from 410 per URL.
+
+**There is no Search Console access in this project.** No credential, no
+connector, no wired API. Stated rather than substituted quietly.
+
+The nearest available instrument is Vercel Web Analytics, and it is a
+poor substitute in three specific ways: it measures client-side pageviews
+on our own site, so it has **no impressions at all** (the main thing the
+ruling asked for), **no organic/direct/referral split**, and **no inbound
+link data**. It also undercounts behind ad blockers and does not separate
+bots.
+
+What it does say, over 2026-05-01 → 2026-08-22 (113 days):
+
+- **62 of the 68 candidates have zero recorded visits.**
+- The remaining **6 have exactly 1 visitor each**.
+
+**Calibration, so "1 visitor" means something.** Over the same window the
+homepage drew 208 visitors and the single busiest product page on the
+whole site drew 13. A product page at 1 visitor in 113 days is at the
+floor of the distribution, not near any threshold.
+
+**Recommendation, with the limitation attached: 410 all 68.** No
+candidate clears any plausible bar for "has earned traffic", and a
+301/410 split derived from a 1-visitor difference would be manufactured
+from noise — the ruling's own reasoning ("let the data pick per URL")
+requires data that can distinguish, and this cannot. If the operator
+wants the Search Console signal specifically, it needs pulling by hand
+from the GSC UI; the property is not reachable from here.
+
+**Incidental finding.** Of the 39 analytics rows under `/canvas-vows/`
+and `/tsar-bomba/`, most are **old merged slugs that now 301** — e.g.
+`photo-word-art-canvas-…-5`, `sound-wave-canvas-…-8`. Crawler traffic to
+redirected URLs, months after the collapse. Not a problem, but it means
+raw path counts over this window cannot be read as current-URL demand
+without filtering, which is why the 68 were intersected by exact slug
+rather than eyeballed.
+
+### §72. Post-removal staleness scope — CONFIRMED ZERO (2026-08-22)
+
+The operator predicted the 30-day suppression rule would ship with no
+live instance, and asked for the count rather than the assumption.
+
+| | 0–2 | 8–14 | 15–30 | 31–60 | 61–90 | 90+ | suppressed at >30d |
+|---|---|---|---|---|---|---|---|
+| today | 899 | 21 | 300 | 0 | 0 | 68 | **68** |
+| after the 68 removals | 899 | 21 | 300 | 0 | 0 | **0** | **0** |
+| after 68 + 40 link failures | 895 | 21 | 264 | 0 | 0 | **0** | **0** |
+
+**Confirmed: zero products in scope on the day it ships.** The entire
+90+ bucket was canvas-vows and tsar-bomba Default; removing them empties
+it exactly.
+
+So the suppression branch ships unexercised by production data, which is
+the no-stamp defect's shape. Per the ruling it still ships, with fixture
+coverage for the three transitions (crossing the threshold, sitting above
+it, returning below it when a feed resumes) and the 14-day feed alarm as
+the thing that remembers stale feeds happen once the evidence is deleted.
+
+Worth stating plainly: after this cleanup the oldest displayed price on
+the site is **~28 days** (the 15–30 bucket, brooklyn-delhi/evdance/
+golden-maple/tsar-bomba catalog prices). The nearest product to the
+30-day line is inside two days of it, so the rule will not stay
+unexercised for long — 113495 at 10 days is the one to watch, and it
+crosses 30 days around 11 September if its feed stays dead.

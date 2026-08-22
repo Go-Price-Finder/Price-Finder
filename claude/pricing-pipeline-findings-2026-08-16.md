@@ -6506,3 +6506,164 @@ golden-maple/tsar-bomba catalog prices). The nearest product to the
 30-day line is inside two days of it, so the rule will not stay
 unexercised for long — 113495 at 10 days is the one to watch, and it
 crosses 30 days around 11 September if its feed stays dead.
+
+### §73. Naming the 300 — no fourth feed is dying, and the alarm would not have fired (2026-08-22)
+
+**The hypothesis was wrong, and its remedy would have been wrong too.**
+Tested rather than assumed: "a feed that stopped exporting between late
+July and early August."
+
+**A. Every live feed exported TODAY.** Straight from AWIN's feed list:
+
+| feed | age | last export | products | |
+|---|---|---|---|---|
+| F2639 | **0d** | 2026-08-22 15:08 | 1,686 | aaawave |
+| F1320 | **0d** | 2026-08-22 14:02 | 71 | evdance |
+| F2615 | **0d** | 2026-08-22 13:53 | 356 | golden-maple |
+| 101819 | **0d** | 2026-08-22 14:49 | 30 | king-koil |
+| 113495 | 10d | 2026-08-12 06:45 | 234 | tsar-bomba US |
+| 103552 | 99d | 2026-05-15 | 204 | canvas-vows (known dead) |
+| 105368 | 99d | 2026-05-15 | 189 | tsar-bomba Default (known dead) |
+
+No fourth feed is dying. Nothing stopped exporting in late July.
+
+**B. The 300 are on the catalog-fallback path, not a stale-feed path.**
+
+| n | partner | feed | stamp | source |
+|---|---|---|---|---|
+| 224 | tsar-bomba | 113495 | 2026-08-02 (20d) | catalog |
+| 29 | brooklyn-delhi | none | 2026-07-25 (28d) | catalog |
+| 27 | golden-maple | F2615 | 2026-07-25 (28d) | catalog |
+| 20 | evdance | F1320 | 2026-07-25 (28d) | catalog |
+
+**298 of the 300 have no `current_prices` row at all.** The refresh never
+matched them. Their displayed date is not a feed vintage — it is
+`FEED_VINTAGE`, the hand-maintained constant in `lib/price-as-of.ts`,
+frozen at import time. It changes only when a human edits a TypeScript
+file, and nobody has.
+
+So the site is showing a July-25 date for products whose feed exported
+six hours ago. Not because the data is old at source, but because we
+never reach it.
+
+**C. THE 14-DAY ALARM AS SPECIFIED WOULD BE SILENT ON ALL 300.** The
+ruling says the alarm "fires against the FEED, not the product — one
+alert per dead feed, not 42." That is right for canvas-vows and right for
+113495. It is blind to this, because every feed here is healthy. The
+failure is between a healthy feed and our catalog.
+
+The alarm needs a second condition, and it is a different measurement:
+**per feed, the share of that partner's catalog carrying a fresh
+`current_prices` row.** A feed exporting daily into a partner where 83%
+of products get no row is exactly as broken as a feed that stopped, and
+only the second condition can see it.
+
+Per-partner coverage today:
+
+| partner | products | live | catalog | on catalog path |
+|---|---|---|---|---|
+| aaawave | 500 | 500 | 0 | 0% |
+| canvas-vows | 42 | 42 | 0 | 0% |
+| king-koil | 26 | 26 | 0 | 0% |
+| golden-maple | 348 | 321 | 27 | 8% |
+| evdance | 72 | 52 | 20 | 28% |
+| **tsar-bomba** | **271** | **47** | **224** | **83%** |
+| brooklyn-delhi | 29 | 0 | 29 | **100%** |
+
+brooklyn-delhi's 100% is expected and permanent — no AWIN feed exists for
+it, so there is nothing to match against. tsar-bomba's 83% is not.
+
+### §74. Root cause of tsar-bomba's 224 — AWIN re-issued the product ids (2026-08-22)
+
+`refreshPrices` matches by the AWIN merchant product id, the `p=` in the
+deep link (the id-matching fix that replaced the name matching in §46).
+The ids our catalog stores are the ones AWIN issued at import.
+
+**225 of the 246 ids in the 2026-08-02-era feed are absent from the feed
+AWIN served on 2026-08-12.** The feed did not shrink from 246 to 234 by
+dropping 12 products; it re-issued nearly its whole id space.
+
+Consequences, measured:
+
+- **47 of 271** tsar-bomba products have a `current_prices` row.
+- **0** products have a `p=` that IS in today's feed but got no row —
+  so the refresh is not skipping anything it can see. It genuinely
+  cannot find them.
+- **21 of 245** 113495 links resolve against today's feed. The other 224
+  carry a `p=` the merchant's current feed does not contain.
+
+**THIS CORRECTS §69's 113495 NUMBER.** That audit resolved destinations
+against `scripts/_tsarbomba-us-feed.csv`, the cached Aug-02-era feed,
+because that is what was on disk. Against the live feed only 21 of 245
+resolve. The §69 storefront verdict (226 of 245 products still exist and
+are purchasable at tsarbomba.com) remains true and is worth keeping — but
+it answered "does the product still exist" when the question that now
+matters is "does AWIN still have a mapping for our id", and those have
+diverged.
+
+**Two layers, and only one of them is broken:**
+
+| layer | state |
+|---|---|
+| tsarbomba.com storefront | 226 of 245 products live and purchasable |
+| AWIN id → destination | 21 of 245 ids still in the feed |
+
+**What cannot be determined from here.** Whether AWIN's redirector still
+resolves a retired product id. It may retain history; it may bounce to
+the merchant homepage; it may drop attribution while still delivering the
+customer. Testing it requires clicking our own tracking links, which is
+prohibited (handover rule 15). **The commercial exposure — 224 links that
+may deliver traffic we are not paid for — is therefore stated as
+unquantified, not estimated.** This is a question for AWIN or the
+merchant, and it belongs in the note the operator has already asked for.
+
+**The likely remedy is a RE-IMPORT, not a removal.** The products exist,
+the feed is alive, and the ids are simply stale. Removing 224 products
+that a re-import would fix is the destructive answer to a bookkeeping
+problem. The operator's ruling on the 19 stands as its own question and
+is unaffected by this; the 224 are new and were not in scope.
+
+### §75. evdance at 20.8% is a PATTERN, not scatter (2026-08-22)
+
+Fifteen removals across 72 links, against golden-maple's 1.7% on five
+times the volume. It resolves into one merchant event plus two one-offs.
+
+**Thirteen variant-gone, clustered in PAIRS on seven base products:**
+
+| destination product | ours |
+|---|---|
+| flux-level-2-nema-14-50-40a-j1772 | 2 |
+| flux-level-2-nema-14-50-40a-tesla | 2 |
+| level-2-nema-10-30-24a-j1772 | 2 |
+| level-2-nema-10-30-24a-tesla | 2 |
+| level-2-nema-14-30-24a-j1772 | 1 |
+| level-2-nema-14-30-24a-tesla | 2 |
+| 240v-32a-j1772-portable-home-2-in-1 | 2 |
+
+**Eleven of the thirteen carry the suffix `standard-safety-plug-play` or
+`standard-safety-wifi-enabled`** — the two halves of a single product
+option. The remaining two are a `black`/`silver` colour pair on one
+product.
+
+The control that makes this a pattern rather than a coincidence: **53
+evdance products with no such suffix all survived, and only 4 products
+carrying that suffix survived.** The failure is concentrated almost
+entirely in one option axis on one product line (Level 2 portable
+chargers), not spread across the catalogue.
+
+**Reading: evdance restructured the "Plug & Play vs WiFi Enabled" option
+on their Level-2 charger line, retiring the old variant ids.** That is a
+single merchant event, dated, specific, and worth asking about — the
+merchant note can cover it in one sentence and might restore all eleven.
+
+The two dead handles (`j1772-to-tesla-charging-adapter-by-evdance`,
+`evdance-u40-level-2-ev-charger-…-40a-etl-certification`) are unrelated
+single deletions and are ordinary churn.
+
+**Note for the import gate.** Both evdance failure shapes and the
+tsar-bomba id re-issue are the same class underneath: **a merchant
+changing identifiers we have cached.** A gate that only checks
+reachability at import time would pass tsar-bomba's 224 today if AWIN
+still redirects them. The gate must check the id against the CURRENT
+feed as well as the destination against the storefront — two assertions,
+because there are two layers and they fail independently.

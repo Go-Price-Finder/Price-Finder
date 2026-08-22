@@ -130,6 +130,18 @@ export default async function CategoriesPage() {
                           deptTotal > 0 ? "text-gilt-400" : "text-ivory-400"
                         }`}
                       >
+                        {/* "Coming soon" IS A PROMISE, AND IT IS THE
+                            LARGEST ONE ON THE SITE (§67). It renders for
+                            every taxonomy node with zero products: 682
+                            occurrences against 78 real counts on this page
+                            as of 2026-08-22, i.e. ~90% of the taxonomy is
+                            an undertaking nobody has committed to. The
+                            taxonomy is imported wholesale; the products are
+                            not. Unlike a flag, nothing here can ever be
+                            "flipped on", so this sentence has no expiry and
+                            no owner. Registered pending an operator ruling
+                            on whether empty nodes should say nothing, be
+                            hidden, or keep the promise. */}
                         {deptTotal > 0 ? `${deptTotal} products` : "Coming soon"}
                       </span>
                       {deptTotal > 0 && (
@@ -163,6 +175,8 @@ export default async function CategoriesPage() {
                                 catTotal > 0 ? "text-gilt-400" : "text-ivory-400"
                               }`}
                             >
+                              {/* Same promise as the department row above
+                                  (§67) — one ruling covers both. */}
                               {catTotal > 0 ? `${catTotal} products` : "Coming soon"}
                             </span>
                           </div>

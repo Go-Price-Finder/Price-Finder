@@ -17,6 +17,14 @@ const STEPS = [
       // 13:00Z, real emails via Resend) — this copy said "in development"
       // long after they shipped (findings §23). Price history RECORDING is
       // also live (snapshot-prices cron); only the charts are still to come.
+      //
+      // DEPENDS ON A GATED CONSTRUCT (§67). "Charts ... are on the way" is
+      // true only while PriceHistoryChart is on its way. That component is
+      // gated by NEXT_PUBLIC_PRICE_HISTORY_CHART, currently OFF, per
+      // claude/incident-2026-08-16-price-history-chart.md. This is the
+      // SECOND copy site with that dependency (PriceHistorySparkline is the
+      // other) — if the flag is abandoned rather than flipped, BOTH
+      // sentences must be deleted in the same commit, not softened.
       "Save an item to your wishlist and set a target price — when the price drops to it, we email you. Charts of each product's price history are on the way; we're already recording it daily.",
   },
   {
@@ -27,6 +35,14 @@ const STEPS = [
       // lowest-price flag and shipping/fees — none of which exists yet
       // (the GTIN identity work that enables cross-store comparison is in
       // progress, findings §20). Describe what the site does TODAY.
+      //
+      // DEPENDS ON A GATED CONSTRUCT (§67). "what we're building next"
+      // depends on the GTIN identity work (§20) actually shipping. The
+      // claims gate already bans the *stronger* phrasings ("side by side",
+      // "best price") until it does — see NEVER_ASSERT in
+      // scripts/check-rendered-claims.mjs, whose entries say "remove when
+      // the comparison surface ships". This sentence is the promise those
+      // bans permit; retire it in the same commit that retires them.
       "Every listing is a real price from a real store, checked daily and stamped with when it was last verified. Cross-store comparison of the same product is what we're building next.",
   },
 ];

@@ -6183,3 +6183,156 @@ its output becomes a finding.
 suppress the number entirely above a threshold — is not built, and the
 ruling is theirs. Recorded for that ruling: on the 5 checked, suppression
 removes a wrong price twice and removes a *correct* price once.
+
+### §66. Merchant-facing verification requires a rendered check (2026-08-22)
+
+Standing rule, operator, from the near-miss in §65:
+
+> Merchant-facing verification requires a rendered check. Text extraction
+> from a storefront is a hypothesis, never a finding.
+
+WebFetch's markdown conversion reported every tsar-bomba Atomic product
+"Unavailable" and quoted $739.99 where the page's own JSON-LD said
+$830.99. Both were caught before they were written up.
+
+**Recorded as a near-miss, not a catch, at the operator's instruction.**
+The rule exists because the instrument was wrong, not because anyone was
+clever. Nothing in the process guaranteed the second look; it happened
+because the result was surprising enough to re-check, and "surprising
+enough" is not a control. §67 below was found the same way.
+
+### §67. A flag's blast radius includes the copy that assumes it (2026-08-22)
+
+Standing rule, operator:
+
+> A flag's blast radius includes the copy that assumes it. Any
+> user-visible sentence whose truth depends on a gated construct must be
+> registered at that construct's definition site, and the audit that
+> checks flags must check their dependent copy.
+
+**The sweep, run against every user-visible future-tense capability
+claim in `app/` and `components/`.** The sparkline was not alone; it was
+the smallest instance.
+
+| Site | Sentence | Depends on | Registered |
+|---|---|---|---|
+| `components/PriceHistorySparkline.tsx:63` | "Price history charts are on the way" | `NEXT_PUBLIC_PRICE_HISTORY_CHART` (OFF) | §64 |
+| `components/HowItWorks.tsx:20` | "Charts of each product's price history are on the way" | same flag | **new** |
+| `components/HowItWorks.tsx:30` | "Cross-store comparison … is what we're building next" | GTIN identity work (§20) | **new** |
+| `app/categories/page.tsx:133` | "Coming soon" (department rows) | products existing in that node | **new** |
+| `app/categories/page.tsx:166` | "Coming soon" (category rows) | same | **new** |
+
+**THE CATEGORIES PAGE IS THE FINDING.** "Coming soon" renders **682
+times against 78 real product counts** on `/categories` — about 90% of
+the rendered taxonomy is a promise. The taxonomy was imported wholesale;
+the products were not.
+
+It is worse than a flag-dependent promise in a specific way: a flag can
+be flipped, so its copy has an owner and an expiry. Nothing can ever
+"flip on" 682 taxonomy nodes. There is no plan, no owner, and no date, so
+the sentence cannot become true and cannot become false in any way that
+would be noticed — it just accrues. Two of the three `HowItWorks` claims
+at least name work that is in progress.
+
+Registered at all five sites pending an operator ruling. The copy is NOT
+changed — the ruling is the operator's, and the options (say nothing,
+hide empty nodes, keep the promise) trade off against SEO and taxonomy
+strategy that is not this session's to decide.
+
+**Method note.** The sweep is a grep for future-tense capability phrasing
+over user-visible string literals, run once. That is a hand-enumeration
+with an expiry date and it is not wired into any gate. Converting it into
+a real check means teaching `check-rendered-claims.mjs` to treat
+promise-phrasing as a registered-claim class rather than a banned one —
+worth doing, not done here, and flagged rather than left implied.
+
+### §68. Deep-link resolution across the frozen cohort — 68 links, exhaustive (2026-08-22)
+
+Operator brief: do these links land on a product page, a category page, a
+homepage, or nothing? Exhaustive, not sampled.
+
+**WHY THE LINKS WERE NOT FOLLOWED, AND WHY THAT IS STRONGER.** Our
+`deep_link` is `awin1.com/pclick.php?p=<id>&a=<affiliate>&m=<merchant>`.
+The destination is not encoded in it — AWIN resolves `p` server-side, and
+the redirect request itself registers a click on our own affiliate
+account. Following 68 is 68 self-clicks, a standing prohibition. The
+destination was instead reconstructed from AWIN's own source of truth for
+that redirect: the `merchant_deep_link` column of the same feed, keyed by
+`aw_product_id`. That also answers a question a redirect-follow cannot:
+whether the `p` id exists in the feed at all. **All 68 do** — so every
+link has a destination, and the failures below are failures of the
+destination, not of the mapping.
+
+Each destination was then checked from the merchant's own origin, with
+redirects followed and Shopify's product JSON parsed (§66). Controls:
+bogus handle → 404, known-good handle → 200, known-good variant id
+matches, all passing.
+
+**canvas-vows — 42 links**
+
+| outcome | n |
+|---|---|
+| lands on the named live product | 39 |
+| lands on a live product via a merchant redirect | 1 (`coffee-sign` → `coffee-sign-farmhouse-style`) |
+| **404 — lands on nothing** | **2** |
+
+**tsar-bomba Default feed — 26 links**
+
+| outcome | n |
+|---|---|
+| **404 — lands on nothing** | **15** |
+| lands on a product page, but the advertised variant no longer exists | 10 |
+| reaches its variant | 1 |
+
+**Zero of the 26 land on the exact product we advertise.** The one that
+reaches its variant does so only after a redirect to `tb8228t`, a
+differently-named model (Elemental-TB8228T, where we advertise a TB8208T)
+— structurally a hit, substantively a different watch. Nine of the 15
+dead links redirect to a `-eu` suffixed handle that then 404s, which
+looks like an abandoned regional-storefront migration.
+
+**Totals: 17 of 68 links (25%) land on nothing. A further 10 (15%) land
+on the wrong variant.** 40% of the cohort's outbound links do not deliver
+the item advertised.
+
+**A price finding fell out of it, exhaustive rather than spot-checked.**
+Having the live variant ranges for all 42 canvas-vows products:
+
+| our displayed price vs the merchant's live range | n |
+|---|---|
+| **below the merchant's cheapest purchasable variant** | **10** |
+| within range | 30 |
+| above the merchant's dearest variant | 0 |
+| destination dead | 2 |
+
+Every error is in the same direction: we advertise **less** than the
+customer can pay. Worst is `song-sound-wave-art` at $49.95 against a $79
+floor — **36.8% low**. The rest are 5.1%–8.3%. This supersedes the §65
+spot-check (2 of 3) with a complete count, and it strengthens the
+staleness ruling rather than qualifying it: the errors are systematic and
+one-directional, not noise.
+
+**Correction to §65.** §65 said "nothing we store maps a product to its
+merchant page." That was true of what was checked at the time — the
+`deep_link` alone — and false of the system: the feed maps `p` →
+`merchant_deep_link` for all 68. The mapping gap is narrower and more
+specific than reported: we cannot map a product to a merchant page **by
+name**, which is why the manual spot-check failed, but the feed can do it
+by id. Reported as a bigger finding than it was; the deep-link failures
+found here are the bigger finding, and they are a different one.
+
+**Instrument note, and the reason the first pass was wrong.** The first
+pass probed Shopify's `/products/<handle>.js` endpoint, which does NOT
+follow Shopify's own URL redirects. It reported 21 dead tsar-bomba links
+and 3 dead canvas-vows links. Following redirects on the real page
+corrected those to 15 and 2 — `tb8208t` redirects to a live `tb8228t`,
+`coffee-sign` to a live `coffee-sign-farmhouse-style`.
+
+**All three controls passed on the wrong pass.** Bogus handle → 404,
+known-good handle → 200, known-good variant matched — every one of them
+green while the method was overstating dead links by 40%. A control
+proves the instrument can distinguish its two answers; it does not prove
+the instrument is being asked the right question. That is a distinct
+failure from §44's and it needs its own guard: when a check produces a
+dramatic number, re-derive it by a second method before reporting, not
+just re-run the controls.
